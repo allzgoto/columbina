@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Columbina Perfect</title>
 
+    <!-- Fonte Moderna -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Serif', 'Times New Roman', serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         html, body {
@@ -27,7 +30,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, #1a3a5a 0%, #050a14 100%);
+            background: linear-gradient(135deg, #0a2342 0%, #000000 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -37,14 +40,31 @@
         }
 
         #splash h1 {
-            color: #fff;
-            font-size: 2rem;
-            letter-spacing: 5px;
+            color: #e6f0ff;
+            font-size: 2.2rem;
+            letter-spacing: 6px;
             text-transform: uppercase;
-            border: 1px solid #5dade2;
-            padding: 20px 40px;
-            background: rgba(93, 158, 226, 0.1);
-            backdrop-filter: blur(5px);
+            font-weight: 600;
+
+            padding: 22px 50px;
+            border-radius: 12px;
+
+            background: linear-gradient(
+                135deg,
+                rgba(20, 60, 120, 0.35),
+                rgba(0, 0, 0, 0.6)
+            );
+
+            border: 1px solid rgba(100, 170, 255, 0.4);
+            backdrop-filter: blur(8px);
+
+            box-shadow: 0 0 30px rgba(0, 80, 160, 0.35);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #splash:hover h1 {
+            transform: scale(1.05);
+            box-shadow: 0 0 45px rgba(0, 120, 255, 0.6);
         }
 
         /* Vídeo de Fundo */
@@ -54,8 +74,6 @@
             left: 50%;
             min-width: 100%;
             min-height: 100%;
-            width: auto;
-            height: auto;
             transform: translate(-50%, -50%);
             object-fit: cover;
             z-index: 0;
@@ -87,7 +105,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: white;
+            color: #ffffff;
             text-align: center;
             text-shadow: 0 0 10px rgba(0,0,0,0.8);
         }
@@ -95,7 +113,7 @@
         .content h2 {
             font-size: 3rem;
             margin-bottom: 10px;
-            color: #000;
+            font-weight: 600;
         }
     </style>
 </head>
