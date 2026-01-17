@@ -48,7 +48,7 @@
         <h1>[ Enter ]</h1>
     </div>
 
-<video id="bg-video" loop playsinline>
+<video id="bg-video" loop playsinline muted style="display: block;">
     <source src="https://files.catbox.moe/mdnygm.mp4" type="video/mp4">
 </video>
 
@@ -64,12 +64,9 @@ function startStage() {
     const video = document.getElementById('bg-video');
     const splash = document.getElementById('splash');
     
-    // Força o vídeo a carregar e tocar
-    video.play().then(() => {
-        console.log("Vídeo rodando!");
-    }).catch(error => {
-        console.log("Erro ao rodar vídeo: ", error);
-    });
+    // O segredo está aqui:
+    video.muted = false; 
+    video.play();
 
     splash.style.opacity = '0';
     setTimeout(() => {
