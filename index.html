@@ -35,6 +35,7 @@
             z-index: 5;
             cursor: pointer;
             transition: opacity 1s ease, transform 1s ease;
+            overflow: hidden; /* IMPORTANTE pra neve */
         }
 
         .splash-hide {
@@ -53,6 +54,7 @@
             backdrop-filter: blur(8px);
             box-shadow: 0 0 25px rgba(0,80,160,0.4);
             transition: transform 0.4s ease, box-shadow 0.4s ease;
+            z-index: 3;
         }
 
         #splash:hover h1 {
@@ -69,6 +71,7 @@
             text-shadow: 0 0 12px rgba(120,180,255,0.4);
             animation: allzFloat 3s ease-in-out infinite,
                        allzGlow 2.5s ease-in-out infinite;
+            z-index: 3;
         }
 
         @keyframes allzFloat {
@@ -172,12 +175,12 @@
 
         /* ❄️ NEVE */
         .snowflake {
-            position: fixed;
+            position: absolute;
             top: -10px;
             color: white;
             opacity: 0.8;
             animation: fall linear infinite;
-            z-index: 4;
+            z-index: 2;
             pointer-events: none;
         }
 
@@ -217,7 +220,7 @@
     </div>
 
     <script>
-        /* NEVE SÓ NA SPLASH */
+        /* NEVE NA SPLASH */
         let snowInterval;
 
         function createSnow() {
@@ -227,7 +230,7 @@
             snow.style.left = Math.random() * window.innerWidth + "px";
             snow.style.animationDuration = (3 + Math.random() * 5) + "s";
             snow.style.fontSize = (8 + Math.random() * 14) + "px";
-            document.body.appendChild(snow);
+            document.getElementById("splash").appendChild(snow);
             setTimeout(() => snow.remove(), 8000);
         }
 
