@@ -13,7 +13,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
-            cursor: url("https://files.catbox.moe/c2kg1h.cur"), auto;
+            cursor: url("https://files.catbox.moe/pyn2ty.cur"), auto;
         }
 
         html, body {
@@ -107,6 +107,7 @@
             z-index: 1;
             pointer-events: none;
             transition: opacity 6s ease;
+            will-change: transform;
         }
 
         /* UI MÚSICA */
@@ -165,7 +166,7 @@
             color: white;
             opacity: 0.8;
             animation: fall linear infinite;
-            z-index: 6; /* acima da splash */
+            z-index: 6;
             pointer-events: none;
         }
 
@@ -217,7 +218,6 @@
             setTimeout(() => snow.remove(), 8000);
         }
 
-        /* começa assim que a página carrega */
         snowInterval = setInterval(createSnow, 180);
 
         function startStage() {
@@ -256,6 +256,17 @@
                 ui.style.opacity = "0";
             }, 30000);
         }
+
+        /* 👻 TEXTO COLUMBINA SE MOVENDO COM O MOUSE */
+        const ghostText = document.querySelector(".ghost-text");
+
+        document.addEventListener("mousemove", (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 30;
+            const y = (e.clientY / window.innerHeight - 0.5) * 30;
+
+            ghostText.style.transform =
+                `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+        });
     </script>
 
 </body>
