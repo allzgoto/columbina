@@ -88,7 +88,7 @@ html,body{
     transition:background 6s ease;
 }
 
-/* TEXTO COLUMBINA */
+/* TEXTO */
 .ghost-text{
     position:fixed;
     top:50%;
@@ -105,14 +105,14 @@ html,body{
 
 /* GLITCH */
 .glitch{
-    animation:glitch 0.15s steps(2) 6;
+    animation:glitch .15s steps(2) 6;
 }
 @keyframes glitch{
-    0%{transform:translate(-50%,-50%) translate(0,0);}
-    25%{transform:translate(-50%,-50%) translate(2px,-2px);}
-    50%{transform:translate(-50%,-50%) translate(-2px,2px);}
-    75%{transform:translate(-50%,-50%) translate(2px,2px);}
-    100%{transform:translate(-50%,-50%) translate(0,0);}
+    0%{transform:translate(-50%,-50%)}
+    25%{transform:translate(-50%,-50%) translate(2px,-2px)}
+    50%{transform:translate(-50%,-50%) translate(-2px,2px)}
+    75%{transform:translate(-50%,-50%) translate(2px,2px)}
+    100%{transform:translate(-50%,-50%)}
 }
 
 /* MUSIC UI */
@@ -130,7 +130,6 @@ html,body{
     border-radius:16px;
     border:1px solid rgba(120,180,255,.3);
     width:280px;
-    transition:opacity 6s ease;
 }
 
 .music-ui h3,
@@ -139,9 +138,9 @@ html,body{
 }
 
 @keyframes glowPulse{
-    0%{text-shadow:0 0 6px rgba(120,180,255,.3);}
-    50%{text-shadow:0 0 18px rgba(120,180,255,.9);}
-    100%{text-shadow:0 0 6px rgba(120,180,255,.3);}
+    0%{text-shadow:0 0 6px rgba(120,180,255,.3)}
+    50%{text-shadow:0 0 18px rgba(120,180,255,.9)}
+    100%{text-shadow:0 0 6px rgba(120,180,255,.3)}
 }
 
 .progress{
@@ -158,9 +157,9 @@ html,body{
     background:linear-gradient(90deg,#7bbcff,#fff);
     animation:fakeProgress 180s linear forwards;
 }
-@keyframes fakeProgress{to{width:100%;}}
+@keyframes fakeProgress{to{width:100%}}
 
-/* ❄️ NEVE */
+/* NEVE */
 .snowflake{
     position:fixed;
     top:-10px;
@@ -170,102 +169,10 @@ html,body{
     z-index:6;
     pointer-events:none;
 }
-@keyframes fall{to{transform:translateY(110vh);}}
+@keyframes fall{to{transform:translateY(110vh)}}
 
-/* PARTÍCULAS DO MOUSE */
+/* PARTÍCULAS */
 .particle{
     position:fixed;
     width:3px;
-    height:3px;
-    background:rgba(160,200,255,.8);
-    border-radius:50%;
-    pointer-events:none;
-    animation:fadeOut .8s linear forwards;
-}
-@keyframes fadeOut{
-    to{opacity:0;transform:scale(2);}
-}
-</style>
-</head>
-
-<body>
-
-<div id="splash" onclick="startStage()">
-    <h1>Click ❄️</h1>
-    <div class="signature">ALLZ</div>
-</div>
-
-<video id="bg-video" loop playsinline muted>
-    <source src="https://files.catbox.moe/mdnygm.mp4" type="video/mp4">
-</video>
-
-<audio id="bg-music">
-    <source src="https://files.catbox.moe/xwbm2h.mp3" type="audio/mpeg">
-</audio>
-
-<div class="overlay"></div>
-<div class="ghost-text" id="ghost">COLUMBINA</div>
-
-<div class="music-ui">
-    <h3>Swim</h3>
-    <span>Chase Atlantic</span>
-    <div class="progress"><div class="progress-bar"></div></div>
-</div>
-
-<script>
-/* NEVE */
-let snowInterval=setInterval(createSnow,180);
-function createSnow(){
-    const s=document.createElement("div");
-    s.className="snowflake";
-    s.innerHTML="❄";
-    s.style.left=Math.random()*innerWidth+"px";
-    s.style.fontSize=(8+Math.random()*14)+"px";
-    s.style.animationDuration=(3+Math.random()*5)+"s";
-    document.body.appendChild(s);
-    setTimeout(()=>s.remove(),8000);
-}
-
-/* START */
-function startStage(){
-    clearInterval(snowInterval);
-    document.querySelectorAll(".snowflake").forEach(e=>e.remove());
-
-    splash.classList.add("splash-hide");
-    bgVideo.play();
-    bgMusic.volume=.15;
-    bgMusic.play();
-    setTimeout(()=>splash.remove(),1000);
-
-    /* GLITCH ~15s */
-    setTimeout(triggerGlitch,15000);
-    setInterval(triggerGlitch,20000);
-}
-
-/* GLITCH */
-const ghost=document.getElementById("ghost");
-function triggerGlitch(){
-    ghost.classList.add("glitch");
-    setTimeout(()=>ghost.classList.remove("glitch"),500);
-}
-
-/* PARALLAX TEXTO */
-document.addEventListener("mousemove",e=>{
-    const x=(e.clientX/window.innerWidth-.5)*20;
-    const y=(e.clientY/window.innerHeight-.5)*20;
-    ghost.style.transform=`translate(-50%,-50%) translate(${x}px,${y}px)`;
-});
-
-/* PARTÍCULAS */
-document.addEventListener("mousemove",e=>{
-    const p=document.createElement("div");
-    p.className="particle";
-    p.style.left=e.clientX+"px";
-    p.style.top=e.clientY+"px";
-    document.body.appendChild(p);
-    setTimeout(()=>p.remove(),800);
-});
-</script>
-
-</body>
-</html>
+    hei
