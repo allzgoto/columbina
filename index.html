@@ -5,11 +5,14 @@
 <title>columbina</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
 <style>
 *{
   margin:0;
   padding:0;
   box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
   cursor:url("https://files.catbox.moe/pyn2ty.cur"), auto;
 }
 
@@ -18,7 +21,49 @@ body{
   overflow:hidden;
   height:100vh;
   width:100vw;
-  font-family:Arial, Helvetica, sans-serif;
+}
+
+/* SPLASH CLICK */
+#splash{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(135deg,#0a2342,#000);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:10;
+  cursor:pointer;
+  transition:opacity 1s ease,transform 1s ease;
+}
+
+#splash.hide{
+  opacity:0;
+  transform:scale(1.1);
+}
+
+#splash h1{
+  color:#e6f0ff;
+  font-size:2.2rem;
+  letter-spacing:6px;
+  padding:22px 50px;
+  border-radius:12px;
+  background:rgba(0,0,0,0.4);
+  border:1px solid rgba(120,180,255,0.4);
+  box-shadow:0 0 25px rgba(120,180,255,0.4);
+  transition:transform .4s ease, box-shadow .4s ease;
+}
+
+#splash:hover h1{
+  transform:scale(1.08);
+  box-shadow:0 0 45px rgba(120,180,255,0.8);
+}
+
+#splash span{
+  margin-top:14px;
+  font-size:.8rem;
+  letter-spacing:4px;
+  opacity:.6;
 }
 
 /* VIDEO */
@@ -31,7 +76,7 @@ video{
   min-height:100%;
   object-fit:cover;
   z-index:-3;
-  filter:brightness(0.65) contrast(1.1);
+  filter:brightness(.65) contrast(1.1);
 }
 
 /* OVERLAY FINAL */
@@ -55,38 +100,43 @@ video{
   pointer-events:none;
 }
 
-/* TEXTO FANTASMA + GLITCH */
+/* TEXTO COLUMBINA */
 .glitch{
   position:relative;
   font-size:clamp(4rem,10vw,10rem);
-  font-weight:800;
-  letter-spacing:0.15em;
-  color:rgba(240,240,255,0.08);
-  text-transform:lowercase;
+  font-weight:600;
+  letter-spacing:20px;
+  color:rgba(255,255,255,0.05);
 }
 
-/* camadas do glitch */
+/* glitch fantasma */
 .glitch::before,
 .glitch::after{
   content:attr(data-text);
   position:absolute;
   inset:0;
-  color:rgba(240,240,255,0.15);
+  color:rgba(255,255,255,0.08);
   opacity:0;
 }
 
-/* glitch esquerdo */
 .glitch.glitching::before{
   opacity:1;
-  transform:translate(-3px);
-  clip-path:inset(10% 0 70% 0);
+  transform:translate(-2px);
+  clip-path:inset(15% 0 60% 0);
 }
 
-/* glitch direito */
 .glitch.glitching::after{
   opacity:1;
-  transform:translate(3px);
-  clip-path:inset(60% 0 20% 0);
+  transform:translate(2px);
+  clip-path:inset(55% 0 25% 0);
+}
+
+/* ASS */
+.ass{
+  margin-top:18px;
+  font-size:.8rem;
+  letter-spacing:.35em;
+  opacity:.5;
 }
 
 /* SNOW */
@@ -96,20 +146,18 @@ canvas{
   pointer-events:none;
   z-index:5;
 }
-
-/* ASSINATURA */
-.ass{
-  margin-top:20px;
-  font-size:.9rem;
-  letter-spacing:.3em;
-  opacity:.5;
-}
 </style>
 </head>
 
 <body>
 
-<video autoplay muted loop playsinline>
+<!-- SPLASH -->
+<div id="splash">
+  <h1>Click ❄</h1>
+  <span>ALLZ</span>
+</div>
+
+<video id="video" loop playsinline muted>
   <source src="https://files.catbox.moe/mdnygm.mp4" type="video/mp4">
 </video>
 
@@ -122,43 +170,41 @@ canvas{
 <canvas id="snow"></canvas>
 
 <div class="center">
-  <h1 class="glitch" id="title" data-text="columbina">columbina</h1>
-  <div class="ass">allz</div>
+  <h1 class="glitch" id="title" data-text="COLUMBINA">COLUMBINA</h1>
+  <div class="ass">ALLZ</div>
 </div>
 
 <script>
-/* AUDIO START */
-document.body.addEventListener("click",()=>{
-  document.getElementById("audio").play();
-},{once:true});
+/* START */
+const splash=document.getElementById("splash");
+const audio=document.getElementById("audio");
+const video=document.getElementById("video");
 
-/* GLITCH SUTIL A CADA 15s */
+splash.addEventListener("click",()=>{
+  splash.classList.add("hide");
+  video.play();
+  audio.volume=.15;
+  audio.play();
+  setTimeout(()=>splash.remove(),1000);
+});
+
+/* GLITCH A CADA 15s */
 const title=document.getElementById("title");
 setInterval(()=>{
   title.classList.add("glitching");
-  setTimeout(()=>{
-    title.classList.remove("glitching");
-  },180);
+  setTimeout(()=>title.classList.remove("glitching"),180);
 },15000);
 
-/* FINAL FADE */
+/* FINAL */
 setTimeout(()=>{
-  const audio=document.getElementById("audio");
-  const overlay=document.getElementById("overlay");
-
-  overlay.style.background="rgba(0,0,0,0.85)";
+  document.getElementById("overlay").style.background="rgba(0,0,0,.85)";
   title.style.transition="opacity 6s ease";
   title.style.opacity="0";
 
-  let vol=audio.volume;
+  let v=audio.volume;
   const fade=setInterval(()=>{
-    if(vol>0.02){
-      vol-=0.01;
-      audio.volume=vol;
-    }else{
-      audio.pause();
-      clearInterval(fade);
-    }
+    if(v>0.02){ v-=0.01; audio.volume=v }
+    else{ audio.pause(); clearInterval(fade) }
   },200);
 },30000);
 
@@ -176,22 +222,19 @@ addEventListener("resize",resize);
 const flakes=[...Array(120)].map(()=>({
   x:Math.random()*canvas.width,
   y:Math.random()*canvas.height,
-  r:Math.random()*2+0.5,
-  s:Math.random()*0.6+0.2
+  r:Math.random()*2+.5,
+  s:Math.random()*.6+.2
 }));
 
 function snow(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="rgba(255,255,255,0.8)";
+  ctx.fillStyle="rgba(255,255,255,.8)";
   flakes.forEach(f=>{
     ctx.beginPath();
     ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
     ctx.fill();
     f.y+=f.s;
-    if(f.y>canvas.height){
-      f.y=-5;
-      f.x=Math.random()*canvas.width;
-    }
+    if(f.y>canvas.height){f.y=-5;f.x=Math.random()*canvas.width;}
   });
   requestAnimationFrame(snow);
 }
