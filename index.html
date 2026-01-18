@@ -98,48 +98,37 @@ html,body{
     font-size:10rem;
     font-weight:600;
     letter-spacing:20px;
-    color:rgba(255,255,255,.04);
+    color:rgba(255,255,255,.03);
     z-index:1;
     pointer-events:none;
-
-    animation:ghostFloat 8s ease-in-out infinite;
-    transition:opacity 6s ease;
+    transition:opacity 6s ease, transform .15s;
 }
 
-/* flutuação sutil */
-@keyframes ghostFloat{
-    0%,100%{
-        transform:translate(-50%,-50%) scale(1);
-        opacity:.35;
-    }
-    50%{
-        transform:translate(-50%,-52%) scale(1.02);
-        opacity:.55;
-    }
-}
-
-/* GLITCH REAL */
+/* GLITCH TV ANTIGA */
 .glitch{
-    animation:glitchEffect .35s steps(2,end) infinite;
+    position:relative;
 }
 
-@keyframes glitchEffect{
-    0%{
-        text-shadow:
-            2px 0 red,
-            -2px 0 cyan;
-        transform:translate(-50%,-50%) translateX(-2px);
-    }
-    50%{
-        text-shadow:
-            -2px 0 red,
-            2px 0 cyan;
-        transform:translate(-50%,-50%) translateX(2px);
-    }
-    100%{
-        text-shadow:none;
-        transform:translate(-50%,-50%);
-    }
+.glitch::before,
+.glitch::after{
+    content:attr(data-text);
+    position:absolute;
+    inset:0;
+    opacity:0.3;
+}
+
+.glitch::before{
+    color:rgba(0,180,255,0.4);
+    left:2px;
+    text-shadow:1px 0 rgba(0,180,255,0.2);
+    clip-path:inset(0 0 50% 0);
+}
+
+.glitch::after{
+    color:rgba(0,0,50,0.3);
+    left:-2px;
+    text-shadow:-1px 0 rgba(0,0,50,0.2);
+    clip-path:inset(50% 0 0 0);
 }
 
 /* UI MÚSICA */
@@ -239,7 +228,7 @@ html,body{
 </audio>
 
 <div class="overlay"></div>
-<div class="ghost-text">COLUMBINA</div>
+<div class="ghost-text glitch" data-text="COLUMBINA">COLUMBINA</div>
 
 <div class="music-ui">
     <h3>Swim</h3>
@@ -262,7 +251,7 @@ function createSnow(){
 }
 snowInterval=setInterval(createSnow,180);
 
-/* ✨ PARTÍCULAS */
+/* ✨ PARTÍCULAS NO MOUSE */
 document.addEventListener("mousemove",e=>{
     const p=document.createElement("div");
     p.className="particle";
@@ -272,12 +261,20 @@ document.addEventListener("mousemove",e=>{
     setTimeout(()=>p.remove(),1000);
 });
 
-/* ⚠️ GLITCH A CADA ~15s */
+/* ⚠️ MICRO GLITCH TV ANTIGA */
 setInterval(()=>{
     const g=document.querySelector(".ghost-text");
     g.classList.add("glitch");
-    setTimeout(()=>g.classList.remove("glitch"),400);
+    setTimeout(()=>g.classList.remove("glitch"),120);
 },15000);
+
+/* REAÇÃO AO MOUSE */
+document.addEventListener("mousemove",e=>{
+    const g=document.querySelector(".ghost-text");
+    const x=(e.clientX-window.innerWidth/2)/40;
+    const y=(e.clientY-window.innerHeight/2)/40;
+    g.style.transform=`translate(-50%,-50%) translate(${x}px,${y}px)`;
+});
 
 function startStage(){
     clearInterval(snowInterval);
@@ -297,6 +294,7 @@ function startStage(){
 
     setTimeout(()=>splash.remove(),1000);
 
+    /* FINAL SILENCIOSO AOS 30s */
     setTimeout(()=>{
         let v=music.volume;
         const f=setInterval(()=>{
