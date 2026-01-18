@@ -1,300 +1,249 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Columbina</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Columbina</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
-}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-html,body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#000;
-}
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+        }
 
-/* SPLASH */
-#splash{
-    position:fixed;
-    inset:0;
-    background:linear-gradient(135deg,#0a2342,#000);
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    z-index:5;
-    cursor:pointer;
-    transition:opacity 1s ease,transform 1s ease;
-}
+        /* SPLASH */
+        #splash {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0a2342, #000);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+            cursor: pointer;
+            transition: opacity 1s ease, transform 1s ease;
+        }
 
-.splash-hide{
-    opacity:0;
-    transform:scale(1.15);
-}
+        .splash-hide {
+            opacity: 0;
+            transform: scale(1.15);
+        }
 
-#splash h1{
-    color:#e6f0ff;
-    font-size:2.2rem;
-    letter-spacing:6px;
-    padding:22px 50px;
-    border-radius:12px;
-    background:rgba(0,0,0,0.4);
-    border:1px solid rgba(100,170,255,0.4);
-    backdrop-filter:blur(8px);
-    box-shadow:0 0 25px rgba(0,80,160,0.4);
-    transition:.4s;
-}
+        #splash h1 {
+            color: #e6f0ff;
+            font-size: 2.2rem;
+            letter-spacing: 6px;
+            padding: 22px 50px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(100,170,255,0.4);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 25px rgba(0,80,160,0.4);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
 
-#splash:hover h1{
-    transform:scale(1.08);
-    box-shadow:0 0 45px rgba(120,180,255,.9);
-}
+        #splash:hover h1 {
+            transform: scale(1.08);
+            box-shadow: 0 0 45px rgba(120,180,255,0.8);
+        }
 
-/* ALLZ */
-.signature{
-    margin-top:14px;
-    font-size:.8rem;
-    letter-spacing:4px;
-    color:rgba(200,220,255,.7);
-    animation:allzFloat 3s ease-in-out infinite,
-              allzGlow 2.5s ease-in-out infinite;
-}
+        .signature {
+            margin-top: 14px;
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            color: rgba(200,220,255,0.6);
+            text-shadow: 0 0 12px rgba(120,180,255,0.5);
+        }
 
-@keyframes allzFloat{
-    0%,100%{transform:translateY(0)}
-    50%{transform:translateY(-6px)}
-}
-@keyframes allzGlow{
-    0%{text-shadow:0 0 8px rgba(120,180,255,.3)}
-    50%{text-shadow:0 0 18px rgba(120,180,255,.8)}
-    100%{text-shadow:0 0 8px rgba(120,180,255,.3)}
-}
+        /* VIDEO */
+        #bg-video {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            z-index: 0;
+        }
 
-/* VIDEO */
-#bg-video{
-    position:fixed;
-    top:50%;
-    left:50%;
-    min-width:100%;
-    min-height:100%;
-    transform:translate(-50%,-50%);
-    object-fit:cover;
-    z-index:0;
-}
+        /* OVERLAY */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(
+                180deg,
+                rgba(0,0,0,0.4),
+                rgba(0,0,0,0),
+                rgba(0,0,0,0.4)
+            );
+            z-index: 1;
+            transition: background 3s ease;
+        }
 
-/* OVERLAY */
-.overlay{
-    position:fixed;
-    inset:0;
-    background:linear-gradient(
-        180deg,
-        rgba(0,0,0,.35),
-        rgba(0,0,0,0),
-        rgba(0,0,0,.35)
-    );
-    z-index:1;
-}
+        /* TEXTO FANTASMA */
+        .ghost-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10rem;
+            font-weight: 600;
+            letter-spacing: 20px;
+            color: rgba(255,255,255,0.03);
+            z-index: 1;
+            pointer-events: none;
+            transition: opacity 3s ease;
+        }
 
-/* TEXTO FANTASMA */
-.ghost-text{
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    font-size:10rem;
-    letter-spacing:20px;
-    color:rgba(255,255,255,.03);
-    z-index:1;
-    pointer-events:none;
-}
+        /* UI MÚSICA */
+        .music-ui {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            text-align: center;
+            color: #e6f0ff;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(6px);
+            padding: 16px 28px;
+            border-radius: 16px;
+            border: 1px solid rgba(120,180,255,0.3);
+            width: 280px;
+            transition: opacity 3s ease;
+        }
 
-/* MUSIC UI */
-.music-ui{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    z-index:3;
-    text-align:center;
-    color:#e6f0ff;
-    background:rgba(0,0,0,.25);
-    backdrop-filter:blur(6px);
-    padding:16px 28px;
-    border-radius:16px;
-    border:1px solid rgba(120,180,255,.3);
-    width:280px;
-}
+        .music-ui h3,
+        .music-ui span {
+            animation: glowPulse 2.5s ease-in-out infinite;
+        }
 
-.music-ui h3,
-.music-ui span{
-    animation:glowPulse 2.5s ease-in-out infinite;
-}
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 6px rgba(120,180,255,0.3); }
+            50% { text-shadow: 0 0 18px rgba(120,180,255,0.9); }
+            100% { text-shadow: 0 0 6px rgba(120,180,255,0.3); }
+        }
 
-@keyframes glowPulse{
-    0%{text-shadow:0 0 6px rgba(120,180,255,.3)}
-    50%{text-shadow:0 0 18px rgba(120,180,255,.9)}
-    100%{text-shadow:0 0 6px rgba(120,180,255,.3)}
-}
+        .progress {
+            margin-top: 12px;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
 
-.progress{
-    margin-top:12px;
-    width:100%;
-    height:4px;
-    background:rgba(255,255,255,.15);
-    border-radius:10px;
-    overflow:hidden;
-}
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #7bbcff, #ffffff);
+            animation: fakeProgress 180s linear forwards;
+        }
 
-.progress-bar{
-    height:100%;
-    background:linear-gradient(90deg,#7bbcff,#fff);
-    animation:fakeProgress 180s linear infinite;
-}
+        @keyframes fakeProgress {
+            to { width: 100%; }
+        }
 
-/* ❄️ NEVE */
-.snowflake{
-    position:absolute;
-    top:-10px;
-    color:white;
-    opacity:.8;
-    animation:fall linear infinite;
-    z-index:2;
-    pointer-events:none;
-}
+        /* MICRO INTERAÇÃO MOUSE */
+        .mouse-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(120,180,255,0.12), transparent 70%);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            transition: opacity 2s ease;
+        }
 
-@keyframes fall{
-    to{transform:translateY(110vh)}
-}
-
-/* ✨ PARTÍCULAS */
-.particle{
-    position:fixed;
-    width:2px;
-    height:2px;
-    background:rgba(200,220,255,.25);
-    border-radius:50%;
-    pointer-events:none;
-    z-index:1;
-}
-
-/* 🕯️ EASTER */
-.easter{
-    position:fixed;
-    bottom:12%;
-    left:50%;
-    transform:translateX(-50%);
-    color:rgba(220,240,255,.8);
-    font-size:.8rem;
-    letter-spacing:4px;
-    opacity:0;
-    z-index:4;
-    transition:.4s;
-}
-</style>
+        .fade-out {
+            opacity: 0;
+        }
+    </style>
 </head>
 
 <body>
 
-<div id="splash" onclick="startStage()">
-    <h1>Click ❄️</h1>
-    <div class="signature">ALLZ</div>
-</div>
+    <div id="splash" onclick="startStage()">
+        <h1>Click ❄️</h1>
+        <div class="signature">ALLZ</div>
+    </div>
 
-<video id="bg-video" loop playsinline muted>
-    <source src="https://files.catbox.moe/mdnygm.mp4" type="video/mp4">
-</video>
+    <video id="bg-video" loop playsinline muted>
+        <source src="https://files.catbox.moe/mdnygm.mp4" type="video/mp4">
+    </video>
 
-<audio id="bg-music" loop>
-    <source src="https://files.catbox.moe/xwbm2h.mp3" type="audio/mpeg">
-</audio>
+    <audio id="bg-music">
+        <source src="https://files.catbox.moe/xwbm2h.mp3" type="audio/mpeg">
+    </audio>
 
-<div class="overlay"></div>
-<div class="ghost-text">COLUMBINA</div>
+    <div class="overlay"></div>
+    <div class="ghost-text">COLUMBINA</div>
 
-<div class="music-ui">
-    <h3>Swim</h3>
-    <span>Chase Atlantic</span>
-    <div class="progress"><div class="progress-bar"></div></div>
-</div>
+    <div class="music-ui">
+        <h3>Swim</h3>
+        <span>Chase Atlantic</span>
+        <div class="progress">
+            <div class="progress-bar"></div>
+        </div>
+    </div>
 
-<div class="easter" id="easter">allz was here</div>
+    <div class="mouse-glow" id="mouseGlow"></div>
 
-<script>
-const splash = document.getElementById("splash");
-const bgVideo = document.getElementById("bg-video");
-const bgMusic = document.getElementById("bg-music");
+    <script>
+        const music = document.getElementById("bg-music");
+        const video = document.getElementById("bg-video");
+        const glow = document.getElementById("mouseGlow");
+        const overlay = document.querySelector(".overlay");
+        const ghost = document.querySelector(".ghost-text");
+        const ui = document.querySelector(".music-ui");
 
-/* NEVE */
-let snowInterval;
-function createSnow(){
-    const snow=document.createElement("div");
-    snow.className="snowflake";
-    snow.innerHTML="❄";
-    snow.style.left=Math.random()*window.innerWidth+"px";
-    snow.style.fontSize=(8+Math.random()*14)+"px";
-    snow.style.animationDuration=(3+Math.random()*5)+"s";
-    splash.appendChild(snow);
-    setTimeout(()=>snow.remove(),8000);
-}
-snowInterval=setInterval(createSnow,180);
+        function startStage() {
+            const splash = document.getElementById("splash");
+            splash.classList.add("splash-hide");
 
-/* PARTÍCULAS */
-for(let i=0;i<40;i++){
-    const p=document.createElement("div");
-    p.className="particle";
-    p.style.left=Math.random()*100+"vw";
-    p.style.top=Math.random()*100+"vh";
-    document.body.appendChild(p);
-}
+            video.play();
+            music.volume = 0.15;
+            music.play();
 
-/* MOUSE */
-document.addEventListener("mousemove",e=>{
-    const x=(e.clientX/window.innerWidth-.5)*20;
-    const y=(e.clientY/window.innerHeight-.5)*20;
-    document.querySelector(".ghost-text").style.transform =
-        `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
-});
+            setTimeout(() => splash.remove(), 1000);
+        }
 
-/* EASTER */
-let clicks=0,timer;
-document.addEventListener("click",()=>{
-    clicks++;
-    clearTimeout(timer);
-    timer=setTimeout(()=>clicks=0,600);
-    if(clicks===6){
-        const e=document.getElementById("easter");
-        e.style.opacity=1;
-        setTimeout(()=>e.style.opacity=0,1000);
-        clicks=0;
-    }
-});
+        document.addEventListener("mousemove", e => {
+            glow.style.left = e.clientX + "px";
+            glow.style.top = e.clientY + "px";
+        });
 
-/* START */
-function startStage(){
-    clearInterval(snowInterval);
-    document.querySelectorAll(".snowflake").forEach(e=>e.remove());
+        music.addEventListener("ended", () => {
+            let vol = music.volume;
+            const fade = setInterval(() => {
+                if (vol > 0.01) {
+                    vol -= 0.01;
+                    music.volume = vol;
+                } else {
+                    clearInterval(fade);
+                }
+            }, 100);
 
-    splash.classList.add("splash-hide");
-
-    bgVideo.play();
-    bgMusic.volume=0.15;
-    bgMusic.play();
-
-    setTimeout(()=>splash.style.display="none",1000);
-}
-</script>
-
-<!-- swim until you disappear -->
-<!-- made by allz -->
+            glow.classList.add("fade-out");
+            overlay.style.background = "rgba(0,0,0,0.85)";
+            ghost.style.opacity = "0";
+            ui.style.opacity = "0";
+        });
+    </script>
 
 </body>
 </html>
