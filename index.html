@@ -60,7 +60,7 @@
             box-shadow: 0 0 45px rgba(120,180,255,0.8);
         }
 
-        /* Assinatura ALLZ com vida */
+        /* Assinatura */
         .signature {
             margin-top: 14px;
             font-size: 0.8rem;
@@ -122,7 +122,7 @@
             user-select: none;
         }
 
-        /* Layout da música */
+        /* Música */
         .music-ui {
             position: absolute;
             top: 50%;
@@ -175,17 +175,14 @@
             position: fixed;
             top: -10px;
             color: white;
-            font-size: 1em;
             opacity: 0.8;
             animation: fall linear infinite;
-            z-index: 2;
+            z-index: 4;
             pointer-events: none;
         }
 
         @keyframes fall {
-            to {
-                transform: translateY(110vh);
-            }
+            to { transform: translateY(110vh); }
         }
     </style>
 </head>
@@ -220,9 +217,29 @@
     </div>
 
     <script>
+        /* NEVE SÓ NA SPLASH */
+        let snowInterval;
+
+        function createSnow() {
+            const snow = document.createElement("div");
+            snow.className = "snowflake";
+            snow.innerHTML = "❄";
+            snow.style.left = Math.random() * window.innerWidth + "px";
+            snow.style.animationDuration = (3 + Math.random() * 5) + "s";
+            snow.style.fontSize = (8 + Math.random() * 14) + "px";
+            document.body.appendChild(snow);
+            setTimeout(() => snow.remove(), 8000);
+        }
+
+        snowInterval = setInterval(createSnow, 180);
+
         function startStage() {
+            clearInterval(snowInterval);
+            document.querySelectorAll(".snowflake").forEach(e => e.remove());
+
             document.getElementById("splash").classList.add("splash-hide");
             document.getElementById("bg-video").play();
+
             const music = document.getElementById("bg-music");
             music.volume = 0.15;
             music.play();
@@ -231,22 +248,6 @@
                 document.getElementById("splash").style.display = "none";
             }, 1000);
         }
-
-        /* Criador de neve */
-        function createSnow() {
-            const snow = document.createElement("div");
-            snow.classList.add("snowflake");
-            snow.innerHTML = "❄";
-            snow.style.left = Math.random() * window.innerWidth + "px";
-            snow.style.animationDuration = (3 + Math.random() * 5) + "s";
-            snow.style.fontSize = (8 + Math.random() * 14) + "px";
-
-            document.body.appendChild(snow);
-
-            setTimeout(() => snow.remove(), 8000);
-        }
-
-        setInterval(createSnow, 180);
     </script>
 
 </body>
