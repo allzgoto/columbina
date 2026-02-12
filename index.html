@@ -19,10 +19,9 @@ body{
 }
 
 /* VIDEO */
-video{
+#video{
     position:fixed;
-    top:0;
-    left:0;
+    inset:0;
     width:100%;
     height:100%;
     object-fit:contain;
@@ -30,99 +29,111 @@ video{
     z-index:-2;
 }
 
-/* BLUSH DINÂMICO */
-.color-overlay{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:radial-gradient(circle at center, rgba(255,0,150,0.15), rgba(0,0,0,0.85));
-    mix-blend-mode:screen;
-    pointer-events:none;
-    z-index:-1;
-    transition:background 0.5s ease;
-}
-
-/* SPLASH ENTER */
-.splash{
+/* BLUR BACKGROUND */
+#video-bg{
     position:fixed;
     inset:0;
-    background:black;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    filter:blur(80px) brightness(.6);
+    transform:scale(1.2);
+    z-index:-3;
+}
+
+/* ENTER SCREEN */
+#splash{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(circle at center, #111, #000);
     display:flex;
     justify-content:center;
     align-items:center;
     z-index:10;
-}
-
-.enter-btn{
-    font-size:32px;
-    letter-spacing:4px;
-    color:white;
     cursor:pointer;
-    opacity:0.8;
-    transition:0.3s;
+    transition:opacity .8s ease;
 }
 
-.enter-btn:hover{
-    opacity:1;
-    transform:scale(1.1);
+#enter-box{
+    padding:20px 60px;
+    border-radius:14px;
+    font-size:28px;
+    letter-spacing:6px;
+    color:white;
+    backdrop-filter:blur(20px);
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.15);
+    transition:.3s;
 }
 
-/* VOLUME */
-.volume-wrapper{
+#enter-box:hover{
+    background:rgba(255,255,255,0.15);
+    transform:scale(1.08);
+}
+
+/* VOLUME IOS STYLE */
+#volumeWrapper{
     position:fixed;
     top:20px;
     left:20px;
-    z-index:5;
     display:flex;
     align-items:center;
     gap:10px;
+    z-index:20;
     opacity:0;
-    transition:opacity 0.4s ease;
+    transition:opacity .4s ease;
 }
 
-.volume-wrapper.show{
+#volumeWrapper.visible{
     opacity:1;
 }
 
-.volume-btn{
-    width:42px;
-    height:42px;
+#volumeBtn{
+    width:44px;
+    height:44px;
     border-radius:50%;
-    backdrop-filter:blur(10px);
-    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(15px);
+    background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.15);
     display:flex;
     justify-content:center;
     align-items:center;
     cursor:pointer;
-    transition:0.3s;
+    transition:.3s;
 }
 
-.volume-btn:hover{
-    background:rgba(255,255,255,0.25);
+#volumeBtn:hover{
+    background:rgba(255,255,255,0.18);
 }
 
-.volume-slider{
+#volumeBtn svg{
+    width:22px;
+    height:22px;
+    fill:white;
+    opacity:.8;
+}
+
+/* SLIDER */
+#sliderContainer{
     width:0;
     overflow:hidden;
-    transition:width 0.4s ease;
+    transition:width .35s cubic-bezier(.4,0,.2,1);
 }
 
-.volume-wrapper.open .volume-slider{
+#volumeWrapper.open #sliderContainer{
     width:120px;
 }
 
-.volume-slider input{
+#volumeRange{
     width:100%;
     appearance:none;
     height:4px;
-    background:rgba(255,255,255,0.3);
     border-radius:4px;
+    background:linear-gradient(to right, white 70%, rgba(255,255,255,.3) 70%);
     outline:none;
 }
 
-.volume-slider input::-webkit-slider-thumb{
+#volumeRange::-webkit-slider-thumb{
     appearance:none;
     width:14px;
     height:14px;
@@ -130,30 +141,37 @@ video{
     background:white;
     cursor:pointer;
 }
-
 </style>
 </head>
 <body>
 
-<div class="splash" id="splash">
-    <div class="enter-btn" id="enterBtn">ENTER</div>
+<!-- SPLASH -->
+<div id="splash">
+    <div id="enter-box">ENTER</div>
 </div>
 
-<video id="bgVideo" loop playsinline>
+<!-- VIDEO -->
+<video id="video-bg" muted playsinline>
     <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
 </video>
 
-<audio id="bgAudio" loop>
+<video id="video" muted playsinline>
+    <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
+</video>
+
+<audio id="audio">
     <source src="https://files.catbox.moe/plro9c.mp3" type="audio/mpeg">
 </audio>
 
-<div class="color-overlay" id="overlay"></div>
-
-<div class="volume-wrapper" id="volumeWrapper">
-    <div class="volume-btn" id="volumeBtn">
-        🔊
+<!-- VOLUME -->
+<div id="volumeWrapper">
+    <div id="volumeBtn">
+        <svg id="volumeIcon" viewBox="0 0 24 24">
+            <path d="M3 9v6h4l5 5V4L7 9H3z"/>
+            <path d="M16 8a4 4 0 010 8" fill="none" stroke="white" stroke-width="2"/>
+        </svg>
     </div>
-    <div class="volume-slider">
+    <div id="sliderContainer">
         <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.7">
     </div>
 </div>
@@ -161,66 +179,77 @@ video{
 <script>
 
 const splash = document.getElementById("splash");
-const enterBtn = document.getElementById("enterBtn");
-const video = document.getElementById("bgVideo");
-const audio = document.getElementById("bgAudio");
-const overlay = document.getElementById("overlay");
+const video = document.getElementById("video");
+const videoBg = document.getElementById("video-bg");
+const audio = document.getElementById("audio");
 
 const volumeWrapper = document.getElementById("volumeWrapper");
 const volumeBtn = document.getElementById("volumeBtn");
 const volumeRange = document.getElementById("volumeRange");
+const volumeIcon = document.getElementById("volumeIcon");
 
 audio.volume = 0.7;
 
-enterBtn.addEventListener("click", () => {
-    splash.style.display = "none";
+/* START */
+splash.addEventListener("click", ()=>{
+    splash.style.opacity="0";
+    setTimeout(()=>splash.style.display="none",800);
+
     video.play();
+    videoBg.play();
     audio.play();
-    volumeWrapper.classList.add("show");
+
+    volumeWrapper.classList.add("visible");
 });
 
-/* SINCRONIZAR VIDEO COM AUDIO */
-audio.addEventListener("timeupdate", () => {
-    if(Math.abs(video.currentTime - audio.currentTime) > 0.3){
-        video.currentTime = audio.currentTime;
-    }
+/* SINCRONIZAÇÃO SUAVE */
+audio.addEventListener("play",()=>{
+    video.currentTime = audio.currentTime;
+    videoBg.currentTime = audio.currentTime;
 });
 
-/* BLUSH DINÂMICO */
 setInterval(()=>{
-    const r = Math.floor(Math.random()*255);
-    const g = Math.floor(Math.random()*255);
-    const b = Math.floor(Math.random()*255);
-    overlay.style.background = `radial-gradient(circle at center, rgba(${r},${g},${b},0.15), rgba(0,0,0,0.85))`;
-},4000);
+    if(Math.abs(video.currentTime - audio.currentTime) > 0.25){
+        video.currentTime = audio.currentTime;
+        videoBg.currentTime = audio.currentTime;
+    }
+},2000);
 
 /* VOLUME */
 let hideTimeout;
 
 function showVolume(){
-    volumeWrapper.classList.add("show");
+    volumeWrapper.classList.add("visible");
     clearTimeout(hideTimeout);
     hideTimeout = setTimeout(()=>{
-        volumeWrapper.classList.remove("show");
+        volumeWrapper.classList.remove("visible");
+        volumeWrapper.classList.remove("open");
     },3000);
 }
 
 document.addEventListener("mousemove", showVolume);
 
-volumeBtn.addEventListener("click",()=>{
+volumeBtn.addEventListener("click", ()=>{
     volumeWrapper.classList.toggle("open");
+    showVolume();
 });
 
-volumeRange.addEventListener("input",()=>{
+volumeRange.addEventListener("input", ()=>{
     audio.volume = volumeRange.value;
 
-    if(audio.volume == 0){
-        volumeBtn.textContent = "🔇";
-    } else if(audio.volume < 0.5){
-        volumeBtn.textContent = "🔉";
-    } else{
-        volumeBtn.textContent = "🔊";
-    }
+    const percent = volumeRange.value * 100;
+    volumeRange.style.background =
+        `linear-gradient(to right, white ${percent}%, rgba(255,255,255,.3) ${percent}%)`;
+});
+
+/* LOOP LIMPO */
+audio.addEventListener("ended",()=>{
+    audio.currentTime = 0;
+    video.currentTime = 0;
+    videoBg.currentTime = 0;
+    audio.play();
+    video.play();
+    videoBg.play();
 });
 
 </script>
