@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dottore</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 
@@ -12,6 +14,7 @@ body{
     background:black;
     overflow:hidden;
     font-family:Arial, sans-serif;
+    color:white;
 }
 
 /* VIDEO */
@@ -22,7 +25,34 @@ body{
     height:100%;
     object-fit:contain;
     background:black;
+    z-index:-2;
+}
+
+/* SCANLINES */
+.scanlines{
+    position:fixed;
+    inset:0;
+    background:repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.03),
+        rgba(255,255,255,0.03) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+    pointer-events:none;
     z-index:-1;
+}
+
+/* BACKGROUND WATERMARK */
+.watermark{
+    position:fixed;
+    bottom:20px;
+    right:30px;
+    font-size:80px;
+    font-family:'Orbitron', sans-serif;
+    opacity:0.03;
+    letter-spacing:20px;
+    pointer-events:none;
 }
 
 /* LOADING */
@@ -34,14 +64,15 @@ body{
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    color:white;
     z-index:10;
     transition:opacity .6s ease;
+    font-family:'Orbitron', sans-serif;
 }
 
 .loading-text{
-    letter-spacing:6px;
-    margin-bottom:25px;
+    letter-spacing:4px;
+    margin-bottom:20px;
+    font-size:12px;
     opacity:.7;
 }
 
@@ -49,7 +80,7 @@ body{
     width:40px;
     height:40px;
     border:3px solid rgba(255,255,255,.1);
-    border-top:3px solid white;
+    border-top:3px solid #00d4ff;
     border-radius:50%;
     animation:spin 1s linear infinite;
 }
@@ -61,21 +92,53 @@ body{
 /* ENTER */
 #enterBox{
     margin-top:40px;
-    padding:18px 60px;
-    border-radius:14px;
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.25);
-    backdrop-filter:blur(20px);
-    letter-spacing:6px;
+    padding:18px 70px;
+    border-radius:10px;
+    background:rgba(10,20,35,0.6);
+    border:1px solid rgba(0,200,255,0.4);
+    backdrop-filter:blur(25px);
+    letter-spacing:8px;
+    font-family:'Orbitron', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    color:#cfefff;
+    text-shadow:0 0 8px rgba(0,200,255,0.7);
     opacity:0;
     pointer-events:none;
     transition:.4s ease;
+    position:relative;
+    overflow:hidden;
+}
+
+#enterBox::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(0,200,255,0.3),transparent);
+    transform:translateX(-100%);
+    transition:0.6s;
 }
 
 #enterBox.show{
     opacity:1;
     pointer-events:auto;
     cursor:pointer;
+}
+
+#enterBox:hover::before{
+    transform:translateX(100%);
+}
+
+/* TECH INFO */
+.tech-info{
+    position:fixed;
+    top:20px;
+    right:30px;
+    font-size:11px;
+    font-family:'Orbitron', sans-serif;
+    opacity:0.6;
+    line-height:18px;
+    letter-spacing:2px;
 }
 
 /* VOLUME */
@@ -139,17 +202,23 @@ body{
 </head>
 <body>
 
-<video id="video"
-playsinline
-preload="auto"
-loop>
+<video id="video" playsinline preload="auto" loop>
     <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
 </video>
 
+<div class="scanlines"></div>
+<div class="watermark">DOTTORE</div>
+
 <div id="loadingScreen">
-    <div class="loading-text">INITIALIZING EXPERIMENT...</div>
+    <div class="loading-text" id="dynamicText">INITIALIZING EXPERIMENT...</div>
     <div class="spinner"></div>
     <div id="enterBox">ENTER</div>
+</div>
+
+<div class="tech-info">
+    SUBJECT ID: 07<br>
+    NEURAL STABILITY: 63%<br>
+    CONTAINMENT LEVEL: GAMMA
 </div>
 
 <div id="volumeWrapper">
@@ -164,6 +233,7 @@ loop>
 const video = document.getElementById("video");
 const enterBox = document.getElementById("enterBox");
 const loadingScreen = document.getElementById("loadingScreen");
+const dynamicText = document.getElementById("dynamicText");
 
 const volumeWrapper = document.getElementById("volumeWrapper");
 const volumeBtn = document.getElementById("volumeBtn");
@@ -171,12 +241,25 @@ const volumeRange = document.getElementById("volumeRange");
 
 video.volume = 0.7;
 
-/* Espera o navegador dizer que consegue tocar */
+/* Mensagens rotativas */
+const messages = [
+    "INITIALIZING EXPERIMENT...",
+    "STABILIZING MEMORY FRAGMENTS...",
+    "SYNCHRONIZING NEURAL PATHWAYS...",
+    "OVERRIDING CONSCIOUS LIMITERS..."
+];
+
+let msgIndex = 0;
+setInterval(()=>{
+    msgIndex = (msgIndex + 1) % messages.length;
+    dynamicText.textContent = messages[msgIndex];
+}, 2500);
+
+/* Espera poder tocar */
 video.addEventListener("canplaythrough", () => {
     enterBox.classList.add("show");
 });
 
-/* Fallback se canplaythrough não disparar */
 video.addEventListener("loadeddata", () => {
     setTimeout(()=>{
         enterBox.classList.add("show");
