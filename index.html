@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Columbina</title>
+<title>Projeto Dottore</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -27,12 +27,12 @@ html,body{
 #splash{
     position:fixed;
     inset:0;
-    background:linear-gradient(135deg,#0a2342,#000);
+    background:linear-gradient(135deg,#0a0a0a,#000);
     display:flex;
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    z-index:5;
+    z-index:10;
     cursor:pointer;
     transition:opacity 1s ease, transform 1s ease;
 }
@@ -43,31 +43,29 @@ html,body{
 }
 
 #splash h1{
-    color:#e6f0ff;
-    font-size:2.2rem;
-    letter-spacing:6px;
-    padding:22px 50px;
-    border-radius:12px;
-    background:rgba(0,0,0,0.4);
-    border:1px solid rgba(100,170,255,0.4);
-    backdrop-filter:blur(8px);
-    box-shadow:0 0 25px rgba(0,80,160,0.4);
-    transition:transform .4s ease, box-shadow .4s ease;
+    color:#e6e6e6;
+    font-size:2rem;
+    letter-spacing:4px;
+    padding:20px 45px;
+    border-radius:10px;
+    background:rgba(20,20,20,0.4);
+    border:1px solid rgba(160,160,160,0.4);
+    backdrop-filter:blur(6px);
+    box-shadow:0 0 20px rgba(40,40,40,0.4);
+    transition:transform .3s ease, box-shadow .3s ease;
 }
 
 #splash:hover h1{
-    transform:scale(1.08);
-    box-shadow:0 0 45px rgba(120,180,255,0.8);
+    transform:scale(1.06);
+    box-shadow:0 0 40px rgba(100,100,100,0.6);
 }
 
-/* ASSINATURA ALLZ */
+/* Click subtítulo */
 .signature{
     margin-top:12px;
-    font-size:.8rem;
+    font-size:.75rem;
     letter-spacing:3px;
-    color:rgba(200,220,255,.6);
-    text-shadow:0 0 6px rgba(120,180,255,.3);
-    animation:glowPulse 2s ease-in-out infinite;
+    color:rgba(200,200,200,.6);
 }
 
 /* VIDEO */
@@ -77,46 +75,41 @@ html,body{
     left:50%;
     min-width:100%;
     min-height:100%;
-    transform:translate(-50%,-50%);
+    transform:translate(-50%,-50%) scale(1);
     object-fit:cover;
     z-index:0;
-    animation:videoPan 200s linear infinite;
-}
-
-/* ANIMAÇÃO SUTIL DO VÍDEO */
-@keyframes videoPan{
-    0%{transform:translate(-50%,-50%) scale(1);}
-    50%{transform:translate(-49%,-50%) scale(1.02);}
-    100%{transform:translate(-50%,-50%) scale(1);}
+    transition:transform 90s linear;
 }
 
 /* OVERLAY */
 .overlay{
     position:fixed;
     inset:0;
-    background:linear-gradient(180deg,rgba(0,0,0,.4),rgba(0,0,0,0),rgba(0,0,0,.4));
+    background:rgba(0,0,0,0);
     z-index:1;
     transition:background 6s ease;
 }
 
-/* TEXTO FANTASMA */
-.ghost-text{
+/* TEXTO CENTRAL (pode usar pra legenda/interação) */
+.center-text{
     position:fixed;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
-    font-size:10rem;
+    font-size:6rem;
     font-weight:600;
-    letter-spacing:20px;
-    color:rgba(255,255,255,.03);
+    color:rgba(255,255,255,.02);
     z-index:2;
     pointer-events:none;
+    text-align:center;
+    letter-spacing:15px;
+    user-select:none;
     transition:opacity 6s ease, transform .15s;
 }
 
-/* GLITCH TV ANTIGA REAL */
-.ghost-text.glitch::before,
-.ghost-text.glitch::after{
+/* MICRO GLITCH INTERATIVO */
+.center-text.glitch::before,
+.center-text.glitch::after{
     content:attr(data-text);
     position:absolute;
     top:0; left:0;
@@ -124,18 +117,18 @@ html,body{
     overflow:hidden;
 }
 
-.ghost-text.glitch::before{
-    color:rgba(0,180,255,0.4);
+.center-text.glitch::before{
+    color:rgba(60,180,255,0.25);
     left:2px;
     clip-path:inset(0 0 50% 0);
-    animation:glitchTop 0.2s infinite;
+    animation:glitchTop .18s infinite;
 }
 
-.ghost-text.glitch::after{
-    color:rgba(0,0,50,0.3);
+.center-text.glitch::after{
+    color:rgba(0,30,80,0.25);
     left:-2px;
     clip-path:inset(50% 0 0 0);
-    animation:glitchBottom 0.25s infinite;
+    animation:glitchBottom .22s infinite;
 }
 
 @keyframes glitchTop{
@@ -154,73 +147,12 @@ html,body{
     100% {transform:translate(0,0);}
 }
 
-/* UI MÚSICA */
-.music-ui{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    z-index:3;
-    text-align:center;
-    color:#e6f0ff;
-    background:rgba(0,0,0,.25);
-    backdrop-filter:blur(6px);
-    padding:16px 28px;
-    border-radius:16px;
-    border:1px solid rgba(120,180,255,.3);
-    width:280px;
-    transition:opacity 6s ease;
-}
-
-.music-ui h3,
-.music-ui span{
-    animation:glowPulse 2.5s ease-in-out infinite;
-}
-
-@keyframes glowPulse{
-    0%{text-shadow:0 0 6px rgba(120,180,255,.3);}
-    50%{text-shadow:0 0 18px rgba(120,180,255,.9);}
-    100%{text-shadow:0 0 6px rgba(120,180,255,.3);}
-}
-
-/* PROGRESSO */
-.progress{
-    margin-top:12px;
-    width:100%;
-    height:4px;
-    background:rgba(255,255,255,.15);
-    border-radius:10px;
-    overflow:hidden;
-}
-
-.progress-bar{
-    width:0%;
-    height:100%;
-    background:linear-gradient(90deg,#7bbcff,#fff);
-    animation:fakeProgress 180s linear forwards;
-}
-
-@keyframes fakeProgress{to{width:100%;}}
-
-/* ❄️ NEVE */
-.snowflake{
-    position:fixed;
-    top:-10px;
-    color:white;
-    opacity:.8;
-    animation:fall linear infinite;
-    z-index:6;
-    pointer-events:none;
-}
-
-@keyframes fall{to{transform:translateY(110vh);}}
-
-/* ✨ PARTÍCULAS */
+/* ✨ PARTICULAS DO MOUSE */
 .particle{
     position:fixed;
     width:3px;
     height:3px;
-    background:rgba(140,190,255,.6);
+    background:rgba(110,180,255,.6);
     border-radius:50%;
     pointer-events:none;
     animation:fadeParticle 1s ease-out forwards;
@@ -230,7 +162,7 @@ html,body{
 @keyframes fadeParticle{
     to{
         opacity:0;
-        transform:translateY(-15px);
+        transform:translateY(-18px);
     }
 }
 </style>
@@ -238,130 +170,75 @@ html,body{
 
 <body>
 
+<!-- SPLASH -->
 <div id="splash" onclick="startStage(event)">
-    <h1>Click ❄️</h1>
+    <h1>INITIALIZE SEQUENCE</h1>
     <div class="signature">ALLZ</div>
 </div>
 
-<video id="bg-video" loop playsinline muted>
-    <source src="https://files.catbox.moe/mdnygm.mp4" type="video/mp4">
+<!-- VIDEO (com áudio embutido) -->
+<video id="bg-video" playsinline>
+    <source src="https://files.catbox.moe/2ho3p6.mp4" type="video/mp4">
 </video>
 
-<audio id="bg-music">
-    <source src="https://files.catbox.moe/xwbm2h.mp3" type="audio/mpeg">
-</audio>
-
 <div class="overlay"></div>
-<div class="ghost-text" id="ghost" data-text="COLUMBINA">COLUMBINA</div>
-
-<div class="music-ui">
-    <h3>Swim</h3>
-    <span>Chase Atlantic</span>
-    <div class="progress"><div class="progress-bar"></div></div>
-</div>
+<div class="center-text" id="centerText" data-text="DOTT‽RE">DOTT‽RE</div>
 
 <script>
-/* ❄️ NEVE SPLASH */
-let snowInterval;
-function createSnow(){
-    const s=document.createElement("div");
-    s.className="snowflake";
-    s.innerHTML="❄";
-    s.style.left=Math.random()*innerWidth+"px";
-    s.style.fontSize=8+Math.random()*14+"px";
-    s.style.animationDuration=3+Math.random()*5+"s";
-    document.body.appendChild(s);
-    setTimeout(()=>s.remove(),8000);
-}
-snowInterval=setInterval(createSnow,180);
-
-/* ✨ PARTÍCULAS NO MOUSE */
+/* ✨ PARTICULAS NO MOUSE */
 document.addEventListener("mousemove",e=>{
     const p=document.createElement("div");
     p.className="particle";
     p.style.left=e.clientX+"px";
     p.style.top=e.clientY+"px";
     document.body.appendChild(p);
-    setTimeout(()=>p.remove(),1000);
+    setTimeout(()=>p.remove(),800);
 });
 
-/* ⚡ REAÇÃO AO MOUSE */
+/* ⚡ REAÇÃO DO TEXTO AO MOUSE */
 document.addEventListener("mousemove",e=>{
-    const g=document.getElementById("ghost");
+    const ct=document.getElementById("centerText");
     const x=(e.clientX-window.innerWidth/2)/40;
     const y=(e.clientY-window.innerHeight/2)/40;
-    g.style.transform=`translate(-50%,-50%) translate(${x}px,${y}px)`;
+    ct.style.transform=`translate(-50%,-50%) translate(${x}px,${y}px)`;
+    
+    // mini glitch ao mover mouse
+    if(Math.random()<0.08){
+        ct.classList.add("glitch");
+        setTimeout(()=>ct.classList.remove("glitch"),120);
+    }
 });
 
-/* ⚠️ MICRO GLITCH TV ANTIGA */
-setInterval(()=>{
-    const g=document.getElementById("ghost");
-    g.classList.add("glitch");
-    setTimeout(()=>g.classList.remove("glitch"),150);
-},15000);
+/* CLIQUE, TUDO INICIA */
+function startStage(e){
+    const splash = document.getElementById("splash");
+    const video  = document.getElementById("bg-video");
+    const overlay= document.querySelector(".overlay");
+    const ct     = document.getElementById("centerText");
 
-/* 💥 EXPLOSÃO DE PARTICULAS NO CLIQUE */
-function createClickParticles(x,y){
-    for(let i=0;i<25;i++){
+    // explosão de partículas no clique
+    for(let i=0;i<40;i++){
         const p=document.createElement("div");
         p.className="particle";
-        p.style.left=x+"px";
-        p.style.top=y+"px";
-        const angle=Math.random()*Math.PI*2;
-        const speed=Math.random()*6+2;
-        p.style.transform=`translate(0,0)`;
+        p.style.left=e.clientX+"px";
+        p.style.top=e.clientY+"px";
         document.body.appendChild(p);
-        let dx=Math.cos(angle)*speed;
-        let dy=Math.sin(angle)*speed;
-        let life=0;
-        const anim=setInterval(()=>{
-            p.style.transform=`translate(${dx*life}px,${dy*life}px)`;
-            p.style.opacity=1-(life/20);
-            life++;
-            if(life>20){
-                clearInterval(anim);
-                p.remove();
-            }
-        },20);
+        setTimeout(()=>p.remove(),2000);
     }
-}
-
-/* FUNÇÃO PRINCIPAL */
-function startStage(e){
-    clearInterval(snowInterval);
-    document.querySelectorAll(".snowflake").forEach(s=>s.remove());
-
-    const splash=document.getElementById("splash");
-    const video=document.getElementById("bg-video");
-    const music=document.getElementById("bg-music");
-    const overlay=document.querySelector(".overlay");
-    const ghost=document.getElementById("ghost");
-    const ui=document.querySelector(".music-ui");
-
-    /* EXPLOSÃO NO CLICK */
-    createClickParticles(e.clientX,e.clientY);
 
     splash.classList.add("splash-hide");
-    video.play();
-    music.volume=.15;
-    music.play();
+    video.play(); // o vídeo já tem áudio embutido
 
     setTimeout(()=>splash.remove(),1000);
 
-    /* FINAL SILENCIOSO AOS 30s */
-    setTimeout(()=>{
-        let v=music.volume;
-        const f=setInterval(()=>{
-            if(v>0.01){
-                v-=.005;
-                music.volume=v;
-            }else clearInterval(f);
-        },200);
+    // zoom sutil de fundo
+    video.style.transform = 'translate(-50%,-50%) scale(1.04)';
 
-        overlay.style.background="rgba(0,0,0,.85)";
-        ghost.style.opacity="0";
-        ui.style.opacity="0";
-    },30000);
+    /* INTERFERÊNCIA AUTOMÁTICA */
+    setInterval(()=>{
+        ct.classList.add("glitch");
+        setTimeout(()=>ct.classList.remove("glitch"),150);
+    },18000);
 }
 </script>
 
