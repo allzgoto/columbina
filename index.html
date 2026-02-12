@@ -14,7 +14,6 @@ body{
     font-family:Arial, sans-serif;
 }
 
-/* VIDEO */
 #video{
     position:fixed;
     inset:0;
@@ -25,7 +24,6 @@ body{
     z-index:-1;
 }
 
-/* LOADING */
 #loadingScreen{
     position:fixed;
     inset:0;
@@ -60,7 +58,6 @@ body{
     transition:width .2s ease;
 }
 
-/* ENTER */
 #enterBox{
     margin-top:40px;
     padding:18px 60px;
@@ -70,78 +67,24 @@ body{
     backdrop-filter:blur(15px);
     letter-spacing:6px;
     opacity:0;
-    pointer-events:none; /* 🔒 trava clique */
+    pointer-events:none;
     transition:.4s ease;
 }
 
 #enterBox.show{
     opacity:1;
-    pointer-events:auto; /* 🔓 libera clique */
-    cursor:pointer;
-}
-
-/* VOLUME */
-#volumeWrapper{
-    position:fixed;
-    top:20px;
-    left:20px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    z-index:20;
-    opacity:0;
-    transition:opacity .3s ease;
-}
-
-#volumeWrapper.visible{
-    opacity:1;
-}
-
-#volumeBtn{
-    width:44px;
-    height:44px;
-    border-radius:50%;
-    backdrop-filter:blur(10px);
-    background:rgba(255,255,255,0.1);
-    border:1px solid rgba(255,255,255,0.2);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    cursor:pointer;
-}
-
-#sliderContainer{
-    width:0;
-    overflow:hidden;
-    transition:width .3s ease;
-}
-
-#volumeWrapper.open #sliderContainer{
-    width:120px;
-}
-
-#volumeRange{
-    width:100%;
-    appearance:none;
-    height:4px;
-    border-radius:4px;
-    background:linear-gradient(to right, white 70%, rgba(255,255,255,.3) 70%);
-    outline:none;
-}
-
-#volumeRange::-webkit-slider-thumb{
-    appearance:none;
-    width:14px;
-    height:14px;
-    border-radius:50%;
-    background:white;
+    pointer-events:auto;
     cursor:pointer;
 }
 </style>
 </head>
 <body>
 
-<video id="video" playsinline preload="auto" muted>
+<video id="video"
+playsinline
+preload="auto"
+loop
+webkit-playsinline>
     <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
 </video>
 
@@ -153,13 +96,6 @@ body{
     <div id="enterBox">ENTER</div>
 </div>
 
-<div id="volumeWrapper">
-    <div id="volumeBtn">🔊</div>
-    <div id="sliderContainer">
-        <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.7">
-    </div>
-</div>
-
 <script>
 
 const video = document.getElementById("video");
@@ -167,85 +103,36 @@ const progressFill = document.getElementById("progressFill");
 const enterBox = document.getElementById("enterBox");
 const loadingScreen = document.getElementById("loadingScreen");
 
-const volumeWrapper = document.getElementById("volumeWrapper");
-const volumeBtn = document.getElementById("volumeBtn");
-const volumeRange = document.getElementById("volumeRange");
+/* Buffer agressivo */
+video.load();
 
-video.volume = 0.7;
-
-/* ===== Pré-aquecer vídeo (evita travada no play) ===== */
-video.play().then(()=>{
-    video.pause();
-    video.currentTime = 0;
-}).catch(()=>{});
-
-/* ===== Loading inteligente ===== */
 let fakeProgress = 0;
 
 let interval = setInterval(()=>{
-    if(video.readyState >= 3){ // tem dados suficientes
+    if(video.readyState >= 4){
+        fakeProgress += 15;
+    } else if(video.readyState >= 3){
         fakeProgress += 8;
     } else {
-        fakeProgress += Math.random()*3;
+        fakeProgress += Math.random()*2;
     }
 
     if(fakeProgress >= 100){
         fakeProgress = 100;
         clearInterval(interval);
-        liberarEnter();
+        enterBox.classList.add("show");
     }
 
     progressFill.style.width = fakeProgress + "%";
 },200);
 
-function liberarEnter(){
-    enterBox.classList.add("show");
-}
-
-/* ===== START ===== */
 enterBox.addEventListener("click", ()=>{
-    video.muted = false;
-
     video.play().then(()=>{
         loadingScreen.style.opacity="0";
         setTimeout(()=>{
             loadingScreen.style.display="none";
         },600);
-
-        volumeWrapper.classList.add("visible");
     });
-});
-
-/* ===== LOOP ===== */
-video.addEventListener("ended",()=>{
-    video.currentTime=0;
-    video.play();
-});
-
-/* ===== VOLUME ===== */
-let hideTimeout;
-
-function showVolume(){
-    volumeWrapper.classList.add("visible");
-    clearTimeout(hideTimeout);
-    hideTimeout=setTimeout(()=>{
-        volumeWrapper.classList.remove("visible");
-        volumeWrapper.classList.remove("open");
-    },3000);
-}
-
-document.addEventListener("mousemove", showVolume);
-
-volumeBtn.addEventListener("click",()=>{
-    volumeWrapper.classList.toggle("open");
-    showVolume();
-});
-
-volumeRange.addEventListener("input",()=>{
-    video.volume = volumeRange.value;
-    const percent = volumeRange.value*100;
-    volumeRange.style.background =
-    `linear-gradient(to right, white ${percent}%, rgba(255,255,255,.3) ${percent}%)`;
 });
 
 </script>
