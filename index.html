@@ -14,6 +14,7 @@ body{
     font-family:Arial, sans-serif;
 }
 
+/* VIDEO */
 #video{
     position:fixed;
     inset:0;
@@ -24,6 +25,7 @@ body{
     z-index:-1;
 }
 
+/* LOADING */
 #loadingScreen{
     position:fixed;
     inset:0;
@@ -58,6 +60,7 @@ body{
     transition:width .2s ease;
 }
 
+/* ENTER */
 #enterBox{
     margin-top:40px;
     padding:18px 60px;
@@ -76,6 +79,64 @@ body{
     pointer-events:auto;
     cursor:pointer;
 }
+
+/* VOLUME */
+#volumeWrapper{
+    position:fixed;
+    top:20px;
+    left:20px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    z-index:20;
+    opacity:0;
+    transition:opacity .3s ease;
+}
+
+#volumeWrapper.visible{
+    opacity:1;
+}
+
+#volumeBtn{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    backdrop-filter:blur(10px);
+    background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.2);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+}
+
+#sliderContainer{
+    width:0;
+    overflow:hidden;
+    transition:width .3s ease;
+}
+
+#volumeWrapper.open #sliderContainer{
+    width:120px;
+}
+
+#volumeRange{
+    width:100%;
+    appearance:none;
+    height:4px;
+    border-radius:4px;
+    background:linear-gradient(to right, white 70%, rgba(255,255,255,.3) 70%);
+    outline:none;
+}
+
+#volumeRange::-webkit-slider-thumb{
+    appearance:none;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:white;
+    cursor:pointer;
+}
 </style>
 </head>
 <body>
@@ -83,9 +144,8 @@ body{
 <video id="video"
 playsinline
 preload="auto"
-loop
-webkit-playsinline>
-    <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
+loop>
+    <source src="https://drive.google.com/uc?export=preview&id=19AbJPOW0UzLDjgIrxJTt3D_y3Qm8_85h" type="video/mp4">
 </video>
 
 <div id="loadingScreen">
@@ -96,6 +156,13 @@ webkit-playsinline>
     <div id="enterBox">ENTER</div>
 </div>
 
+<div id="volumeWrapper">
+    <div id="volumeBtn">🔊</div>
+    <div id="sliderContainer">
+        <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.7">
+    </div>
+</div>
+
 <script>
 
 const video = document.getElementById("video");
@@ -103,7 +170,13 @@ const progressFill = document.getElementById("progressFill");
 const enterBox = document.getElementById("enterBox");
 const loadingScreen = document.getElementById("loadingScreen");
 
-/* Buffer agressivo */
+const volumeWrapper = document.getElementById("volumeWrapper");
+const volumeBtn = document.getElementById("volumeBtn");
+const volumeRange = document.getElementById("volumeRange");
+
+video.volume = 0.7;
+
+/* Força carregamento */
 video.load();
 
 let fakeProgress = 0;
@@ -132,7 +205,21 @@ enterBox.addEventListener("click", ()=>{
         setTimeout(()=>{
             loadingScreen.style.display="none";
         },600);
+
+        volumeWrapper.classList.add("visible");
     });
+});
+
+/* Volume */
+volumeBtn.addEventListener("click",()=>{
+    volumeWrapper.classList.toggle("open");
+});
+
+volumeRange.addEventListener("input",()=>{
+    video.volume = volumeRange.value;
+    const percent = volumeRange.value*100;
+    volumeRange.style.background =
+    `linear-gradient(to right, white ${percent}%, rgba(255,255,255,.3) ${percent}%)`;
 });
 
 </script>
