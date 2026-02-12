@@ -255,16 +255,29 @@ setInterval(()=>{
     dynamicText.textContent = messages[msgIndex];
 }, 2500);
 
-/* Espera poder tocar */
-video.addEventListener("canplaythrough", () => {
-    enterBox.classList.add("show");
+/* ---- SISTEMA ANTI-INFINITO ---- */
+
+let enterLiberado = false;
+
+function liberarEnter(){
+    if(!enterLiberado){
+        enterLiberado = true;
+        enterBox.classList.add("show");
+    }
+}
+
+/* Evento ideal */
+video.addEventListener("canplaythrough", liberarEnter);
+
+/* Evento secundário */
+video.addEventListener("loadeddata", ()=>{
+    setTimeout(liberarEnter, 1200);
 });
 
-video.addEventListener("loadeddata", () => {
-    setTimeout(()=>{
-        enterBox.classList.add("show");
-    }, 1500);
-});
+/* Fallback de segurança absoluto */
+setTimeout(liberarEnter, 4000);
+
+/* ---- CLICK ---- */
 
 enterBox.addEventListener("click", () => {
     video.play().then(()=>{
@@ -273,10 +286,13 @@ enterBox.addEventListener("click", () => {
             loadingScreen.style.display="none";
         },600);
         volumeWrapper.classList.add("visible");
+    }).catch(err=>{
+        console.log("Erro ao iniciar vídeo:", err);
     });
 });
 
-/* Volume */
+/* ---- VOLUME ---- */
+
 volumeBtn.addEventListener("click",()=>{
     volumeWrapper.classList.toggle("open");
 });
@@ -289,6 +305,7 @@ volumeRange.addEventListener("input",()=>{
 });
 
 </script>
+
 
 </body>
 </html>
