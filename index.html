@@ -6,9 +6,19 @@
 <title>Dottore</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:black;overflow:hidden;font-family:Arial;}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
+body{
+    background:black;
+    overflow:hidden;
+    font-family:Arial, sans-serif;
+}
+
+/* VIDEO */
 #video{
     position:fixed;
     inset:0;
@@ -23,23 +33,24 @@ body{background:black;overflow:hidden;font-family:Arial;}
 #loadingScreen{
     position:fixed;
     inset:0;
-    background:radial-gradient(circle at center,#0a0a12,#000);
+    background:radial-gradient(circle at center,#0a0f18,#000);
     display:flex;
     flex-direction:column;
     justify-content:center;
     align-items:center;
     color:white;
     z-index:10;
+    transition:opacity .6s ease;
 }
 
 .loading-text{
-    letter-spacing:4px;
+    letter-spacing:6px;
     margin-bottom:20px;
     opacity:.7;
 }
 
 .progress-bar{
-    width:300px;
+    width:320px;
     height:4px;
     background:rgba(255,255,255,.1);
     border-radius:4px;
@@ -63,12 +74,70 @@ body{background:black;overflow:hidden;font-family:Arial;}
     backdrop-filter:blur(15px);
     cursor:pointer;
     opacity:0;
-    transition:.4s;
+    transition:.4s ease;
     letter-spacing:6px;
 }
 
 #enterBox.show{
     opacity:1;
+}
+
+/* Volume */
+#volumeWrapper{
+    position:fixed;
+    top:20px;
+    left:20px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    z-index:20;
+    opacity:0;
+    transition:opacity .3s ease;
+}
+
+#volumeWrapper.visible{
+    opacity:1;
+}
+
+#volumeBtn{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    backdrop-filter:blur(10px);
+    background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.2);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+}
+
+#sliderContainer{
+    width:0;
+    overflow:hidden;
+    transition:width .3s ease;
+}
+
+#volumeWrapper.open #sliderContainer{
+    width:120px;
+}
+
+#volumeRange{
+    width:100%;
+    appearance:none;
+    height:4px;
+    border-radius:4px;
+    background:linear-gradient(to right, white 70%, rgba(255,255,255,.3) 70%);
+    outline:none;
+}
+
+#volumeRange::-webkit-slider-thumb{
+    appearance:none;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:white;
+    cursor:pointer;
 }
 </style>
 </head>
@@ -86,6 +155,13 @@ body{background:black;overflow:hidden;font-family:Arial;}
     <div id="enterBox">ENTER</div>
 </div>
 
+<div id="volumeWrapper">
+    <div id="volumeBtn">🔊</div>
+    <div id="sliderContainer">
+        <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.7">
+    </div>
+</div>
+
 <script>
 
 const video = document.getElementById("video");
@@ -93,39 +169,73 @@ const progressFill = document.getElementById("progressFill");
 const enterBox = document.getElementById("enterBox");
 const loadingScreen = document.getElementById("loadingScreen");
 
-/* Progresso real baseado em buffer */
-video.addEventListener("progress", ()=>{
-    if(video.buffered.length > 0){
-        const bufferedEnd = video.buffered.end(video.buffered.length - 1);
-        const duration = video.duration;
-        if(duration > 0){
-            const percent = (bufferedEnd / duration) * 100;
-            progressFill.style.width = percent + "%";
+const volumeWrapper = document.getElementById("volumeWrapper");
+const volumeBtn = document.getElementById("volumeBtn");
+const volumeRange = document.getElementById("volumeRange");
 
-            if(percent > 20){ // já dá pra iniciar suave
-                enterBox.classList.add("show");
-            }
-        }
+video.volume = 0.7;
+
+/* ===== LOADING FAKE SUAVE ===== */
+let fakeProgress = 0;
+let loadingInterval = setInterval(()=>{
+    if(fakeProgress < 90){
+        fakeProgress += Math.random() * 4;
+        progressFill.style.width = fakeProgress + "%";
     }
+}, 200);
+
+/* ===== QUANDO ESTIVER REALMENTE PRONTO ===== */
+video.addEventListener("canplaythrough", ()=>{
+    clearInterval(loadingInterval);
+    progressFill.style.width = "100%";
+
+    setTimeout(()=>{
+        enterBox.classList.add("show");
+    }, 300);
 });
 
-/* Garantir duração carregada */
-video.addEventListener("loadedmetadata", ()=>{
-    console.log("Metadata carregada");
-});
-
-/* START */
+/* ===== START ===== */
 enterBox.addEventListener("click", ()=>{
     video.play().then(()=>{
         loadingScreen.style.opacity="0";
-        setTimeout(()=>loadingScreen.style.display="none",600);
+        setTimeout(()=>{
+            loadingScreen.style.display="none";
+        },600);
+
+        volumeWrapper.classList.add("visible");
     });
 });
 
-/* LOOP */
+/* ===== LOOP LIMPO ===== */
 video.addEventListener("ended",()=>{
     video.currentTime=0;
     video.play();
+});
+
+/* ===== VOLUME ===== */
+let hideTimeout;
+
+function showVolume(){
+    volumeWrapper.classList.add("visible");
+    clearTimeout(hideTimeout);
+    hideTimeout=setTimeout(()=>{
+        volumeWrapper.classList.remove("visible");
+        volumeWrapper.classList.remove("open");
+    },3000);
+}
+
+document.addEventListener("mousemove", showVolume);
+
+volumeBtn.addEventListener("click",()=>{
+    volumeWrapper.classList.toggle("open");
+    showVolume();
+});
+
+volumeRange.addEventListener("input",()=>{
+    video.volume = volumeRange.value;
+    const percent = volumeRange.value*100;
+    volumeRange.style.background =
+    `linear-gradient(to right, white ${percent}%, rgba(255,255,255,.3) ${percent}%)`;
 });
 
 </script>
