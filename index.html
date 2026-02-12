@@ -6,11 +6,7 @@
 <title>Dottore</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
 
 body{
     background:black;
@@ -29,7 +25,7 @@ body{
     z-index:-1;
 }
 
-/* LOADING SCREEN */
+/* LOADING */
 #loadingScreen{
     position:fixed;
     inset:0;
@@ -72,17 +68,19 @@ body{
     background:rgba(255,255,255,.08);
     border:1px solid rgba(255,255,255,.2);
     backdrop-filter:blur(15px);
-    cursor:pointer;
-    opacity:0;
-    transition:.4s ease;
     letter-spacing:6px;
+    opacity:0;
+    pointer-events:none; /* 🔒 trava clique */
+    transition:.4s ease;
 }
 
 #enterBox.show{
     opacity:1;
+    pointer-events:auto; /* 🔓 libera clique */
+    cursor:pointer;
 }
 
-/* Volume */
+/* VOLUME */
 #volumeWrapper{
     position:fixed;
     top:20px;
@@ -143,7 +141,7 @@ body{
 </head>
 <body>
 
-<video id="video" playsinline preload="auto">
+<video id="video" playsinline preload="auto" muted>
     <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
 </video>
 
@@ -175,27 +173,39 @@ const volumeRange = document.getElementById("volumeRange");
 
 video.volume = 0.7;
 
-/* ===== LOADING FAKE SUAVE ===== */
+/* ===== Pré-aquecer vídeo (evita travada no play) ===== */
+video.play().then(()=>{
+    video.pause();
+    video.currentTime = 0;
+}).catch(()=>{});
+
+/* ===== Loading inteligente ===== */
 let fakeProgress = 0;
-let loadingInterval = setInterval(()=>{
-    if(fakeProgress < 90){
-        fakeProgress += Math.random() * 4;
-        progressFill.style.width = fakeProgress + "%";
+
+let interval = setInterval(()=>{
+    if(video.readyState >= 3){ // tem dados suficientes
+        fakeProgress += 8;
+    } else {
+        fakeProgress += Math.random()*3;
     }
-}, 200);
 
-/* ===== QUANDO ESTIVER REALMENTE PRONTO ===== */
-video.addEventListener("canplaythrough", ()=>{
-    clearInterval(loadingInterval);
-    progressFill.style.width = "100%";
+    if(fakeProgress >= 100){
+        fakeProgress = 100;
+        clearInterval(interval);
+        liberarEnter();
+    }
 
-    setTimeout(()=>{
-        enterBox.classList.add("show");
-    }, 300);
-});
+    progressFill.style.width = fakeProgress + "%";
+},200);
+
+function liberarEnter(){
+    enterBox.classList.add("show");
+}
 
 /* ===== START ===== */
 enterBox.addEventListener("click", ()=>{
+    video.muted = false;
+
     video.play().then(()=>{
         loadingScreen.style.opacity="0";
         setTimeout(()=>{
@@ -206,7 +216,7 @@ enterBox.addEventListener("click", ()=>{
     });
 });
 
-/* ===== LOOP LIMPO ===== */
+/* ===== LOOP ===== */
 video.addEventListener("ended",()=>{
     video.currentTime=0;
     video.play();
