@@ -6,31 +6,9 @@
 <title>Dottore</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:black;overflow:hidden;font-family:Arial;}
 
-body{
-    background:black;
-    overflow:hidden;
-    font-family:Arial, Helvetica, sans-serif;
-}
-
-/* VIDEO FUNDO BLUR */
-#video-bg{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    filter:blur(80px) brightness(.6);
-    transform:scale(1.2);
-    z-index:-2;
-}
-
-/* VIDEO PRINCIPAL */
 #video{
     position:fixed;
     inset:0;
@@ -41,179 +19,113 @@ body{
     z-index:-1;
 }
 
-/* ENTER */
-#splash{
+/* LOADING SCREEN */
+#loadingScreen{
     position:fixed;
     inset:0;
-    background:radial-gradient(circle at center,#111,#000);
+    background:radial-gradient(circle at center,#0a0a12,#000);
     display:flex;
+    flex-direction:column;
     justify-content:center;
     align-items:center;
-    z-index:10;
-    cursor:pointer;
-    transition:opacity .8s ease;
-}
-
-#enter-box{
-    padding:20px 60px;
-    border-radius:14px;
-    font-size:28px;
-    letter-spacing:6px;
     color:white;
-    backdrop-filter:blur(20px);
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.15);
-    transition:.3s;
+    z-index:10;
 }
 
-#enter-box:hover{
-    background:rgba(255,255,255,0.15);
-    transform:scale(1.08);
+.loading-text{
+    letter-spacing:4px;
+    margin-bottom:20px;
+    opacity:.7;
 }
 
-/* VOLUME */
-#volumeWrapper{
-    position:fixed;
-    top:20px;
-    left:20px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    z-index:20;
-    opacity:0;
-    transition:opacity .4s ease;
-}
-
-#volumeWrapper.visible{
-    opacity:1;
-}
-
-#volumeBtn{
-    width:44px;
-    height:44px;
-    border-radius:50%;
-    backdrop-filter:blur(15px);
-    background:rgba(255,255,255,0.1);
-    border:1px solid rgba(255,255,255,0.15);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    cursor:pointer;
-}
-
-#sliderContainer{
-    width:0;
-    overflow:hidden;
-    transition:width .35s ease;
-}
-
-#volumeWrapper.open #sliderContainer{
-    width:120px;
-}
-
-#volumeRange{
-    width:100%;
-    appearance:none;
+.progress-bar{
+    width:300px;
     height:4px;
+    background:rgba(255,255,255,.1);
     border-radius:4px;
-    background:linear-gradient(to right, white 70%, rgba(255,255,255,.3) 70%);
-    outline:none;
+    overflow:hidden;
 }
 
-#volumeRange::-webkit-slider-thumb{
-    appearance:none;
-    width:14px;
-    height:14px;
-    border-radius:50%;
-    background:white;
+.progress-fill{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,#00d4ff,#ffffff);
+    transition:width .2s ease;
+}
+
+/* ENTER */
+#enterBox{
+    margin-top:40px;
+    padding:18px 60px;
+    border-radius:12px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.2);
+    backdrop-filter:blur(15px);
     cursor:pointer;
+    opacity:0;
+    transition:.4s;
+    letter-spacing:6px;
+}
+
+#enterBox.show{
+    opacity:1;
 }
 </style>
 </head>
 <body>
 
-<!-- SPLASH -->
-<div id="splash">
-    <div id="enter-box">ENTER</div>
-</div>
-
-<!-- VIDEOS (mesmo arquivo, só visual) -->
-<video id="video-bg" preload="auto" muted playsinline>
+<video id="video" playsinline preload="auto">
     <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
 </video>
 
-<video id="video" preload="auto" playsinline>
-    <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
-</video>
-
-<!-- VOLUME -->
-<div id="volumeWrapper">
-    <div id="volumeBtn">🔊</div>
-    <div id="sliderContainer">
-        <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.7">
+<div id="loadingScreen">
+    <div class="loading-text">INITIALIZING EXPERIMENT...</div>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
     </div>
+    <div id="enterBox">ENTER</div>
 </div>
 
 <script>
 
-const splash = document.getElementById("splash");
 const video = document.getElementById("video");
-const videoBg = document.getElementById("video-bg");
+const progressFill = document.getElementById("progressFill");
+const enterBox = document.getElementById("enterBox");
+const loadingScreen = document.getElementById("loadingScreen");
 
-const volumeWrapper = document.getElementById("volumeWrapper");
-const volumeBtn = document.getElementById("volumeBtn");
-const volumeRange = document.getElementById("volumeRange");
+/* Progresso real baseado em buffer */
+video.addEventListener("progress", ()=>{
+    if(video.buffered.length > 0){
+        const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+        const duration = video.duration;
+        if(duration > 0){
+            const percent = (bufferedEnd / duration) * 100;
+            progressFill.style.width = percent + "%";
 
-video.volume = 0.7;
+            if(percent > 20){ // já dá pra iniciar suave
+                enterBox.classList.add("show");
+            }
+        }
+    }
+});
 
-/* Esperar vídeo carregar antes de permitir ENTER */
-video.addEventListener("canplaythrough",()=>{
-    splash.style.cursor="pointer";
+/* Garantir duração carregada */
+video.addEventListener("loadedmetadata", ()=>{
+    console.log("Metadata carregada");
 });
 
 /* START */
-splash.addEventListener("click", ()=>{
-    splash.style.opacity="0";
-    setTimeout(()=>splash.style.display="none",800);
-
-    videoBg.play();
-    video.play();
-
-    volumeWrapper.classList.add("visible");
+enterBox.addEventListener("click", ()=>{
+    video.play().then(()=>{
+        loadingScreen.style.opacity="0";
+        setTimeout(()=>loadingScreen.style.display="none",600);
+    });
 });
 
-/* LOOP NATURAL */
+/* LOOP */
 video.addEventListener("ended",()=>{
     video.currentTime=0;
-    videoBg.currentTime=0;
     video.play();
-    videoBg.play();
-});
-
-/* VOLUME */
-let hideTimeout;
-
-function showVolume(){
-    volumeWrapper.classList.add("visible");
-    clearTimeout(hideTimeout);
-    hideTimeout=setTimeout(()=>{
-        volumeWrapper.classList.remove("visible");
-        volumeWrapper.classList.remove("open");
-    },3000);
-}
-
-document.addEventListener("mousemove", showVolume);
-
-volumeBtn.addEventListener("click",()=>{
-    volumeWrapper.classList.toggle("open");
-    showVolume();
-});
-
-volumeRange.addEventListener("input",()=>{
-    video.volume = volumeRange.value;
-    const percent = volumeRange.value*100;
-    volumeRange.style.background =
-    `linear-gradient(to right, white ${percent}%, rgba(255,255,255,.3) ${percent}%)`;
 });
 
 </script>
