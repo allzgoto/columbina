@@ -5,273 +5,224 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dottore</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-
 <style>
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
 }
 
-html,body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
+body{
     background:black;
-}
-
-/* ENTER SCREEN */
-#splash{
-    position:fixed;
-    inset:0;
-    background:radial-gradient(circle at center,#111,#000);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    z-index:20;
-    cursor:pointer;
-    transition:opacity 1s ease;
-}
-
-#splash h1{
-    font-size:2.2rem;
-    letter-spacing:8px;
-    color:white;
-    opacity:.8;
-    transition:.3s;
-}
-
-#splash:hover h1{
-    opacity:1;
-    transform:scale(1.08);
-}
-
-.signature{
-    margin-top:12px;
-    font-size:.7rem;
-    letter-spacing:4px;
-    opacity:.4;
-}
-
-/* VIDEO WRAPPER */
-#video-wrapper{
-    position:fixed;
-    inset:0;
     overflow:hidden;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
-/* BACKGROUND BLUR DINÂMICO */
-#video-bg{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    filter:blur(90px) brightness(.7) saturate(1.4);
-    transform:scale(1.2);
-}
-
-/* MAIN VIDEO */
-#main-video{
-    position:absolute;
-    inset:0;
+/* VIDEO */
+video{
+    position:fixed;
+    top:0;
+    left:0;
     width:100%;
     height:100%;
     object-fit:contain;
+    background:black;
+    z-index:-2;
 }
 
-/* CHROMATIC ABERRATION */
-#aberration{
+/* BLUSH DINÂMICO */
+.color-overlay{
     position:fixed;
-    inset:0;
-    pointer-events:none;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:radial-gradient(circle at center, rgba(255,0,150,0.15), rgba(0,0,0,0.85));
     mix-blend-mode:screen;
-    opacity:.05;
-    background:linear-gradient(90deg,red,transparent,blue);
-    animation:aberrate 6s infinite alternate ease-in-out;
+    pointer-events:none;
+    z-index:-1;
+    transition:background 0.5s ease;
 }
 
-@keyframes aberrate{
-    from{transform:translateX(-5px);}
-    to{transform:translateX(5px);}
-}
-
-/* VINHETA */
-#vignette{
+/* SPLASH ENTER */
+.splash{
     position:fixed;
     inset:0;
-    pointer-events:none;
-    background:radial-gradient(circle,transparent 60%,rgba(0,0,0,.7));
+    background:black;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:10;
 }
 
-/* GRAIN */
-#grain{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    opacity:.05;
-    background-image:url("https://grainy-gradients.vercel.app/noise.svg");
-    animation:grainMove .4s infinite;
+.enter-btn{
+    font-size:32px;
+    letter-spacing:4px;
+    color:white;
+    cursor:pointer;
+    opacity:0.8;
+    transition:0.3s;
 }
 
-@keyframes grainMove{
-    0%{transform:translate(0,0)}
-    25%{transform:translate(-5px,5px)}
-    50%{transform:translate(5px,-5px)}
-    75%{transform:translate(-5px,-5px)}
-    100%{transform:translate(5px,5px)}
+.enter-btn:hover{
+    opacity:1;
+    transform:scale(1.1);
 }
 
-/* RESPIRAÇÃO DE LUZ */
-#lightPulse{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    background:radial-gradient(circle at center,rgba(0,120,255,.08),transparent 60%);
-    animation:pulse 8s infinite ease-in-out;
-}
-
-@keyframes pulse{
-    0%,100%{opacity:.4}
-    50%{opacity:.8}
-}
-
-/* BOTÃO VOLUME */
-#volume-wrapper{
+/* VOLUME */
+.volume-wrapper{
     position:fixed;
     top:20px;
     left:20px;
-    z-index:30;
+    z-index:5;
+    display:flex;
+    align-items:center;
+    gap:10px;
     opacity:0;
-    transition:opacity .5s ease;
+    transition:opacity 0.4s ease;
 }
 
-#volume-btn{
-    width:45px;
-    height:45px;
+.volume-wrapper.show{
+    opacity:1;
+}
+
+.volume-btn{
+    width:42px;
+    height:42px;
     border-radius:50%;
-    background:rgba(255,255,255,.08);
-    backdrop-filter:blur(8px);
-    border:1px solid rgba(255,255,255,.2);
+    backdrop-filter:blur(10px);
+    background:rgba(255,255,255,0.15);
     display:flex;
     justify-content:center;
     align-items:center;
     cursor:pointer;
+    transition:0.3s;
 }
 
-#volume-btn svg{
-    width:20px;
-    height:20px;
-    fill:white;
-    opacity:.7;
+.volume-btn:hover{
+    background:rgba(255,255,255,0.25);
 }
 
-#volume-slider{
-    position:absolute;
-    top:55px;
-    left:0;
+.volume-slider{
+    width:0;
+    overflow:hidden;
+    transition:width 0.4s ease;
+}
+
+.volume-wrapper.open .volume-slider{
     width:120px;
-    display:none;
 }
 
-input[type=range]{
+.volume-slider input{
     width:100%;
+    appearance:none;
+    height:4px;
+    background:rgba(255,255,255,0.3);
+    border-radius:4px;
+    outline:none;
 }
 
-/* SHOW ON MOVE */
-.show-ui{
-    opacity:1 !important;
+.volume-slider input::-webkit-slider-thumb{
+    appearance:none;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:white;
+    cursor:pointer;
 }
+
 </style>
 </head>
-
 <body>
 
-<div id="splash" onclick="startStage()">
-    <h1>ENTER</h1>
-    <div class="signature">ALLZ</div>
+<div class="splash" id="splash">
+    <div class="enter-btn" id="enterBtn">ENTER</div>
 </div>
 
-<div id="video-wrapper">
-    <video id="video-bg" playsinline muted>
-        <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
-    </video>
+<video id="bgVideo" loop playsinline>
+    <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
+</video>
 
-    <video id="main-video" playsinline muted>
-        <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
-    </video>
-</div>
-
-<audio id="main-audio">
+<audio id="bgAudio" loop>
     <source src="https://files.catbox.moe/plro9c.mp3" type="audio/mpeg">
 </audio>
 
-<div id="aberration"></div>
-<div id="vignette"></div>
-<div id="grain"></div>
-<div id="lightPulse"></div>
+<div class="color-overlay" id="overlay"></div>
 
-<div id="volume-wrapper">
-    <div id="volume-btn">
-        <svg viewBox="0 0 24 24">
-            <path d="M3 10v4h4l5 5V5L7 10H3z"/>
-        </svg>
+<div class="volume-wrapper" id="volumeWrapper">
+    <div class="volume-btn" id="volumeBtn">
+        🔊
     </div>
-    <div id="volume-slider">
-        <input type="range" min="0" max="1" step="0.01" value="0.7">
+    <div class="volume-slider">
+        <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.7">
     </div>
 </div>
 
 <script>
-const splash=document.getElementById("splash");
-const video=document.getElementById("main-video");
-const videoBg=document.getElementById("video-bg");
-const audio=document.getElementById("main-audio");
-const volumeWrapper=document.getElementById("volume-wrapper");
-const volumeBtn=document.getElementById("volume-btn");
-const volumeSlider=document.querySelector("input");
 
-audio.volume=.7;
+const splash = document.getElementById("splash");
+const enterBtn = document.getElementById("enterBtn");
+const video = document.getElementById("bgVideo");
+const audio = document.getElementById("bgAudio");
+const overlay = document.getElementById("overlay");
 
-/* START */
-function startStage(){
-    splash.style.opacity="0";
-    setTimeout(()=>splash.remove(),1000);
+const volumeWrapper = document.getElementById("volumeWrapper");
+const volumeBtn = document.getElementById("volumeBtn");
+const volumeRange = document.getElementById("volumeRange");
 
+audio.volume = 0.7;
+
+enterBtn.addEventListener("click", () => {
+    splash.style.display = "none";
     video.play();
-    videoBg.play();
     audio.play();
+    volumeWrapper.classList.add("show");
+});
 
-    setInterval(()=>{
-        if(Math.abs(video.currentTime-audio.currentTime)>.3){
-            video.currentTime=audio.currentTime;
-            videoBg.currentTime=audio.currentTime;
-        }
-    },1000);
-}
+/* SINCRONIZAR VIDEO COM AUDIO */
+audio.addEventListener("timeupdate", () => {
+    if(Math.abs(video.currentTime - audio.currentTime) > 0.3){
+        video.currentTime = audio.currentTime;
+    }
+});
+
+/* BLUSH DINÂMICO */
+setInterval(()=>{
+    const r = Math.floor(Math.random()*255);
+    const g = Math.floor(Math.random()*255);
+    const b = Math.floor(Math.random()*255);
+    overlay.style.background = `radial-gradient(circle at center, rgba(${r},${g},${b},0.15), rgba(0,0,0,0.85))`;
+},4000);
 
 /* VOLUME */
-volumeBtn.onclick=()=>{
-    const slider=document.getElementById("volume-slider");
-    slider.style.display=slider.style.display==="block"?"none":"block";
-};
-
-volumeSlider.oninput=(e)=>{
-    audio.volume=e.target.value;
-};
-
-/* AUTO HIDE */
 let hideTimeout;
-document.addEventListener("mousemove",()=>{
-    volumeWrapper.classList.add("show-ui");
+
+function showVolume(){
+    volumeWrapper.classList.add("show");
     clearTimeout(hideTimeout);
-    hideTimeout=setTimeout(()=>{
-        volumeWrapper.classList.remove("show-ui");
+    hideTimeout = setTimeout(()=>{
+        volumeWrapper.classList.remove("show");
     },3000);
+}
+
+document.addEventListener("mousemove", showVolume);
+
+volumeBtn.addEventListener("click",()=>{
+    volumeWrapper.classList.toggle("open");
 });
+
+volumeRange.addEventListener("input",()=>{
+    audio.volume = volumeRange.value;
+
+    if(audio.volume == 0){
+        volumeBtn.textContent = "🔇";
+    } else if(audio.volume < 0.5){
+        volumeBtn.textContent = "🔉";
+    } else{
+        volumeBtn.textContent = "🔊";
+    }
+});
+
 </script>
 
 </body>
