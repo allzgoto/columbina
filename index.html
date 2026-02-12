@@ -26,12 +26,12 @@ html,body{
 #splash{
     position:fixed;
     inset:0;
-    background:linear-gradient(135deg,#000,#0a0f1a);
+    background:linear-gradient(135deg,#000,#111);
     display:flex;
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    z-index:10;
+    z-index:5;
     cursor:pointer;
     transition:opacity 1s ease, transform 1s ease;
 }
@@ -42,27 +42,19 @@ html,body{
 }
 
 #splash h1{
-    color:#dfe9ff;
+    color:#e6f0ff;
     font-size:2rem;
     letter-spacing:6px;
-    padding:20px 50px;
+    padding:20px 40px;
     border-radius:12px;
-    background:rgba(0,0,0,0.4);
-    border:1px solid rgba(120,170,255,0.3);
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
     backdrop-filter:blur(6px);
-    transition:.4s;
+    transition:.3s;
 }
 
 #splash:hover h1{
-    transform:scale(1.07);
-}
-
-.signature{
-    margin-top:18px;
-    font-size:.7rem;
-    letter-spacing:3px;
-    color:rgba(255,255,255,.4);
-    opacity:.6;
+    transform:scale(1.05);
 }
 
 /* VIDEO */
@@ -70,10 +62,11 @@ html,body{
     position:fixed;
     top:50%;
     left:50%;
-    min-width:100%;
-    min-height:100%;
+    width:100%;
+    height:100%;
     transform:translate(-50%,-50%);
-    object-fit:cover;
+    object-fit:contain; /* SEM ZOOM */
+    background:black;
     z-index:0;
 }
 
@@ -81,45 +74,37 @@ html,body{
 .overlay{
     position:fixed;
     inset:0;
-    background:linear-gradient(180deg,rgba(0,0,0,.4),rgba(0,0,0,.7));
+    background:rgba(0,0,0,.3);
     z-index:1;
+    transition:background 4s ease;
 }
 
-/* TEXTO */
-.ghost-text{
+/* BOTÃO VOLUME */
+.volume-control{
     position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    font-size:8rem;
-    font-weight:600;
-    letter-spacing:18px;
-    color:rgba(255,255,255,.05);
-    z-index:2;
-    pointer-events:none;
+    top:20px;
+    left:20px;
+    z-index:10;
+    background:rgba(0,0,0,.4);
+    padding:10px 14px;
+    border-radius:12px;
+    backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,.1);
 }
 
-/* EXPLOSÃO */
-.explosion{
-    position:fixed;
-    width:6px;
-    height:6px;
-    background:rgba(150,200,255,.9);
-    border-radius:50%;
-    pointer-events:none;
-    z-index:20;
+.volume-control input{
+    width:120px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="splash" onclick="startStage(event)">
+<div id="splash" onclick="startStage()">
     <h1>Click</h1>
-    <div class="signature">ALLZ</div>
 </div>
 
-<video id="bg-video" loop playsinline muted>
+<video id="bg-video" playsinline>
     <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
 </video>
 
@@ -128,53 +113,52 @@ html,body{
 </audio>
 
 <div class="overlay"></div>
-<div class="ghost-text">DOTTORE</div>
+
+<div class="volume-control">
+    <input type="range" min="0" max="1" step="0.01" value="0.5" id="volumeSlider">
+</div>
 
 <script>
 
-/* SINCRONIZAÇÃO */
-const video=document.getElementById("bg-video");
-const audio=document.getElementById("bg-audio");
-
-audio.addEventListener("timeupdate",()=>{
-    if(Math.abs(video.currentTime-audio.currentTime)>0.3){
-        video.currentTime=audio.currentTime;
-    }
-});
-
-/* START */
-function startStage(e){
-
-    /* explosão */
-    for(let i=0;i<40;i++){
-        const ex=document.createElement("div");
-        ex.className="explosion";
-        ex.style.left=e.clientX+"px";
-        ex.style.top=e.clientY+"px";
-        document.body.appendChild(ex);
-
-        const angle=Math.random()*2*Math.PI;
-        const distance=100+Math.random()*80;
-
-        ex.animate([
-            {transform:"translate(0,0)",opacity:1},
-            {transform:`translate(${Math.cos(angle)*distance}px,${Math.sin(angle)*distance}px)`,opacity:0}
-        ],{
-            duration:900,
-            easing:"ease-out"
-        });
-
-        setTimeout(()=>ex.remove(),900);
-    }
+function startStage(){
 
     const splash=document.getElementById("splash");
+    const video=document.getElementById("bg-video");
+    const audio=document.getElementById("bg-audio");
+
     splash.classList.add("splash-hide");
+
+    video.currentTime = 0;
+    audio.currentTime = 0;
 
     video.play();
     audio.play();
 
+    video.volume = 0;
+    audio.volume = 0.5;
+
     setTimeout(()=>splash.remove(),1000);
 }
+
+/* SINCRONIZAÇÃO */
+const video = document.getElementById("bg-video");
+const audio = document.getElementById("bg-audio");
+
+video.addEventListener("play",()=>{
+    audio.currentTime = video.currentTime;
+});
+
+video.addEventListener("pause",()=>{
+    audio.pause();
+});
+
+/* SLIDER VOLUME */
+const slider = document.getElementById("volumeSlider");
+
+slider.addEventListener("input",()=>{
+    audio.volume = slider.value;
+});
+
 </script>
 
 </body>
