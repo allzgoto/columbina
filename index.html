@@ -13,11 +13,11 @@
 body{
     background:black;
     overflow:hidden;
-    font-family:Arial, sans-serif;
+    font-family:'Orbitron', sans-serif;
     color:white;
 }
 
-/* 🔵 BLUR VIDEO FUNDO (cobre laterais) */
+/* BLUR FUNDO */
 #videoBlur{
     position:fixed;
     inset:-20%;
@@ -26,7 +26,6 @@ body{
     object-fit:cover;
     filter:blur(90px) brightness(.5) saturate(1.5);
     z-index:-5;
-    background:black;
 }
 
 /* VIDEO PRINCIPAL */
@@ -54,18 +53,6 @@ body{
     z-index:-1;
 }
 
-/* WATERMARK */
-.watermark{
-    position:fixed;
-    bottom:20px;
-    right:30px;
-    font-size:80px;
-    font-family:'Orbitron', sans-serif;
-    opacity:0.03;
-    letter-spacing:20px;
-    pointer-events:none;
-}
-
 /* LOADING */
 #loadingScreen{
     position:fixed;
@@ -77,14 +64,20 @@ body{
     align-items:center;
     z-index:10;
     transition:opacity .6s ease;
-    font-family:'Orbitron', sans-serif;
 }
 
 .loading-text{
-    letter-spacing:4px;
+    letter-spacing:6px;
     margin-bottom:20px;
     font-size:12px;
-    opacity:.7;
+    opacity:.8;
+    text-align:center;
+    animation:flicker 2s infinite;
+}
+
+@keyframes flicker{
+    0%,100%{opacity:.8}
+    50%{opacity:1}
 }
 
 .spinner{
@@ -96,7 +89,9 @@ body{
     animation:spin 1s linear infinite;
 }
 
-@keyframes spin{ to{ transform:rotate(360deg);} }
+@keyframes spin{
+    to{ transform:rotate(360deg); }
+}
 
 /* ENTER */
 #enterBox{
@@ -107,7 +102,6 @@ body{
     border:1px solid rgba(0,200,255,0.4);
     backdrop-filter:blur(25px);
     letter-spacing:8px;
-    font-family:'Orbitron', sans-serif;
     font-weight:600;
     font-size:14px;
     color:#cfefff;
@@ -115,104 +109,88 @@ body{
     opacity:0;
     pointer-events:none;
     transition:.4s ease;
-    position:relative;
-    overflow:hidden;
+    cursor:pointer;
 }
 
 #enterBox.show{
     opacity:1;
     pointer-events:auto;
-    cursor:pointer;
 }
 
-/* VOLUME */
-#volumeWrapper{
+/* HUD */
+.hud{
     position:fixed;
-    top:20px;
-    left:20px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    z-index:20;
-    opacity:0;
-    transition:opacity .4s ease;
+    bottom:20px;
+    left:30px;
+    font-size:10px;
+    opacity:.4;
+    letter-spacing:2px;
+    animation:blink 4s infinite;
 }
 
-#volumeWrapper.visible{opacity:1;}
-
-#volumeBtn{
-    width:44px;
-    height:44px;
-    border-radius:50%;
-    backdrop-filter:blur(12px);
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.25);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    cursor:pointer;
-}
-
-#sliderContainer{
-    width:0;
-    overflow:hidden;
-    transition:width .3s ease;
-}
-
-#volumeWrapper.open #sliderContainer{width:120px;}
-
-#volumeRange{
-    width:100%;
-    appearance:none;
-    height:4px;
-    border-radius:4px;
-    background:linear-gradient(to right, white 70%, rgba(255,255,255,.3) 70%);
-    outline:none;
+@keyframes blink{
+    0%,100%{opacity:.4}
+    50%{opacity:.1}
 }
 </style>
 </head>
 
 <body>
 
-<!-- BLUR FUNDO -->
 <video id="videoBlur" playsinline preload="auto" muted loop>
 <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
 </video>
 
-<!-- VIDEO PRINCIPAL -->
 <video id="video" playsinline preload="auto" loop>
 <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4">
 </video>
 
 <div class="scanlines"></div>
-<div class="watermark">DOTTORE</div>
 
 <div id="loadingScreen">
-<div class="loading-text" id="dynamicText">INITIALIZING EXPERIMENT...</div>
+<div class="loading-text" id="dynamicText">
+INITIALIZING EXPERIMENT...
+</div>
 <div class="spinner"></div>
 <div id="enterBox">ENTER</div>
 </div>
 
-<div id="volumeWrapper">
-<div id="volumeBtn">🔊</div>
-<div id="sliderContainer">
-<input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.7">
-</div>
+<div class="hud">
+NEURAL LINK ESTABLISHED // SUBJECT ONLINE
 </div>
 
 <script>
+
 const video = document.getElementById("video");
 const videoBlur = document.getElementById("videoBlur");
 const enterBox = document.getElementById("enterBox");
 const loadingScreen = document.getElementById("loadingScreen");
+const dynamicText = document.getElementById("dynamicText");
 
 video.volume = 0.7;
 
-/* sincroniza blur com principal */
+/* frases rotativas */
+const messages = [
+"INITIALIZING EXPERIMENT...",
+"STABILIZING MEMORY FRAGMENTS...",
+"NEURAL PATHWAYS SYNCHRONIZED...",
+"ETHICS MODULE DISABLED...",
+"SUBJECT AWARENESS: IRRELEVANT",
+"PROCEEDING WITHOUT CONSENT..."
+];
+
+let i = 0;
+setInterval(()=>{
+i = (i+1)%messages.length;
+dynamicText.textContent = messages[i];
+},2200);
+
+/* liberar enter */
+setTimeout(()=>enterBox.classList.add("show"),2000);
+
+/* sincronizar blur */
 video.addEventListener("play",()=>videoBlur.play());
 video.addEventListener("pause",()=>videoBlur.pause());
-
-setTimeout(()=>enterBox.classList.add("show"),2000);
 
 enterBox.onclick=()=>{
 Promise.all([video.play(),videoBlur.play()]).then(()=>{
@@ -220,6 +198,7 @@ loadingScreen.style.opacity="0";
 setTimeout(()=>loadingScreen.style.display="none",600);
 });
 };
+
 </script>
 
 </body>
