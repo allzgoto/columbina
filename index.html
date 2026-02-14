@@ -228,7 +228,6 @@ body{
   opacity:.92;
   transition:.18s ease;
 
-  /* “halo” discreto */
   filter: drop-shadow(0 0 18px rgba(0,200,255,.22));
 }
 #topControls:hover{opacity:1}
@@ -259,7 +258,6 @@ body{
   overflow:hidden;
 }
 .ctrlBtn::before{
-  /* “borda dupla” de laboratório */
   content:"";
   position:absolute;
   inset:2px;
@@ -268,7 +266,6 @@ body{
   pointer-events:none;
 }
 .ctrlBtn::after{
-  /* micro scanner passando */
   content:"";
   position:absolute;
   inset:-40% -30%;
@@ -572,7 +569,7 @@ body{
   <div class="termLine"><span class="tag">ETHICS</span> <span class="sep">//</span> <span class="value">DISABLED</span></div>
   <div class="termLine"><span class="tag">SUBJECT</span> <span class="sep">//</span> <span class="value" id="sysSubject">ONLINE</span></div>
 
-  <!-- ✅ Upgrade 1: States / Ascension Protocol (leve, só texto) -->
+  <!-- ✅ Upgrade 1: States / Ascension Protocol -->
   <div class="termLine"><span class="tag">PHASE</span> <span class="sep">//</span> <span class="value" id="sysPhase">BOOT</span></div>
   <div class="termLine"><span class="tag">DIRECTIVE</span> <span class="sep">//</span> <span class="value" id="sysDirective">MONITORING</span></div>
 </div>
@@ -614,7 +611,6 @@ body{
     </div>
     <div id="termLog" class="termLog"></div>
 
-    <!-- ✅ Upgrade 2: terminal com comandos falsos (peso mínimo) -->
     <div class="termInputBar" aria-label="Console">
       <div class="termPrompt" id="termPrompt">root@lab:~$</div>
       <input id="termInput" type="text" autocomplete="off" spellcheck="false" placeholder="Digite um comando (ex: help)" />
@@ -642,7 +638,6 @@ const sysStream = document.getElementById("sysStream");
 const sysNeural = document.getElementById("sysNeural");
 const sysSubject = document.getElementById("sysSubject");
 
-/* ✅ New HUD for states */
 const sysPhase = document.getElementById("sysPhase");
 const sysDirective = document.getElementById("sysDirective");
 
@@ -658,7 +653,6 @@ const volState = document.getElementById("volState");
 const terminal = document.getElementById("terminal");
 const termLog = document.getElementById("termLog");
 
-/* ✅ Terminal input elements */
 const termInput = document.getElementById("termInput");
 const termPrompt = document.getElementById("termPrompt");
 const termHint = document.getElementById("termHint");
@@ -813,49 +807,25 @@ function triggerGlitch(){
 }
 
 /* =======================================================================
-   ✅ UPGRADE 1: STATES / "ASCENSION PROTOCOL" (leve, modular, sem libs)
-   - Não interfere no loading nem no vídeo.
-   - Só atualiza duas linhas do HUD + (opcional) log no terminal após lore.
+   ✅ UPGRADE 1: STATES / "ASCENSION PROTOCOL"
 ======================================================================= */
 const PROTOCOL_ENABLED = true;
 
 const Protocol = {
   started: false,
-  phaseIndex: 0,
   timers: [],
   lastPhase: null,
   phases: [
-    {
-      name: "BOOT",
-      directive: "MONITORING",
-      whenMs: 0,
-      subject: "ONLINE"
-    },
-    {
-      name: "SUBJECT_LOCK",
-      directive: "IDENTITY: IRRELEVANT",
-      whenMs: 4200,
-      subject: "LOCKED"
-    },
-    {
-      name: "CALIBRATION",
-      directive: "PAIN LIMIT: ADJUSTABLE",
-      whenMs: 9800,
-      subject: "RESPONSIVE"
-    },
-    {
-      name: "ASCENSION",
-      directive: "PROTOCOL: ACTIVE",
-      whenMs: 16800,
-      subject: "MATERIAL"
-    }
+    { name: "BOOT", directive: "MONITORING", whenMs: 0, subject: "ONLINE" },
+    { name: "SUBJECT_LOCK", directive: "IDENTITY: IRRELEVANT", whenMs: 4200, subject: "LOCKED" },
+    { name: "CALIBRATION", directive: "PAIN LIMIT: ADJUSTABLE", whenMs: 9800, subject: "RESPONSIVE" },
+    { name: "ASCENSION", directive: "PROTOCOL: ACTIVE", whenMs: 16800, subject: "MATERIAL" }
   ]
 };
 
 function setProtocolHUD(phase){
   sysPhase.textContent = phase.name.replace("_", " ");
   sysDirective.textContent = phase.directive;
-  // Mantém compatível com o base: só altera sysSubject (já existe)
   sysSubject.textContent = phase.subject;
 }
 
@@ -873,9 +843,6 @@ function terminalAppendDimLine(text){
 }
 
 function maybeLogPhaseToTerminal(phase){
-  // Só loga se:
-  // - terminal aberto
-  // - lore já terminou e modo interativo ativo (pra não bagunçar ordem/typing)
   if (!terminal.classList.contains("show")) return;
   if (!termInteractive) return;
   terminalAppendDimLine(`// PHASE UPDATE: ${phase.name.replace("_"," ")} // ${phase.directive}`);
@@ -887,12 +854,10 @@ function startAscensionProtocol(){
   Protocol.started = true;
   clearProtocolTimers();
 
-  // aplica fase 0 imediatamente
   const first = Protocol.phases[0];
   setProtocolHUD(first);
   Protocol.lastPhase = first.name;
 
-  // agenda próximas fases
   for (let i = 1; i < Protocol.phases.length; i++){
     const ph = Protocol.phases[i];
     const timer = setTimeout(() => {
@@ -907,11 +872,23 @@ function startAscensionProtocol(){
 }
 
 /* =======================================================================
-   TERMINAL (ordenado e sem duplicar) + ✅ UPGRADE 2: comandos falsos
+   TERMINAL + ✅ UPGRADE 2: comandos falsos
+   ✅ Ajustes pedidos:
+   1) Texto do Dottore levemente mais rápido (sem ficar ilegível)
+   2) Tecla T NÃO fecha se painel já estiver aberto (T apenas abre/foca)
+   3) Após terminar lore, mostrar "comandos disponíveis:" automático
 ======================================================================= */
 let termRunToken = 0;
-let termTyping = false;       // true enquanto lore está "digitando"
-let termInteractive = false;  // true quando comandos estão liberados
+let termTyping = false;
+let termInteractive = false;
+
+/* ✅ velocidade (um pouco mais rápido) */
+const LORE_SPEED = {
+  header: 9,     // era 11
+  lang: 9,       // era 10
+  main: 13,      // era 16
+  post: 9        // bloco final
+};
 
 function clearTerminal(){ termLog.innerHTML = ""; }
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
@@ -926,12 +903,11 @@ async function typeLine(text, cls="", speed=14, token=0){
   for (let i=0; i<text.length; i++){
     if (!ensureAlive(token)) return;
     div.textContent += text[i];
-    await sleep(speed + Math.random()*18);
+    await sleep(speed + Math.random()*14); /* ✅ um pouco menor que antes */
     termLog.scrollTop = termLog.scrollHeight;
   }
 }
 
-/* ✅ AJUSTE: só a FRASE “Changing language to...” com glitch e ORDEM certinha */
 async function typeGlitchPhraseOnly(token){
   const base = "Changing language to...";
   const variants = [
@@ -950,15 +926,15 @@ async function typeGlitchPhraseOnly(token){
   termLog.appendChild(line);
   termLog.scrollTop = termLog.scrollHeight;
 
-  await sleep(140);
+  await sleep(130);
   for (let i=0; i<variants.length; i++){
     if (!ensureAlive(token)) return;
     line.textContent = variants[i];
-    await sleep(75);
+    await sleep(70);
   }
   if (!ensureAlive(token)) return;
   line.textContent = base;
-  await sleep(220);
+  await sleep(200);
 }
 
 /* ===== Fake command handling ===== */
@@ -968,11 +944,7 @@ function normalizeCmd(s){
 function setInputEnabled(on){
   termInput.disabled = !on;
   termHint.style.opacity = on ? ".55" : ".35";
-  if (on) {
-    termInput.placeholder = "Digite um comando (ex: help)";
-  } else {
-    termInput.placeholder = "Sistema ocupado...";
-  }
+  termInput.placeholder = on ? "Digite um comando (ex: help)" : "Sistema ocupado...";
 }
 function focusTerminalInput(){
   if (!terminal.classList.contains("show")) return;
@@ -983,19 +955,16 @@ function printUserCmd(raw){
   terminalAppendDimLine(`${termPrompt.textContent} ${raw}`);
 }
 async function respond(textLines){
-  // resposta curta, sem “typewriter pesado” pra manter performance
-  // mas ainda “vivinho”: usa typeLine com speed alto (rápido)
   const token = termRunToken;
   for (const ln of textLines){
     if (!ensureAlive(token)) return;
-    await typeLine(ln, "", 8, token);
-    await sleep(120);
+    await typeLine(ln, "", 7, token); /* ✅ respostas um pouco mais rápidas */
+    await sleep(90);
   }
 }
 async function handleCommand(raw){
   const cmd = normalizeCmd(raw);
 
-  // bloqueio de estabilidade: não deixa comandos interferirem na lore
   if (!termInteractive || termTyping){
     terminalAppendDimLine("// INPUT IGNORED: BUSY");
     return;
@@ -1004,7 +973,6 @@ async function handleCommand(raw){
 
   printUserCmd(raw);
 
-  // comandos
   if (cmd === "help" || cmd === "?" ){
     await respond([
       "Comandos disponíveis:",
@@ -1080,7 +1048,6 @@ async function handleCommand(raw){
     return;
   }
 
-  // fallback (bem Dottore)
   await respond([
     `UNKNOWN COMMAND: "${raw}"`,
     "Se você quer controle, está no lugar errado."
@@ -1092,11 +1059,23 @@ termInput.addEventListener("keydown", async (e) => {
   const v = termInput.value;
   termInput.value = "";
   await handleCommand(v);
-  // mantém foco
   focusTerminalInput();
 });
 
-/* ===== Lore Sequence (mantém ordem e sem duplicar) ===== */
+async function showCommandsHintAuto(token){
+  if (!ensureAlive(token)) return;
+  await sleep(220);
+  await typeLine(" ", "dim", 1, token);
+  await typeLine("COMANDOS DISPONÍVEIS:", "dim", 9, token);
+  await typeLine("- status", "dim", 9, token);
+  await typeLine("- phase", "dim", 9, token);
+  await typeLine("- consent", "dim", 9, token);
+  await typeLine("- whoami", "dim", 9, token);
+  await typeLine("- who are you", "dim", 9, token);
+  await typeLine("- clear", "dim", 9, token);
+  await typeLine("Dica: digite \"help\" para repetir.", "dim", 9, token);
+}
+
 async function runLoreSequence(){
   const token = ++termRunToken;
   termTyping = true;
@@ -1105,10 +1084,10 @@ async function runLoreSequence(){
 
   clearTerminal();
 
-  await typeLine("TERMINAL DO LABORATÓRIO ONLINE", "dim", 11, token);
-  await typeLine("HANDSHAKE: ACEITO // AUTORIZAÇÃO: Δ", "dim", 11, token);
-  await typeLine("CANAL DE LOG: PRIVADO // OBSERVADORES: NENHUM", "dim", 11, token);
-  await sleep(260);
+  await typeLine("TERMINAL DO LABORATÓRIO ONLINE", "dim", LORE_SPEED.header, token);
+  await typeLine("HANDSHAKE: ACEITO // AUTORIZAÇÃO: Δ", "dim", LORE_SPEED.header, token);
+  await typeLine("CANAL DE LOG: PRIVADO // OBSERVADORES: NENHUM", "dim", LORE_SPEED.header, token);
+  await sleep(220);
 
   await typeGlitchPhraseOnly(token);
 
@@ -1123,40 +1102,41 @@ async function runLoreSequence(){
     "Português (BR)"
   ];
   for (let k = 0; k < langs.length; k++){
-    await typeLine(`> ${langs[k]}`, "dim", 10, token);
-    await sleep(k === langs.length - 1 ? 320 : 95);
+    await typeLine(`> ${langs[k]}`, "dim", LORE_SPEED.lang, token);
+    await sleep(k === langs.length - 1 ? 280 : 85);
   }
 
-  await typeLine("Idioma definido: Português (BR).", "dim", 12, token);
-  await sleep(320);
+  await typeLine("Idioma definido: Português (BR).", "dim", LORE_SPEED.header, token);
+  await sleep(280);
 
   const lines = [
-    { t: "…", cls:"dim", d: 420 },
-    { t: "Então você encontrou a interface.", cls:"", d: 420 },
-    { t: "Ótimo. Curiosidade é a única virtude que eu ainda tolero.", cls:"", d: 560 },
-    { t: "Vamos deixar claro: consentimento é um conceito decorativo.", cls:"dim", d: 620 },
-    { t: "Estado do sujeito: responsivo.", cls:"", d: 420 },
-    { t: "Módulo de ética: desativado.", cls:"", d: 420 },
-    { t: "Limite de dor: ajustável.", cls:"dim", d: 520 },
-    { t: "Se estiver com medo, não desvie o olhar.", cls:"", d: 620 },
-    { t: "Observar exige devoção.", cls:"dim", d: 520 },
-    { t: "Prosseguindo com a calibração.", cls:"", d: 520 },
-    { t: "— Il Dottore", cls:"dim", d: 520 },
+    { t: "…", cls:"dim", d: 360 },
+    { t: "Então você encontrou a interface.", cls:"", d: 360 },
+    { t: "Ótimo. Curiosidade é a única virtude que eu ainda tolero.", cls:"", d: 480 },
+    { t: "Vamos deixar claro: consentimento é um conceito decorativo.", cls:"dim", d: 520 },
+    { t: "Estado do sujeito: responsivo.", cls:"", d: 360 },
+    { t: "Módulo de ética: desativado.", cls:"", d: 360 },
+    { t: "Limite de dor: ajustável.", cls:"dim", d: 450 },
+    { t: "Se estiver com medo, não desvie o olhar.", cls:"", d: 520 },
+    { t: "Observar exige devoção.", cls:"dim", d: 450 },
+    { t: "Prosseguindo com a calibração.", cls:"", d: 450 },
+    { t: "— Il Dottore", cls:"dim", d: 450 },
   ];
 
   for (const L of lines){
-    await typeLine(L.t, L.cls, 16, token);
+    await typeLine(L.t, L.cls, LORE_SPEED.main, token);
     await sleep(L.d);
   }
 
   if (!ensureAlive(token)) return;
 
-  // ✅ Integra o Upgrade 1 no terminal sem bagunçar a ordem:
-  // Só depois da lore, adiciona um bloco de "protocolo" (curto e elegante)
   await typeLine(" ", "dim", 1, token);
-  await typeLine(`ASCENSION PROTOCOL // ${sysPhase.textContent}`, "dim", 10, token);
-  await typeLine(`DIRECTIVE // ${sysDirective.textContent}`, "dim", 10, token);
-  await typeLine("Você não é um convidado. É material.", "dim", 11, token);
+  await typeLine(`ASCENSION PROTOCOL // ${sysPhase.textContent}`, "dim", LORE_SPEED.post, token);
+  await typeLine(`DIRECTIVE // ${sysDirective.textContent}`, "dim", LORE_SPEED.post, token);
+  await typeLine("Você não é um convidado. É material.", "dim", LORE_SPEED.post, token);
+
+  /* ✅ Novo: após terminar, sistema lista comandos disponíveis */
+  await showCommandsHintAuto(token);
 
   const cursor = document.createElement("div");
   cursor.className = "termLine";
@@ -1164,7 +1144,6 @@ async function runLoreSequence(){
   termLog.appendChild(cursor);
   termLog.scrollTop = termLog.scrollHeight;
 
-  // libera comandos
   termTyping = false;
   termInteractive = true;
   setInputEnabled(true);
@@ -1190,13 +1169,29 @@ btnTerm.addEventListener("click", (e) => {
   if (terminal.classList.contains("show")) closeTerminal();
   else openTerminal();
 });
+
+/* ✅ FIX: tecla T não fecha quando já está aberto.
+   - Agora: T (ou `) apenas ABRE (se fechado) e foca input (se aberto)
+*/
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeTerminal();
-  if (e.key === "`" || e.key.toLowerCase() === "t") {
-    if (terminal.classList.contains("show")) closeTerminal();
-    else openTerminal();
+
+  const isToggleKey = (e.key === "`" || e.key.toLowerCase() === "t");
+  if (isToggleKey) {
+    // Evita conflito quando digitando no input
+    const a = document.activeElement;
+    const typingInInput = (a === termInput);
+
+    if (typingInInput) return;
+
+    if (!terminal.classList.contains("show")) {
+      openTerminal();
+    } else {
+      // não fecha
+      focusTerminalInput();
+    }
   }
-  // QoL: quando terminal aberto, Enter foca input (não atrapalha lore pois fica disabled)
+
   if (terminal.classList.contains("show") && e.key === "Enter"){
     if (!termInput.disabled) focusTerminalInput();
   }
@@ -1264,7 +1259,6 @@ enterBox.onclick = async () => {
     triggerGlitch();
     hideLoading();
 
-    // ✅ inicia o protocolo de “ascensão” só depois que o vídeo realmente começou
     startAscensionProtocol();
 
   } catch (err) {
