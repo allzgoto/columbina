@@ -381,7 +381,7 @@ body{
   transition: clip-path .08s linear;
 }
 
-/* ========= TERMINAL ========= */
+/* ========= TERMINAL (LORE) ========= */
 #terminal{
   position:fixed;
   inset:0;
@@ -422,31 +422,17 @@ body{
 }
 .termLog .dim{opacity:.55}
 .termLine{margin:2px 0}
-.termInputRow{
-  display:flex;
-  gap:10px;
-  padding:10px 12px;
-  border-top:1px solid rgba(255,255,255,.08);
+
+/* Cursor piscando no terminal */
+.cursor{
+  display:inline-block;
+  margin-left:6px;
+  opacity:.9;
+  animation:cursorBlink 1s steps(2) infinite;
 }
-.termPrompt{
-  font-size:11px;
-  letter-spacing:2px;
-  opacity:.75;
-  white-space:nowrap;
-  padding-top:6px;
-}
-#termInput{
-  flex:1;
-  border:none;
-  outline:none;
-  background:rgba(0,0,0,.35);
-  color:rgba(207,239,255,.95);
-  border:1px solid rgba(0,200,255,.22);
-  border-radius:10px;
-  padding:10px 12px;
-  font-family:'Orbitron', sans-serif;
-  font-size:11px;
-  letter-spacing:2px;
+@keyframes cursorBlink{
+  0%,49%{opacity:1}
+  50%,100%{opacity:0}
 }
 
 /* acessibilidade / performance */
@@ -536,18 +522,17 @@ body{
   </div>
 </div>
 
-<!-- Terminal -->
+<!-- Terminal (LORE) -->
 <div id="terminal" aria-hidden="true">
   <div class="termBox">
     <div class="termHeader">
       <div>LAB TERMINAL // ACCESS: GRANTED</div>
       <div class="dim">ESC para fechar</div>
     </div>
-    <div id="termLog" class="termLog"></div>
-    <div class="termInputRow">
-      <div class="termPrompt">></div>
-      <input id="termInput" autocomplete="off" spellcheck="false"
-        placeholder="help | fs | grain on/off | scan on/off | amb on/off | vol 0.7" />
+
+    <div id="termLog" class="termLog">
+      <div class="termLine dim">Pressione ESC para sair.</div>
+      <div class="termLine"><span class="cursor" aria-hidden="true">█</span></div>
     </div>
   </div>
 </div>
@@ -582,7 +567,6 @@ const volState = document.getElementById("volState");
 
 const terminal = document.getElementById("terminal");
 const termLog = document.getElementById("termLog");
-const termInput = document.getElementById("termInput");
 
 /* ===== FLAGS ===== */
 let fxGrainOn = true;
@@ -609,22 +593,19 @@ let readyToEnter = false;
 let enterShown = false;
 
 function showEnter(label="ENTER"){
-  // Sempre reabilita clique quando mostramos o ENTER
   enterBox.style.pointerEvents = "auto";
-  if (!enterShown) enterShown = true;
+  enterShown = true;
   enterBox.textContent = label;
   enterBox.classList.add("show");
 }
-
 function setLoadingStatus(t){ dynamicText.textContent = t; }
-
 function markReady(){
   if (readyToEnter) return;
   readyToEnter = true;
   showEnter("ENTER");
 }
 
-/* Segurança 1: se o vídeo demorar, libera mesmo assim */
+/* Segurança 1 */
 const SAFETY_TIMEOUT_MS = 9000;
 let safetyTimeout = setTimeout(() => {
   if (!readyToEnter) {
@@ -633,7 +614,7 @@ let safetyTimeout = setTimeout(() => {
   }
 }, SAFETY_TIMEOUT_MS);
 
-/* Segurança 2: se eventos não dispararem (alguns browsers), mostra ENTER rápido */
+/* Segurança 2 */
 setTimeout(() => {
   if (!enterBox.classList.contains("show")) {
     setLoadingStatus("AWAITING STREAM // MANUAL START ENABLED");
@@ -641,7 +622,6 @@ setTimeout(() => {
   }
 }, 2500);
 
-/* Eventos de carregamento */
 video.addEventListener("loadeddata", markReady, { once:true });
 video.addEventListener("canplay", markReady, { once:true });
 
@@ -678,7 +658,6 @@ volSlider.value = String(video.volume);
 function updateVolumeUI(){
   const pct = Math.round(Number(video.volume) * 100);
   volReadout.textContent = pct + "%";
-
   volumeHUD.style.setProperty("--bars-w", Math.max(6, pct) + "%");
   volumeHUD.style.setProperty("--bars-a", String(0.25 + (pct/100) * 0.55));
 
@@ -700,7 +679,6 @@ volSlider.addEventListener("input", () => {
 });
 updateVolumeUI();
 
-/* Mobile/touch: abrir/fechar */
 volIconBtn.addEventListener("click", (e) => {
   e.stopPropagation();
   volumeHUD.classList.toggle("open");
@@ -745,22 +723,74 @@ function triggerGlitch(){
   setTimeout(()=>document.body.classList.remove("glitch-on"), 700);
 }
 
-/* ===== TERMINAL ===== */
-function logLine(text, cls=""){
+/* ===== FX TOGGLES (mantidos, mas sem comandos) ===== */
+function setFX(){
+  document.getElementById("cinemaFX").style.display = fxGrainOn ? "" : "none";
+  document.querySelector(".scanlines").style.display = fxScanOn ? "" : "none";
+}
+setFX();
+
+/* ===== TERMINAL (LORE + TYPING) ===== */
+function clearTerminal(){ termLog.innerHTML = ""; }
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+async function typeLine(text, cls="", speed=14){
   const div = document.createElement("div");
   div.className = "termLine " + cls;
-  div.textContent = text;
   termLog.appendChild(div);
+
+  for (let i=0; i<text.length; i++){
+    div.textContent += text[i];
+    await sleep(speed + Math.random()*18);
+    termLog.scrollTop = termLog.scrollHeight;
+  }
+}
+
+async function runLoreSequence(){
+  clearTerminal();
+
+  const cursor = document.createElement("div");
+  cursor.className = "termLine";
+  cursor.innerHTML = `<span class="cursor" aria-hidden="true">█</span>`;
+  termLog.appendChild(cursor);
+
+  cursor.before(Object.assign(document.createElement("div"), { className:"termLine dim", textContent:"LAB TERMINAL ONLINE" }));
+  cursor.before(Object.assign(document.createElement("div"), { className:"termLine dim", textContent:"HANDSHAKE: ACCEPTED // CLEARANCE: Δ" }));
+  cursor.before(Object.assign(document.createElement("div"), { className:"termLine dim", textContent:"LOG CHANNEL: PRIVATE // OBSERVERS: NONE" }));
+  await sleep(450);
+
+  const lines = [
+    { t: "…", cls:"dim", d: 520 },
+    { t: "So you found the interface.", cls:"", d: 520 },
+    { t: "Good. Curiosity is the only virtue I still tolerate.", cls:"", d: 650 },
+    { t: "Let us be clear: consent is a decorative concept.", cls:"dim", d: 700 },
+    { t: "Subject status: responsive.", cls:"", d: 520 },
+    { t: "Ethics module: disabled.", cls:"", d: 520 },
+    { t: "Pain threshold: adjustable.", cls:"dim", d: 650 },
+    { t: "If you are frightened, do not avert your eyes.", cls:"", d: 720 },
+    { t: "Observation requires devotion.", cls:"dim", d: 650 },
+    { t: "Proceeding with calibration.", cls:"", d: 600 },
+    { t: "— Il Dottore", cls:"dim", d: 720 },
+  ];
+
+  cursor.remove();
+
+  for (const L of lines){
+    await typeLine(L.t, L.cls, 16);
+    await sleep(L.d);
+  }
+
+  const cursor2 = document.createElement("div");
+  cursor2.className = "termLine";
+  cursor2.innerHTML = `<span class="cursor" aria-hidden="true">█</span>`;
+  termLog.appendChild(cursor2);
   termLog.scrollTop = termLog.scrollHeight;
 }
+
 function openTerminal(){
   terminal.classList.add("show");
   terminal.setAttribute("aria-hidden","false");
-  termInput.focus();
-  if (!termLog.childElementCount){
-    logLine("LAB TERMINAL ONLINE", "dim");
-    logLine("Type: help", "dim");
-  }
+  runLoreSequence().catch(()=>{});
 }
 function closeTerminal(){
   terminal.classList.remove("show");
@@ -775,82 +805,11 @@ document.addEventListener("keydown", (e) => {
     else openTerminal();
   }
 });
-
-function setFX(){
-  document.getElementById("cinemaFX").style.display = fxGrainOn ? "" : "none";
-  document.querySelector(".scanlines").style.display = fxScanOn ? "" : "none";
-}
-setFX();
-
-function setAmb(on){
-  ambOn = on;
-  if (!ambOn) ambience.pause();
-  else ambience.play().catch(()=>{});
-}
-
-function parseCmd(cmdRaw){
-  const cmd = cmdRaw.trim();
-  if (!cmd) return;
-
-  logLine("> " + cmd, "dim");
-  const parts = cmd.split(/\s+/);
-  const a = parts[0].toLowerCase();
-  const b = (parts[1] || "").toLowerCase();
-
-  if (a === "help"){
-    logLine("Commands:");
-    logLine("  fs               -> toggle fullscreen");
-    logLine("  grain on/off     -> cinematic grain");
-    logLine("  scan on/off      -> scanlines");
-    logLine("  amb on/off       -> ambience audio");
-    logLine("  vol 0.0-1.0      -> set video volume");
-    logLine("  glitch           -> trigger glitch flash");
-    return;
-  }
-  if (a === "fs"){ toggleFullscreen(); return; }
-  if (a === "glitch"){ triggerGlitch(); return; }
-
-  if (a === "grain"){
-    fxGrainOn = (b !== "off");
-    setFX();
-    logLine("grain: " + (fxGrainOn ? "ON" : "OFF"));
-    return;
-  }
-  if (a === "scan"){
-    fxScanOn = (b !== "off");
-    setFX();
-    logLine("scanlines: " + (fxScanOn ? "ON" : "OFF"));
-    return;
-  }
-  if (a === "amb"){
-    setAmb(b !== "off");
-    logLine("ambience: " + (ambOn ? "ON" : "OFF"));
-    return;
-  }
-  if (a === "vol"){
-    const v = Number(parts[1]);
-    if (Number.isFinite(v)){
-      video.volume = Math.min(1, Math.max(0, v));
-      volSlider.value = String(video.volume);
-      updateVolumeUI();
-      logLine("volume set: " + video.volume.toFixed(2));
-    } else logLine("invalid vol. example: vol 0.7");
-    return;
-  }
-
-  logLine("unknown command. type: help");
-}
-termInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter"){
-    parseCmd(termInput.value);
-    termInput.value = "";
-  }
-});
 terminal.addEventListener("click", (e) => {
   if (e.target === terminal) closeTerminal();
 });
 
-/* ===== HELPERS: esconder loading quando o vídeo realmente começou ===== */
+/* ===== HELPERS ===== */
 function hideLoading(){
   loadingScreen.style.opacity = "0";
   setTimeout(() => loadingScreen.style.display = "none", 600);
@@ -860,10 +819,8 @@ function hideLoading(){
 
 /* ===== ENTER / RETRY (ROBUSTO) ===== */
 enterBox.onclick = async () => {
-  // evita double click louco
   enterBox.style.pointerEvents = "none";
 
-  // RETRY
   if (enterBox.textContent === "RETRY") {
     spinner.style.display = "";
     setLoadingStatus("RECALIBRATING STREAM...");
@@ -881,36 +838,26 @@ enterBox.onclick = async () => {
       }
     }, SAFETY_TIMEOUT_MS);
 
-    // reabilita clique
     setTimeout(() => enterBox.style.pointerEvents = "auto", 200);
     return;
   }
 
   try {
-    // 1) Começa o vídeo principal (isso é o que decide a transição)
     await video.play();
-
-    // 2) Blur e ambience NUNCA podem travar o fluxo
     videoBlur.play().catch(()=>{});
     if (ambOn) ambience.play().catch(()=>{});
 
     updateVolumeUI();
     triggerGlitch();
 
-    // 3) Se o vídeo está tocando, some com o loading
-    if (!video.paused) {
-      hideLoading();
-    } else {
-      // fallback muito raro
-      throw new Error("Video did not start");
-    }
+    if (!video.paused) hideLoading();
+    else throw new Error("Video did not start");
 
   } catch (err) {
     spinner.style.display = "none";
     setLoadingStatus("PLAYBACK BLOCKED // CLICK AGAIN");
     showEnter("ENTER");
   } finally {
-    // reabilita clique se ainda estiver em loading
     if (loadingScreen.style.display !== "none") {
       enterBox.style.pointerEvents = "auto";
     }
