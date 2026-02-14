@@ -59,7 +59,7 @@ body{
   opacity:.75;
 }
 
-/* Grain + vinheta + leve aberração */
+/* Grain + vinheta */
 #cinemaFX{
   position:fixed;
   inset:0;
@@ -99,7 +99,7 @@ body{
   100%{transform:translate(0,0)}
 }
 
-/* Glitch flash (aparece só na entrada) */
+/* Glitch flash (só na entrada) */
 #glitchFlash{
   position:fixed;
   inset:0;
@@ -187,7 +187,6 @@ body{
 }
 @keyframes blink{0%,100%{opacity:.4}50%{opacity:.12}}
 
-/* Top-right coords */
 #coordsHUD{
   position:fixed;
   top:18px;
@@ -203,7 +202,6 @@ body{
 #coordsHUD .blink{animation:coordsBlink 2.8s infinite}
 @keyframes coordsBlink{0%,100%{opacity:.55}50%{opacity:.15}}
 
-/* Left technical overlay */
 #techHUD{
   position:fixed;
   top:80px;
@@ -220,7 +218,6 @@ body{
 #techHUD .value{opacity:.9; color:rgba(207,239,255,.95)}
 #techHUD .sep{opacity:.25}
 
-/* Fullscreen + Terminal tiny buttons (top center) */
 #topControls{
   position:fixed;
   top:16px;
@@ -373,8 +370,6 @@ body{
   letter-spacing:3px;
   opacity:.65;
 }
-
-/* barras reagindo ao volume (a largura/opacity é controlada via CSS var) */
 .vol-bars{
   width:70px;
   height:10px;
@@ -386,7 +381,7 @@ body{
   transition: clip-path .08s linear;
 }
 
-/* ========= TERMINAL (MENU SECRETO) ========= */
+/* ========= TERMINAL ========= */
 #terminal{
   position:fixed;
   inset:0;
@@ -462,7 +457,7 @@ body{
 }
 @media (max-width: 768px){
   :root{ --blur-amount: 55px; }
-  #techHUD{display:none;} /* economiza em mobile */
+  #techHUD{display:none;}
 }
 </style>
 </head>
@@ -477,9 +472,8 @@ body{
   <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4" />
 </video>
 
-<!-- Áudio ambiente (só toca depois do ENTER por política do navegador) -->
+<!-- Áudio ambiente: troque o src por um mp3/ogg seu se quiser -->
 <audio id="ambience" preload="auto" loop>
-  <!-- troque o src por um arquivo seu (mp3/ogg) -->
   <source src="https://files.catbox.moe/3q1h1x.mp3" type="audio/mpeg">
 </audio>
 
@@ -515,7 +509,7 @@ body{
   <button class="ctrlBtn" id="btnTerm" title="Terminal">⌁</button>
 </div>
 
-<!-- Volume HUD (Dottore) -->
+<!-- Volume HUD -->
 <div id="volumeHUD" class="vol" aria-label="Controle de volume" style="--bars-w:50%; --bars-a:.55;">
   <button id="volIconBtn" class="vol-btn" type="button" aria-label="Abrir controle de volume">
     <svg class="vol-svg" viewBox="0 0 48 48" aria-hidden="true">
@@ -552,7 +546,8 @@ body{
     <div id="termLog" class="termLog"></div>
     <div class="termInputRow">
       <div class="termPrompt">></div>
-      <input id="termInput" autocomplete="off" spellcheck="false" placeholder="help | fs | grain on/off | scan on/off | amb on/off | vol 0.7" />
+      <input id="termInput" autocomplete="off" spellcheck="false"
+        placeholder="help | fs | grain on/off | scan on/off | amb on/off | vol 0.7" />
     </div>
   </div>
 </div>
@@ -589,12 +584,12 @@ const terminal = document.getElementById("terminal");
 const termLog = document.getElementById("termLog");
 const termInput = document.getElementById("termInput");
 
-/* ===== FLAGS (não quebra nada) ===== */
+/* ===== FLAGS ===== */
 let fxGrainOn = true;
 let fxScanOn = true;
 let ambOn = true;
 
-/* ===== ROTATING LOADING TEXT ===== */
+/* ===== LOADING TEXT ===== */
 const messages = [
   "INITIALIZING EXPERIMENT...",
   "STABILIZING MEMORY FRAGMENTS...",
@@ -614,18 +609,22 @@ let readyToEnter = false;
 let enterShown = false;
 
 function showEnter(label="ENTER"){
-  if (enterShown) return;
-  enterShown = true;
+  // Sempre reabilita clique quando mostramos o ENTER
+  enterBox.style.pointerEvents = "auto";
+  if (!enterShown) enterShown = true;
   enterBox.textContent = label;
   enterBox.classList.add("show");
 }
+
 function setLoadingStatus(t){ dynamicText.textContent = t; }
+
 function markReady(){
   if (readyToEnter) return;
   readyToEnter = true;
   showEnter("ENTER");
 }
 
+/* Segurança 1: se o vídeo demorar, libera mesmo assim */
 const SAFETY_TIMEOUT_MS = 9000;
 let safetyTimeout = setTimeout(() => {
   if (!readyToEnter) {
@@ -634,6 +633,15 @@ let safetyTimeout = setTimeout(() => {
   }
 }, SAFETY_TIMEOUT_MS);
 
+/* Segurança 2: se eventos não dispararem (alguns browsers), mostra ENTER rápido */
+setTimeout(() => {
+  if (!enterBox.classList.contains("show")) {
+    setLoadingStatus("AWAITING STREAM // MANUAL START ENABLED");
+    showEnter("ENTER");
+  }
+}, 2500);
+
+/* Eventos de carregamento */
 video.addEventListener("loadeddata", markReady, { once:true });
 video.addEventListener("canplay", markReady, { once:true });
 
@@ -641,9 +649,7 @@ function onVideoError(){
   clearTimeout(safetyTimeout);
   spinner.style.display = "none";
   setLoadingStatus("ERROR // DATA CORRUPTED // TAP TO RETRY");
-  enterBox.textContent = "RETRY";
-  enterBox.classList.add("show");
-  enterBox.style.pointerEvents = "auto";
+  showEnter("RETRY");
 }
 video.addEventListener("error", onVideoError);
 videoBlur.addEventListener("error", onVideoError);
@@ -652,7 +658,7 @@ videoBlur.addEventListener("error", onVideoError);
 video.addEventListener("play", () => { videoBlur.play().catch(()=>{}); });
 video.addEventListener("pause", () => { try{ videoBlur.pause(); }catch(e){} });
 
-/* ===== VISIBILITY (pausa / volta) ===== */
+/* ===== VISIBILITY ===== */
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     try{ video.pause(); }catch(e){}
@@ -665,7 +671,7 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
-/* ===== VOLUME + HUD REACTION ===== */
+/* ===== VOLUME UI ===== */
 video.volume = 0.7;
 volSlider.value = String(video.volume);
 
@@ -673,7 +679,6 @@ function updateVolumeUI(){
   const pct = Math.round(Number(video.volume) * 100);
   volReadout.textContent = pct + "%";
 
-  // barras reagem (largura + intensidade)
   volumeHUD.style.setProperty("--bars-w", Math.max(6, pct) + "%");
   volumeHUD.style.setProperty("--bars-a", String(0.25 + (pct/100) * 0.55));
 
@@ -687,7 +692,6 @@ function updateVolumeUI(){
     volState.style.color = "rgba(207,239,255,.9)";
   }
 
-  // áudio ambiente acompanha o vídeo (bem mais baixo)
   ambience.volume = Math.min(0.35, Math.max(0.02, Number(video.volume) * 0.25));
 }
 volSlider.addEventListener("input", () => {
@@ -696,20 +700,18 @@ volSlider.addEventListener("input", () => {
 });
 updateVolumeUI();
 
-/* Mobile/touch: abrir/fechar no clique do ícone */
+/* Mobile/touch: abrir/fechar */
 volIconBtn.addEventListener("click", (e) => {
   e.stopPropagation();
   volumeHUD.classList.toggle("open");
 });
 document.addEventListener("click", () => volumeHUD.classList.remove("open"));
 
-/* ===== TECH HUD DYNAMIC (bem leve) ===== */
+/* ===== TECH HUD DYNAMIC ===== */
 function pad2(n){ return String(n).padStart(2,"0"); }
 function tickTech(){
   const d = new Date();
   sysClock.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
-
-  // estados “fake” mas convincentes
   const r = Math.random();
   sysStream.textContent = video.readyState >= 3 ? "STABLE" : (video.readyState ? "BUFFERING" : "OFFLINE");
   sysNeural.textContent = r > 0.92 ? "ANOMALY DETECTED" : (r > 0.75 ? "SYNCING" : "CALIBRATED");
@@ -717,7 +719,6 @@ function tickTech(){
 setInterval(tickTech, 900);
 tickTech();
 
-/* coords piscando (fake) */
 function rndCoord(){
   const a = (Math.random()*180 - 90).toFixed(4);
   const b = (Math.random()*360 - 180).toFixed(4);
@@ -730,19 +731,15 @@ rndCoord();
 /* ===== FULLSCREEN ===== */
 async function toggleFullscreen(){
   try{
-    if (!document.fullscreenElement) {
-      await document.documentElement.requestFullscreen();
-    } else {
-      await document.exitFullscreen();
-    }
+    if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+    else await document.exitFullscreen();
   } catch(e){}
 }
 btnFS.addEventListener("click", toggleFullscreen);
 
-/* ===== GLITCH TRIGGER (entrada) ===== */
+/* ===== GLITCH ===== */
 function triggerGlitch(){
   document.body.classList.remove("glitch-on");
-  // reflow rápido
   void document.body.offsetWidth;
   document.body.classList.add("glitch-on");
   setTimeout(()=>document.body.classList.remove("glitch-on"), 700);
@@ -796,7 +793,6 @@ function parseCmd(cmdRaw){
   if (!cmd) return;
 
   logLine("> " + cmd, "dim");
-
   const parts = cmd.split(/\s+/);
   const a = parts[0].toLowerCase();
   const b = (parts[1] || "").toLowerCase();
@@ -838,15 +834,12 @@ function parseCmd(cmdRaw){
       volSlider.value = String(video.volume);
       updateVolumeUI();
       logLine("volume set: " + video.volume.toFixed(2));
-    } else {
-      logLine("invalid vol. example: vol 0.7");
-    }
+    } else logLine("invalid vol. example: vol 0.7");
     return;
   }
 
   logLine("unknown command. type: help");
 }
-
 termInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter"){
     parseCmd(termInput.value);
@@ -854,16 +847,23 @@ termInput.addEventListener("keydown", (e) => {
   }
 });
 terminal.addEventListener("click", (e) => {
-  // clicar fora da caixa fecha
   if (e.target === terminal) closeTerminal();
 });
 
-/* ===== ENTER / RETRY ===== */
+/* ===== HELPERS: esconder loading quando o vídeo realmente começou ===== */
+function hideLoading(){
+  loadingScreen.style.opacity = "0";
+  setTimeout(() => loadingScreen.style.display = "none", 600);
+  clearInterval(msgTimer);
+  sysSubject.textContent = "ACTIVE";
+}
+
+/* ===== ENTER / RETRY (ROBUSTO) ===== */
 enterBox.onclick = async () => {
-  // evita double-click bug
+  // evita double click louco
   enterBox.style.pointerEvents = "none";
 
-  // modo retry
+  // RETRY
   if (enterBox.textContent === "RETRY") {
     spinner.style.display = "";
     setLoadingStatus("RECALIBRATING STREAM...");
@@ -881,45 +881,40 @@ enterBox.onclick = async () => {
       }
     }, SAFETY_TIMEOUT_MS);
 
-    // reativa clique
-    setTimeout(() => enterBox.style.pointerEvents = "", 200);
+    // reabilita clique
+    setTimeout(() => enterBox.style.pointerEvents = "auto", 200);
     return;
   }
 
   try {
-    // tenta tocar vídeos (o blur pode falhar em alguns browsers, não pode travar o fluxo)
+    // 1) Começa o vídeo principal (isso é o que decide a transição)
     await video.play();
-    videoBlur.play().catch(()=>{});
 
-    // áudio ambiente: nunca pode impedir a transição
+    // 2) Blur e ambience NUNCA podem travar o fluxo
+    videoBlur.play().catch(()=>{});
     if (ambOn) ambience.play().catch(()=>{});
 
-    // só agora fazemos efeitos
     updateVolumeUI();
     triggerGlitch();
 
-    // ESCONDE SEMPRE a tela assim que o vídeo estiver tocando
+    // 3) Se o vídeo está tocando, some com o loading
     if (!video.paused) {
-      loadingScreen.style.opacity = "0";
-      setTimeout(() => loadingScreen.style.display = "none", 600);
-      clearInterval(msgTimer);
-      sysSubject.textContent = "ACTIVE";
+      hideLoading();
     } else {
-      // fallback raro: se por algum motivo o vídeo não tocou
+      // fallback muito raro
       throw new Error("Video did not start");
     }
 
   } catch (err) {
-    // se der ruim, libera clique de novo e não prende o user
-    enterBox.style.pointerEvents = "";
     spinner.style.display = "none";
     setLoadingStatus("PLAYBACK BLOCKED // CLICK AGAIN");
-    enterShown = false;
-    enterBox.classList.add("show");
-    enterBox.style.pointerEvents = "auto";
+    showEnter("ENTER");
+  } finally {
+    // reabilita clique se ainda estiver em loading
+    if (loadingScreen.style.display !== "none") {
+      enterBox.style.pointerEvents = "auto";
+    }
   }
-};
-
 };
 </script>
 
