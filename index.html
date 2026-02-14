@@ -9,7 +9,6 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-
 body{
   background:black;
   overflow:hidden;
@@ -17,23 +16,18 @@ body{
   color:white;
 }
 
-/* BLUR FUNDO */
+/* ========= VIDEO LAYERS ========= */
 #videoBlur{
   position:fixed;
   inset:-20%;
   width:140%;
   height:140%;
   object-fit:cover;
-
-  /* performance: blur é caro, mas mantemos e ajudamos o navegador */
   filter: blur(var(--blur-amount, 90px)) brightness(.5) saturate(1.5);
   will-change: transform, filter;
   transform: translateZ(0);
-
   z-index:-5;
 }
-
-/* VIDEO PRINCIPAL */
 #video{
   position:fixed;
   inset:0;
@@ -43,24 +37,12 @@ body{
   z-index:-4;
   background:black;
 
-  /* máscara suave nas bordas pra sumir com “barras” */
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 8%,
-    black 92%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 8%,
-    black 92%,
-    transparent 100%
-  );
+  /* máscara suave nas bordas (some com barras “feias”) */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
 
-/* SCANLINES */
+/* ========= FX OVERLAYS ========= */
 .scanlines{
   position:fixed;
   inset:0;
@@ -72,10 +54,77 @@ body{
     transparent 3px
   );
   pointer-events:none;
-  z-index:-1;
+  z-index:3;
+  mix-blend-mode:overlay;
+  opacity:.75;
 }
 
-/* LOADING */
+/* Grain + vinheta + leve aberração */
+#cinemaFX{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:4;
+}
+#cinemaFX::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+  opacity:.08;
+  mix-blend-mode:overlay;
+  transform: translateZ(0);
+  animation:grain 5s steps(10) infinite;
+}
+#cinemaFX::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 50% 45%, transparent 0 55%, rgba(0,0,0,.55) 78%, rgba(0,0,0,.85) 100%),
+    linear-gradient(90deg, rgba(0,200,255,.05), transparent 35%, transparent 65%, rgba(0,200,255,.04));
+  opacity:.65;
+}
+@keyframes grain{
+  0%{transform:translate(0,0)}
+  10%{transform:translate(-2%, -3%)}
+  20%{transform:translate(-4%, 2%)}
+  30%{transform:translate(3%, -2%)}
+  40%{transform:translate(2%, 4%)}
+  50%{transform:translate(-3%, 2%)}
+  60%{transform:translate(4%, 0%)}
+  70%{transform:translate(0%, 3%)}
+  80%{transform:translate(-2%, -2%)}
+  90%{transform:translate(3%, 1%)}
+  100%{transform:translate(0,0)}
+}
+
+/* Glitch flash (aparece só na entrada) */
+#glitchFlash{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9;
+  opacity:0;
+  background:
+    linear-gradient(90deg, rgba(0,200,255,.12), transparent 35%, rgba(255,90,90,.08)),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 1px, transparent 1px 4px);
+  mix-blend-mode:screen;
+}
+.glitch-on #glitchFlash{
+  animation:glitchFlash .55s steps(6) 1;
+}
+@keyframes glitchFlash{
+  0%{opacity:0}
+  10%{opacity:1; transform:translateX(8px)}
+  25%{opacity:.35; transform:translateX(-10px)}
+  40%{opacity:1; transform:translateX(6px)}
+  60%{opacity:.2; transform:translateX(-5px)}
+  80%{opacity:.9; transform:translateX(2px)}
+  100%{opacity:0; transform:none}
+}
+
+/* ========= LOADING ========= */
 #loadingScreen{
   position:fixed;
   inset:0;
@@ -87,7 +136,6 @@ body{
   z-index:10;
   transition:opacity .6s ease;
 }
-
 .loading-text{
   letter-spacing:6px;
   margin-bottom:20px;
@@ -95,28 +143,17 @@ body{
   opacity:.8;
   text-align:center;
   animation:flicker 2s infinite;
-  max-width: 90vw;
+  max-width:90vw;
 }
-
-@keyframes flicker{
-  0%,100%{opacity:.8}
-  50%{opacity:1}
-}
-
+@keyframes flicker{0%,100%{opacity:.8}50%{opacity:1}}
 .spinner{
-  width:40px;
-  height:40px;
+  width:40px;height:40px;
   border:3px solid rgba(255,255,255,.1);
   border-top:3px solid #00d4ff;
   border-radius:50%;
   animation:spin 1s linear infinite;
 }
-
-@keyframes spin{
-  to{ transform:rotate(360deg); }
-}
-
-/* ENTER */
+@keyframes spin{to{transform:rotate(360deg)}}
 #enterBox{
   margin-top:40px;
   padding:18px 70px;
@@ -135,13 +172,9 @@ body{
   cursor:pointer;
   user-select:none;
 }
+#enterBox.show{opacity:1; pointer-events:auto;}
 
-#enterBox.show{
-  opacity:1;
-  pointer-events:auto;
-}
-
-/* HUD */
+/* ========= HUDS ========= */
 .hud{
   position:fixed;
   bottom:20px;
@@ -150,14 +183,72 @@ body{
   opacity:.4;
   letter-spacing:2px;
   animation:blink 4s infinite;
+  z-index:6;
 }
+@keyframes blink{0%,100%{opacity:.4}50%{opacity:.12}}
 
-@keyframes blink{
-  0%,100%{opacity:.4}
-  50%{opacity:.1}
+/* Top-right coords */
+#coordsHUD{
+  position:fixed;
+  top:18px;
+  right:22px;
+  font-size:10px;
+  letter-spacing:2px;
+  opacity:.45;
+  z-index:6;
+  text-align:right;
+  user-select:none;
 }
+#coordsHUD .line{opacity:.7}
+#coordsHUD .blink{animation:coordsBlink 2.8s infinite}
+@keyframes coordsBlink{0%,100%{opacity:.55}50%{opacity:.15}}
 
-/* ===== VOLUME (DOTTORE HUD) ===== */
+/* Left technical overlay */
+#techHUD{
+  position:fixed;
+  top:80px;
+  left:24px;
+  width:min(360px, 42vw);
+  font-size:10px;
+  letter-spacing:2px;
+  opacity:.35;
+  z-index:6;
+  user-select:none;
+  line-height:1.55;
+}
+#techHUD .tag{opacity:.85}
+#techHUD .value{opacity:.9; color:rgba(207,239,255,.95)}
+#techHUD .sep{opacity:.25}
+
+/* Fullscreen + Terminal tiny buttons (top center) */
+#topControls{
+  position:fixed;
+  top:16px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:10px;
+  z-index:7;
+  opacity:.35;
+  transition:.2s ease;
+}
+#topControls:hover{opacity:1}
+.ctrlBtn{
+  width:34px;height:28px;
+  border-radius:8px;
+  border:1px solid rgba(0,200,255,.35);
+  background:rgba(0,0,0,.35);
+  backdrop-filter: blur(14px);
+  color:rgba(207,239,255,.9);
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  font-size:12px;
+  letter-spacing:2px;
+}
+.ctrlBtn:active{transform:translateY(1px)}
+
+/* ========= VOLUME (DOTTORE HUD) ========= */
 #volumeHUD{
   position:fixed;
   top:22px;
@@ -173,8 +264,7 @@ body{
 
 .vol-btn{
   position:relative;
-  width:40px;
-  height:40px;
+  width:40px;height:40px;
   border-radius:12px;
   border:1px solid rgba(0,200,255,.45);
   background:linear-gradient(180deg, rgba(10,20,35,.65), rgba(5,10,18,.55));
@@ -183,27 +273,21 @@ body{
   place-items:center;
   cursor:pointer;
   padding:0;
-  box-shadow: 0 0 0 1px rgba(0,0,0,.25) inset;
+  box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
 }
 .vol-btn::before{
   content:"";
-  position:absolute;
-  inset:-1px;
+  position:absolute; inset:-1px;
   border-radius:12px;
   background:
     radial-gradient(circle at 30% 30%, rgba(0,200,255,.18), transparent 55%),
     radial-gradient(circle at 70% 70%, rgba(207,239,255,.10), transparent 55%);
   pointer-events:none;
 }
-.vol-svg{
-  width:26px;
-  height:26px;
-  filter: drop-shadow(0 0 10px rgba(0,200,255,.45));
-}
+.vol-svg{width:26px;height:26px;filter:drop-shadow(0 0 10px rgba(0,200,255,.45));}
 .vol-state{
   position:absolute;
-  left:50%;
-  bottom:-9px;
+  left:50%; bottom:-9px;
   transform:translateX(-50%);
   font-size:8px;
   letter-spacing:2px;
@@ -231,36 +315,16 @@ body{
   box-shadow: 0 12px 40px rgba(0,0,0,.45);
   overflow:hidden;
 }
-#volumeHUD:hover .vol-panel{
-  width:230px;
-  opacity:1;
-  pointer-events:auto;
-  padding:10px 12px;
-}
+#volumeHUD:hover .vol-panel,
 #volumeHUD.open .vol-panel{
-  width:230px;
+  width:240px;
   opacity:1;
   pointer-events:auto;
   padding:10px 12px;
 }
-
-.vol-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:8px;
-}
-.vol-title{
-  font-size:9px;
-  letter-spacing:3px;
-  opacity:.75;
-}
-.vol-readout{
-  font-size:10px;
-  letter-spacing:2px;
-  color:#cfefff;
-  text-shadow:0 0 10px rgba(0,200,255,.35);
-}
+.vol-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.vol-title{font-size:9px;letter-spacing:3px;opacity:.75;}
+.vol-readout{font-size:10px;letter-spacing:2px;color:#cfefff;text-shadow:0 0 10px rgba(0,200,255,.35);}
 
 #volSlider{
   width:100%;
@@ -271,39 +335,33 @@ body{
   cursor:pointer;
 }
 #volSlider::-webkit-slider-runnable-track{
-  height:6px;
-  border-radius:999px;
+  height:6px;border-radius:999px;
   background:
     linear-gradient(90deg, rgba(0,200,255,.95), rgba(0,200,255,.25)),
     repeating-linear-gradient(90deg, rgba(255,255,255,.14) 0 1px, transparent 1px 8px);
-  box-shadow: 0 0 18px rgba(0,200,255,.18);
+  box-shadow:0 0 18px rgba(0,200,255,.18);
   border:1px solid rgba(0,200,255,.25);
 }
 #volSlider::-webkit-slider-thumb{
   -webkit-appearance:none;
-  width:16px;
-  height:16px;
-  border-radius:6px;
+  width:16px;height:16px;border-radius:6px;
   margin-top:-6px;
   background: radial-gradient(circle at 30% 30%, rgba(207,239,255,1), rgba(0,200,255,.55));
   border:1px solid rgba(0,200,255,.65);
-  box-shadow: 0 0 18px rgba(0,200,255,.55);
+  box-shadow:0 0 18px rgba(0,200,255,.55);
 }
 #volSlider::-moz-range-track{
-  height:6px;
-  border-radius:999px;
+  height:6px;border-radius:999px;
   background:
     linear-gradient(90deg, rgba(0,200,255,.95), rgba(0,200,255,.25)),
     repeating-linear-gradient(90deg, rgba(255,255,255,.14) 0 1px, transparent 1px 8px);
   border:1px solid rgba(0,200,255,.25);
 }
 #volSlider::-moz-range-thumb{
-  width:16px;
-  height:16px;
-  border-radius:6px;
+  width:16px;height:16px;border-radius:6px;
   background: radial-gradient(circle at 30% 30%, rgba(207,239,255,1), rgba(0,200,255,.55));
   border:1px solid rgba(0,200,255,.65);
-  box-shadow: 0 0 18px rgba(0,200,255,.55);
+  box-shadow:0 0 18px rgba(0,200,255,.55);
 }
 
 .vol-footer{
@@ -315,24 +373,96 @@ body{
   letter-spacing:3px;
   opacity:.65;
 }
+
+/* barras reagindo ao volume (a largura/opacity é controlada via CSS var) */
 .vol-bars{
-  width:58px;
+  width:70px;
   height:10px;
   border-radius:6px;
   background:
-    repeating-linear-gradient(90deg, rgba(0,200,255,.55) 0 6px, transparent 6px 10px);
+    repeating-linear-gradient(90deg, rgba(0,200,255,var(--bars-a,.55)) 0 6px, transparent 6px 10px);
   filter: drop-shadow(0 0 10px rgba(0,200,255,.25));
+  clip-path: inset(0 calc(100% - var(--bars-w,50%)) 0 0 round 6px);
+  transition: clip-path .08s linear;
 }
 
-/* acessibilidade */
+/* ========= TERMINAL (MENU SECRETO) ========= */
+#terminal{
+  position:fixed;
+  inset:0;
+  z-index:30;
+  display:none;
+  background:rgba(0,0,0,.65);
+  backdrop-filter: blur(18px);
+}
+#terminal.show{display:block;}
+.termBox{
+  position:absolute;
+  left:24px;
+  bottom:24px;
+  width:min(720px, calc(100vw - 48px));
+  border-radius:16px;
+  border:1px solid rgba(0,200,255,.35);
+  background:linear-gradient(180deg, rgba(10,20,35,.75), rgba(0,0,0,.6));
+  box-shadow:0 18px 60px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+.termHeader{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 12px;
+  font-size:10px;
+  letter-spacing:3px;
+  opacity:.8;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.termLog{
+  max-height:min(46vh, 420px);
+  overflow:auto;
+  padding:12px;
+  font-size:11px;
+  line-height:1.55;
+  letter-spacing:1px;
+  opacity:.9;
+}
+.termLog .dim{opacity:.55}
+.termLine{margin:2px 0}
+.termInputRow{
+  display:flex;
+  gap:10px;
+  padding:10px 12px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.termPrompt{
+  font-size:11px;
+  letter-spacing:2px;
+  opacity:.75;
+  white-space:nowrap;
+  padding-top:6px;
+}
+#termInput{
+  flex:1;
+  border:none;
+  outline:none;
+  background:rgba(0,0,0,.35);
+  color:rgba(207,239,255,.95);
+  border:1px solid rgba(0,200,255,.22);
+  border-radius:10px;
+  padding:10px 12px;
+  font-family:'Orbitron', sans-serif;
+  font-size:11px;
+  letter-spacing:2px;
+}
+
+/* acessibilidade / performance */
 @media (prefers-reduced-motion: reduce){
-  .scanlines{ opacity: .35; }
-  .spinner{ animation:none; }
+  .scanlines{opacity:.35}
+  .spinner{animation:none}
+  #cinemaFX::before{animation:none}
 }
-
-/* blur mais leve em telas pequenas */
 @media (max-width: 768px){
   :root{ --blur-amount: 55px; }
+  #techHUD{display:none;} /* economiza em mobile */
 }
 </style>
 </head>
@@ -347,7 +477,15 @@ body{
   <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4" />
 </video>
 
+<!-- Áudio ambiente (só toca depois do ENTER por política do navegador) -->
+<audio id="ambience" preload="auto" loop>
+  <!-- troque o src por um arquivo seu (mp3/ogg) -->
+  <source src="https://files.catbox.moe/3q1h1x.mp3" type="audio/mpeg">
+</audio>
+
 <div class="scanlines"></div>
+<div id="cinemaFX"></div>
+<div id="glitchFlash"></div>
 
 <div id="loadingScreen">
   <div class="loading-text" id="dynamicText">INITIALIZING EXPERIMENT...</div>
@@ -359,8 +497,26 @@ body{
   NEURAL LINK ESTABLISHED // SUBJECT ONLINE
 </div>
 
+<div id="coordsHUD">
+  <div class="line blink" id="coordA">COORD: --.---- / --.----</div>
+  <div class="line" id="coordB">NODE: Σ-07 // LINK: STABLE</div>
+</div>
+
+<div id="techHUD">
+  <div class="termLine"><span class="tag">SYS</span> <span class="sep">//</span> <span class="value" id="sysClock">--:--:--</span></div>
+  <div class="termLine"><span class="tag">STREAM</span> <span class="sep">//</span> <span class="value" id="sysStream">BUFFERING</span></div>
+  <div class="termLine"><span class="tag">NEURAL</span> <span class="sep">//</span> <span class="value" id="sysNeural">CALIBRATING</span></div>
+  <div class="termLine"><span class="tag">ETHICS</span> <span class="sep">//</span> <span class="value">DISABLED</span></div>
+  <div class="termLine"><span class="tag">SUBJECT</span> <span class="sep">//</span> <span class="value" id="sysSubject">ONLINE</span></div>
+</div>
+
+<div id="topControls">
+  <button class="ctrlBtn" id="btnFS" title="Tela cheia">⛶</button>
+  <button class="ctrlBtn" id="btnTerm" title="Terminal">⌁</button>
+</div>
+
 <!-- Volume HUD (Dottore) -->
-<div id="volumeHUD" class="vol" aria-label="Controle de volume">
+<div id="volumeHUD" class="vol" aria-label="Controle de volume" style="--bars-w:50%; --bars-a:.55;">
   <button id="volIconBtn" class="vol-btn" type="button" aria-label="Abrir controle de volume">
     <svg class="vol-svg" viewBox="0 0 48 48" aria-hidden="true">
       <circle cx="24" cy="24" r="18" fill="none" stroke="rgba(0,200,255,.65)" stroke-width="2"/>
@@ -386,15 +542,59 @@ body{
   </div>
 </div>
 
+<!-- Terminal -->
+<div id="terminal" aria-hidden="true">
+  <div class="termBox">
+    <div class="termHeader">
+      <div>LAB TERMINAL // ACCESS: GRANTED</div>
+      <div class="dim">ESC para fechar</div>
+    </div>
+    <div id="termLog" class="termLog"></div>
+    <div class="termInputRow">
+      <div class="termPrompt">></div>
+      <input id="termInput" autocomplete="off" spellcheck="false" placeholder="help | fs | grain on/off | scan on/off | amb on/off | vol 0.7" />
+    </div>
+  </div>
+</div>
+
 <script>
+/* ===== ELEMENTS ===== */
 const video = document.getElementById("video");
 const videoBlur = document.getElementById("videoBlur");
+const ambience = document.getElementById("ambience");
+
 const enterBox = document.getElementById("enterBox");
 const loadingScreen = document.getElementById("loadingScreen");
 const dynamicText = document.getElementById("dynamicText");
 const spinner = document.getElementById("spinner");
 
-/* frases rotativas */
+const coordA = document.getElementById("coordA");
+const coordB = document.getElementById("coordB");
+
+const sysClock = document.getElementById("sysClock");
+const sysStream = document.getElementById("sysStream");
+const sysNeural = document.getElementById("sysNeural");
+const sysSubject = document.getElementById("sysSubject");
+
+const btnFS = document.getElementById("btnFS");
+const btnTerm = document.getElementById("btnTerm");
+
+const volumeHUD = document.getElementById("volumeHUD");
+const volSlider = document.getElementById("volSlider");
+const volIconBtn = document.getElementById("volIconBtn");
+const volReadout = document.getElementById("volReadout");
+const volState = document.getElementById("volState");
+
+const terminal = document.getElementById("terminal");
+const termLog = document.getElementById("termLog");
+const termInput = document.getElementById("termInput");
+
+/* ===== FLAGS (não quebra nada) ===== */
+let fxGrainOn = true;
+let fxScanOn = true;
+let ambOn = true;
+
+/* ===== ROTATING LOADING TEXT ===== */
 const messages = [
   "INITIALIZING EXPERIMENT...",
   "STABILIZING MEMORY FRAGMENTS...",
@@ -403,35 +603,29 @@ const messages = [
   "SUBJECT AWARENESS: IRRELEVANT",
   "PROCEEDING WITHOUT CONSENT..."
 ];
-
 let msgIndex = 0;
 const msgTimer = setInterval(() => {
   msgIndex = (msgIndex + 1) % messages.length;
   dynamicText.textContent = messages[msgIndex];
 }, 2200);
 
-/* ---- Estado / robustez ---- */
+/* ===== READY / SAFETY ===== */
 let readyToEnter = false;
 let enterShown = false;
 
-function showEnter(label = "ENTER") {
+function showEnter(label="ENTER"){
   if (enterShown) return;
   enterShown = true;
   enterBox.textContent = label;
   enterBox.classList.add("show");
 }
-
-function setLoadingStatus(text) {
-  dynamicText.textContent = text;
-}
-
-function markReady() {
+function setLoadingStatus(t){ dynamicText.textContent = t; }
+function markReady(){
   if (readyToEnter) return;
   readyToEnter = true;
   showEnter("ENTER");
 }
 
-/* anti-loop: fallback caso demore demais */
 const SAFETY_TIMEOUT_MS = 9000;
 let safetyTimeout = setTimeout(() => {
   if (!readyToEnter) {
@@ -440,12 +634,10 @@ let safetyTimeout = setTimeout(() => {
   }
 }, SAFETY_TIMEOUT_MS);
 
-/* Eventos de carregamento do vídeo */
 video.addEventListener("loadeddata", markReady, { once:true });
 video.addEventListener("canplay", markReady, { once:true });
 
-/* Se der erro, vira RETRY */
-function onVideoError() {
+function onVideoError(){
   clearTimeout(safetyTimeout);
   spinner.style.display = "none";
   setLoadingStatus("ERROR // DATA CORRUPTED // TAP TO RETRY");
@@ -456,35 +648,34 @@ function onVideoError() {
 video.addEventListener("error", onVideoError);
 videoBlur.addEventListener("error", onVideoError);
 
-/* sincronizar blur com o principal */
+/* ===== SYNC BLUR ===== */
 video.addEventListener("play", () => { videoBlur.play().catch(()=>{}); });
 video.addEventListener("pause", () => { try{ videoBlur.pause(); }catch(e){} });
 
-/* Ao sair da aba: pausar. Ao voltar: tentar retomar */
+/* ===== VISIBILITY (pausa / volta) ===== */
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
-    try { video.pause(); } catch(e){}
-    try { videoBlur.pause(); } catch(e){}
+    try{ video.pause(); }catch(e){}
+    try{ videoBlur.pause(); }catch(e){}
+    try{ ambience.pause(); }catch(e){}
   } else {
     video.play().catch(()=>{});
     videoBlur.play().catch(()=>{});
+    if (ambOn) ambience.play().catch(()=>{});
   }
 });
 
-/* ===== Volume HUD (Dottore) ===== */
-const volSlider = document.getElementById("volSlider");
-const volIconBtn = document.getElementById("volIconBtn");
-const volReadout = document.getElementById("volReadout");
-const volState = document.getElementById("volState");
-const volumeHUD = document.getElementById("volumeHUD");
-
-/* volume inicial */
+/* ===== VOLUME + HUD REACTION ===== */
 video.volume = 0.7;
 volSlider.value = String(video.volume);
 
 function updateVolumeUI(){
   const pct = Math.round(Number(video.volume) * 100);
   volReadout.textContent = pct + "%";
+
+  // barras reagem (largura + intensidade)
+  volumeHUD.style.setProperty("--bars-w", Math.max(6, pct) + "%");
+  volumeHUD.style.setProperty("--bars-a", String(0.25 + (pct/100) * 0.55));
 
   if (pct === 0) {
     volState.textContent = "MUTED";
@@ -495,6 +686,9 @@ function updateVolumeUI(){
     volState.style.borderColor = "rgba(0,200,255,.35)";
     volState.style.color = "rgba(207,239,255,.9)";
   }
+
+  // áudio ambiente acompanha o vídeo (bem mais baixo)
+  ambience.volume = Math.min(0.35, Math.max(0.02, Number(video.volume) * 0.25));
 }
 volSlider.addEventListener("input", () => {
   video.volume = Number(volSlider.value);
@@ -507,11 +701,164 @@ volIconBtn.addEventListener("click", (e) => {
   e.stopPropagation();
   volumeHUD.classList.toggle("open");
 });
-document.addEventListener("click", () => {
-  volumeHUD.classList.remove("open");
+document.addEventListener("click", () => volumeHUD.classList.remove("open"));
+
+/* ===== TECH HUD DYNAMIC (bem leve) ===== */
+function pad2(n){ return String(n).padStart(2,"0"); }
+function tickTech(){
+  const d = new Date();
+  sysClock.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+
+  // estados “fake” mas convincentes
+  const r = Math.random();
+  sysStream.textContent = video.readyState >= 3 ? "STABLE" : (video.readyState ? "BUFFERING" : "OFFLINE");
+  sysNeural.textContent = r > 0.92 ? "ANOMALY DETECTED" : (r > 0.75 ? "SYNCING" : "CALIBRATED");
+}
+setInterval(tickTech, 900);
+tickTech();
+
+/* coords piscando (fake) */
+function rndCoord(){
+  const a = (Math.random()*180 - 90).toFixed(4);
+  const b = (Math.random()*360 - 180).toFixed(4);
+  coordA.textContent = `COORD: ${a} / ${b}`;
+  coordB.textContent = `NODE: Σ-${Math.floor(1+Math.random()*99).toString().padStart(2,"0")} // LINK: ${Math.random()>.15?"STABLE":"DEGRADED"}`;
+}
+setInterval(rndCoord, 2200);
+rndCoord();
+
+/* ===== FULLSCREEN ===== */
+async function toggleFullscreen(){
+  try{
+    if (!document.fullscreenElement) {
+      await document.documentElement.requestFullscreen();
+    } else {
+      await document.exitFullscreen();
+    }
+  } catch(e){}
+}
+btnFS.addEventListener("click", toggleFullscreen);
+
+/* ===== GLITCH TRIGGER (entrada) ===== */
+function triggerGlitch(){
+  document.body.classList.remove("glitch-on");
+  // reflow rápido
+  void document.body.offsetWidth;
+  document.body.classList.add("glitch-on");
+  setTimeout(()=>document.body.classList.remove("glitch-on"), 700);
+}
+
+/* ===== TERMINAL ===== */
+function logLine(text, cls=""){
+  const div = document.createElement("div");
+  div.className = "termLine " + cls;
+  div.textContent = text;
+  termLog.appendChild(div);
+  termLog.scrollTop = termLog.scrollHeight;
+}
+function openTerminal(){
+  terminal.classList.add("show");
+  terminal.setAttribute("aria-hidden","false");
+  termInput.focus();
+  if (!termLog.childElementCount){
+    logLine("LAB TERMINAL ONLINE", "dim");
+    logLine("Type: help", "dim");
+  }
+}
+function closeTerminal(){
+  terminal.classList.remove("show");
+  terminal.setAttribute("aria-hidden","true");
+}
+btnTerm.addEventListener("click", openTerminal);
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeTerminal();
+  if (e.key === "`" || e.key.toLowerCase() === "t") {
+    if (terminal.classList.contains("show")) closeTerminal();
+    else openTerminal();
+  }
 });
 
-/* Clique ENTER / RETRY */
+function setFX(){
+  document.getElementById("cinemaFX").style.display = fxGrainOn ? "" : "none";
+  document.querySelector(".scanlines").style.display = fxScanOn ? "" : "none";
+}
+setFX();
+
+function setAmb(on){
+  ambOn = on;
+  if (!ambOn) ambience.pause();
+  else ambience.play().catch(()=>{});
+}
+
+function parseCmd(cmdRaw){
+  const cmd = cmdRaw.trim();
+  if (!cmd) return;
+
+  logLine("> " + cmd, "dim");
+
+  const parts = cmd.split(/\s+/);
+  const a = parts[0].toLowerCase();
+  const b = (parts[1] || "").toLowerCase();
+
+  if (a === "help"){
+    logLine("Commands:");
+    logLine("  fs               -> toggle fullscreen");
+    logLine("  grain on/off     -> cinematic grain");
+    logLine("  scan on/off      -> scanlines");
+    logLine("  amb on/off       -> ambience audio");
+    logLine("  vol 0.0-1.0      -> set video volume");
+    logLine("  glitch           -> trigger glitch flash");
+    return;
+  }
+  if (a === "fs"){ toggleFullscreen(); return; }
+  if (a === "glitch"){ triggerGlitch(); return; }
+
+  if (a === "grain"){
+    fxGrainOn = (b !== "off");
+    setFX();
+    logLine("grain: " + (fxGrainOn ? "ON" : "OFF"));
+    return;
+  }
+  if (a === "scan"){
+    fxScanOn = (b !== "off");
+    setFX();
+    logLine("scanlines: " + (fxScanOn ? "ON" : "OFF"));
+    return;
+  }
+  if (a === "amb"){
+    setAmb(b !== "off");
+    logLine("ambience: " + (ambOn ? "ON" : "OFF"));
+    return;
+  }
+  if (a === "vol"){
+    const v = Number(parts[1]);
+    if (Number.isFinite(v)){
+      video.volume = Math.min(1, Math.max(0, v));
+      volSlider.value = String(video.volume);
+      updateVolumeUI();
+      logLine("volume set: " + video.volume.toFixed(2));
+    } else {
+      logLine("invalid vol. example: vol 0.7");
+    }
+    return;
+  }
+
+  logLine("unknown command. type: help");
+}
+
+termInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter"){
+    parseCmd(termInput.value);
+    termInput.value = "";
+  }
+});
+terminal.addEventListener("click", (e) => {
+  // clicar fora da caixa fecha
+  if (e.target === terminal) closeTerminal();
+});
+
+/* ===== ENTER / RETRY ===== */
 enterBox.onclick = async () => {
   if (enterBox.textContent === "RETRY") {
     spinner.style.display = "";
@@ -520,7 +867,7 @@ enterBox.onclick = async () => {
     enterShown = false;
     readyToEnter = false;
 
-    try { video.load(); videoBlur.load(); } catch(e){}
+    try { video.load(); videoBlur.load(); ambience.load(); } catch(e){}
 
     clearTimeout(safetyTimeout);
     safetyTimeout = setTimeout(() => {
@@ -535,13 +882,17 @@ enterBox.onclick = async () => {
 
   try {
     await Promise.all([video.play(), videoBlur.play()]);
-    video.volume = Number(volSlider.value);
+    // áudio ambiente só depois de gesto do usuário
+    if (ambOn) await ambience.play().catch(()=>{});
     updateVolumeUI();
+
+    triggerGlitch();
 
     loadingScreen.style.opacity = "0";
     setTimeout(() => loadingScreen.style.display = "none", 600);
 
     clearInterval(msgTimer);
+    sysSubject.textContent = "ACTIVE";
   } catch (err) {
     spinner.style.display = "none";
     setLoadingStatus("PLAYBACK BLOCKED // CLICK AGAIN");
