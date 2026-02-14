@@ -84,6 +84,15 @@ body{
     linear-gradient(90deg, rgba(0,200,255,.05), transparent 35%, transparent 65%, rgba(0,200,255,.04));
   opacity:.65;
 }
+
+/* ✅ ALERT tint (bem discreto, sem poluir vídeo) */
+body.alert #cinemaFX::after{
+  background:
+    radial-gradient(circle at 50% 45%, transparent 0 55%, rgba(0,0,0,.55) 78%, rgba(0,0,0,.85) 100%),
+    linear-gradient(90deg, rgba(255,90,90,.08), transparent 35%, transparent 65%, rgba(255,90,90,.06));
+  opacity:.78;
+}
+
 @keyframes grain{
   0%{transform:translate(0,0)}
   10%{transform:translate(-2%, -3%)}
@@ -98,7 +107,7 @@ body{
   100%{transform:translate(0,0)}
 }
 
-/* Glitch flash (só na entrada) */
+/* Glitch flash (só na entrada e em eventos) */
 #glitchFlash{
   position:fixed;
   inset:0;
@@ -184,6 +193,7 @@ body{
 }
 #enterHint.show{opacity:.85;}
 
+/* scanner do loading (loop 5s) */
 #enterScan{
   position:absolute;
   inset:0;
@@ -202,12 +212,8 @@ body{
   transform:skewX(-14deg) translateX(-120%);
   filter: blur(1px);
 }
-#loadingScreen.scan-on #enterScan{
-  opacity:1;
-}
-#loadingScreen.scan-on #enterScan::before{
-  animation: enterScanPass .85s ease 1;
-}
+#loadingScreen.scan-on #enterScan{ opacity:1; }
+#loadingScreen.scan-on #enterScan::before{ animation: enterScanPass .85s ease 1; }
 @keyframes enterScanPass{
   0%{transform:skewX(-14deg) translateX(-120%); opacity:0}
   15%{opacity:1}
@@ -272,7 +278,6 @@ body{
   filter: drop-shadow(0 0 18px rgba(0,200,255,.22));
 }
 #topControls:hover{opacity:1}
-
 .ctrlBtn{
   width:42px;height:34px;
   border-radius:12px;
@@ -552,7 +557,68 @@ body{
   white-space:nowrap;
 }
 
-/* ========= PRESENÇA (canto) ========= */
+/* ========= EXPERIMENT PANEL (nova UI) ========= */
+#expPanel{
+  position:fixed;
+  right:22px;
+  bottom:22px;
+  z-index:28;
+  width:min(360px, calc(100vw - 44px));
+  border-radius:16px;
+  border:1px solid rgba(0,200,255,.30);
+  background:linear-gradient(180deg, rgba(10,20,35,.78), rgba(0,0,0,.62));
+  backdrop-filter: blur(18px);
+  box-shadow:0 18px 60px rgba(0,0,0,.55);
+  overflow:hidden;
+  display:none;
+}
+#expPanel.show{display:block;}
+.expHeader{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 12px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  font-size:10px;
+  letter-spacing:3px;
+  opacity:.9;
+}
+.expHeader .dim{opacity:.6}
+.expBody{ padding:12px; }
+.expGrid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+.expBtn{
+  border-radius:14px;
+  padding:10px 12px;
+  border:1px solid rgba(0,200,255,.28);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(0,200,255,.08), transparent 60%),
+    linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.38));
+  color:rgba(207,239,255,.95);
+  cursor:pointer;
+  text-align:left;
+  font-family:'Orbitron', sans-serif;
+  letter-spacing:1px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
+}
+.expBtn:hover{ box-shadow:0 0 0 1px rgba(0,0,0,.25) inset, 0 0 22px rgba(0,200,255,.12); }
+.expName{ font-size:11px; letter-spacing:2px; }
+.expDesc{ margin-top:4px; font-size:10px; opacity:.65; letter-spacing:1px; line-height:1.35; }
+.expFooter{
+  padding:10px 12px;
+  border-top:1px solid rgba(255,255,255,.08);
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:9px;
+  letter-spacing:3px;
+  opacity:.65;
+}
+
+/* ========= PRESENÇA (só em eventos, sem spam) ========= */
 #presenceGhost{
   position:fixed;
   right:22px;
@@ -607,10 +673,8 @@ body{
 
 <div id="loadingScreen">
   <div id="enterScan" aria-hidden="true"></div>
-
   <div class="loading-text" id="dynamicText">INITIALIZING EXPERIMENT...</div>
   <div class="spinner" id="spinner"></div>
-
   <div id="enterBox">ENTER</div>
   <div id="enterHint">PRESS [ENTER] TO PROCEED</div>
 </div>
@@ -678,9 +742,47 @@ body{
   </div>
 </div>
 
+<!-- ✅ novo painel interativo -->
+<div id="expPanel" aria-hidden="true">
+  <div class="expHeader">
+    <div>EXPERIMENT PANEL // Δ</div>
+    <div class="dim">ESC para fechar</div>
+  </div>
+  <div class="expBody">
+    <div class="expGrid">
+      <button class="expBtn" data-exp="neural">
+        <div class="expName">NEURAL OVERRIDE</div>
+        <div class="expDesc">Suprime vontade. Converte resistência em obediência.</div>
+      </button>
+      <button class="expBtn" data-exp="memory">
+        <div class="expName">MEMORY EXTRACTION</div>
+        <div class="expDesc">Remove lembranças úteis. Mantém trauma como âncora.</div>
+      </button>
+      <button class="expBtn" data-exp="pain">
+        <div class="expName">PAIN CALIBRATION</div>
+        <div class="expDesc">Ajusta limite. Estabiliza resposta com reforço aversivo.</div>
+      </button>
+      <button class="expBtn" data-exp="identity">
+        <div class="expName">IDENTITY DISSOLUTION</div>
+        <div class="expDesc">Nome, história, crenças. Tudo vira ruído.</div>
+      </button>
+      <button class="expBtn" data-exp="ascend">
+        <div class="expName">ASCENSION TRIGGER</div>
+        <div class="expDesc">Força fase final. Você assiste. Você aprende.</div>
+      </button>
+    </div>
+  </div>
+  <div class="expFooter">
+    <span>Dica: use ↑↓ e ENTER</span>
+    <span>cancel</span>
+  </div>
+</div>
+
 <div id="presenceGhost" aria-hidden="true">…</div>
 
-<script>
+<!-- ===== PARTE 1 TERMINA AQUI ===== -->
+
+  <script>
 /* ===== ELEMENTS ===== */
 const video = document.getElementById("video");
 const videoBlur = document.getElementById("videoBlur");
@@ -714,11 +816,12 @@ const volState = document.getElementById("volState");
 
 const terminal = document.getElementById("terminal");
 const termLog = document.getElementById("termLog");
-
 const termInput = document.getElementById("termInput");
 const termPrompt = document.getElementById("termPrompt");
 const termHint = document.getElementById("termHint");
 
+const expPanel = document.getElementById("expPanel");
+const expButtons = Array.from(expPanel.querySelectorAll(".expBtn"));
 const presenceGhost = document.getElementById("presenceGhost");
 
 /* ===== FLAGS ===== */
@@ -742,54 +845,44 @@ const msgTimer = setInterval(() => {
 /* ===== READY / SAFETY ===== */
 let readyToEnter = false;
 let enterScanPlayed = false;
+let enterScanLoopTimer = null;
 
-/* ✅ scanner loop (a cada 5s) enquanto o loading estiver vivo */
-let scanLoop = null;
 function playEnterScan(){
   loadingScreen.classList.remove("scan-on");
   void loadingScreen.offsetWidth;
   loadingScreen.classList.add("scan-on");
   setTimeout(()=>loadingScreen.classList.remove("scan-on"), 1100);
 }
-function startScanLoop(){
-  if (scanLoop) return;
-  playEnterScan();
-  scanLoop = setInterval(() => {
+function startEnterScanLoop(){
+  if (enterScanLoopTimer) return;
+  enterScanLoopTimer = setInterval(() => {
     const loadingVisible = loadingScreen.style.display !== "none" && getComputedStyle(loadingScreen).display !== "none";
     if (!loadingVisible) return;
+    if (!enterBox.classList.contains("show")) return;
     playEnterScan();
   }, 5000);
 }
-function stopScanLoop(){
-  if (!scanLoop) return;
-  clearInterval(scanLoop);
-  scanLoop = null;
-  loadingScreen.classList.remove("scan-on");
+function stopEnterScanLoop(){
+  if (!enterScanLoopTimer) return;
+  clearInterval(enterScanLoopTimer);
+  enterScanLoopTimer = null;
 }
-
-function playEnterScanOnce(){
-  if (enterScanPlayed) return;
-  enterScanPlayed = true;
-  playEnterScan();
-}
-
 function setEnterHint(label){
-  if (label === "RETRY") {
-    enterHint.textContent = "PRESS [ENTER] TO RETRY";
-  } else {
-    enterHint.textContent = "PRESS [ENTER] TO PROCEED";
-  }
+  enterHint.textContent = (label === "RETRY") ? "PRESS [ENTER] TO RETRY" : "PRESS [ENTER] TO PROCEED";
   enterHint.classList.add("show");
 }
-
 function showEnter(label="ENTER"){
   enterBox.style.pointerEvents = "auto";
   enterBox.textContent = label;
   enterBox.classList.add("show");
-
   setEnterHint(label);
-  playEnterScanOnce();
-  startScanLoop();
+
+  // scanner: toca na primeira vez e depois loop a cada 5s
+  if (!enterScanPlayed){
+    enterScanPlayed = true;
+    playEnterScan();
+  }
+  startEnterScanLoop();
 }
 function setLoadingStatus(t){ dynamicText.textContent = t; }
 function markReady(){
@@ -846,111 +939,6 @@ document.addEventListener("visibilitychange", () => {
 video.volume = 0.7;
 volSlider.value = String(video.volume);
 
-/* ✅ Audio reactive + beep do terminal (seguro e leve) */
-let audioCtx = null;
-let ambSource = null;
-let ambGain = null;
-let ambFilter = null;
-let audioReactiveEnabled = false;
-let ambienceBaseVol = 0.18;
-let termAudioMode = false;
-
-function initAudioReactive(){
-  if (audioReactiveEnabled) return;
-  try{
-    const AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) return;
-
-    audioCtx = new AC();
-
-    // MediaElementSource: 1x por elemento
-    ambSource = audioCtx.createMediaElementSource(ambience);
-    ambGain = audioCtx.createGain();
-    ambFilter = audioCtx.createBiquadFilter();
-
-    ambFilter.type = "lowpass";
-    ambFilter.frequency.value = 12000;
-    ambFilter.Q.value = 0.7;
-
-    ambGain.gain.value = 1;
-
-    ambSource.connect(ambFilter);
-    ambFilter.connect(ambGain);
-    ambGain.connect(audioCtx.destination);
-
-    audioReactiveEnabled = true;
-    ambience.volume = 1; // mix controlado no gain
-    applyAmbienceMix();
-  }catch(e){
-    audioReactiveEnabled = false;
-  }
-}
-
-async function ensureAudioAwake(){
-  initAudioReactive();
-  if (audioCtx && audioCtx.state === "suspended"){
-    try{ await audioCtx.resume(); }catch(e){}
-  }
-}
-
-function applyAmbienceMix(){
-  const modeMul = termAudioMode ? 1.25 : 1.0;
-  const target = ambienceBaseVol * modeMul;
-
-  if (audioReactiveEnabled && ambGain){
-    ambGain.gain.value = Math.max(0.0, Math.min(1.0, target));
-    if (ambFilter){
-      ambFilter.frequency.value = termAudioMode ? 6800 : 12000;
-      ambFilter.Q.value = termAudioMode ? 1.1 : 0.7;
-    }
-  } else {
-    ambience.volume = Math.max(0.0, Math.min(0.35, target));
-  }
-}
-
-function pulseTerminalAudio(intensity=0.06){
-  if (!audioReactiveEnabled || !ambGain || !audioCtx) return;
-  const now = audioCtx.currentTime;
-  const base = Math.max(0.0, Math.min(1.0, ambienceBaseVol * (termAudioMode ? 1.25 : 1.0)));
-  const peak = Math.max(0.0, Math.min(1.0, base + intensity));
-
-  ambGain.gain.cancelScheduledValues(now);
-  ambGain.gain.setValueAtTime(ambGain.gain.value, now);
-  ambGain.gain.linearRampToValueAtTime(peak, now + 0.015);
-  ambGain.gain.linearRampToValueAtTime(base, now + 0.09);
-}
-
-/* beep curtinho (não depende do mp3) */
-function terminalBeep(freq=860, dur=0.03, vol=0.02){
-  if (!audioCtx) return;
-  try{
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type = "square";
-    o.frequency.value = freq;
-
-    const now = audioCtx.currentTime;
-    g.gain.setValueAtTime(0, now);
-    g.gain.linearRampToValueAtTime(vol, now + 0.005);
-    g.gain.linearRampToValueAtTime(0, now + dur);
-
-    o.connect(g);
-    g.connect(audioCtx.destination);
-
-    o.start(now);
-    o.stop(now + dur + 0.01);
-  }catch(e){}
-}
-
-function setTerminalAudioMode(on){
-  termAudioMode = !!on;
-  applyAmbienceMix();
-  if (termAudioMode){
-    pulseTerminalAudio(0.09);
-    terminalBeep(620, 0.035, 0.018);
-  }
-}
-
 function updateVolumeUI(){
   const pct = Math.round(Number(video.volume) * 100);
   volReadout.textContent = pct + "%";
@@ -967,8 +955,7 @@ function updateVolumeUI(){
     volState.style.color = "rgba(207,239,255,.9)";
   }
 
-  ambienceBaseVol = Math.min(0.35, Math.max(0.02, Number(video.volume) * 0.25));
-  applyAmbienceMix();
+  ambience.volume = Math.min(0.35, Math.max(0.02, Number(video.volume) * 0.25));
 }
 volSlider.addEventListener("input", () => {
   video.volume = Number(volSlider.value);
@@ -1020,7 +1007,20 @@ function triggerGlitch(){
   setTimeout(()=>document.body.classList.remove("glitch-on"), 700);
 }
 
-/* ===== Protocol ===== */
+/* ===== Presence Ghost (evento, sem spam) ===== */
+let ghostTimer = null;
+function ghost(text, ms=1100){
+  presenceGhost.textContent = text;
+  presenceGhost.classList.add("show");
+  presenceGhost.setAttribute("aria-hidden","false");
+  clearTimeout(ghostTimer);
+  ghostTimer = setTimeout(() => {
+    presenceGhost.classList.remove("show");
+    presenceGhost.setAttribute("aria-hidden","true");
+  }, ms);
+}
+
+/* ===== Protocol (base) ===== */
 const PROTOCOL_ENABLED = true;
 const Protocol = {
   started: false,
@@ -1042,140 +1042,48 @@ function clearProtocolTimers(){
   for (const t of Protocol.timers) clearTimeout(t);
   Protocol.timers.length = 0;
 }
+function startAscensionProtocol(){
+  if (!PROTOCOL_ENABLED) return;
+  if (Protocol.started) return;
+  Protocol.started = true;
+  clearProtocolTimers();
+  const first = Protocol.phases[0];
+  setProtocolHUD(first);
+  Protocol.lastPhase = first.name;
 
-/* ===== Terminal state (persistência) ===== */
-let termRunToken = 0;
-let termTyping = false;
-let termInteractive = false;
-
-/* ✅ NÃO resetar após concluir: cache do terminal */
-let termLoreCompleted = false;
-let termCacheHTML = "";
-
-/* ===== Presence inteligente ===== */
-const Presence = { timer: null, cooldown: false, lastTerminalOpen: 0 };
-
-function showPresence(text, ms=1400){
-  presenceGhost.textContent = text;
-  presenceGhost.classList.add("show");
-  setTimeout(()=>presenceGhost.classList.remove("show"), ms);
-}
-
-function presencePick(){
-  const phase = sysPhase.textContent || "BOOT";
-  const inTerminal = terminal.classList.contains("show");
-
-  const pools = {
-    BOOT: ["Silêncio.","Eu estou observando.","Você chegou cedo demais.","Curiosidade é um vício útil."],
-    "SUBJECT LOCK": ["Identidade: irrelevante.","Não finja que tem escolha.","Fique parado. Isso facilita.","Material registrado."],
-    CALIBRATION: ["Calibração em curso.","Respire. Eu preciso de estabilidade.","A dor é só um parâmetro.","Sua resistência é… mediana."],
-    ASCENSION: ["Você vai assistir de perto.","Controle total é só o começo.","Deus não pede permissão.","Protocolo ativo. Sem exceções."],
-    TERMINAL: ["Digite. Eu avalio.","Erros são… educativos.","Não improvise.","Você acha que isso é um jogo?"]
-  };
-
-  if (inTerminal) return pools.TERMINAL[(Math.random()*pools.TERMINAL.length)|0];
-  const key = pools[phase] ? phase : "BOOT";
-  const pool = pools[key] || pools.BOOT;
-  return pool[(Math.random()*pool.length)|0];
-}
-
-function schedulePresence(){
-  if (Presence.timer) clearTimeout(Presence.timer);
-  const delay = 45000 + Math.random()*60000;
-  Presence.timer = setTimeout(() => {
-    const loadingVisible = loadingScreen.style.display !== "none" && getComputedStyle(loadingScreen).display !== "none";
-    if (!loadingVisible && !Presence.cooldown){
-      const now = Date.now();
-      if (now - Presence.lastTerminalOpen > 2500){
-        Presence.cooldown = true;
-        showPresence(presencePick());
-        setTimeout(()=>Presence.cooldown = false, 9000);
-      }
-    }
-    schedulePresence();
-  }, delay);
-}
-
-function presenceOnPhase(ph){
-  if (Presence.cooldown) return;
-  if (Math.random() > 0.33) return;
-  Presence.cooldown = true;
-  showPresence(`// ${ph.name.replace("_"," ")} // ${ph.directive}`, 1600);
-  setTimeout(()=>Presence.cooldown = false, 9000);
-}
-
-function presenceOnTerminalOpen(){
-  Presence.lastTerminalOpen = Date.now();
-  if (Presence.cooldown) return;
-  Presence.cooldown = true;
-  showPresence("Abra o terminal. Eu preciso de respostas.", 1500);
-  setTimeout(()=>Presence.cooldown = false, 10000);
-}
-
-/* ===== Logs dinâmicos ===== */
-const DynLogs = { enabled: true, timer: null };
-function randomHex(n=4){
-  const chars = "0123456789ABCDEF";
-  let s = "";
-  for (let i=0;i<n;i++) s += chars[(Math.random()*chars.length)|0];
-  return s;
-}
-function dynLogLine(){
-  const phase = sysPhase.textContent || "BOOT";
-  const lines = [
-    `[SYS] kernel tick // ${pad2(new Date().getHours())}:${pad2(new Date().getMinutes())}:${pad2(new Date().getSeconds())}`,
-    `[NET] uplink Δ // jitter:${(Math.random()*3.2).toFixed(2)}ms`,
-    `[MEM] segment ${randomHex(3)} // stable`,
-    `[I/O] bus Σ-${String((Math.random()*99|0)+1).padStart(2,"0")} // ok`,
-    `[BIO] subject response // ${Math.random()>.2?"present":"latent"}`,
-    `[SEC] observer scan // none`,
-    `[LAB] protocol:${phase.replace(" ","_")} // locked`,
-    `[DBG] checksum ${randomHex(6)} // pass`
-  ];
-  return lines[(Math.random()*lines.length)|0];
-}
-
-function scheduleDynamicLogs(token){
-  if (DynLogs.timer) clearTimeout(DynLogs.timer);
-  if (!DynLogs.enabled) return;
-  if (!terminal.classList.contains("show")) return;
-  if (!termInteractive || termTyping) return;
-  if (token !== termRunToken) return;
-
-  const delay = 3200 + Math.random()*5200;
-  DynLogs.timer = setTimeout(() => {
-    if (terminal.classList.contains("show") && termInteractive && !termTyping && token === termRunToken && DynLogs.enabled){
-      terminalAppendDimLine(dynLogLine());
-      if (termAudioMode){ pulseTerminalAudio(0.03); terminalBeep(920, 0.02, 0.012); }
-    }
-    scheduleDynamicLogs(token);
-  }, delay);
-}
-function stopDynamicLogs(){
-  if (DynLogs.timer) clearTimeout(DynLogs.timer);
-  DynLogs.timer = null;
-}
-
-/* ===== Terminal helpers ===== */
-const LORE_SPEED = { header: 9, lang: 9, main: 13, post: 9 };
-
-function clearTerminal(){ termLog.innerHTML = ""; }
-
-function terminalAppendDimLine(text){
-  const div = document.createElement("div");
-  div.className = "termLine dim";
-  div.textContent = text;
-  termLog.appendChild(div);
-  termLog.scrollTop = termLog.scrollHeight;
-
-  // ✅ mantém cache quando já está “comandos”
-  if (termLoreCompleted){
-    termCacheHTML = termLog.innerHTML;
+  for (let i = 1; i < Protocol.phases.length; i++){
+    const ph = Protocol.phases[i];
+    const timer = setTimeout(() => {
+      setProtocolHUD(ph);
+    }, ph.whenMs);
+    Protocol.timers.push(timer);
   }
 }
 
+/* ===== Terminal state / persistence ===== */
+let termRunToken = 0;
+let termTyping = false;
+let termInteractive = false;
+let termBootCompleted = false;
+let termSnapshotHTML = "";   // ✅ persist after “commands”
+let lockdownEnabled = false;
+let isLocking = false;
+
+const LORE_SPEED = { header: 9, lang: 9, main: 13, post: 9 };
+
+function clearTerminal(){ termLog.innerHTML = ""; }
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 function ensureAlive(token){ return token === termRunToken && terminal.classList.contains("show"); }
+
+function terminalAppendLine(text, cls=""){
+  const div = document.createElement("div");
+  div.className = "termLine " + cls;
+  div.textContent = text;
+  termLog.appendChild(div);
+  termLog.scrollTop = termLog.scrollHeight;
+  return div;
+}
+function terminalAppendDimLine(text){ return terminalAppendLine(text, "dim"); }
 
 async function typeLine(text, cls="", speed=14, token=0){
   if (!ensureAlive(token)) return;
@@ -1186,17 +1094,12 @@ async function typeLine(text, cls="", speed=14, token=0){
   for (let i=0; i<text.length; i++){
     if (!ensureAlive(token)) return;
     div.textContent += text[i];
-
-    if (termAudioMode){
-      if (i % 3 === 0) pulseTerminalAudio(cls.includes("dim") ? 0.018 : 0.026);
-      if (i % 5 === 0) terminalBeep(cls.includes("dim") ? 740 : 860, 0.018, cls.includes("dim") ? 0.010 : 0.013);
-    }
-
+    // ✅ “áudio reage ao terminal”: micro duck/pulse durante digitação
+    pulseAudio(0.10);
     await sleep(speed + Math.random()*14);
     termLog.scrollTop = termLog.scrollHeight;
   }
 }
-
 async function typeGlitchPhraseOnly(token){
   const base = "Changing language to...";
   const variants = [
@@ -1208,17 +1111,12 @@ async function typeGlitchPhraseOnly(token){
     "Mudando idioma para..."
   ];
   if (!ensureAlive(token)) return;
-  const line = document.createElement("div");
-  line.className = "termLine dim";
-  line.textContent = base;
-  termLog.appendChild(line);
-  termLog.scrollTop = termLog.scrollHeight;
-
+  const line = terminalAppendDimLine(base);
   await sleep(130);
   for (let i=0; i<variants.length; i++){
     if (!ensureAlive(token)) return;
     line.textContent = variants[i];
-    if (termAudioMode){ pulseTerminalAudio(0.035); terminalBeep(980, 0.02, 0.012); }
+    pulseAudio(0.14);
     await sleep(70);
   }
   if (!ensureAlive(token)) return;
@@ -1226,6 +1124,7 @@ async function typeGlitchPhraseOnly(token){
   await sleep(200);
 }
 
+/* ===== Terminal input control ===== */
 function normalizeCmd(s){ return (s || "").trim().toLowerCase(); }
 function setInputEnabled(on){
   termInput.disabled = !on;
@@ -1239,6 +1138,48 @@ function focusTerminalInput(){
 }
 function printUserCmd(raw){ terminalAppendDimLine(`${termPrompt.textContent} ${raw}`); }
 
+/* ===== Audio react (safe, lightweight) ===== */
+let audioPulse = 0;
+let pulseTimer = null;
+
+function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+
+/* pulseAudio: aumenta levemente ambience e “tremor” do blur durante eventos/typing */
+function pulseAudio(amount=0.12, holdMs=220){
+  audioPulse = clamp(audioPulse + amount, 0, 0.65);
+
+  if (!pulseTimer){
+    pulseTimer = setInterval(() => {
+      audioPulse = Math.max(0, audioPulse - 0.06);
+      applyReactiveMix();
+      if (audioPulse <= 0.001){
+        clearInterval(pulseTimer);
+        pulseTimer = null;
+      }
+    }, 60);
+  }
+
+  applyReactiveMix();
+  // pequena sustentação
+  setTimeout(() => {
+    audioPulse = Math.max(0, audioPulse - 0.04);
+    applyReactiveMix();
+  }, holdMs);
+}
+
+function applyReactiveMix(){
+  // base ambience já é controlado pelo volume; aqui só adiciona um “boost” temporário
+  const base = Math.min(0.35, Math.max(0.02, Number(video.volume) * 0.25));
+  ambience.volume = clamp(base + audioPulse * 0.10, 0.02, 0.38);
+
+  // blur “respira” discretamente (sem stutter)
+  const baseBlur = getComputedStyle(document.documentElement).getPropertyValue("--blur-amount").trim();
+  const numeric = Number((baseBlur || "90px").replace("px","")) || 90;
+  const extra = audioPulse * 18; // máx ~12px
+  videoBlur.style.filter = `blur(${(numeric + extra).toFixed(1)}px) brightness(.5) saturate(1.5)`;
+}
+
+/* ===== Commands: responses ===== */
 async function respond(textLines){
   const token = termRunToken;
   for (const ln of textLines){
@@ -1246,192 +1187,18 @@ async function respond(textLines){
     await typeLine(ln, "", 7, token);
     await sleep(90);
   }
-  if (termLoreCompleted) termCacheHTML = termLog.innerHTML;
+}
+function makeCursor(){
+  const cursor = document.createElement("div");
+  cursor.className = "termLine";
+  cursor.innerHTML = `<span class="cursor" aria-hidden="true">█</span>`;
+  return cursor;
 }
 
-/* ===== Protocol timers ===== */
-function maybeLogPhaseToTerminal(phase){
-  if (!terminal.classList.contains("show")) return;
-  if (!termInteractive) return;
-  terminalAppendDimLine(`// PHASE UPDATE: ${phase.name.replace("_"," ")} // ${phase.directive}`);
-}
-
-function startAscensionProtocol(){
-  if (!PROTOCOL_ENABLED) return;
-  if (Protocol.started) return;
-  Protocol.started = true;
-  clearProtocolTimers();
-  const first = Protocol.phases[0];
-  setProtocolHUD(first);
-  Protocol.lastPhase = first.name;
-  presenceOnPhase(first);
-
-  for (let i = 1; i < Protocol.phases.length; i++){
-    const ph = Protocol.phases[i];
-    const timer = setTimeout(() => {
-      setProtocolHUD(ph);
-      if (Protocol.lastPhase !== ph.name){
-        Protocol.lastPhase = ph.name;
-        maybeLogPhaseToTerminal(ph);
-        presenceOnPhase(ph);
-      }
-    }, ph.whenMs);
-    Protocol.timers.push(timer);
-  }
-}
-
-/* ===== NOVO: comandos bem Dottore ===== */
-async function runInjectSequence(){
-  if (termAudioMode){ pulseTerminalAudio(0.09); terminalBeep(420, 0.05, 0.02); }
-  triggerGlitch();
-  showPresence("Não se mova.", 1400);
-
-  await respond([
-    "INJECTION SEQUENCE // ARMING",
-    "DOSE: 0x" + randomHex(2) + " // ROUTE: INTRAVENOUS",
-    "SUBJECT: STILL BREATHING",
-    "… você realmente achou que eu pediria permissão?",
-    "INJECTION: COMPLETE // RESPONSE: PENDING"
-  ]);
-}
-
-async function forceAscend(){
-  // força HUD para ASCENSION, mas sem quebrar timers do protocolo:
-  const ph = Protocol.phases[Protocol.phases.length - 1];
-  setProtocolHUD(ph);
-  maybeLogPhaseToTerminal(ph);
-  showPresence("Deus não pede permissão.", 1500);
-  await respond([
-    "OVERRIDE // PHASE SHIFT",
-    `ASCENSION PROTOCOL // ${sysPhase.textContent}`,
-    "Você vai assistir. De perto."
-  ]);
-}
-
-/* ===== Terminal commands ===== */
-async function handleCommand(raw){
-  const cmd = normalizeCmd(raw);
-  if (!termInteractive || termTyping){
-    terminalAppendDimLine("// INPUT IGNORED: BUSY");
-    return;
-  }
-  if (!cmd) return;
-
-  if (termAudioMode){ pulseTerminalAudio(0.06); terminalBeep(980, 0.02, 0.015); }
-  printUserCmd(raw);
-
-  if (cmd === "logs on"){ DynLogs.enabled = true; await respond(["DYNAMIC LOGS: ENABLED."]); scheduleDynamicLogs(termRunToken); return; }
-  if (cmd === "logs off"){ DynLogs.enabled = false; stopDynamicLogs(); await respond(["DYNAMIC LOGS: DISABLED."]); return; }
-
-  if (cmd === "inject"){ await runInjectSequence(); scheduleDynamicLogs(termRunToken); return; }
-  if (cmd === "ascend"){ await forceAscend(); scheduleDynamicLogs(termRunToken); return; }
-
-  if (cmd === "silence"){
-    ambOn = !ambOn;
-    if (!ambOn){ try{ ambience.pause(); }catch(e){} }
-    else { ambience.play().catch(()=>{}); }
-    await respond([`AMBIENCE: ${ambOn ? "ENABLED" : "DISABLED"}`, "Controle total. Lembre disso."]);
-    scheduleDynamicLogs(termRunToken);
-    return;
-  }
-
-  if (cmd === "help" || cmd === "?" ){
-    await respond([
-      "Comandos disponíveis:",
-      "- status",
-      "- phase",
-      "- consent",
-      "- whoami",
-      "- who are you",
-      "- exit",
-      "- clear",
-      "- logs on / logs off",
-      "- inject",
-      "- ascend",
-      "- silence"
-    ]);
-    return;
-  }
-  if (cmd === "clear" || cmd === "cls"){
-    clearTerminal();
-    terminalAppendDimLine("// LOG CLEARED // (a memória é seletiva)");
-    if (termLoreCompleted) termCacheHTML = termLog.innerHTML;
-    scheduleDynamicLogs(termRunToken);
-    return;
-  }
-  if (cmd === "status"){
-    await respond([
-      `SUBJECT: ${sysSubject.textContent}`,
-      `STREAM: ${sysStream.textContent}`,
-      `NEURAL: ${sysNeural.textContent}`,
-      `ETHICS: DISABLED`,
-      `PHASE: ${sysPhase.textContent} // ${sysDirective.textContent}`
-    ]);
-    scheduleDynamicLogs(termRunToken);
-    return;
-  }
-  if (cmd === "phase" || cmd === "protocol"){
-    await respond([
-      `ASCENSION PROTOCOL // ${sysPhase.textContent}`,
-      `DIRECTIVE // ${sysDirective.textContent}`,
-      "Observação: você não é um operador. É material."
-    ]);
-    scheduleDynamicLogs(termRunToken);
-    return;
-  }
-  if (cmd === "consent" || cmd === "assinar" || cmd === "consentimento"){
-    await respond([
-      "CONSENT FORM // OPEN",
-      "SIGNATURE: ACCEPTED",
-      "CONSENT: OVERRIDDEN",
-      "Você chama isso de moral? Interessante."
-    ]);
-    scheduleDynamicLogs(termRunToken);
-    return;
-  }
-  if (cmd === "whoami" || cmd === "quem sou eu"){
-    await respond([
-      "IDENTITY QUERY // DENIED",
-      "Você não precisa de um nome para cumprir sua função."
-    ]);
-    scheduleDynamicLogs(termRunToken);
-    return;
-  }
-  if (cmd === "who are you" || cmd === "whoareyou" || cmd === "quem é você" || cmd === "quem é vc"){
-    await respond([
-      "Eu sou o único adulto na sala.",
-      "E você... é apenas um recurso."
-    ]);
-    scheduleDynamicLogs(termRunToken);
-    return;
-  }
-  if (cmd === "exit" || cmd === "quit" || cmd === "sair"){
-    await respond([
-      "REQUEST: EXIT",
-      "RESULT: DENIED",
-      "Negado. Ainda não terminou."
-    ]);
-    scheduleDynamicLogs(termRunToken);
-    return;
-  }
-  await respond([
-    `UNKNOWN COMMAND: "${raw}"`,
-    "Se você quer controle, está no lugar errado."
-  ]);
-  scheduleDynamicLogs(termRunToken);
-}
-
-termInput.addEventListener("keydown", async (e) => {
-  if (e.key !== "Enter") return;
-  const v = termInput.value;
-  termInput.value = "";
-  await handleCommand(v);
-  focusTerminalInput();
-});
-
+/* ===== Commands list auto (only once) ===== */
 async function showCommandsHintAuto(token){
   if (!ensureAlive(token)) return;
-  await sleep(220);
+  await sleep(160);
   await typeLine(" ", "dim", 1, token);
   await typeLine("COMANDOS DISPONÍVEIS:", "dim", 9, token);
   await typeLine("- status", "dim", 9, token);
@@ -1439,30 +1206,36 @@ async function showCommandsHintAuto(token){
   await typeLine("- consent", "dim", 9, token);
   await typeLine("- whoami", "dim", 9, token);
   await typeLine("- who are you", "dim", 9, token);
+  await typeLine("- subject", "dim", 9, token);
+  await typeLine("- overwrite", "dim", 9, token);
+  await typeLine("- lockdown on/off", "dim", 9, token);
+  await typeLine("- experiment", "dim", 9, token);
+  await typeLine("- cancel", "dim", 9, token);
   await typeLine("- clear", "dim", 9, token);
-  await typeLine("- logs on / logs off", "dim", 9, token);
-  await typeLine("- inject", "dim", 9, token);
-  await typeLine("- ascend", "dim", 9, token);
-  await typeLine("- silence", "dim", 9, token);
   await typeLine("Dica: digite \"help\" para repetir.", "dim", 9, token);
 }
 
+/* ===== Lore sequence (persist after completed) ===== */
 async function runLoreSequence(){
   const token = ++termRunToken;
-
   termTyping = true;
   termInteractive = false;
   setInputEnabled(false);
-  stopDynamicLogs();
 
-  // se for rodar lore, reseta persistência
-  termLoreCompleted = false;
-  termCacheHTML = "";
+  // ✅ se já completou antes, restaurar snapshot sem resetar
+  if (termBootCompleted && termSnapshotHTML){
+    termLog.innerHTML = termSnapshotHTML;
+    termLog.appendChild(makeCursor());
+    termLog.scrollTop = termLog.scrollHeight;
+    termTyping = false;
+    termInteractive = true;
+    setInputEnabled(true);
+    focusTerminalInput();
+    ghost("TERMINAL: STATE RESTORED", 1200);
+    return;
+  }
 
   clearTerminal();
-
-  await ensureAudioAwake();
-  setTerminalAudioMode(true);
 
   await typeLine("TERMINAL DO LABORATÓRIO ONLINE", "dim", LORE_SPEED.header, token);
   await typeLine("HANDSHAKE: ACEITO // AUTORIZAÇÃO: Δ", "dim", LORE_SPEED.header, token);
@@ -1481,17 +1254,17 @@ async function runLoreSequence(){
   await sleep(280);
 
   const lines = [
-    { t: "…", cls:"dim", d: 360 },
-    { t: "Então você encontrou a interface.", cls:"", d: 360 },
-    { t: "Ótimo. Curiosidade é a única virtude que eu ainda tolero.", cls:"", d: 480 },
-    { t: "Vamos deixar claro: consentimento é um conceito decorativo.", cls:"dim", d: 520 },
-    { t: "Estado do sujeito: responsivo.", cls:"", d: 360 },
-    { t: "Módulo de ética: desativado.", cls:"", d: 360 },
-    { t: "Limite de dor: ajustável.", cls:"dim", d: 450 },
-    { t: "Se estiver com medo, não desvie o olhar.", cls:"", d: 520 },
-    { t: "Observar exige devoção.", cls:"dim", d: 450 },
-    { t: "Prosseguindo com a calibração.", cls:"", d: 450 },
-    { t: "— Il Dottore", cls:"dim", d: 450 },
+    { t: "…", cls:"dim", d: 320 },
+    { t: "Então você encontrou a interface.", cls:"", d: 340 },
+    { t: "Ótimo. Curiosidade é a única virtude que eu ainda tolero.", cls:"", d: 440 },
+    { t: "Vamos deixar claro: consentimento é um conceito decorativo.", cls:"dim", d: 480 },
+    { t: "Estado do sujeito: responsivo.", cls:"", d: 320 },
+    { t: "Módulo de ética: desativado.", cls:"", d: 320 },
+    { t: "Limite de dor: ajustável.", cls:"dim", d: 420 },
+    { t: "Se estiver com medo, não desvie o olhar.", cls:"", d: 500 },
+    { t: "Observar exige devoção.", cls:"dim", d: 420 },
+    { t: "Prosseguindo com a calibração.", cls:"", d: 420 },
+    { t: "— Il Dottore", cls:"dim", d: 420 },
   ];
   for (const L of lines){
     await typeLine(L.t, L.cls, LORE_SPEED.main, token);
@@ -1506,10 +1279,8 @@ async function runLoreSequence(){
 
   await showCommandsHintAuto(token);
 
-  const cursor = document.createElement("div");
-  cursor.className = "termLine";
-  cursor.innerHTML = `<span class="cursor" aria-hidden="true">█</span>`;
-  termLog.appendChild(cursor);
+  if (!ensureAlive(token)) return;
+  termLog.appendChild(makeCursor());
   termLog.scrollTop = termLog.scrollHeight;
 
   termTyping = false;
@@ -1517,85 +1288,433 @@ async function runLoreSequence(){
   setInputEnabled(true);
   focusTerminalInput();
 
-  // ✅ agora pode persistir
-  termLoreCompleted = true;
-  termCacheHTML = termLog.innerHTML;
-
-  // logs dinâmicos só depois do lore completo
-  scheduleDynamicLogs(termRunToken);
+  // ✅ salva snapshot do terminal após comandos (persistência)
+  termBootCompleted = true;
+  termSnapshotHTML = termLog.innerHTML.replace(/<div class="termLine"><span class="cursor" aria-hidden="true">█<\/span><\/div>/g, "");
+  ghost("CONTROL SURFACE: GRANTED", 1300);
 }
 
-/* ✅ Open/Close terminal com persistência */
-async function openTerminal(){
+/* ===== Terminal open/close logic ===== */
+function openTerminal(){
   terminal.classList.add("show");
   terminal.setAttribute("aria-hidden","false");
-  presenceOnTerminalOpen();
-
-  // acorda áudio (tecla T conta como gesto)
-  await ensureAudioAwake();
-  setTerminalAudioMode(true);
-
-  // ✅ se já concluiu, não reseta — restaura estado
-  if (termLoreCompleted && termCacheHTML){
-    termLog.innerHTML = termCacheHTML;
-    termTyping = false;
-    termInteractive = true;
-    setInputEnabled(true);
-    focusTerminalInput();
-    scheduleDynamicLogs(termRunToken);
-    return;
-  }
-
   runLoreSequence().catch(()=>{});
 }
-
 function closeTerminal(){
-  // ✅ se fechar no meio da digitação, reseta na próxima
-  const interrupted = termTyping === true;
-
+  // ✅ se fechar no meio do typing, reseta na próxima abertura
+  const wasTyping = termTyping;
   terminal.classList.remove("show");
   terminal.setAttribute("aria-hidden","true");
-
-  termRunToken++; // cancela tasks pendentes
-  stopDynamicLogs();
-
-  if (interrupted){
-    termLoreCompleted = false;
-    termCacheHTML = "";
-  } else {
-    // se já completou, salva o estado atual (com logs/comandos)
-    if (termLoreCompleted){
-      termCacheHTML = termLog.innerHTML;
-    }
-  }
-
+  termRunToken++;
   termTyping = false;
   termInteractive = false;
   setInputEnabled(false);
 
-  setTerminalAudioMode(false);
+  // se fechou enquanto Dottore digitava: resetar boot
+  if (wasTyping){
+    termBootCompleted = false;
+    termSnapshotHTML = "";
+  }
 }
 
+/* ===== Experiment Panel controls ===== */
+let expOpen = false;
+let expIndex = 0;
+
+function openExpPanel(){
+  expOpen = true;
+  expIndex = 0;
+  expPanel.classList.add("show");
+  expPanel.setAttribute("aria-hidden","false");
+  highlightExpIndex();
+  ghost("EXPERIMENT PANEL: OPEN", 1200);
+  pulseAudio(0.18);
+}
+function closeExpPanel(){
+  expOpen = false;
+  expPanel.classList.remove("show");
+  expPanel.setAttribute("aria-hidden","true");
+  ghost("EXPERIMENT PANEL: CLOSED", 900);
+}
+function highlightExpIndex(){
+  expButtons.forEach((b,i) => {
+    b.style.borderColor = (i===expIndex) ? "rgba(255,90,90,.40)" : "rgba(0,200,255,.28)";
+    b.style.boxShadow = (i===expIndex) ? "0 0 0 1px rgba(0,0,0,.25) inset, 0 0 22px rgba(255,90,90,.10)" : "0 0 0 1px rgba(0,0,0,.25) inset";
+  });
+}
+function selectExpByIndex(){
+  const btn = expButtons[expIndex];
+  if (!btn) return;
+  runExperiment(btn.dataset.exp);
+}
+expButtons.forEach((btn, idx) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    expIndex = idx;
+    highlightExpIndex();
+    runExperiment(btn.dataset.exp);
+  });
+});
+
+/* ===== Visual event helpers ===== */
+let alertTimer = null;
+function setAlert(on, ms=700){
+  clearTimeout(alertTimer);
+  if (on){
+    document.body.classList.add("alert");
+    alertTimer = setTimeout(() => document.body.classList.remove("alert"), ms);
+  } else {
+    document.body.classList.remove("alert");
+  }
+}
+
+/* ===== Command: experiments ===== */
+async function runExperiment(kind){
+  closeExpPanel();
+
+  // terminal feedback
+  if (terminal.classList.contains("show")){
+    terminalAppendDimLine(`// EXPERIMENT SELECTED: ${kind.toUpperCase()} //`);
+  }
+
+  // efeito visual discreto
+  triggerGlitch();
+  setAlert(true, 850);
+  pulseAudio(0.30, 260);
+
+  // pequenos “efeitos” sem mexer pesado em vídeo
+  if (kind === "neural"){
+    sysDirective.textContent = "NEURAL OVERRIDE: ACTIVE";
+    ghost("WILL: SUPPRESSED", 1300);
+    if (terminal.classList.contains("show")){
+      await respond([
+        "Neuro-interface: conectada.",
+        "Resposta motora: redirecionada.",
+        "Você vai chamar isso de escolha. Eu chamo de ruído."
+      ]);
+    }
+    return;
+  }
+  if (kind === "memory"){
+    sysDirective.textContent = "MEMORY: EXTRACTION";
+    ghost("MEMORY: HARVESTING", 1400);
+    if (terminal.classList.contains("show")){
+      await respond([
+        "Iniciando dump de memória.",
+        "Fragmentos úteis: retidos.",
+        "Fragmentos humanos: descartados."
+      ]);
+    }
+    return;
+  }
+  if (kind === "pain"){
+    sysDirective.textContent = "PAIN: CALIBRATION";
+    ghost("PAIN LIMIT: MODULATED", 1400);
+    if (terminal.classList.contains("show")){
+      await respond([
+        "Você sempre mente sobre tolerância.",
+        "Eu não."
+      ]);
+    }
+    return;
+  }
+  if (kind === "identity"){
+    sysDirective.textContent = "IDENTITY: DISSOLUTION";
+    ghost("NAME: OPTIONAL", 1400);
+    if (terminal.classList.contains("show")){
+      await respond([
+        "Nome: irrelevante.",
+        "História: reescrita.",
+        "Se ainda existir 'você', é por conveniência."
+      ]);
+    }
+    return;
+  }
+  if (kind === "ascend"){
+    sysDirective.textContent = "ASCENSION: FORCED";
+    ghost("ASCENSION: TRIGGERED", 1500);
+    if (terminal.classList.contains("show")){
+      await respond([
+        "Você pediu por um 'deus'.",
+        "Eu forneço o mecanismo.",
+        "Agora assista."
+      ]);
+    }
+    return;
+  }
+}
+
+/* ===== Command handling (NO random logs) ===== */
+async function handleCommand(raw){
+  const cmd = normalizeCmd(raw);
+  if (!termInteractive || termTyping){
+    terminalAppendDimLine("// INPUT IGNORED: BUSY");
+    pulseAudio(0.08);
+    return;
+  }
+  if (!cmd) return;
+
+  // lockdown: se estiver travando, ignora
+  if (isLocking){
+    terminalAppendDimLine("// LOCKDOWN: ACTIVE");
+    return;
+  }
+
+  printUserCmd(raw);
+
+  // HELP
+  if (cmd === "help" || cmd === "?" ){
+    await respond([
+      "Comandos disponíveis:",
+      "- status",
+      "- phase",
+      "- consent",
+      "- whoami",
+      "- who are you",
+      "- subject",
+      "- overwrite",
+      "- lockdown on/off",
+      "- experiment",
+      "- cancel",
+      "- clear"
+    ]);
+    return;
+  }
+
+  // CLEAR
+  if (cmd === "clear" || cmd === "cls"){
+    clearTerminal();
+    terminalAppendDimLine("// LOG CLEARED // (a memória é seletiva)");
+    termLog.appendChild(makeCursor());
+    termLog.scrollTop = termLog.scrollHeight;
+    // atualizar snapshot (persistência)
+    if (termBootCompleted){
+      termSnapshotHTML = termLog.innerHTML.replace(/<div class="termLine"><span class="cursor" aria-hidden="true">█<\/span><\/div>/g, "");
+    }
+    pulseAudio(0.10);
+    return;
+  }
+
+  // STATUS
+  if (cmd === "status"){
+    await respond([
+      `SUBJECT: ${sysSubject.textContent}`,
+      `STREAM: ${sysStream.textContent}`,
+      `NEURAL: ${sysNeural.textContent}`,
+      `ETHICS: DISABLED`,
+      `PHASE: ${sysPhase.textContent} // ${sysDirective.textContent}`
+    ]);
+    pulseAudio(0.10);
+    return;
+  }
+
+  // PHASE / PROTOCOL
+  if (cmd === "phase" || cmd === "protocol"){
+    await respond([
+      `ASCENSION PROTOCOL // ${sysPhase.textContent}`,
+      `DIRECTIVE // ${sysDirective.textContent}`,
+      "Observação: você não é um operador. É material."
+    ]);
+    pulseAudio(0.10);
+    return;
+  }
+
+  // CONSENT
+  if (cmd === "consent" || cmd === "assinar" || cmd === "consentimento"){
+    await respond([
+      "CONSENT FORM // OPEN",
+      "SIGNATURE: ACCEPTED",
+      "CONSENT: OVERRIDDEN",
+      "Você chama isso de moral? Interessante."
+    ]);
+    setAlert(true, 650);
+    pulseAudio(0.18);
+    return;
+  }
+
+  // WHOAMI
+  if (cmd === "whoami" || cmd === "quem sou eu"){
+    await respond([
+      "IDENTITY QUERY // DENIED",
+      "Você não precisa de um nome para cumprir sua função."
+    ]);
+    pulseAudio(0.10);
+    return;
+  }
+
+  // WHO ARE YOU
+  if (cmd === "who are you" || cmd === "whoareyou" || cmd === "quem é você" || cmd === "quem é vc"){
+    await respond([
+      "Eu sou o único adulto na sala.",
+      "E você... é apenas um recurso."
+    ]);
+    pulseAudio(0.12);
+    return;
+  }
+
+  // SUBJECT (biometria falsa)
+  if (cmd === "subject"){
+    const bpm = 58 + Math.floor(Math.random()*36);
+    const temp = (35.7 + Math.random()*1.2).toFixed(1);
+    const stress = ["BAIXO","MODERADO","ALTO","CRÍTICO"][Math.floor(Math.random()*4)];
+    await respond([
+      "SUBJECT BIOMETRICS // READ",
+      `HR: ${bpm} bpm`,
+      `TEMP: ${temp}°C`,
+      `STRESS: ${stress}`,
+      "Conclusão: ainda funcional."
+    ]);
+    pulseAudio(0.14);
+    return;
+  }
+
+  // OVERWRITE (directive temporary)
+  if (cmd === "overwrite"){
+    const prev = sysDirective.textContent;
+    sysDirective.textContent = "DIRECTIVE: OVERRIDDEN";
+    await respond([
+      "REQUEST: DIRECTIVE OVERRIDE",
+      "RESULT: ACCEPTED",
+      "Você quis 'controle'. Eu dei um botão. Não confunda."
+    ]);
+    triggerGlitch();
+    setAlert(true, 700);
+    pulseAudio(0.22);
+    setTimeout(() => { sysDirective.textContent = prev; }, 5200);
+    return;
+  }
+
+  // LOCKDOWN toggle
+  if (cmd === "lockdown on" || cmd === "lockdown"){
+    lockdownEnabled = true;
+    await respond([
+      "LOCKDOWN MODE: ENABLED",
+      "Erros serão punidos com latência.",
+      "Disciplina é um método. Não uma escolha."
+    ]);
+    setAlert(true, 520);
+    pulseAudio(0.16);
+    return;
+  }
+  if (cmd === "lockdown off"){
+    lockdownEnabled = false;
+    await respond([
+      "LOCKDOWN MODE: DISABLED",
+      "Pena. Eu estava começando a gostar."
+    ]);
+    pulseAudio(0.12);
+    return;
+  }
+
+  // EXPERIMENT PANEL
+  if (cmd === "experiment" || cmd === "experiments" || cmd === "exp"){
+    openExpPanel();
+    await respond([
+      "Painel de experimentos: aberto.",
+      "Escolha com ↑↓ e ENTER. Ou clique.",
+      "Digite \"cancel\" para abortar."
+    ]);
+    pulseAudio(0.14);
+    return;
+  }
+
+  // CANCEL
+  if (cmd === "cancel" || cmd === "abort"){
+    if (expOpen){
+      closeExpPanel();
+      await respond(["Experimento abortado.", "Boa tentativa de autopreservação."]);
+      pulseAudio(0.12);
+      return;
+    }
+    await respond(["Nada em execução.", "Eu não cancelo. Eu adio."]);
+    pulseAudio(0.10);
+    return;
+  }
+
+  // EXIT
+  if (cmd === "exit" || cmd === "quit" || cmd === "sair"){
+    await respond([
+      "REQUEST: EXIT",
+      "RESULT: DENIED",
+      "Negado. Ainda não terminou."
+    ]);
+    pulseAudio(0.12);
+    return;
+  }
+
+  // UNKNOWN
+  await respond([
+    `UNKNOWN COMMAND: "${raw}"`,
+    "Se você quer controle, está no lugar errado."
+  ]);
+  pulseAudio(0.10);
+
+  // lockdown punishment (3s)
+  if (lockdownEnabled){
+    isLocking = true;
+    setInputEnabled(false);
+    terminalAppendDimLine("// LOCKDOWN // 3000ms");
+    setAlert(true, 900);
+    pulseAudio(0.20);
+    setTimeout(() => {
+      isLocking = false;
+      setInputEnabled(true);
+      focusTerminalInput();
+      terminalAppendDimLine("// LOCKDOWN RELEASED");
+      // refresh snapshot
+      if (termBootCompleted){
+        termSnapshotHTML = termLog.innerHTML.replace(/<div class="termLine"><span class="cursor" aria-hidden="true">█<\/span><\/div>/g, "");
+      }
+    }, 3000);
+  }
+}
+
+/* ===== Terminal input key ===== */
+termInput.addEventListener("keydown", async (e) => {
+  if (e.key !== "Enter") return;
+  const v = termInput.value;
+  termInput.value = "";
+  await handleCommand(v);
+  focusTerminalInput();
+
+  // persist snapshot after each command (when boot completed)
+  if (termBootCompleted){
+    termSnapshotHTML = termLog.innerHTML.replace(/<div class="termLine"><span class="cursor" aria-hidden="true">█<\/span><\/div>/g, "");
+  }
+});
+
+/* ===== Global keys ===== */
 btnTerm.addEventListener("click", (e) => {
   e.stopPropagation();
   if (terminal.classList.contains("show")) closeTerminal();
   else openTerminal();
 });
-
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeTerminal();
+  if (e.key === "Escape"){
+    if (expOpen){ closeExpPanel(); return; }
+    closeTerminal();
+    return;
+  }
 
+  // abrir terminal com ` ou T (não fecha mais)
   const isToggleKey = (e.key === "`" || e.key.toLowerCase() === "t");
   if (isToggleKey) {
     const a = document.activeElement;
     const typingInInput = (a === termInput);
     if (typingInInput) return;
-
-    // ✅ T não fecha: abre ou só foca
     if (!terminal.classList.contains("show")) openTerminal();
     else focusTerminalInput();
+    return;
   }
 
+  // navegar painel de experimentos
+  if (expOpen){
+    if (e.key === "ArrowDown"){ expIndex = (expIndex + 1) % expButtons.length; highlightExpIndex(); pulseAudio(0.08); e.preventDefault(); }
+    if (e.key === "ArrowUp"){ expIndex = (expIndex - 1 + expButtons.length) % expButtons.length; highlightExpIndex(); pulseAudio(0.08); e.preventDefault(); }
+    if (e.key === "Enter"){ selectExpByIndex(); e.preventDefault(); }
+  }
+
+  // Enter foca input do terminal (sem fechar)
   if (terminal.classList.contains("show") && e.key === "Enter"){
     if (!termInput.disabled) focusTerminalInput();
   }
@@ -1609,11 +1728,9 @@ function hideLoading(){
   loadingScreen.style.opacity = "0";
   setTimeout(() => loadingScreen.style.display = "none", 600);
   clearInterval(msgTimer);
+  stopEnterScanLoop();
   sysSubject.textContent = "ATIVO";
-  stopScanLoop();
-  schedulePresence();
 }
-
 function waitForPlaying(el, timeoutMs=1200){
   return new Promise((resolve, reject) => {
     let done = false;
@@ -1657,8 +1774,6 @@ enterBox.onclick = async () => {
   }
 
   try {
-    await ensureAudioAwake();
-
     video.muted = false;
     await video.play();
     await waitForPlaying(video, 1500);
@@ -1671,6 +1786,7 @@ enterBox.onclick = async () => {
     hideLoading();
 
     startAscensionProtocol();
+    ghost("SUBJECT: CONNECTED", 1200);
 
   } catch (err) {
     spinner.style.display = "none";
@@ -1686,6 +1802,8 @@ enterBox.onclick = async () => {
 /* teclado ENTER dispara o botão ENTER (quando loading está ativo) */
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Enter") return;
+
+  // se terminal estiver aberto, Enter pertence ao terminal
   if (terminal.classList.contains("show")) return;
 
   const a = document.activeElement;
@@ -1702,7 +1820,20 @@ document.addEventListener("keydown", (e) => {
 
 /* ===== Initial defaults ===== */
 setProtocolHUD(Protocol.phases[0]);
-startScanLoop();
+</script>
+
+  <script>
+/* ===== Snapshot cursor guard (micro fix final) ===== */
+/* garante que só exista 1 cursor visual no final do log */
+(function cursorGuard(){
+  const cursors = termLog.querySelectorAll(".cursor");
+  if (cursors.length <= 1) return;
+
+  for (let i = 0; i < cursors.length - 1; i++){
+    const el = cursors[i].closest(".termLine");
+    if (el) el.remove();
+  }
+})();
 </script>
 
 </body>
