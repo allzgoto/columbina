@@ -37,7 +37,6 @@ body{
   z-index:-4;
   background:black;
 
-  /* máscara suave nas bordas (some com barras “feias”) */
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
   mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
@@ -111,9 +110,7 @@ body{
     repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 1px, transparent 1px 4px);
   mix-blend-mode:screen;
 }
-.glitch-on #glitchFlash{
-  animation:glitchFlash .55s steps(6) 1;
-}
+.glitch-on #glitchFlash{ animation:glitchFlash .55s steps(6) 1; }
 @keyframes glitchFlash{
   0%{opacity:0}
   10%{opacity:1; transform:translateX(8px)}
@@ -218,34 +215,90 @@ body{
 #techHUD .value{opacity:.9; color:rgba(207,239,255,.95)}
 #techHUD .sep{opacity:.25}
 
+/* ===== Top controls: MAIS DESTACADO, MAS AINDA CLEAN ===== */
 #topControls{
   position:fixed;
   top:16px;
   left:50%;
   transform:translateX(-50%);
   display:flex;
-  gap:10px;
-  z-index:7;
-  opacity:.35;
-  transition:.2s ease;
+  gap:12px;
+  z-index:25;
+
+  opacity:.92;
+  transition:.18s ease;
+
+  /* “halo” discreto */
+  filter: drop-shadow(0 0 18px rgba(0,200,255,.22));
 }
 #topControls:hover{opacity:1}
+
 .ctrlBtn{
-  width:34px;height:28px;
-  border-radius:8px;
-  border:1px solid rgba(0,200,255,.35);
-  background:rgba(0,0,0,.35);
-  backdrop-filter: blur(14px);
-  color:rgba(207,239,255,.9);
+  width:42px;height:34px;
+  border-radius:12px;
+
+  border:1px solid rgba(0,200,255,.72);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(0,200,255,.10), transparent 55%),
+    linear-gradient(180deg, rgba(12,24,44,.78), rgba(0,0,0,.50));
+
+  backdrop-filter: blur(20px);
+  color:rgba(207,239,255,.98);
+
   cursor:pointer;
   display:grid;
   place-items:center;
-  font-size:12px;
+  font-size:14px;
   letter-spacing:2px;
+
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.25) inset,
+    0 12px 34px rgba(0,0,0,.32);
+
+  position:relative;
+  overflow:hidden;
+}
+.ctrlBtn::before{
+  /* “borda dupla” de laboratório */
+  content:"";
+  position:absolute;
+  inset:2px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.06);
+  pointer-events:none;
+}
+.ctrlBtn::after{
+  /* micro scanner passando */
+  content:"";
+  position:absolute;
+  inset:-40% -30%;
+  background:linear-gradient(90deg, transparent, rgba(0,200,255,.22), transparent);
+  transform:rotate(12deg) translateX(-90%);
+  opacity:.0;
+  pointer-events:none;
+}
+#topControls:hover .ctrlBtn::after{
+  opacity:1;
+  animation:scanPass 1.05s ease infinite;
+}
+@keyframes scanPass{
+  0%{transform:rotate(12deg) translateX(-90%);}
+  100%{transform:rotate(12deg) translateX(90%);}
+}
+.ctrlBtn:hover{
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.25) inset,
+    0 16px 42px rgba(0,0,0,.38),
+    0 0 26px rgba(0,200,255,.18);
 }
 .ctrlBtn:active{transform:translateY(1px)}
+.ctrlBtn:focus-visible{
+  outline:none;
+  box-shadow: 0 0 0 2px rgba(0,200,255,.55), 0 16px 42px rgba(0,0,0,.38);
+}
 
-/* ========= VOLUME (DOTTORE HUD) ========= */
+/* ========= VOLUME ========= */
 #volumeHUD{
   position:fixed;
   top:22px;
@@ -258,7 +311,6 @@ body{
   transition:.25s ease;
 }
 #volumeHUD:hover{ opacity:1; }
-
 .vol-btn{
   position:relative;
   width:40px;height:40px;
@@ -295,7 +347,6 @@ body{
   color:rgba(207,239,255,.9);
   text-shadow:0 0 8px rgba(0,200,255,.35);
 }
-
 .vol-panel{
   width:0;
   opacity:0;
@@ -322,7 +373,6 @@ body{
 .vol-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .vol-title{font-size:9px;letter-spacing:3px;opacity:.75;}
 .vol-readout{font-size:10px;letter-spacing:2px;color:#cfefff;text-shadow:0 0 10px rgba(0,200,255,.35);}
-
 #volSlider{
   width:100%;
   height:26px;
@@ -360,7 +410,6 @@ body{
   border:1px solid rgba(0,200,255,.65);
   box-shadow:0 0 18px rgba(0,200,255,.55);
 }
-
 .vol-footer{
   margin-top:8px;
   display:flex;
@@ -374,14 +423,13 @@ body{
   width:70px;
   height:10px;
   border-radius:6px;
-  background:
-    repeating-linear-gradient(90deg, rgba(0,200,255,var(--bars-a,.55)) 0 6px, transparent 6px 10px);
+  background:repeating-linear-gradient(90deg, rgba(0,200,255,var(--bars-a,.55)) 0 6px, transparent 6px 10px);
   filter: drop-shadow(0 0 10px rgba(0,200,255,.25));
   clip-path: inset(0 calc(100% - var(--bars-w,50%)) 0 0 round 6px);
   transition: clip-path .08s linear;
 }
 
-/* ========= TERMINAL (LORE) ========= */
+/* ========= TERMINAL ========= */
 #terminal{
   position:fixed;
   inset:0;
@@ -422,8 +470,6 @@ body{
 }
 .termLog .dim{opacity:.55}
 .termLine{margin:2px 0}
-
-/* Cursor piscando no terminal */
 .cursor{
   display:inline-block;
   margin-left:6px;
@@ -435,11 +481,11 @@ body{
   50%,100%{opacity:0}
 }
 
-/* acessibilidade / performance */
 @media (prefers-reduced-motion: reduce){
   .scanlines{opacity:.35}
   .spinner{animation:none}
   #cinemaFX::before{animation:none}
+  #topControls .ctrlBtn::after{animation:none; opacity:0;}
 }
 @media (max-width: 768px){
   :root{ --blur-amount: 55px; }
@@ -458,7 +504,6 @@ body{
   <source src="https://files.catbox.moe/um6f2u.mp4" type="video/mp4" />
 </video>
 
-<!-- Áudio ambiente: troque o src por um mp3/ogg seu se quiser -->
 <audio id="ambience" preload="auto" loop>
   <source src="https://files.catbox.moe/3q1h1x.mp3" type="audio/mpeg">
 </audio>
@@ -473,9 +518,7 @@ body{
   <div id="enterBox">ENTER</div>
 </div>
 
-<div class="hud">
-  NEURAL LINK ESTABLISHED // SUBJECT ONLINE
-</div>
+<div class="hud">NEURAL LINK ESTABLISHED // SUBJECT ONLINE</div>
 
 <div id="coordsHUD">
   <div class="line blink" id="coordA">COORD: --.---- / --.----</div>
@@ -492,10 +535,9 @@ body{
 
 <div id="topControls">
   <button class="ctrlBtn" id="btnFS" title="Tela cheia">⛶</button>
-  <button class="ctrlBtn" id="btnTerm" title="Terminal">⌁</button>
+  <button class="ctrlBtn" id="btnTerm" title="Painel">⌁</button>
 </div>
 
-<!-- Volume HUD -->
 <div id="volumeHUD" class="vol" aria-label="Controle de volume" style="--bars-w:50%; --bars-a:.55;">
   <button id="volIconBtn" class="vol-btn" type="button" aria-label="Abrir controle de volume">
     <svg class="vol-svg" viewBox="0 0 48 48" aria-hidden="true">
@@ -512,9 +554,7 @@ body{
       <div class="vol-title">AUDIO // MIX</div>
       <div id="volReadout" class="vol-readout">70%</div>
     </div>
-
     <input type="range" id="volSlider" min="0" max="1" step="0.01" value="0.7" />
-
     <div class="vol-footer">
       <span>OUTPUT</span>
       <span class="vol-bars" aria-hidden="true"></span>
@@ -522,18 +562,13 @@ body{
   </div>
 </div>
 
-<!-- Terminal (LORE) -->
 <div id="terminal" aria-hidden="true">
   <div class="termBox">
     <div class="termHeader">
       <div>LAB TERMINAL // ACCESS: GRANTED</div>
       <div class="dim">ESC para fechar</div>
     </div>
-
-    <div id="termLog" class="termLog">
-      <div class="termLine dim">Pressione ESC para sair.</div>
-      <div class="termLine"><span class="cursor" aria-hidden="true">█</span></div>
-    </div>
+    <div id="termLog" class="termLog"></div>
   </div>
 </div>
 
@@ -569,8 +604,6 @@ const terminal = document.getElementById("terminal");
 const termLog = document.getElementById("termLog");
 
 /* ===== FLAGS ===== */
-let fxGrainOn = true;
-let fxScanOn = true;
 let ambOn = true;
 
 /* ===== LOADING TEXT ===== */
@@ -590,11 +623,9 @@ const msgTimer = setInterval(() => {
 
 /* ===== READY / SAFETY ===== */
 let readyToEnter = false;
-let enterShown = false;
 
 function showEnter(label="ENTER"){
   enterBox.style.pointerEvents = "auto";
-  enterShown = true;
   enterBox.textContent = label;
   enterBox.classList.add("show");
 }
@@ -605,7 +636,6 @@ function markReady(){
   showEnter("ENTER");
 }
 
-/* Segurança 1 */
 const SAFETY_TIMEOUT_MS = 9000;
 let safetyTimeout = setTimeout(() => {
   if (!readyToEnter) {
@@ -614,7 +644,6 @@ let safetyTimeout = setTimeout(() => {
   }
 }, SAFETY_TIMEOUT_MS);
 
-/* Segurança 2 */
 setTimeout(() => {
   if (!enterBox.classList.contains("show")) {
     setLoadingStatus("AWAITING STREAM // MANUAL START ENABLED");
@@ -723,47 +752,71 @@ function triggerGlitch(){
   setTimeout(()=>document.body.classList.remove("glitch-on"), 700);
 }
 
-/* ===== FX TOGGLES (mantidos, sem comandos) ===== */
-function setFX(){
-  document.getElementById("cinemaFX").style.display = fxGrainOn ? "" : "none";
-  document.querySelector(".scanlines").style.display = fxScanOn ? "" : "none";
-}
-setFX();
+/* ===== TERMINAL (ordenado e sem duplicar) ===== */
+let termRunToken = 0;
 
-/* ===== TERMINAL (LORE + TYPING) ===== */
 function clearTerminal(){ termLog.innerHTML = ""; }
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+function ensureAlive(token){ return token === termRunToken && terminal.classList.contains("show"); }
 
-async function typeLine(text, cls="", speed=14){
+async function typeLine(text, cls="", speed=14, token=0){
+  if (!ensureAlive(token)) return;
   const div = document.createElement("div");
   div.className = "termLine " + cls;
   termLog.appendChild(div);
 
   for (let i=0; i<text.length; i++){
+    if (!ensureAlive(token)) return;
     div.textContent += text[i];
     await sleep(speed + Math.random()*18);
     termLog.scrollTop = termLog.scrollHeight;
   }
 }
 
+/* ✅ AJUSTE: só a FRASE “Changing language to...” com glitch e ORDEM certinha */
+async function typeGlitchPhraseOnly(token){
+  // A linha base SEMPRE começa em inglês (como você quer)
+  const base = "Changing language to...";
+  const variants = [
+    "Cambiando idioma a...",
+    "Ändere Sprache zu...",
+    "Changement de langue...",
+    "Изменение языка...",
+    "言語を変更中...",
+    "Mudando idioma para..."
+  ];
+
+  // cria linha fixa (não cria várias linhas, não bagunça ordem)
+  if (!ensureAlive(token)) return;
+  const line = document.createElement("div");
+  line.className = "termLine dim";
+  line.textContent = base;
+  termLog.appendChild(line);
+  termLog.scrollTop = termLog.scrollHeight;
+
+  // “glitch” rápido: troca o MESMO texto algumas vezes e volta pro inglês
+  await sleep(140);
+  for (let i=0; i<variants.length; i++){
+    if (!ensureAlive(token)) return;
+    line.textContent = variants[i];
+    await sleep(75);
+  }
+  if (!ensureAlive(token)) return;
+  line.textContent = base;
+  await sleep(220);
+}
+
 async function runLoreSequence(){
+  const token = ++termRunToken;
   clearTerminal();
 
-  // cursor fixo no final
-  const cursor = document.createElement("div");
-  cursor.className = "termLine";
-  cursor.innerHTML = `<span class="cursor" aria-hidden="true">█</span>`;
-  termLog.appendChild(cursor);
+  await typeLine("TERMINAL DO LABORATÓRIO ONLINE", "dim", 11, token);
+  await typeLine("HANDSHAKE: ACEITO // AUTORIZAÇÃO: Δ", "dim", 11, token);
+  await typeLine("CANAL DE LOG: PRIVADO // OBSERVADORES: NENHUM", "dim", 11, token);
+  await sleep(260);
 
-  // Boot
-  cursor.before(Object.assign(document.createElement("div"), { className:"termLine dim", textContent:"TERMINAL DO LABORATÓRIO ONLINE" }));
-  cursor.before(Object.assign(document.createElement("div"), { className:"termLine dim", textContent:"HANDSHAKE: ACEITO // AUTORIZAÇÃO: Δ" }));
-  cursor.before(Object.assign(document.createElement("div"), { className:"termLine dim", textContent:"CANAL DE LOG: PRIVADO // OBSERVADORES: NENHUM" }));
-  await sleep(380);
-
-  // “Selecionando idioma…” (começa em inglês, varre idiomas, para no PT-BR)
-  await typeLine("Alterando idioma para...", "dim", 12);
-  await sleep(220);
+  // aqui só ajusta a frase, sem mexer no resto
+  await typeGlitchPhraseOnly(token);
 
   const langs = [
     "English (US)",
@@ -775,36 +828,38 @@ async function runLoreSequence(){
     "中文 (CN)",
     "Português (BR)"
   ];
-
-  // anima troca rápida
   for (let k = 0; k < langs.length; k++){
-    await typeLine(`> ${langs[k]}`, "dim", 10);
-    await sleep(k === langs.length - 1 ? 420 : 110);
+    await typeLine(`> ${langs[k]}`, "dim", 10, token);
+    await sleep(k === langs.length - 1 ? 320 : 95);
   }
 
-  await typeLine("Idioma definido: Português (BR).", "dim", 12);
-  await sleep(420);
+  await typeLine("Idioma definido: Português (BR).", "dim", 12, token);
+  await sleep(320);
 
-  // Agora entra o “Dottore” em PT
   const lines = [
-    { t: "…", cls:"dim", d: 520 },
-    { t: "Então você encontrou a interface.", cls:"", d: 520 },
-    { t: "Ótimo. Curiosidade é a única virtude que eu ainda tolero.", cls:"", d: 680 },
-    { t: "Vamos deixar claro: consentimento é um conceito decorativo.", cls:"dim", d: 760 },
-    { t: "Estado do sujeito: responsivo.", cls:"", d: 540 },
-    { t: "Módulo de ética: desativado.", cls:"", d: 540 },
-    { t: "Limite de dor: ajustável.", cls:"dim", d: 660 },
-    { t: "Se estiver com medo, não desvie o olhar.", cls:"", d: 760 },
-    { t: "Observar exige devoção.", cls:"dim", d: 660 },
-    { t: "Prosseguindo com a calibração.", cls:"", d: 620 },
-    { t: "— Il Dottore", cls:"dim", d: 720 },
+    { t: "…", cls:"dim", d: 420 },
+    { t: "Então você encontrou a interface.", cls:"", d: 420 },
+    { t: "Ótimo. Curiosidade é a única virtude que eu ainda tolero.", cls:"", d: 560 },
+    { t: "Vamos deixar claro: consentimento é um conceito decorativo.", cls:"dim", d: 620 },
+    { t: "Estado do sujeito: responsivo.", cls:"", d: 420 },
+    { t: "Módulo de ética: desativado.", cls:"", d: 420 },
+    { t: "Limite de dor: ajustável.", cls:"dim", d: 520 },
+    { t: "Se estiver com medo, não desvie o olhar.", cls:"", d: 620 },
+    { t: "Observar exige devoção.", cls:"dim", d: 520 },
+    { t: "Prosseguindo com a calibração.", cls:"", d: 520 },
+    { t: "— Il Dottore", cls:"dim", d: 520 },
   ];
 
   for (const L of lines){
-    await typeLine(L.t, L.cls, 16);
+    await typeLine(L.t, L.cls, 16, token);
     await sleep(L.d);
   }
 
+  if (!ensureAlive(token)) return;
+  const cursor = document.createElement("div");
+  cursor.className = "termLine";
+  cursor.innerHTML = `<span class="cursor" aria-hidden="true">█</span>`;
+  termLog.appendChild(cursor);
   termLog.scrollTop = termLog.scrollHeight;
 }
 
@@ -816,9 +871,14 @@ function openTerminal(){
 function closeTerminal(){
   terminal.classList.remove("show");
   terminal.setAttribute("aria-hidden","true");
+  termRunToken++;
 }
-btnTerm.addEventListener("click", openTerminal);
 
+btnTerm.addEventListener("click", (e) => {
+  e.stopPropagation();
+  if (terminal.classList.contains("show")) closeTerminal();
+  else openTerminal();
+});
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeTerminal();
   if (e.key === "`" || e.key.toLowerCase() === "t") {
@@ -837,8 +897,23 @@ function hideLoading(){
   clearInterval(msgTimer);
   sysSubject.textContent = "ATIVO";
 }
+function waitForPlaying(el, timeoutMs=1200){
+  return new Promise((resolve, reject) => {
+    let done = false;
+    const onPlay = () => { if(done) return; done=true; cleanup(); resolve(); };
+    const onErr = () => { if(done) return; done=true; cleanup(); reject(new Error("play error")); };
+    const t = setTimeout(() => { if(done) return; done=true; cleanup(); resolve(); }, timeoutMs);
+    function cleanup(){
+      clearTimeout(t);
+      el.removeEventListener("playing", onPlay);
+      el.removeEventListener("error", onErr);
+    }
+    el.addEventListener("playing", onPlay, { once:true });
+    el.addEventListener("error", onErr, { once:true });
+  });
+}
 
-/* ===== ENTER / RETRY (ROBUSTO) ===== */
+/* ===== ENTER / RETRY ===== */
 enterBox.onclick = async () => {
   enterBox.style.pointerEvents = "none";
 
@@ -846,7 +921,6 @@ enterBox.onclick = async () => {
     spinner.style.display = "";
     setLoadingStatus("RECALIBRANDO STREAM...");
     enterBox.classList.remove("show");
-    enterShown = false;
     readyToEnter = false;
 
     try { video.load(); videoBlur.load(); ambience.load(); } catch(e){}
@@ -864,15 +938,16 @@ enterBox.onclick = async () => {
   }
 
   try {
+    video.muted = false;
     await video.play();
+    await waitForPlaying(video, 1500);
+
     videoBlur.play().catch(()=>{});
     if (ambOn) ambience.play().catch(()=>{});
 
     updateVolumeUI();
     triggerGlitch();
-
-    if (!video.paused) hideLoading();
-    else throw new Error("Video did not start");
+    hideLoading();
 
   } catch (err) {
     spinner.style.display = "none";
