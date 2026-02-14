@@ -860,6 +860,10 @@ terminal.addEventListener("click", (e) => {
 
 /* ===== ENTER / RETRY ===== */
 enterBox.onclick = async () => {
+  // evita double-click bug
+  enterBox.style.pointerEvents = "none";
+
+  // modo retry
   if (enterBox.textContent === "RETRY") {
     spinner.style.display = "";
     setLoadingStatus("RECALIBRATING STREAM...");
@@ -877,27 +881,45 @@ enterBox.onclick = async () => {
       }
     }, SAFETY_TIMEOUT_MS);
 
+    // reativa clique
+    setTimeout(() => enterBox.style.pointerEvents = "", 200);
     return;
   }
 
   try {
-    await Promise.all([video.play(), videoBlur.play()]);
-    // áudio ambiente só depois de gesto do usuário
-    if (ambOn) await ambience.play().catch(()=>{});
-    updateVolumeUI();
+    // tenta tocar vídeos (o blur pode falhar em alguns browsers, não pode travar o fluxo)
+    await video.play();
+    videoBlur.play().catch(()=>{});
 
+    // áudio ambiente: nunca pode impedir a transição
+    if (ambOn) ambience.play().catch(()=>{});
+
+    // só agora fazemos efeitos
+    updateVolumeUI();
     triggerGlitch();
 
-    loadingScreen.style.opacity = "0";
-    setTimeout(() => loadingScreen.style.display = "none", 600);
+    // ESCONDE SEMPRE a tela assim que o vídeo estiver tocando
+    if (!video.paused) {
+      loadingScreen.style.opacity = "0";
+      setTimeout(() => loadingScreen.style.display = "none", 600);
+      clearInterval(msgTimer);
+      sysSubject.textContent = "ACTIVE";
+    } else {
+      // fallback raro: se por algum motivo o vídeo não tocou
+      throw new Error("Video did not start");
+    }
 
-    clearInterval(msgTimer);
-    sysSubject.textContent = "ACTIVE";
   } catch (err) {
+    // se der ruim, libera clique de novo e não prende o user
+    enterBox.style.pointerEvents = "";
     spinner.style.display = "none";
     setLoadingStatus("PLAYBACK BLOCKED // CLICK AGAIN");
-    showEnter("ENTER");
+    enterShown = false;
+    enterBox.classList.add("show");
+    enterBox.style.pointerEvents = "auto";
   }
+};
+
 };
 </script>
 
