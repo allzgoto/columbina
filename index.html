@@ -132,8 +132,7 @@ body{
   align-items:center;
   z-index:10;
   transition:opacity .6s ease;
-
-  overflow:hidden; /* necessário pro scan overlay */
+  overflow:hidden;
 }
 .loading-text{
   letter-spacing:6px;
@@ -173,7 +172,6 @@ body{
 }
 #enterBox.show{opacity:1; pointer-events:auto;}
 
-/* "PRESS [ENTER]" hint */
 #enterHint{
   margin-top:12px;
   font-size:10px;
@@ -186,7 +184,6 @@ body{
 }
 #enterHint.show{opacity:.85;}
 
-/* scanner pass on ready */
 #enterScan{
   position:absolute;
   inset:0;
@@ -555,7 +552,7 @@ body{
   white-space:nowrap;
 }
 
-/* ========= PRESENÇA (canto, nunca no centro) ========= */
+/* ========= PRESENÇA (canto) ========= */
 #presenceGhost{
   position:fixed;
   right:22px;
@@ -681,7 +678,6 @@ body{
   </div>
 </div>
 
-<!-- ✅ Presence inteligente (canto) -->
 <div id="presenceGhost" aria-hidden="true">…</div>
 
 <script>
@@ -850,13 +846,13 @@ document.addEventListener("visibilitychange", () => {
 video.volume = 0.7;
 volSlider.value = String(video.volume);
 
-/* ✅ Audio reactive (fallback seguro) */
+/* ✅ Audio reactive + beep do terminal (seguro e leve) */
 let audioCtx = null;
 let ambSource = null;
 let ambGain = null;
 let ambFilter = null;
 let audioReactiveEnabled = false;
-let ambienceBaseVol = 0.18; // base (vai ser recalculado pelo updateVolumeUI)
+let ambienceBaseVol = 0.18;
 let termAudioMode = false;
 
 function initAudioReactive(){
@@ -867,7 +863,7 @@ function initAudioReactive(){
 
     audioCtx = new AC();
 
-    // IMPORTANT: MediaElementSource pode ser criado 1x por elemento
+    // MediaElementSource: 1x por elemento
     ambSource = audioCtx.createMediaElementSource(ambience);
     ambGain = audioCtx.createGain();
     ambFilter = audioCtx.createBiquadFilter();
@@ -883,37 +879,37 @@ function initAudioReactive(){
     ambGain.connect(audioCtx.destination);
 
     audioReactiveEnabled = true;
-
-    // garante que o volume do elemento não brigue (mantém baixo; a mistura é no gain)
-    ambience.volume = 1;
+    ambience.volume = 1; // mix controlado no gain
     applyAmbienceMix();
   }catch(e){
     audioReactiveEnabled = false;
   }
 }
 
+async function ensureAudioAwake(){
+  initAudioReactive();
+  if (audioCtx && audioCtx.state === "suspended"){
+    try{ await audioCtx.resume(); }catch(e){}
+  }
+}
+
 function applyAmbienceMix(){
-  // multiplier quando terminal está aberto
   const modeMul = termAudioMode ? 1.25 : 1.0;
   const target = ambienceBaseVol * modeMul;
 
   if (audioReactiveEnabled && ambGain){
-    // clamp
     ambGain.gain.value = Math.max(0.0, Math.min(1.0, target));
     if (ambFilter){
-      // quando terminal aberto, corta um pouco (ficar mais “lab/monitor”)
       ambFilter.frequency.value = termAudioMode ? 6800 : 12000;
       ambFilter.Q.value = termAudioMode ? 1.1 : 0.7;
     }
   } else {
-    // fallback simples (sem webaudio)
     ambience.volume = Math.max(0.0, Math.min(0.35, target));
   }
 }
 
 function pulseTerminalAudio(intensity=0.06){
-  if (!audioReactiveEnabled || !ambGain) return;
-  // envelope leve: sobe rápido e volta
+  if (!audioReactiveEnabled || !ambGain || !audioCtx) return;
   const now = audioCtx.currentTime;
   const base = Math.max(0.0, Math.min(1.0, ambienceBaseVol * (termAudioMode ? 1.25 : 1.0)));
   const peak = Math.max(0.0, Math.min(1.0, base + intensity));
@@ -924,11 +920,35 @@ function pulseTerminalAudio(intensity=0.06){
   ambGain.gain.linearRampToValueAtTime(base, now + 0.09);
 }
 
+/* beep curtinho (não depende do mp3) */
+function terminalBeep(freq=860, dur=0.03, vol=0.02){
+  if (!audioCtx) return;
+  try{
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = "square";
+    o.frequency.value = freq;
+
+    const now = audioCtx.currentTime;
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(vol, now + 0.005);
+    g.gain.linearRampToValueAtTime(0, now + dur);
+
+    o.connect(g);
+    g.connect(audioCtx.destination);
+
+    o.start(now);
+    o.stop(now + dur + 0.01);
+  }catch(e){}
+}
+
 function setTerminalAudioMode(on){
   termAudioMode = !!on;
   applyAmbienceMix();
-  // micro pulso de “lock”
-  if (termAudioMode) pulseTerminalAudio(0.09);
+  if (termAudioMode){
+    pulseTerminalAudio(0.09);
+    terminalBeep(620, 0.035, 0.018);
+  }
 }
 
 function updateVolumeUI(){
@@ -947,7 +967,6 @@ function updateVolumeUI(){
     volState.style.color = "rgba(207,239,255,.9)";
   }
 
-  // base do ambience (segue vídeo, mas discreto)
   ambienceBaseVol = Math.min(0.35, Math.max(0.02, Number(video.volume) * 0.25));
   applyAmbienceMix();
 }
@@ -1001,7 +1020,7 @@ function triggerGlitch(){
   setTimeout(()=>document.body.classList.remove("glitch-on"), 700);
 }
 
-/* ===== Protocol (unchanged) ===== */
+/* ===== Protocol ===== */
 const PROTOCOL_ENABLED = true;
 const Protocol = {
   started: false,
@@ -1023,26 +1042,18 @@ function clearProtocolTimers(){
   for (const t of Protocol.timers) clearTimeout(t);
   Protocol.timers.length = 0;
 }
+
+/* ===== Terminal state (persistência) ===== */
 let termRunToken = 0;
 let termTyping = false;
 let termInteractive = false;
 
-function terminalAppendDimLine(text){
-  const div = document.createElement("div");
-  div.className = "termLine dim";
-  div.textContent = text;
-  termLog.appendChild(div);
-  termLog.scrollTop = termLog.scrollHeight;
-}
+/* ✅ NÃO resetar após concluir: cache do terminal */
+let termLoreCompleted = false;
+let termCacheHTML = "";
 
 /* ===== Presence inteligente ===== */
-const Presence = {
-  timer: null,
-  cooldown: false,
-  lastKeyTime: 0,
-  lastEnterTime: 0,
-  lastTerminalOpen: 0
-};
+const Presence = { timer: null, cooldown: false, lastTerminalOpen: 0 };
 
 function showPresence(text, ms=1400){
   presenceGhost.textContent = text;
@@ -1055,52 +1066,25 @@ function presencePick(){
   const inTerminal = terminal.classList.contains("show");
 
   const pools = {
-    BOOT: [
-      "Silêncio.",
-      "Eu estou observando.",
-      "Você chegou cedo demais.",
-      "A curiosidade é um vício útil."
-    ],
-    "SUBJECT LOCK": [
-      "Identidade: irrelevante.",
-      "Não finja que tem escolha.",
-      "Fique parado. Isso facilita.",
-      "Material registrado."
-    ],
-    CALIBRATION: [
-      "Calibração em curso.",
-      "Respire. Eu preciso de estabilidade.",
-      "A dor é só um parâmetro.",
-      "Sua resistência é… mediana."
-    ],
-    ASCENSION: [
-      "Você vai assistir de perto.",
-      "Controle total é só o começo.",
-      "Deus não pede permissão.",
-      "Protocolo ativo. Sem exceções."
-    ],
-    TERMINAL: [
-      "Digite. Eu avalio.",
-      "Erros são… educativos.",
-      "Não improvise.",
-      "Você acha que isso é um jogo?"
-    ]
+    BOOT: ["Silêncio.","Eu estou observando.","Você chegou cedo demais.","Curiosidade é um vício útil."],
+    "SUBJECT LOCK": ["Identidade: irrelevante.","Não finja que tem escolha.","Fique parado. Isso facilita.","Material registrado."],
+    CALIBRATION: ["Calibração em curso.","Respire. Eu preciso de estabilidade.","A dor é só um parâmetro.","Sua resistência é… mediana."],
+    ASCENSION: ["Você vai assistir de perto.","Controle total é só o começo.","Deus não pede permissão.","Protocolo ativo. Sem exceções."],
+    TERMINAL: ["Digite. Eu avalio.","Erros são… educativos.","Não improvise.","Você acha que isso é um jogo?"]
   };
 
-  if (inTerminal) return pools.TERMINAL[Math.floor(Math.random()*pools.TERMINAL.length)];
+  if (inTerminal) return pools.TERMINAL[(Math.random()*pools.TERMINAL.length)|0];
   const key = pools[phase] ? phase : "BOOT";
   const pool = pools[key] || pools.BOOT;
-  return pool[Math.floor(Math.random()*pool.length)];
+  return pool[(Math.random()*pool.length)|0];
 }
 
 function schedulePresence(){
   if (Presence.timer) clearTimeout(Presence.timer);
-  // 45s ~ 105s
   const delay = 45000 + Math.random()*60000;
   Presence.timer = setTimeout(() => {
     const loadingVisible = loadingScreen.style.display !== "none" && getComputedStyle(loadingScreen).display !== "none";
     if (!loadingVisible && !Presence.cooldown){
-      // não aparece se terminal acabou de abrir (evita “spam”)
       const now = Date.now();
       if (now - Presence.lastTerminalOpen > 2500){
         Presence.cooldown = true;
@@ -1112,15 +1096,14 @@ function schedulePresence(){
   }, delay);
 }
 
-/* presença reativa a eventos */
 function presenceOnPhase(ph){
-  // bem raro e discreto
   if (Presence.cooldown) return;
   if (Math.random() > 0.33) return;
   Presence.cooldown = true;
   showPresence(`// ${ph.name.replace("_"," ")} // ${ph.directive}`, 1600);
   setTimeout(()=>Presence.cooldown = false, 9000);
 }
+
 function presenceOnTerminalOpen(){
   Presence.lastTerminalOpen = Date.now();
   if (Presence.cooldown) return;
@@ -1129,43 +1112,8 @@ function presenceOnTerminalOpen(){
   setTimeout(()=>Presence.cooldown = false, 10000);
 }
 
-function maybeLogPhaseToTerminal(phase){
-  if (!terminal.classList.contains("show")) return;
-  if (!termInteractive) return;
-  terminalAppendDimLine(`// PHASE UPDATE: ${phase.name.replace("_"," ")} // ${phase.directive}`);
-}
-
-function startAscensionProtocol(){
-  if (!PROTOCOL_ENABLED) return;
-  if (Protocol.started) return;
-  Protocol.started = true;
-  clearProtocolTimers();
-  const first = Protocol.phases[0];
-  setProtocolHUD(first);
-  Protocol.lastPhase = first.name;
-
-  // presença leve
-  presenceOnPhase(first);
-
-  for (let i = 1; i < Protocol.phases.length; i++){
-    const ph = Protocol.phases[i];
-    const timer = setTimeout(() => {
-      setProtocolHUD(ph);
-      if (Protocol.lastPhase !== ph.name){
-        Protocol.lastPhase = ph.name;
-        maybeLogPhaseToTerminal(ph);
-        presenceOnPhase(ph);
-      }
-    }, ph.whenMs);
-    Protocol.timers.push(timer);
-  }
-}
-
 /* ===== Logs dinâmicos ===== */
-const DynLogs = {
-  enabled: true,
-  timer: null
-};
+const DynLogs = { enabled: true, timer: null };
 function randomHex(n=4){
   const chars = "0123456789ABCDEF";
   let s = "";
@@ -1186,6 +1134,7 @@ function dynLogLine(){
   ];
   return lines[(Math.random()*lines.length)|0];
 }
+
 function scheduleDynamicLogs(token){
   if (DynLogs.timer) clearTimeout(DynLogs.timer);
   if (!DynLogs.enabled) return;
@@ -1193,13 +1142,11 @@ function scheduleDynamicLogs(token){
   if (!termInteractive || termTyping) return;
   if (token !== termRunToken) return;
 
-  const delay = 3200 + Math.random()*5200; // 3.2s ~ 8.4s
+  const delay = 3200 + Math.random()*5200;
   DynLogs.timer = setTimeout(() => {
-    // só enquanto estiver vivo e interativo
     if (terminal.classList.contains("show") && termInteractive && !termTyping && token === termRunToken && DynLogs.enabled){
       terminalAppendDimLine(dynLogLine());
-      // micro reação no áudio (leve)
-      if (termAudioMode) pulseTerminalAudio(0.035);
+      if (termAudioMode){ pulseTerminalAudio(0.03); terminalBeep(920, 0.02, 0.012); }
     }
     scheduleDynamicLogs(token);
   }, delay);
@@ -1213,6 +1160,20 @@ function stopDynamicLogs(){
 const LORE_SPEED = { header: 9, lang: 9, main: 13, post: 9 };
 
 function clearTerminal(){ termLog.innerHTML = ""; }
+
+function terminalAppendDimLine(text){
+  const div = document.createElement("div");
+  div.className = "termLine dim";
+  div.textContent = text;
+  termLog.appendChild(div);
+  termLog.scrollTop = termLog.scrollHeight;
+
+  // ✅ mantém cache quando já está “comandos”
+  if (termLoreCompleted){
+    termCacheHTML = termLog.innerHTML;
+  }
+}
+
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 function ensureAlive(token){ return token === termRunToken && terminal.classList.contains("show"); }
 
@@ -1226,14 +1187,16 @@ async function typeLine(text, cls="", speed=14, token=0){
     if (!ensureAlive(token)) return;
     div.textContent += text[i];
 
-    // ✅ Áudio reage ao terminal: pequenos pulsos durante digitação
-    if (termAudioMode && !cls.includes("dim") && (i % 3 === 0)) pulseTerminalAudio(0.028);
-    if (termAudioMode && cls.includes("dim") && (i % 5 === 0)) pulseTerminalAudio(0.020);
+    if (termAudioMode){
+      if (i % 3 === 0) pulseTerminalAudio(cls.includes("dim") ? 0.018 : 0.026);
+      if (i % 5 === 0) terminalBeep(cls.includes("dim") ? 740 : 860, 0.018, cls.includes("dim") ? 0.010 : 0.013);
+    }
 
     await sleep(speed + Math.random()*14);
     termLog.scrollTop = termLog.scrollHeight;
   }
 }
+
 async function typeGlitchPhraseOnly(token){
   const base = "Changing language to...";
   const variants = [
@@ -1255,7 +1218,7 @@ async function typeGlitchPhraseOnly(token){
   for (let i=0; i<variants.length; i++){
     if (!ensureAlive(token)) return;
     line.textContent = variants[i];
-    if (termAudioMode) pulseTerminalAudio(0.035);
+    if (termAudioMode){ pulseTerminalAudio(0.035); terminalBeep(980, 0.02, 0.012); }
     await sleep(70);
   }
   if (!ensureAlive(token)) return;
@@ -1283,7 +1246,69 @@ async function respond(textLines){
     await typeLine(ln, "", 7, token);
     await sleep(90);
   }
+  if (termLoreCompleted) termCacheHTML = termLog.innerHTML;
 }
+
+/* ===== Protocol timers ===== */
+function maybeLogPhaseToTerminal(phase){
+  if (!terminal.classList.contains("show")) return;
+  if (!termInteractive) return;
+  terminalAppendDimLine(`// PHASE UPDATE: ${phase.name.replace("_"," ")} // ${phase.directive}`);
+}
+
+function startAscensionProtocol(){
+  if (!PROTOCOL_ENABLED) return;
+  if (Protocol.started) return;
+  Protocol.started = true;
+  clearProtocolTimers();
+  const first = Protocol.phases[0];
+  setProtocolHUD(first);
+  Protocol.lastPhase = first.name;
+  presenceOnPhase(first);
+
+  for (let i = 1; i < Protocol.phases.length; i++){
+    const ph = Protocol.phases[i];
+    const timer = setTimeout(() => {
+      setProtocolHUD(ph);
+      if (Protocol.lastPhase !== ph.name){
+        Protocol.lastPhase = ph.name;
+        maybeLogPhaseToTerminal(ph);
+        presenceOnPhase(ph);
+      }
+    }, ph.whenMs);
+    Protocol.timers.push(timer);
+  }
+}
+
+/* ===== NOVO: comandos bem Dottore ===== */
+async function runInjectSequence(){
+  if (termAudioMode){ pulseTerminalAudio(0.09); terminalBeep(420, 0.05, 0.02); }
+  triggerGlitch();
+  showPresence("Não se mova.", 1400);
+
+  await respond([
+    "INJECTION SEQUENCE // ARMING",
+    "DOSE: 0x" + randomHex(2) + " // ROUTE: INTRAVENOUS",
+    "SUBJECT: STILL BREATHING",
+    "… você realmente achou que eu pediria permissão?",
+    "INJECTION: COMPLETE // RESPONSE: PENDING"
+  ]);
+}
+
+async function forceAscend(){
+  // força HUD para ASCENSION, mas sem quebrar timers do protocolo:
+  const ph = Protocol.phases[Protocol.phases.length - 1];
+  setProtocolHUD(ph);
+  maybeLogPhaseToTerminal(ph);
+  showPresence("Deus não pede permissão.", 1500);
+  await respond([
+    "OVERRIDE // PHASE SHIFT",
+    `ASCENSION PROTOCOL // ${sysPhase.textContent}`,
+    "Você vai assistir. De perto."
+  ]);
+}
+
+/* ===== Terminal commands ===== */
 async function handleCommand(raw){
   const cmd = normalizeCmd(raw);
   if (!termInteractive || termTyping){
@@ -1291,19 +1316,22 @@ async function handleCommand(raw){
     return;
   }
   if (!cmd) return;
+
+  if (termAudioMode){ pulseTerminalAudio(0.06); terminalBeep(980, 0.02, 0.015); }
   printUserCmd(raw);
 
-  // ✅ logs dinâmicos toggle (safe)
-  if (cmd === "logs on"){
-    DynLogs.enabled = true;
-    await respond(["DYNAMIC LOGS: ENABLED."]);
+  if (cmd === "logs on"){ DynLogs.enabled = true; await respond(["DYNAMIC LOGS: ENABLED."]); scheduleDynamicLogs(termRunToken); return; }
+  if (cmd === "logs off"){ DynLogs.enabled = false; stopDynamicLogs(); await respond(["DYNAMIC LOGS: DISABLED."]); return; }
+
+  if (cmd === "inject"){ await runInjectSequence(); scheduleDynamicLogs(termRunToken); return; }
+  if (cmd === "ascend"){ await forceAscend(); scheduleDynamicLogs(termRunToken); return; }
+
+  if (cmd === "silence"){
+    ambOn = !ambOn;
+    if (!ambOn){ try{ ambience.pause(); }catch(e){} }
+    else { ambience.play().catch(()=>{}); }
+    await respond([`AMBIENCE: ${ambOn ? "ENABLED" : "DISABLED"}`, "Controle total. Lembre disso."]);
     scheduleDynamicLogs(termRunToken);
-    return;
-  }
-  if (cmd === "logs off"){
-    DynLogs.enabled = false;
-    stopDynamicLogs();
-    await respond(["DYNAMIC LOGS: DISABLED."]);
     return;
   }
 
@@ -1317,14 +1345,17 @@ async function handleCommand(raw){
       "- who are you",
       "- exit",
       "- clear",
-      "- logs on",
-      "- logs off"
+      "- logs on / logs off",
+      "- inject",
+      "- ascend",
+      "- silence"
     ]);
     return;
   }
   if (cmd === "clear" || cmd === "cls"){
     clearTerminal();
     terminalAppendDimLine("// LOG CLEARED // (a memória é seletiva)");
+    if (termLoreCompleted) termCacheHTML = termLog.innerHTML;
     scheduleDynamicLogs(termRunToken);
     return;
   }
@@ -1394,7 +1425,6 @@ termInput.addEventListener("keydown", async (e) => {
   if (e.key !== "Enter") return;
   const v = termInput.value;
   termInput.value = "";
-  if (termAudioMode) pulseTerminalAudio(0.06);
   await handleCommand(v);
   focusTerminalInput();
 });
@@ -1411,17 +1441,27 @@ async function showCommandsHintAuto(token){
   await typeLine("- who are you", "dim", 9, token);
   await typeLine("- clear", "dim", 9, token);
   await typeLine("- logs on / logs off", "dim", 9, token);
+  await typeLine("- inject", "dim", 9, token);
+  await typeLine("- ascend", "dim", 9, token);
+  await typeLine("- silence", "dim", 9, token);
   await typeLine("Dica: digite \"help\" para repetir.", "dim", 9, token);
 }
 
 async function runLoreSequence(){
   const token = ++termRunToken;
+
   termTyping = true;
   termInteractive = false;
   setInputEnabled(false);
+  stopDynamicLogs();
+
+  // se for rodar lore, reseta persistência
+  termLoreCompleted = false;
+  termCacheHTML = "";
+
   clearTerminal();
 
-  // ao abrir terminal, entra em modo áudio “monitor”
+  await ensureAudioAwake();
   setTerminalAudioMode(true);
 
   await typeLine("TERMINAL DO LABORATÓRIO ONLINE", "dim", LORE_SPEED.header, token);
@@ -1453,7 +1493,6 @@ async function runLoreSequence(){
     { t: "Prosseguindo com a calibração.", cls:"", d: 450 },
     { t: "— Il Dottore", cls:"dim", d: 450 },
   ];
-
   for (const L of lines){
     await typeLine(L.t, L.cls, LORE_SPEED.main, token);
     await sleep(L.d);
@@ -1478,26 +1517,62 @@ async function runLoreSequence(){
   setInputEnabled(true);
   focusTerminalInput();
 
-  // ✅ inicia logs dinâmicos (só agora, pra não bagunçar o lore)
-  scheduleDynamicLogs(token);
+  // ✅ agora pode persistir
+  termLoreCompleted = true;
+  termCacheHTML = termLog.innerHTML;
+
+  // logs dinâmicos só depois do lore completo
+  scheduleDynamicLogs(termRunToken);
 }
 
-function openTerminal(){
+/* ✅ Open/Close terminal com persistência */
+async function openTerminal(){
   terminal.classList.add("show");
   terminal.setAttribute("aria-hidden","false");
   presenceOnTerminalOpen();
+
+  // acorda áudio (tecla T conta como gesto)
+  await ensureAudioAwake();
+  setTerminalAudioMode(true);
+
+  // ✅ se já concluiu, não reseta — restaura estado
+  if (termLoreCompleted && termCacheHTML){
+    termLog.innerHTML = termCacheHTML;
+    termTyping = false;
+    termInteractive = true;
+    setInputEnabled(true);
+    focusTerminalInput();
+    scheduleDynamicLogs(termRunToken);
+    return;
+  }
+
   runLoreSequence().catch(()=>{});
 }
+
 function closeTerminal(){
+  // ✅ se fechar no meio da digitação, reseta na próxima
+  const interrupted = termTyping === true;
+
   terminal.classList.remove("show");
   terminal.setAttribute("aria-hidden","true");
-  termRunToken++;
+
+  termRunToken++; // cancela tasks pendentes
+  stopDynamicLogs();
+
+  if (interrupted){
+    termLoreCompleted = false;
+    termCacheHTML = "";
+  } else {
+    // se já completou, salva o estado atual (com logs/comandos)
+    if (termLoreCompleted){
+      termCacheHTML = termLog.innerHTML;
+    }
+  }
+
   termTyping = false;
   termInteractive = false;
   setInputEnabled(false);
-  stopDynamicLogs();
 
-  // sai do modo áudio do terminal
   setTerminalAudioMode(false);
 }
 
@@ -1516,7 +1591,7 @@ document.addEventListener("keydown", (e) => {
     const typingInInput = (a === termInput);
     if (typingInInput) return;
 
-    // ✅ T não fecha mais: abre ou só foca
+    // ✅ T não fecha: abre ou só foca
     if (!terminal.classList.contains("show")) openTerminal();
     else focusTerminalInput();
   }
@@ -1536,8 +1611,6 @@ function hideLoading(){
   clearInterval(msgTimer);
   sysSubject.textContent = "ATIVO";
   stopScanLoop();
-
-  // presença começa após iniciar
   schedulePresence();
 }
 
@@ -1584,9 +1657,7 @@ enterBox.onclick = async () => {
   }
 
   try {
-    // inicia WebAudio reativo no 1º gesto do usuário (seguro)
-    initAudioReactive();
-    if (audioCtx && audioCtx.state === "suspended") { try{ await audioCtx.resume(); }catch(e){} }
+    await ensureAudioAwake();
 
     video.muted = false;
     await video.play();
@@ -1615,7 +1686,6 @@ enterBox.onclick = async () => {
 /* teclado ENTER dispara o botão ENTER (quando loading está ativo) */
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Enter") return;
-
   if (terminal.classList.contains("show")) return;
 
   const a = document.activeElement;
@@ -1630,7 +1700,7 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-/* ===== Initial defaults for protocol HUD (safe) ===== */
+/* ===== Initial defaults ===== */
 setProtocolHUD(Protocol.phases[0]);
 startScanLoop();
 </script>
