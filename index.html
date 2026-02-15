@@ -374,7 +374,7 @@ body.subglitch #statusStrip{
   box-shadow: 0 0 0 2px rgba(0,200,255,.55), 0 16px 42px rgba(0,0,0,.38);
 }
 
-/* ===== Social control (top-right) ===== */
+/* ===== Social / Outbound control (top-right) — REWORKED ===== */
 #socialControl{
   position:fixed;
   top:62px;
@@ -385,31 +385,81 @@ body.subglitch #statusStrip{
   filter: drop-shadow(0 0 18px rgba(0,200,255,.18));
 }
 #socialControl:hover{opacity:1}
-#socialControl .ctrlBtn{
-  width:58px;
-  height:34px;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  padding:0 10px;
+
+/* agora é um “módulo de roteamento”: ícone + tag seca “OUT” */
+#socialControl .routeBtn{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  border:1px solid rgba(0,200,255,.62);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(0,200,255,.10), transparent 55%),
+    linear-gradient(180deg, rgba(12,24,44,.76), rgba(0,0,0,.55));
+  backdrop-filter: blur(20px);
+  display:grid;
+  place-items:center;
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+  box-shadow:0 0 0 1px rgba(0,0,0,.25) inset, 0 12px 34px rgba(0,0,0,.32);
 }
-#socialControl .ctrlBtn svg{
-  width:18px;height:18px;
+#socialControl .routeBtn::before{
+  content:"";
+  position:absolute;
+  inset:2px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.06);
+  pointer-events:none;
+}
+#socialControl .routeBtn::after{
+  content:"";
+  position:absolute;
+  inset:-40% -30%;
+  background:linear-gradient(90deg, transparent, rgba(0,200,255,.20), transparent);
+  transform:rotate(16deg) translateX(-90%);
+  opacity:0;
+  pointer-events:none;
+}
+#socialControl:hover .routeBtn::after{
+  opacity:1;
+  animation:scanPass 1.05s ease infinite;
+}
+#socialControl .routeTag{
+  position:absolute;
+  left:50%;
+  bottom:-10px;
+  transform:translateX(-50%);
+  font-size:8px;
+  letter-spacing:3px;
+  padding:2px 7px;
+  border-radius:999px;
+  border:1px solid rgba(0,200,255,.30);
+  background:rgba(0,0,0,.38);
+  color:rgba(207,239,255,.90);
+  text-shadow:0 0 10px rgba(0,200,255,.22);
+  opacity:.85;
+}
+#socialControl .routeGlyph{
+  width:22px;height:22px;
   filter: drop-shadow(0 0 10px rgba(0,200,255,.25));
 }
-#socialControl .socLabel{
-  font-size:9px;
-  letter-spacing:3px;
+#socialControl .routePulse{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:7px;height:7px;
+  border-radius:50%;
+  background:rgba(0,200,255,.8);
+  box-shadow:0 0 14px rgba(0,200,255,.35);
   opacity:.75;
-  color:rgba(207,239,255,.9);
-  transform: translateY(0.5px);
+  animation:routeDot 2.6s infinite;
+}
+@keyframes routeDot{
+  0%,100%{opacity:.25; transform:scale(.9)}
+  45%{opacity:.85; transform:scale(1.15)}
 }
 @media (max-width: 520px){
   #socialControl{ top:56px; }
-  #socialControl .socLabel{ display:none; }
-  #socialControl .ctrlBtn{ width:42px; padding:0; }
 }
 
 /* ========= VOLUME ========= */
@@ -940,6 +990,170 @@ body.subglitch #statusStrip{
   opacity:.95;
 }
 
+/* ========= ADMIN GATE (overlay) ========= */
+#admin{
+  position:fixed;
+  inset:0;
+  z-index:27; /* abaixo de channels(28) */
+  display:none;
+  background:rgba(0,0,0,.62);
+  backdrop-filter: blur(18px);
+}
+#admin.show{display:block;}
+.adBox{
+  position:absolute;
+  left:24px;
+  top:96px;
+  width:min(760px, calc(100vw - 48px));
+  border-radius:16px;
+  border:1px solid rgba(0,200,255,.30);
+  background:linear-gradient(180deg, rgba(10,20,35,.74), rgba(0,0,0,.60));
+  box-shadow:0 18px 60px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+.adHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:10px 12px;
+  font-size:10px;
+  letter-spacing:3px;
+  opacity:.85;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.adHeader .dim{opacity:.55}
+.adBody{ padding:14px; }
+.adGrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:12px;
+}
+@media (max-width: 720px){
+  .adBox{ top:86px; }
+  .adGrid{ grid-template-columns:1fr; }
+}
+.adField{
+  border-radius:14px;
+  border:1px solid rgba(0,200,255,.20);
+  background:rgba(0,0,0,.22);
+  box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
+  padding:10px 12px;
+}
+.adLabel{
+  font-size:9px;
+  letter-spacing:3px;
+  opacity:.60;
+  margin-bottom:8px;
+}
+.adRow{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.adStatic{
+  font-size:12px;
+  letter-spacing:2px;
+  opacity:.92;
+  color:rgba(207,239,255,.95);
+  text-shadow:0 0 10px rgba(0,200,255,.18);
+}
+#adPass{
+  width:100%;
+  height:36px;
+  border-radius:12px;
+  border:1px solid rgba(0,200,255,.25);
+  background:rgba(0,0,0,.35);
+  color:rgba(207,239,255,.95);
+  padding:0 12px;
+  font-family:'Orbitron', sans-serif;
+  letter-spacing:1px;
+  font-size:11px;
+  outline:none;
+  box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
+}
+#adPass::placeholder{ color:rgba(207,239,255,.45); }
+
+.adActions{
+  margin-top:12px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.adBtn{
+  height:34px;
+  padding:0 14px;
+  border-radius:12px;
+  border:1px solid rgba(0,200,255,.55);
+  background:linear-gradient(180deg, rgba(12,24,44,.78), rgba(0,0,0,.50));
+  backdrop-filter: blur(18px);
+  color:rgba(207,239,255,.95);
+  letter-spacing:3px;
+  font-size:9px;
+  cursor:pointer;
+  box-shadow:0 0 0 1px rgba(0,0,0,.25) inset, 0 12px 34px rgba(0,0,0,.28);
+}
+.adBtn:hover{ transform:translateY(-1px); }
+.adBtn:active{ transform:translateY(1px); }
+
+#adMsg{
+  font-size:9px;
+  letter-spacing:2px;
+  opacity:.60;
+}
+#adMsg.bad{ opacity:.85; color:rgba(255,190,190,.95); }
+#adMsg.ok{ opacity:.85; color:rgba(207,239,255,.95); }
+
+.adDash{
+  margin-top:12px;
+  border-top:1px solid rgba(255,255,255,.08);
+  padding-top:12px;
+}
+.adKpiGrid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:12px;
+}
+@media (max-width: 720px){
+  .adKpiGrid{ grid-template-columns:1fr; }
+}
+.adKpi{
+  border-radius:14px;
+  border:1px solid rgba(0,200,255,.18);
+  background:rgba(0,0,0,.18);
+  padding:10px 12px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
+}
+.adKpi .k{ font-size:9px; letter-spacing:3px; opacity:.55; margin-bottom:6px; }
+.adKpi .v{ font-size:16px; letter-spacing:2px; opacity:.92; color:rgba(207,239,255,.95); text-shadow:0 0 12px rgba(0,200,255,.14); }
+.adNote{
+  margin-top:10px;
+  font-size:9px;
+  letter-spacing:2px;
+  opacity:.55;
+  line-height:1.5;
+}
+.adToggleRow{
+  margin-top:12px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.adToggle{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 10px;
+  border-radius:12px;
+  border:1px solid rgba(0,200,255,.20);
+  background:rgba(0,0,0,.20);
+  box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
+  user-select:none;
+}
+.adToggle input{ width:14px;height:14px; accent-color: rgba(0,200,255,.85); }
+.adToggle span{ font-size:9px; letter-spacing:3px; opacity:.75; }
+
 /* reduced motion */
 @media (prefers-reduced-motion: reduce){
   .scanlines{opacity:.35}
@@ -947,6 +1161,8 @@ body.subglitch #statusStrip{
   #cinemaFX::before{animation:none}
   #topControls .ctrlBtn::after{animation:none; opacity:0;}
   #loadingScreen.scan-on #enterScan::before{animation:none !important;}
+  #socialControl .routePulse{animation:none}
+  #socialControl .routeBtn::after{animation:none; opacity:0;}
 }
 @media (max-width: 768px){
   :root{ --blur-amount: 55px; }
@@ -1011,12 +1227,14 @@ body.subglitch #statusStrip{
   <button class="ctrlBtn" id="btnFS" title="Tela cheia">⛶</button>
   <button class="ctrlBtn" id="btnCat" title="Catálogo">≡</button>
   <button class="ctrlBtn" id="btnTerm" title="Painel">⌁</button>
+  <button class="ctrlBtn" id="btnAdmin" title="Admin Gate">⌂</button>
 </div>
 
-<!-- Social / Outbound control (top-right) -->
-<div id="socialControl" aria-label="Outbound links">
-  <button class="ctrlBtn" id="btnLinks" type="button" title="Canais / Redes" aria-label="Abrir canais externos">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+<!-- Outbound / Routing control (top-right) -->
+<div id="socialControl" aria-label="Outbound routing">
+  <button class="routeBtn" id="btnLinks" type="button" title="Outbound Routing" aria-label="Abrir canais externos">
+    <span class="routePulse" aria-hidden="true"></span>
+    <svg class="routeGlyph" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M16 8a3 3 0 1 0-2.83-4H13a3 3 0 0 0 3 4Zm-8 8a3 3 0 1 0-2.83-4H5a3 3 0 0 0 3 4Zm11 4a3 3 0 1 0-2.83-4H16a3 3 0 0 0 3 4Z"
             fill="rgba(207,239,255,.95)"/>
       <path d="M7.6 12.9 14.4 9.1M7.7 14.9 14.3 18.9"
@@ -1025,7 +1243,7 @@ body.subglitch #statusStrip{
             stroke-width="1.7"
             stroke-linecap="round"/>
     </svg>
-    <span class="socLabel">LINKS</span>
+    <span class="routeTag" aria-hidden="true">OUT</span>
   </button>
 </div>
 
@@ -1124,6 +1342,76 @@ body.subglitch #statusStrip{
   </div>
 </div>
 
+<!-- ADMIN -->
+<div id="admin" aria-hidden="true">
+  <div class="adBox">
+    <div class="adHeader">
+      <div>ADMIN CONSOLE // AUTH REQUIRED</div>
+      <div class="dim">ESC para fechar</div>
+    </div>
+
+    <div class="adBody">
+      <div class="adGrid" id="adGate">
+        <div class="adField">
+          <div class="adLabel">USER</div>
+          <div class="adRow">
+            <div class="adStatic" id="adUser">Dottore</div>
+          </div>
+        </div>
+
+        <div class="adField">
+          <div class="adLabel">PASS</div>
+          <div class="adRow">
+            <input id="adPass" type="password" autocomplete="off" spellcheck="false" placeholder="—" />
+          </div>
+        </div>
+      </div>
+
+      <div class="adActions">
+        <button class="adBtn" id="adAuthBtn" type="button">AUTH</button>
+        <button class="adBtn" id="adClearBtn" type="button" style="border-color:rgba(255,255,255,.18);opacity:.85;">CLEAR</button>
+        <div id="adMsg">ACCESS: LOCKED</div>
+      </div>
+
+      <div class="adDash" id="adDash" style="display:none;">
+        <div class="adKpiGrid">
+          <div class="adKpi">
+            <div class="k">VIEWS // ENTER</div>
+            <div class="v" id="kViews">0</div>
+          </div>
+          <div class="adKpi">
+            <div class="k">UNIQUE // DEVICE</div>
+            <div class="v" id="kUnique">0</div>
+          </div>
+          <div class="adKpi">
+            <div class="k">LAST ACCESS</div>
+            <div class="v" id="kLast">—</div>
+          </div>
+        </div>
+
+        <div class="adToggleRow">
+          <label class="adToggle">
+            <input type="checkbox" id="adToggleSubglitch" checked />
+            <span>SUBGLITCH</span>
+          </label>
+          <label class="adToggle">
+            <input type="checkbox" id="adToggleAmb" checked />
+            <span>AMBIENCE</span>
+          </label>
+        </div>
+
+        <div class="adActions" style="margin-top:12px;">
+          <button class="adBtn" id="adResetMetrics" type="button" style="border-color:rgba(255,90,90,.45);">RESET METRICS</button>
+          <button class="adBtn" id="adLogout" type="button" style="border-color:rgba(255,255,255,.18);opacity:.85;">LOCK</button>
+          <div id="adNote" class="adNote">
+            Nota: métricas são locais (este navegador/dispositivo). Sem backend, não existe contagem global real.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="terminal" aria-hidden="true">
   <div class="termBox">
     <div class="termHeader">
@@ -1167,6 +1455,7 @@ const btnFS = document.getElementById("btnFS");
 const btnTerm = document.getElementById("btnTerm");
 const btnCat  = document.getElementById("btnCat");
 const btnLinks = document.getElementById("btnLinks");
+const btnAdmin = document.getElementById("btnAdmin");
 
 const volumeHUD = document.getElementById("volumeHUD");
 const volSlider = document.getElementById("volSlider");
@@ -1185,6 +1474,21 @@ const catalog = document.getElementById("catalog");
 const catGrid = document.getElementById("catGrid");
 
 const channels = document.getElementById("channels");
+
+/* ADMIN */
+const admin = document.getElementById("admin");
+const adPass = document.getElementById("adPass");
+const adAuthBtn = document.getElementById("adAuthBtn");
+const adClearBtn = document.getElementById("adClearBtn");
+const adMsg = document.getElementById("adMsg");
+const adDash = document.getElementById("adDash");
+const kViews = document.getElementById("kViews");
+const kUnique = document.getElementById("kUnique");
+const kLast = document.getElementById("kLast");
+const adToggleSubglitch = document.getElementById("adToggleSubglitch");
+const adToggleAmb = document.getElementById("adToggleAmb");
+const adResetMetrics = document.getElementById("adResetMetrics");
+const adLogout = document.getElementById("adLogout");
 
 /* Catalog filter toggles */
 const fArchived = document.getElementById("fArchived");
@@ -1858,6 +2162,7 @@ async function runLoreSequence(){
 function openTerminal(){
   closeCatalog();
   closeChannels();
+  closeAdmin();
 
   terminal.classList.add("show");
   terminal.setAttribute("aria-hidden","false");
@@ -1909,6 +2214,8 @@ btnTerm.addEventListener("click", (e) => {
 function openChannels(){
   closeTerminal();
   closeCatalog();
+  closeAdmin();
+
   channels.classList.add("show");
   channels.setAttribute("aria-hidden","false");
   armAudioOnce();
@@ -2032,6 +2339,7 @@ renderCatalog();
 function openCatalog(){
   if (terminal.classList.contains("show")) closeTerminal();
   closeChannels();
+  closeAdmin();
 
   catalog.classList.add("show");
   catalog.setAttribute("aria-hidden","false");
@@ -2056,18 +2364,190 @@ catalog.addEventListener("click", (e) => {
   if (e.target === catalog) closeCatalog();
 });
 
+/* ===== ADMIN (gate + dashboard) ===== */
+const ADMIN_USER = "Dottore";
+const ADMIN_PASS = "Projeto26";
+let adminAuthed = false;
+
+const METRIC_KEYS = {
+  views: "dottore_views_total",
+  unique: "dottore_unique_device",
+  last: "dottore_last_access"
+};
+
+function readIntLS(key){
+  try{ return parseInt(localStorage.getItem(key) || "0", 10) || 0; }catch(e){ return 0; }
+}
+function writeLS(key, val){
+  try{ localStorage.setItem(key, String(val)); }catch(e){}
+}
+function nowStamp(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const da = String(d.getDate()).padStart(2,"0");
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  const ss = String(d.getSeconds()).padStart(2,"0");
+  return `${y}-${m}-${da} ${hh}:${mm}:${ss}`;
+}
+function refreshAdminMetrics(){
+  kViews.textContent = String(readIntLS(METRIC_KEYS.views));
+  kUnique.textContent = String(readIntLS(METRIC_KEYS.unique));
+  kLast.textContent = localStorage.getItem(METRIC_KEYS.last) || "—";
+}
+function setAdMsg(text, mode){
+  adMsg.textContent = text;
+  adMsg.classList.remove("bad","ok");
+  if (mode) adMsg.classList.add(mode);
+}
+
+function openAdmin(){
+  closeTerminal();
+  closeCatalog();
+  closeChannels();
+
+  admin.classList.add("show");
+  admin.setAttribute("aria-hidden","false");
+  armAudioOnce();
+  blip(760, 0.07, 0.030);
+
+  pulseStrip("ADMIN:GATE", "AUTH:REQUIRED", "TRACE:LOCKED");
+  ss2.classList.remove("faint"); ss3.classList.remove("faint");
+
+  // reset gate view
+  if (!adminAuthed){
+    adDash.style.display = "none";
+    setAdMsg("ACCESS: LOCKED", null);
+    adPass.value = "";
+    setTimeout(()=>adPass.focus({preventScroll:true}), 40);
+  }else{
+    adDash.style.display = "";
+    refreshAdminMetrics();
+    setAdMsg("ACCESS: GRANTED", "ok");
+  }
+}
+function closeAdmin(){
+  if (!admin.classList.contains("show")) return;
+  admin.classList.remove("show");
+  admin.setAttribute("aria-hidden","true");
+  pulseStrip("ADMIN:CLOSED", "FEED:STANDBY", "TRACE:—");
+}
+btnAdmin.addEventListener("click", (e) => {
+  e.stopPropagation();
+  if (admin.classList.contains("show")) closeAdmin();
+  else openAdmin();
+});
+admin.addEventListener("click", (e) => {
+  if (e.target === admin) closeAdmin();
+});
+
+function doAuth(){
+  armAudioOnce();
+  blip(520, 0.05, 0.030);
+
+  const p = (adPass.value || "").trim();
+  if (p === ADMIN_PASS){
+    adminAuthed = true;
+    setAdMsg("ACCESS: GRANTED", "ok");
+    blip(980, 0.06, 0.035);
+
+    adDash.style.display = "";
+    refreshAdminMetrics();
+    pulseStrip("ADMIN:UNLOCKED", "AUTH:VALID", "TRACE:Δ");
+    ss2.classList.remove("faint"); ss3.classList.remove("faint");
+    return;
+  }
+
+  setAdMsg("ACCESS: DENIED", "bad");
+  blip(220, 0.08, 0.030);
+  pulseStrip("ADMIN:DENIED", "AUTH:INVALID", "TRACE:LOCKED");
+  ss2.classList.remove("faint"); ss3.classList.remove("faint");
+}
+adAuthBtn.addEventListener("click", doAuth);
+adPass.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") doAuth();
+});
+adClearBtn.addEventListener("click", () => {
+  adPass.value = "";
+  setAdMsg(adminAuthed ? "ACCESS: GRANTED" : "ACCESS: LOCKED", adminAuthed ? "ok" : null);
+  blip(610, 0.05, 0.020);
+  adPass.focus({preventScroll:true});
+});
+adLogout.addEventListener("click", () => {
+  adminAuthed = false;
+  adDash.style.display = "none";
+  adPass.value = "";
+  setAdMsg("ACCESS: LOCKED", null);
+  blip(340, 0.06, 0.028);
+  pulseStrip("ADMIN:LOCKED", "AUTH:REQUIRED", "TRACE:—");
+  ss2.classList.remove("faint"); ss3.classList.remove("faint");
+});
+adResetMetrics.addEventListener("click", () => {
+  if (!adminAuthed){
+    setAdMsg("ACTION BLOCKED", "bad");
+    blip(220, 0.08, 0.030);
+    return;
+  }
+  writeLS(METRIC_KEYS.views, 0);
+  writeLS(METRIC_KEYS.unique, 0);
+  writeLS(METRIC_KEYS.last, "—");
+  refreshAdminMetrics();
+  setAdMsg("METRICS RESET", "ok");
+  blip(880, 0.05, 0.030);
+  pulseStrip("ADMIN:RESET", "METRICS:CLEARED", "TRACE:OK");
+  ss2.classList.remove("faint"); ss3.classList.remove("faint");
+});
+
+/* Admin toggles (local effect only) */
+adToggleSubglitch.addEventListener("change", () => {
+  if (!adminAuthed){
+    adToggleSubglitch.checked = subglitchArmed;
+    setAdMsg("ACTION DENIED", "bad");
+    blip(220, 0.08, 0.030);
+    return;
+  }
+  subglitchArmed = !!adToggleSubglitch.checked;
+  if (subglitchArmed && hasEntered) scheduleSubglitch();
+  pulseStrip("ADMIN:TOGGLE", "SUBGLITCH:SET", subglitchArmed ? "TRACE:ARMED" : "TRACE:OFF");
+  ss2.classList.remove("faint"); ss3.classList.remove("faint");
+  blip(610, 0.05, 0.020);
+});
+adToggleAmb.addEventListener("change", () => {
+  if (!adminAuthed){
+    adToggleAmb.checked = ambOn;
+    setAdMsg("ACTION DENIED", "bad");
+    blip(220, 0.08, 0.030);
+    return;
+  }
+  ambOn = !!adToggleAmb.checked;
+  if (!hasEntered){
+    // não toca nada antes do enter
+    pulseStrip("ADMIN:TOGGLE", "AMBIENCE:SET", "TRACE:DEFERRED");
+    ss2.classList.remove("faint"); ss3.classList.remove("faint");
+    blip(610, 0.05, 0.018);
+    return;
+  }
+  if (ambOn) ambience.play().catch(()=>{});
+  else ambience.pause();
+  pulseStrip("ADMIN:TOGGLE", "AMBIENCE:SET", ambOn ? "TRACE:LIVE" : "TRACE:MUTED");
+  ss2.classList.remove("faint"); ss3.classList.remove("faint");
+  blip(610, 0.05, 0.018);
+});
+
 /* ===== Keyboard routing ===== */
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape"){
     if (terminal.classList.contains("show")) { closeTerminal(); return; }
     if (catalog.classList.contains("show")) { closeCatalog(); return; }
     if (channels.classList.contains("show")) { closeChannels(); return; }
+    if (admin.classList.contains("show")) { closeAdmin(); return; }
   }
 
   const isToggleKey = (e.key === "`" || e.key.toLowerCase() === "t");
   if (isToggleKey){
     const a = document.activeElement;
-    const typingInInput = (a === termInput);
+    const typingInInput = (a === termInput || a === adPass);
     if (typingInInput) return;
     if (!terminal.classList.contains("show")) openTerminal();
     else focusTerminalInput();
@@ -2079,6 +2559,14 @@ document.addEventListener("keydown", (e) => {
     if (isTypingField) return;
     if (!catalog.classList.contains("show")) openCatalog();
     else closeCatalog();
+  }
+
+  if (e.key.toLowerCase() === "a"){
+    const a = document.activeElement;
+    const isTypingField = a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA" || a.isContentEditable);
+    if (isTypingField) return;
+    if (!admin.classList.contains("show")) openAdmin();
+    else closeAdmin();
   }
 
   if (terminal.classList.contains("show") && e.key === "Enter"){
@@ -2108,6 +2596,27 @@ function waitForPlaying(el, timeoutMs=1200){
     el.addEventListener("playing", onPlay, { once:true });
     el.addEventListener("error", onErr, { once:true });
   });
+}
+
+/* ===== METRICS (local) ===== */
+function bumpMetricsOnEnterSuccess(){
+  // total views (enter)
+  const v = readIntLS(METRIC_KEYS.views) + 1;
+  writeLS(METRIC_KEYS.views, v);
+
+  // unique device (only first time)
+  const hasU = (localStorage.getItem(METRIC_KEYS.unique + "_flag") === "1");
+  if (!hasU){
+    const u = readIntLS(METRIC_KEYS.unique) + 1;
+    writeLS(METRIC_KEYS.unique, u);
+    try{ localStorage.setItem(METRIC_KEYS.unique + "_flag", "1"); }catch(e){}
+  }
+
+  // last access
+  writeLS(METRIC_KEYS.last, nowStamp());
+
+  // se admin já estiver authed, reflete
+  if (adminAuthed) refreshAdminMetrics();
 }
 
 /* ===== ENTER / RETRY ===== */
@@ -2161,6 +2670,9 @@ enterBox.onclick = async () => {
     ss2.classList.remove("faint");
     ss3.classList.remove("faint");
 
+    // ✅ métricas locais
+    bumpMetricsOnEnterSuccess();
+
   } catch (err) {
     spinner.style.display = "none";
     setLoadingStatus("REPRODUÇÃO BLOQUEADA // CLIQUE NOVAMENTE");
@@ -2193,6 +2705,10 @@ document.addEventListener("keydown", (e) => {
 /* ===== Initial defaults ===== */
 setProtocolHUD(Protocol.phases[0]);
 pulseStrip("SYSTEM:BOOT", "FEED:IDLE", "TRACE:—");
+
+/* admin defaults */
+adToggleSubglitch.checked = true;
+adToggleAmb.checked = true;
 </script>
 
 </body>
