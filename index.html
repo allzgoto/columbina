@@ -121,6 +121,24 @@ body{
   100%{opacity:0; transform:none}
 }
 
+/* ========= SUBTLE SUBLAYER GLITCH (ambient, nunca no vídeo) ========= */
+body.subglitch .scanlines{
+  opacity:.88;
+  filter: contrast(1.12);
+}
+body.subglitch #coordsHUD,
+body.subglitch #techHUD,
+body.subglitch #statusStrip{
+  animation:subglitchJitter 180ms steps(2) 1;
+}
+@keyframes subglitchJitter{
+  0%{transform:translate(0,0)}
+  25%{transform:translate(1px,-1px)}
+  50%{transform:translate(-1px,1px)}
+  75%{transform:translate(1px,0)}
+  100%{transform:translate(0,0)}
+}
+
 /* ========= LOADING ========= */
 #loadingScreen{
   position:fixed;
@@ -255,6 +273,73 @@ body{
 #techHUD .tag{opacity:.85}
 #techHUD .value{opacity:.9; color:rgba(207,239,255,.95)}
 #techHUD .sep{opacity:.25}
+
+/* ========= STATUS STRIP (micro logs, fora do centro) ========= */
+#statusStrip{
+  position:fixed;
+  left:24px;
+  top:252px; /* abaixo do volume/techHUD */
+  width:min(280px, 44vw);
+  z-index:7;
+  opacity:.42;
+  transition:.22s ease;
+  pointer-events:none;
+  user-select:none;
+  filter: drop-shadow(0 0 18px rgba(0,200,255,.16));
+}
+#statusStrip:hover{opacity:.7;}
+.statusBox{
+  border-radius:14px;
+  border:1px solid rgba(0,200,255,.22);
+  background:
+    linear-gradient(180deg, rgba(10,20,35,.62), rgba(0,0,0,.48)),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 10px);
+  backdrop-filter: blur(18px);
+  box-shadow:0 0 0 1px rgba(0,0,0,.25) inset, 0 14px 48px rgba(0,0,0,.38);
+  overflow:hidden;
+}
+.statusHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px 10px;
+  font-size:9px;
+  letter-spacing:3px;
+  opacity:.85;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.statusHead .dim{opacity:.55}
+.statusLines{
+  padding:8px 10px 10px 10px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.sLine{
+  font-size:9px;
+  letter-spacing:2px;
+  line-height:1.35;
+  opacity:.9;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sLine .k{opacity:.6}
+.sLine .v{opacity:.95;color:rgba(207,239,255,.92)}
+.sPulse{
+  height:2px;
+  width:100%;
+  background:linear-gradient(90deg, rgba(0,200,255,.0), rgba(0,200,255,.35), rgba(0,200,255,.0));
+  opacity:0;
+}
+#statusStrip.pulse .sPulse{
+  opacity:1;
+  animation:statusPulse 420ms ease 1;
+}
+@keyframes statusPulse{
+  0%{transform:translateX(-40%)}
+  100%{transform:translateX(40%)}
+}
 
 /* ===== Top controls ===== */
 #topControls{
@@ -580,8 +665,63 @@ body{
   letter-spacing:3px;
   opacity:.85;
   border-bottom:1px solid rgba(255,255,255,.08);
+  gap:12px;
 }
 .catHeader .dim{opacity:.55}
+.catHeaderRight{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.catFilters{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 8px;
+  border-radius:12px;
+  border:1px solid rgba(0,200,255,.22);
+  background:rgba(0,0,0,.22);
+  backdrop-filter: blur(16px);
+}
+.catFilters .label{
+  font-size:9px;
+  letter-spacing:3px;
+  opacity:.65;
+  margin-right:4px;
+}
+.fToggle{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 8px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg, rgba(10,20,35,.45), rgba(0,0,0,.28));
+  cursor:pointer;
+  user-select:none;
+  transition:.14s ease;
+}
+.fToggle .dot{
+  width:7px;height:7px;border-radius:50%;
+  background:rgba(0,200,255,.45);
+  box-shadow:0 0 10px rgba(0,200,255,.18);
+}
+.fToggle .t{
+  font-size:9px;
+  letter-spacing:2px;
+  opacity:.75;
+}
+.fToggle.on{
+  border-color: rgba(0,200,255,.35);
+  box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
+}
+.fToggle.on .dot{
+  background:rgba(0,200,255,.85);
+  box-shadow:0 0 12px rgba(0,200,255,.35);
+}
+.fToggle.on .t{opacity:.92;color:rgba(207,239,255,.92);}
+.fToggle:active{transform:translateY(1px);}
+
 .catBody{
   padding:12px;
   max-height:min(56vh, 520px);
@@ -603,6 +743,7 @@ body{
     linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.35));
   overflow:hidden;
   box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
+  position:relative;
 }
 .catThumb{
   position:relative;
@@ -633,7 +774,7 @@ body{
   pointer-events:none;
 }
 
-/* ✅ NEW: carimbo dentro da thumb */
+/* ✅ carimbo dentro da thumb */
 .catStamp{
   position:absolute;
   left:10px;
@@ -690,6 +831,34 @@ body{
   white-space:nowrap;
 }
 
+/* ✅ fallback clínico seguro (se imagem falhar) */
+.catFallback{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  padding:10px;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(0,200,255,.10), transparent 55%),
+    linear-gradient(180deg, rgba(10,20,35,.70), rgba(0,0,0,.60)),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 10px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 6px);
+  opacity:.92;
+}
+.catFallback .left{
+  font-size:9px;
+  letter-spacing:2px;
+  opacity:.85;
+  color:rgba(207,239,255,.92);
+  text-shadow:0 0 10px rgba(0,200,255,.18);
+}
+.catFallback .right{
+  font-size:9px;
+  letter-spacing:3px;
+  opacity:.55;
+}
+
 /* reduced motion */
 @media (prefers-reduced-motion: reduce){
   .scanlines{opacity:.35}
@@ -701,6 +870,7 @@ body{
 @media (max-width: 768px){
   :root{ --blur-amount: 55px; }
   #techHUD{display:none;}
+  #statusStrip{display:none;}
 }
 </style>
 </head>
@@ -750,6 +920,22 @@ body{
   <div class="termLine"><span class="tag">DIRECTIVE</span> <span class="sep">//</span> <span class="value" id="sysDirective">MONITORING</span></div>
 </div>
 
+<!-- ✅ Status Strip: micro logs (não polui o centro) -->
+<div id="statusStrip" aria-hidden="true">
+  <div class="statusBox">
+    <div class="statusHead">
+      <div>STATUS STRIP // Σ</div>
+      <div class="dim" id="statusClock">--:--</div>
+    </div>
+    <div class="sPulse"></div>
+    <div class="statusLines">
+      <div class="sLine" id="sLine0"><span class="k">SYS</span> <span class="k">//</span> <span class="v">IDLE</span></div>
+      <div class="sLine" id="sLine1"><span class="k">PROTO</span> <span class="k">//</span> <span class="v">BOOT</span></div>
+      <div class="sLine" id="sLine2"><span class="k">INDEX</span> <span class="k">//</span> <span class="v">SEALED</span></div>
+    </div>
+  </div>
+</div>
+
 <div id="topControls">
   <button class="ctrlBtn" id="btnFS" title="Tela cheia">⛶</button>
   <button class="ctrlBtn" id="btnCat" title="Catálogo">≡</button>
@@ -784,8 +970,25 @@ body{
   <div class="catBox">
     <div class="catHeader">
       <div>EXPERIMENT CATALOG // INDEX: Σ</div>
-      <div class="dim">ESC para fechar</div>
+
+      <!-- ✅ filtros secos, clínicos (sem vibe de “botão bonitinho”) -->
+      <div class="catHeaderRight">
+        <div class="catFilters" aria-label="Filtros do catálogo">
+          <div class="label">INDEX FILTER</div>
+          <div class="fToggle on" data-status="ARCHIVED" title="Arquivado">
+            <span class="dot" aria-hidden="true"></span><span class="t">ARCHIVED</span>
+          </div>
+          <div class="fToggle on" data-status="ACTIVE" title="Ativo">
+            <span class="dot" aria-hidden="true"></span><span class="t">ACTIVE</span>
+          </div>
+          <div class="fToggle on" data-status="SEALED" title="Selado">
+            <span class="dot" aria-hidden="true"></span><span class="t">SEALED</span>
+          </div>
+        </div>
+        <div class="dim">ESC para fechar</div>
+      </div>
     </div>
+
     <div class="catBody">
       <div id="catGrid" class="catGrid"></div>
     </div>
@@ -851,9 +1054,20 @@ const termHint = document.getElementById("termHint");
 const catalog = document.getElementById("catalog");
 const catGrid = document.getElementById("catGrid");
 
+/* Status strip */
+const statusStrip = document.getElementById("statusStrip");
+const statusClock = document.getElementById("statusClock");
+const sLine0 = document.getElementById("sLine0");
+const sLine1 = document.getElementById("sLine1");
+const sLine2 = document.getElementById("sLine2");
+
+/* Catalog filters */
+const filterToggles = [...document.querySelectorAll(".fToggle")];
+
 /* ===== FLAGS ===== */
 let ambOn = true;
 let hasEntered = false; // ✅ vídeo só pode tocar depois do ENTER
+let ambientLoopArmed = false;
 
 /* ===== LOADING TEXT ===== */
 const messages = [
@@ -1008,8 +1222,47 @@ volIconBtn.addEventListener("click", (e) => {
 });
 document.addEventListener("click", () => volumeHUD.classList.remove("open"));
 
-/* ===== TECH HUD DYNAMIC ===== */
+/* ===== STATUS STRIP (micro logs: 2–3 linhas, sem spam) ===== */
 function pad2(n){ return String(n).padStart(2,"0"); }
+function tickStatusClock(){
+  const d = new Date();
+  statusClock.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+}
+setInterval(tickStatusClock, 1200);
+tickStatusClock();
+
+const Status = {
+  lines: [
+    { k:"SYS", v:"IDLE" },
+    { k:"PROTO", v:"BOOT" },
+    { k:"INDEX", v:"SEALED" }
+  ],
+  lastPushAt: 0,
+  minGapMs: 750
+};
+function renderStatusLines(){
+  sLine0.innerHTML = `<span class="k">${Status.lines[0].k}</span> <span class="k">//</span> <span class="v">${escapeHtml(Status.lines[0].v)}</span>`;
+  sLine1.innerHTML = `<span class="k">${Status.lines[1].k}</span> <span class="k">//</span> <span class="v">${escapeHtml(Status.lines[1].v)}</span>`;
+  sLine2.innerHTML = `<span class="k">${Status.lines[2].k}</span> <span class="k">//</span> <span class="v">${escapeHtml(Status.lines[2].v)}</span>`;
+}
+function pulseStatus(){
+  statusStrip.classList.remove("pulse");
+  void statusStrip.offsetWidth;
+  statusStrip.classList.add("pulse");
+  setTimeout(()=>statusStrip.classList.remove("pulse"), 520);
+}
+function pushStatus(k, v){
+  const now = performance.now();
+  if (now - Status.lastPushAt < Status.minGapMs) return; // anti-spam
+  Status.lastPushAt = now;
+  Status.lines.unshift({ k, v });
+  Status.lines.length = 3;
+  renderStatusLines();
+  pulseStatus();
+}
+renderStatusLines();
+
+/* ===== TECH HUD DYNAMIC ===== */
 function tickTech(){
   const d = new Date();
   sysClock.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
@@ -1044,6 +1297,44 @@ function triggerGlitch(){
   void document.body.offsetWidth;
   document.body.classList.add("glitch-on");
   setTimeout(()=>document.body.classList.remove("glitch-on"), 700);
+}
+
+/* ===== Ambient subglitch events (60–120s, só HUD/scanlines) ===== */
+function triggerSubGlitch(reason="SUBLEVEL DESYNC"){
+  if (!hasEntered) return;
+  document.body.classList.remove("subglitch");
+  void document.body.offsetWidth;
+  document.body.classList.add("subglitch");
+  setTimeout(()=>document.body.classList.remove("subglitch"), 210);
+
+  // micro log (não spammar)
+  pushStatus("ANOM", reason);
+}
+function armAmbientLoopOnce(){
+  if (ambientLoopArmed) return;
+  ambientLoopArmed = true;
+
+  const loop = () => {
+    if (!hasEntered) { setTimeout(loop, 3000); return; }
+    // 60–120s
+    const wait = 60000 + Math.floor(Math.random()*60001);
+    setTimeout(() => {
+      if (!hasEntered) { loop(); return; }
+      // chance moderada: 65%
+      if (Math.random() < 0.65){
+        const reasons = [
+          "SUBLEVEL DESYNC",
+          "PACKET BLEED",
+          "FRAME DRIFT",
+          "HUD PHANTOM",
+          "SIGNAL NOISE"
+        ];
+        triggerSubGlitch(reasons[Math.floor(Math.random()*reasons.length)]);
+      }
+      loop();
+    }, wait);
+  };
+  loop();
 }
 
 /* ===== Audio Reactor (terminal presence) ===== */
@@ -1111,7 +1402,6 @@ function setTerminalAudioState(state){ // "off" | "open" | "typing"
   if (!AudioFX.armed || !AudioFX.master) return;
   const now = AudioFX.ctx.currentTime;
 
-  // ✅ MAIS ALTO (antes 0.020/0.030)
   const target = (state === "off") ? 0.0 : (state === "open" ? 0.045 : 0.065);
   const lfoAmt = (state === "typing") ? 0.018 : 0.0;
 
@@ -1126,7 +1416,7 @@ function blip(freq=820, dur=0.055, gain=0.06){
   const now = AudioFX.ctx.currentTime;
   const o = AudioFX.ctx.createOscillator();
   const g = AudioFX.ctx.createGain();
-  o.type = "square";
+  o.type = "triangle"; // mais cirúrgico, menos arcade
   o.frequency.setValueAtTime(freq, now);
   g.gain.setValueAtTime(0.0001, now);
   g.gain.exponentialRampToValueAtTime(gain, now + 0.012);
@@ -1154,6 +1444,9 @@ function setProtocolHUD(phase){
   sysPhase.textContent = phase.name.replace("_", " ");
   sysDirective.textContent = phase.directive;
   sysSubject.textContent = phase.subject;
+
+  // micro logs: sem flood
+  pushStatus("PROTO", `${phase.name.replace("_"," ")} // ${phase.directive}`);
 }
 function clearProtocolTimers(){
   for (const t of Protocol.timers) clearTimeout(t);
@@ -1163,6 +1456,14 @@ let termRunToken = 0;
 let termTyping = false;
 let termInteractive = false;
 let loreCompleted = false; // ✅ não reseta depois dos comandos
+let busyWarned = false;   // ✅ evita spam "BUSY"
+
+/* ===== Terminal helpers ===== */
+const LORE_SPEED = { header: 9, lang: 9, main: 13, post: 9 };
+
+function clearTerminal(){ termLog.innerHTML = ""; }
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+function ensureAlive(token){ return token === termRunToken && terminal.classList.contains("show"); }
 
 function terminalAppendDimLine(text){
   const div = document.createElement("div");
@@ -1197,13 +1498,6 @@ function startAscensionProtocol(){
   }
 }
 
-/* ===== Terminal helpers ===== */
-const LORE_SPEED = { header: 9, lang: 9, main: 13, post: 9 };
-
-function clearTerminal(){ termLog.innerHTML = ""; }
-function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
-function ensureAlive(token){ return token === termRunToken && terminal.classList.contains("show"); }
-
 async function typeLine(text, cls="", speed=14, token=0){
   if (!ensureAlive(token)) return;
   const div = document.createElement("div");
@@ -1214,11 +1508,11 @@ async function typeLine(text, cls="", speed=14, token=0){
     if (!ensureAlive(token)) return;
     div.textContent += text[i];
 
-    // som micro “tecla” (bem leve, com throttle) — ✅ MAIS ALTO
+    // som micro “tecla” (bem leve, com throttle)
     const now = performance.now();
-    if (now - AudioFX.lastTap > 26){
+    if (now - AudioFX.lastTap > 30){
       AudioFX.lastTap = now;
-      blip(720 + Math.random()*180, 0.03, 0.015);
+      blip(760 + Math.random()*140, 0.028, 0.010);
     }
 
     await sleep(speed + Math.random()*14);
@@ -1277,10 +1571,16 @@ async function respond(textLines){
 }
 async function handleCommand(raw){
   const cmd = normalizeCmd(raw);
+
+  // ✅ enquanto lore escreve: 1 aviso e silêncio (sem spam)
   if (!termInteractive || termTyping){
-    terminalAppendDimLine("// INPUT IGNORED: BUSY");
+    if (!busyWarned){
+      busyWarned = true;
+      terminalAppendDimLine("// INPUT LOCKED: SYSTEM WRITING");
+    }
     return;
   }
+
   if (!cmd) return;
   printUserCmd(raw);
 
@@ -1387,6 +1687,7 @@ async function runLoreSequence(){
   loreCompleted = false;
   termTyping = true;
   termInteractive = false;
+  busyWarned = false;
   setInputEnabled(false);
   clearTerminal();
 
@@ -1448,6 +1749,8 @@ async function runLoreSequence(){
 
   setTerminalAudioState("open");
   blip(440, 0.07, 0.040);
+
+  pushStatus("TERM", "READY // INPUT GRANTED");
 }
 
 /* ===== Terminal open/close behavior ===== */
@@ -1459,6 +1762,8 @@ function openTerminal(){
 
   armAudioOnce();
   blip(860, 0.08, 0.040);
+
+  pushStatus("TERM", "OPEN // CHANNEL ACTIVE");
 
   if (loreCompleted && !termTyping){
     termInteractive = true;
@@ -1488,6 +1793,7 @@ function closeTerminal(){
   }
 
   setTerminalAudioState("off");
+  pushStatus("TERM", "CLOSED // CHANNEL MUTED");
 }
 
 btnTerm.addEventListener("click", (e) => {
@@ -1497,34 +1803,40 @@ btnTerm.addEventListener("click", (e) => {
 });
 
 /* ===== Catalog ===== */
+/*
+  ✅ Imagens “Genshin-coded”:
+  - Eu NÃO vou hotlinkar asset oficial do jogo aqui (copyright / instabilidade).
+  - Use paths seus (assets/...) ou links seus (catbox/github/raw/CDN).
+  - Se faltar imagem, o fallback clínico entra automaticamente.
+*/
 const CATALOG_ITEMS = [
   {
-    ref: "Σ-01 / VIVISECTION",
+    ref: "Σ-01 / SEGMENT",
     status: "ARCHIVED",
-    title: "PROJETO VITRINE // ÓRGÃOS EM LOOP",
-    desc: "Exposição didática: manter o sujeito vivo o suficiente para assistir a própria anatomia 'funcionando'. Uma aula. Para ele, um castigo.",
-    img: "https://www.publicdomainpictures.net/pictures/70000/velka/microscope-in-a-laboratory.jpg"
+    title: "PROJETO SEGMENTO // DUPLICAÇÃO CONTROLADA",
+    desc: "Instâncias funcionais. Personalidade dispensável. Continuidade garantida por redundância. Você chama isso de monstruoso porque pensa como indivíduo.",
+    img: "assets/experiments/dottore_segment.jpg"
   },
   {
-    ref: "Σ-07 / TRANSFER",
+    ref: "Σ-07 / DELUSION",
     status: "ACTIVE",
-    title: "PROTOCOLO EIDOLON // IDENTIDADE REVOGADA",
-    desc: "Separar a pessoa do nome. O nome do medo. Remover o resto. O que sobra obedece melhor.",
-    img: "https://www.publicdomainpictures.net/pictures/210000/velka/--1485197059y0d.jpg"
+    title: "PROTOCOLO DELUSION // POTÊNCIA SEM PERMISSÃO",
+    desc: "Energia emprestada. Corpo como recipiente. O custo é inevitável — a única variável é quem escolhe pagar.",
+    img: "assets/experiments/delusion_vial.jpg"
   },
   {
-    ref: "Δ-12 / NEURAL",
+    ref: "Δ-12 / RUIN",
     status: "SEALED",
-    title: "CÓRTEX-Δ // DOR COMO TELEMETRIA",
-    desc: "Dor não é punição. É um sensor. Você chama de crueldade porque não entende instrumentação.",
-    img: "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2013/06/mri_brain_scan/12915330-1-eng-GB/MRI_brain_scan.jpg"
+    title: "NÚCLEO DE RUIN // MÁQUINA COM MEMÓRIA",
+    desc: "Integração de circuito antigo com tecido novo. O passado sempre volta — às vezes em forma de servo.",
+    img: "assets/experiments/ruin_core.jpg"
   },
   {
-    ref: "K-03 / SYNTH",
+    ref: "K-03 / FATUI",
     status: "ARCHIVED",
-    title: "GEL-SDS // PUREZA ABSOLUTA",
-    desc: "Separar, quantificar, descartar. O destino de qualquer coisa que não alcança o padrão. Incluindo você.",
-    img: "https://upload.wikimedia.org/wikipedia/commons/b/b5/SDS-Gel_electrophoresis.jpg"
+    title: "INSTALAÇÃO FATUI // LABORATÓRIO DE CAMPO",
+    desc: "Ambiente esterilizado para decisões sujas. A diferença entre ciência e crueldade é apenas o vocabulário usado para justificar o resultado.",
+    img: "assets/experiments/fatui_lab.jpg"
   }
 ];
 
@@ -1533,9 +1845,43 @@ function escapeHtml(s){
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   }[m]));
 }
+
+/* ===== Catalog filters state ===== */
+const CatalogFilter = {
+  enabled: new Set(["ARCHIVED","ACTIVE","SEALED"])
+};
+function isAllowedStatus(st){ return CatalogFilter.enabled.has(st); }
+
 function renderCatalog(){
   catGrid.innerHTML = "";
-  for (const it of CATALOG_ITEMS){
+
+  const filtered = CATALOG_ITEMS.filter(it => isAllowedStatus(it.status));
+  if (!filtered.length){
+    const empty = document.createElement("div");
+    empty.className = "catCard";
+    empty.innerHTML = `
+      <div class="catThumb">
+        <div class="catFallback">
+          <div class="left">NO MATCH</div>
+          <div class="right">FILTERED</div>
+        </div>
+        <div class="catStamp">Σ / FILTER</div>
+      </div>
+      <div class="catContent">
+        <div class="catTitle">SEM REGISTROS VISÍVEIS</div>
+        <div class="catDesc">Você removeu todos os estados do índice. Reative pelo INDEX FILTER.</div>
+        <div class="catMeta">
+          <div class="catBadge"><span class="catDot"></span><span>Σ / INDEX</span></div>
+          <div class="catRight">EMPTY</div>
+        </div>
+      </div>
+    `;
+    catGrid.appendChild(empty);
+    pushStatus("INDEX", "FILTER EMPTY");
+    return;
+  }
+
+  for (const it of filtered){
     const card = document.createElement("div");
     card.className = "catCard";
     card.innerHTML = `
@@ -1553,15 +1899,50 @@ function renderCatalog(){
         </div>
       </div>
     `;
+
     const img = card.querySelector("img");
     img.addEventListener("error", () => {
-      img.remove();
+      img.style.display = "none";
+      const fb = document.createElement("div");
+      fb.className = "catFallback";
+      fb.innerHTML = `
+        <div class="left">NO VISUAL DATA</div>
+        <div class="right">ARCHIVE ONLY</div>
+      `;
+      img.parentElement.appendChild(fb);
     }, { once:true });
 
     catGrid.appendChild(card);
   }
+
+  pushStatus("INDEX", `RENDER // ${filtered.length} ITEM(S)`);
 }
 renderCatalog();
+
+/* Filter toggle behavior */
+function syncFilterUI(){
+  for (const t of filterToggles){
+    const st = t.getAttribute("data-status");
+    const on = CatalogFilter.enabled.has(st);
+    t.classList.toggle("on", on);
+  }
+}
+syncFilterUI();
+
+for (const t of filterToggles){
+  t.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const st = t.getAttribute("data-status");
+    if (CatalogFilter.enabled.has(st)) CatalogFilter.enabled.delete(st);
+    else CatalogFilter.enabled.add(st);
+
+    syncFilterUI();
+    renderCatalog();
+    armAudioOnce();
+    blip(640, 0.05, 0.022);
+    pushStatus("INDEX", `FILTER ${st} // ${CatalogFilter.enabled.has(st) ? "ON" : "OFF"}`);
+  });
+}
 
 function openCatalog(){
   if (terminal.classList.contains("show")) closeTerminal();
@@ -1570,11 +1951,14 @@ function openCatalog(){
   catalog.setAttribute("aria-hidden","false");
   armAudioOnce();
   blip(640, 0.07, 0.032);
+
+  pushStatus("INDEX", "OPEN // BROWSING");
 }
 function closeCatalog(){
   if (!catalog.classList.contains("show")) return;
   catalog.classList.remove("show");
   catalog.setAttribute("aria-hidden","true");
+  pushStatus("INDEX", "CLOSED");
 }
 btnCat.addEventListener("click", (e) => {
   e.stopPropagation();
@@ -1621,6 +2005,8 @@ function hideLoading(){
   clearInterval(msgTimer);
   sysSubject.textContent = "ATIVO";
   stopScanLoop();
+
+  pushStatus("SYS", "ONLINE // FEED LIVE");
 }
 function waitForPlaying(el, timeoutMs=1200){
   return new Promise((resolve, reject) => {
@@ -1682,6 +2068,9 @@ enterBox.onclick = async () => {
     startAscensionProtocol();
     blip(980, 0.08, 0.040);
 
+    pushStatus("ACCESS", "GRANTED // ENTER CONFIRMED");
+    armAmbientLoopOnce(); // ✅ só depois do ENTER
+
   } catch (err) {
     spinner.style.display = "none";
     setLoadingStatus("REPRODUÇÃO BLOQUEADA // CLIQUE NOVAMENTE");
@@ -1713,6 +2102,23 @@ document.addEventListener("keydown", (e) => {
 
 /* ===== Initial defaults ===== */
 setProtocolHUD(Protocol.phases[0]);
+
+/* ===== Performance tuning (só blur; não toca mídia) ===== */
+(function tunePerf(){
+  const root = document.documentElement;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const mem = navigator.deviceMemory || 0;
+  const cores = navigator.hardwareConcurrency || 0;
+
+  const low = reduce || (mem && mem <= 4) || (cores && cores <= 4);
+
+  if (low){
+    root.style.setProperty("--blur-amount", "55px");
+    videoBlur.style.filter = "blur(55px) brightness(.5) saturate(1.35)";
+    pushStatus("PERF", "BLUR REDUCED");
+  }
+})();
 </script>
 
 </body>
