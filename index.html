@@ -121,55 +121,6 @@ body{
   100%{opacity:0; transform:none}
 }
 
-/* ========= SUBJECT TAG (pequeno, fora do centro) ========= */
-#subjectTag{
-  position:fixed;
-  right:22px;
-  bottom:22px;
-  z-index:28; /* abaixo do terminal (30), acima do catálogo (29) */
-  padding:10px 12px;
-  border-radius:14px;
-  border:1px solid rgba(0,200,255,.28);
-  background:linear-gradient(180deg, rgba(10,20,35,.72), rgba(0,0,0,.55));
-  backdrop-filter: blur(18px);
-  box-shadow:0 16px 60px rgba(0,0,0,.55);
-  max-width:min(360px, calc(100vw - 44px));
-  opacity:0;
-  transform:translateY(8px);
-  pointer-events:none;
-  transition:.22s ease;
-  overflow:hidden;
-}
-#subjectTag.show{
-  opacity:.92;
-  transform:translateY(0);
-}
-#subjectTag .k{
-  font-size:9px;
-  letter-spacing:3px;
-  opacity:.55;
-  margin-bottom:6px;
-}
-#subjectTag .v{
-  font-size:10px;
-  letter-spacing:2px;
-  opacity:.9;
-  line-height:1.35;
-  color:rgba(207,239,255,.95);
-  text-shadow:0 0 12px rgba(0,200,255,.20);
-}
-#subjectTag::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 5px),
-    radial-gradient(circle at 20% 0%, rgba(0,200,255,.12), transparent 55%);
-  mix-blend-mode:overlay;
-  opacity:.35;
-  pointer-events:none;
-}
-
 /* ========= LOADING ========= */
 #loadingScreen{
   position:fixed;
@@ -652,15 +603,6 @@ body{
     linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.35));
   overflow:hidden;
   box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
-  transition:.18s ease;
-  cursor:pointer;
-}
-.catCard:hover{
-  transform: translateY(-1px);
-  box-shadow:
-    0 0 0 1px rgba(0,0,0,.25) inset,
-    0 18px 60px rgba(0,0,0,.55),
-    0 0 22px rgba(0,200,255,.12);
 }
 .catThumb{
   position:relative;
@@ -676,7 +618,7 @@ body{
   width:100%;
   height:100%;
   object-fit:cover;
-  filter: grayscale(.25) contrast(1.05) brightness(.78) saturate(1.15);
+  filter: grayscale(.35) contrast(1.05) brightness(.78) saturate(1.1);
   transform: translateZ(0);
 }
 .catThumb::after{
@@ -684,13 +626,34 @@ body{
   position:absolute;
   inset:0;
   background:
-    linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.62)),
+    linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.60)),
     repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 4px);
   mix-blend-mode:overlay;
   opacity:.55;
   pointer-events:none;
 }
-.catContent{ padding:10px 12px 12px 12px; }
+
+/* ✅ NEW: carimbo dentro da thumb */
+.catStamp{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  z-index:2;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(0,200,255,.35);
+  background:rgba(0,0,0,.45);
+  backdrop-filter: blur(12px);
+  font-size:9px;
+  letter-spacing:2px;
+  color:rgba(207,239,255,.95);
+  text-shadow:0 0 10px rgba(0,200,255,.22);
+  box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
+}
+
+.catContent{
+  padding:10px 12px 12px 12px;
+}
 .catTitle{
   font-size:11px;
   letter-spacing:2px;
@@ -703,22 +666,28 @@ body{
   line-height:1.55;
   opacity:.80;
 }
-
-/* ✅ reduzimos info extra: só um “ref” discreto */
 .catMeta{
   margin-top:10px;
   display:flex;
-  align-items:center;
+  justify-content:space-between;
   gap:10px;
   font-size:9px;
   letter-spacing:2px;
-  opacity:.52;
+  opacity:.55;
+}
+.catBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
 }
 .catDot{
   width:7px;height:7px;border-radius:50%;
   background:rgba(0,200,255,.75);
   box-shadow:0 0 12px rgba(0,200,255,.35);
   flex:0 0 auto;
+}
+.catRight{
+  white-space:nowrap;
 }
 
 /* reduced motion */
@@ -753,12 +722,6 @@ body{
 <div class="scanlines"></div>
 <div id="cinemaFX"></div>
 <div id="glitchFlash"></div>
-
-<!-- ✅ Subject tag -->
-<div id="subjectTag" aria-hidden="true">
-  <div class="k">SUBJECT TAG</div>
-  <div class="v" id="subjectTagText">—</div>
-</div>
 
 <div id="loadingScreen">
   <div id="enterScan" aria-hidden="true"></div>
@@ -888,20 +851,9 @@ const termHint = document.getElementById("termHint");
 const catalog = document.getElementById("catalog");
 const catGrid = document.getElementById("catGrid");
 
-const subjectTag = document.getElementById("subjectTag");
-const subjectTagText = document.getElementById("subjectTagText");
-
 /* ===== FLAGS ===== */
 let ambOn = true;
-
-/* ===== SUBJECT TAG helper ===== */
-let tagTimer = null;
-function showSubjectTag(text, ms=1800){
-  subjectTagText.textContent = text;
-  subjectTag.classList.add("show");
-  clearTimeout(tagTimer);
-  tagTimer = setTimeout(()=>subjectTag.classList.remove("show"), ms);
-}
+let hasEntered = false; // ✅ vídeo só pode tocar depois do ENTER
 
 /* ===== LOADING TEXT ===== */
 const messages = [
@@ -917,6 +869,16 @@ const msgTimer = setInterval(() => {
   msgIndex = (msgIndex + 1) % messages.length;
   dynamicText.textContent = messages[msgIndex];
 }, 2200);
+
+/* ✅ garante que ao carregar/voltar pro site, se não entrou, fica tudo parado */
+function hardStopMediaIfNotEntered(){
+  if (hasEntered) return;
+  try{ video.pause(); video.currentTime = 0; }catch(e){}
+  try{ videoBlur.pause(); videoBlur.currentTime = 0; }catch(e){}
+  try{ ambience.pause(); ambience.currentTime = 0; }catch(e){}
+}
+document.addEventListener("DOMContentLoaded", hardStopMediaIfNotEntered);
+window.addEventListener("pageshow", () => hardStopMediaIfNotEntered());
 
 /* ===== READY / SAFETY ===== */
 let readyToEnter = false;
@@ -988,21 +950,28 @@ function onVideoError(){
 video.addEventListener("error", onVideoError);
 videoBlur.addEventListener("error", onVideoError);
 
-/* ===== SYNC BLUR ===== */
+/* ===== SYNC BLUR (só sincroniza quando o vídeo realmente tocar) ===== */
 video.addEventListener("play", () => { videoBlur.play().catch(()=>{}); });
 video.addEventListener("pause", () => { try{ videoBlur.pause(); }catch(e){} });
 
-/* ===== VISIBILITY ===== */
+/* ✅ VISIBILITY (não toca nada se ainda está no ENTER) */
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     try{ video.pause(); }catch(e){}
     try{ videoBlur.pause(); }catch(e){}
     try{ ambience.pause(); }catch(e){}
-  } else {
-    video.play().catch(()=>{});
-    videoBlur.play().catch(()=>{});
-    if (ambOn) ambience.play().catch(()=>{});
+    return;
   }
+
+  // ✅ Só retoma se já passou do ENTER
+  if (!hasEntered) {
+    hardStopMediaIfNotEntered();
+    return;
+  }
+
+  video.play().catch(()=>{});
+  videoBlur.play().catch(()=>{});
+  if (ambOn) ambience.play().catch(()=>{});
 });
 
 /* ===== VOLUME UI ===== */
@@ -1081,6 +1050,7 @@ function triggerGlitch(){
 const AudioFX = {
   ctx: null,
   master: null,
+  drone: null,
   droneGain: null,
   lfo: null,
   lfoGain: null,
@@ -1140,8 +1110,10 @@ function armAudioOnce(){
 function setTerminalAudioState(state){ // "off" | "open" | "typing"
   if (!AudioFX.armed || !AudioFX.master) return;
   const now = AudioFX.ctx.currentTime;
-  const target = (state === "off") ? 0.0 : (state === "open" ? 0.020 : 0.030);
-  const lfoAmt = (state === "typing") ? 0.010 : 0.0;
+
+  // ✅ MAIS ALTO (antes 0.020/0.030)
+  const target = (state === "off") ? 0.0 : (state === "open" ? 0.045 : 0.065);
+  const lfoAmt = (state === "typing") ? 0.018 : 0.0;
 
   AudioFX.master.gain.cancelScheduledValues(now);
   AudioFX.master.gain.setTargetAtTime(target, now, 0.06);
@@ -1149,7 +1121,7 @@ function setTerminalAudioState(state){ // "off" | "open" | "typing"
   AudioFX.lfoGain.gain.cancelScheduledValues(now);
   AudioFX.lfoGain.gain.setTargetAtTime(lfoAmt, now, 0.05);
 }
-function blip(freq=820, dur=0.055, gain=0.03){
+function blip(freq=820, dur=0.055, gain=0.06){
   if (!AudioFX.armed || !AudioFX.ctx || !AudioFX.master) return;
   const now = AudioFX.ctx.currentTime;
   const o = AudioFX.ctx.createOscillator();
@@ -1164,10 +1136,6 @@ function blip(freq=820, dur=0.055, gain=0.03){
   o.start(now);
   o.stop(now + dur + 0.02);
 }
-
-/* ✅ garante “gesto” pra áudio (teclado/mouse) */
-document.addEventListener("pointerdown", armAudioOnce, { once:true });
-document.addEventListener("keydown", armAudioOnce, { once:true });
 
 /* ===== Protocol ===== */
 const PROTOCOL_ENABLED = true;
@@ -1246,11 +1214,11 @@ async function typeLine(text, cls="", speed=14, token=0){
     if (!ensureAlive(token)) return;
     div.textContent += text[i];
 
-    // som micro “tecla” (leve, com throttle)
+    // som micro “tecla” (bem leve, com throttle) — ✅ MAIS ALTO
     const now = performance.now();
     if (now - AudioFX.lastTap > 26){
       AudioFX.lastTap = now;
-      blip(720 + Math.random()*180, 0.03, 0.008);
+      blip(720 + Math.random()*180, 0.03, 0.015);
     }
 
     await sleep(speed + Math.random()*14);
@@ -1278,7 +1246,7 @@ async function typeGlitchPhraseOnly(token){
   for (let i=0; i<variants.length; i++){
     if (!ensureAlive(token)) return;
     line.textContent = variants[i];
-    blip(980 + Math.random()*260, 0.03, 0.010);
+    blip(980 + Math.random()*260, 0.03, 0.020);
     await sleep(70);
   }
   if (!ensureAlive(token)) return;
@@ -1317,7 +1285,7 @@ async function handleCommand(raw){
   printUserCmd(raw);
 
   // blip de “ack”
-  blip(520, 0.05, 0.018);
+  blip(520, 0.05, 0.030);
 
   if (cmd === "help" || cmd === "?" ){
     await respond([
@@ -1479,7 +1447,7 @@ async function runLoreSequence(){
   focusTerminalInput();
 
   setTerminalAudioState("open");
-  blip(440, 0.07, 0.02);
+  blip(440, 0.07, 0.040);
 }
 
 /* ===== Terminal open/close behavior ===== */
@@ -1490,8 +1458,7 @@ function openTerminal(){
   terminal.setAttribute("aria-hidden","false");
 
   armAudioOnce();
-  blip(860, 0.08, 0.022);
-  showSubjectTag("TERMINAL // ACCESS: GRANTED", 1200);
+  blip(860, 0.08, 0.040);
 
   if (loreCompleted && !termTyping){
     termInteractive = true;
@@ -1530,31 +1497,34 @@ btnTerm.addEventListener("click", (e) => {
 });
 
 /* ===== Catalog ===== */
-/* ✅ IMAGENS: você pode trocar livremente esses links depois */
 const CATALOG_ITEMS = [
   {
     ref: "Σ-01 / VIVISECTION",
+    status: "ARCHIVED",
     title: "PROJETO VITRINE // ÓRGÃOS EM LOOP",
     desc: "Exposição didática: manter o sujeito vivo o suficiente para assistir a própria anatomia 'funcionando'. Uma aula. Para ele, um castigo.",
-    img: "https://static.wikia.nocookie.net/villains/images/1/15/Dottore%27s_experiment_in_blasphemy.png/revision/latest/scale-to-width-down/800?cb=20220831120355"
+    img: "https://www.publicdomainpictures.net/pictures/70000/velka/microscope-in-a-laboratory.jpg"
   },
   {
     ref: "Σ-07 / TRANSFER",
+    status: "ACTIVE",
     title: "PROTOCOLO EIDOLON // IDENTIDADE REVOGADA",
     desc: "Separar a pessoa do nome. O nome do medo. Remover o resto. O que sobra obedece melhor.",
-    img: "https://static.wikia.nocookie.net/villains/images/d/d1/Dottore_overlooking_the_burning_tree.png/revision/latest/scale-to-width-down/800?cb=20220831120420"
+    img: "https://www.publicdomainpictures.net/pictures/210000/velka/--1485197059y0d.jpg"
   },
   {
     ref: "Δ-12 / NEURAL",
+    status: "SEALED",
     title: "CÓRTEX-Δ // DOR COMO TELEMETRIA",
     desc: "Dor não é punição. É um sensor. Você chama de crueldade porque não entende instrumentação.",
-    img: "https://cdn.oneesports.gg/cdn-data/2024/10/GenshinImpact_IlDottoreAndPantalone.jpg"
+    img: "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2013/06/mri_brain_scan/12915330-1-eng-GB/MRI_brain_scan.jpg"
   },
   {
     ref: "K-03 / SYNTH",
-    title: "THE DOCTOR // SEGMENTO EM CAMPO",
-    desc: "Uma cópia é suficiente. Um enxame é inevitável. O experimento perfeito não precisa de um original — só de continuidade.",
-    img: "https://static.wikia.nocookie.net/villains/images/e/e6/TheDoctorLive.webp/revision/latest/scale-to-width-down/800?cb=20260105100102"
+    status: "ARCHIVED",
+    title: "GEL-SDS // PUREZA ABSOLUTA",
+    desc: "Separar, quantificar, descartar. O destino de qualquer coisa que não alcança o padrão. Incluindo você.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/b/b5/SDS-Gel_electrophoresis.jpg"
   }
 ];
 
@@ -1570,33 +1540,23 @@ function renderCatalog(){
     card.className = "catCard";
     card.innerHTML = `
       <div class="catThumb">
-        <img src="${escapeHtml(it.img)}" alt="" loading="lazy" decoding="async" />
+        <img src="${escapeHtml(it.img)}" alt="" loading="lazy" decoding="async"
+             referrerpolicy="no-referrer" crossorigin="anonymous" />
+        <div class="catStamp">${escapeHtml(it.ref)}</div>
       </div>
       <div class="catContent">
         <div class="catTitle">${escapeHtml(it.title)}</div>
         <div class="catDesc">${escapeHtml(it.desc)}</div>
         <div class="catMeta">
-          <span class="catDot"></span>
-          <span>${escapeHtml(it.ref)}</span>
+          <div class="catBadge"><span class="catDot"></span><span>${escapeHtml(it.ref)}</span></div>
+          <div class="catRight">${escapeHtml(it.status)}</div>
         </div>
       </div>
     `;
-
-    // fallback simples se imagem falhar
     const img = card.querySelector("img");
     img.addEventListener("error", () => {
       img.remove();
-      card.querySelector(".catThumb").style.background =
-        "linear-gradient(180deg, rgba(12,24,44,.70), rgba(0,0,0,.65))";
     }, { once:true });
-
-    // ✅ click: glitch + sound + subject tag
-    card.addEventListener("click", () => {
-      armAudioOnce();
-      blip(640 + Math.random()*120, 0.06, 0.020);
-      triggerGlitch();
-      showSubjectTag(`${it.ref} // CONSENT: OVERRIDDEN`, 1900);
-    });
 
     catGrid.appendChild(card);
   }
@@ -1609,8 +1569,7 @@ function openCatalog(){
   catalog.classList.add("show");
   catalog.setAttribute("aria-hidden","false");
   armAudioOnce();
-  blip(640, 0.07, 0.018);
-  showSubjectTag("CATALOG // INDEX: Σ", 1300);
+  blip(640, 0.07, 0.032);
 }
 function closeCatalog(){
   if (!catalog.classList.contains("show")) return;
@@ -1633,7 +1592,6 @@ document.addEventListener("keydown", (e) => {
     if (catalog.classList.contains("show")) { closeCatalog(); return; }
   }
 
-  // abre terminal: ` ou T (T não fecha; só foca)
   const isToggleKey = (e.key === "`" || e.key.toLowerCase() === "t");
   if (isToggleKey){
     const a = document.activeElement;
@@ -1643,7 +1601,6 @@ document.addEventListener("keydown", (e) => {
     else focusTerminalInput();
   }
 
-  // catálogo: C
   if (e.key.toLowerCase() === "c"){
     const a = document.activeElement;
     const isTypingField = a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA" || a.isContentEditable);
@@ -1652,7 +1609,6 @@ document.addEventListener("keydown", (e) => {
     else closeCatalog();
   }
 
-  // enter foca input quando terminal aberto
   if (terminal.classList.contains("show") && e.key === "Enter"){
     if (!termInput.disabled) focusTerminalInput();
   }
@@ -1685,7 +1641,7 @@ function waitForPlaying(el, timeoutMs=1200){
 /* ===== ENTER / RETRY ===== */
 enterBox.onclick = async () => {
   enterBox.style.pointerEvents = "none";
-  armAudioOnce();
+  armAudioOnce(); // ✅ garante áudio liberado no primeiro gesto
 
   if (enterBox.textContent === "RETRY") {
     spinner.style.display = "";
@@ -1713,6 +1669,9 @@ enterBox.onclick = async () => {
     await video.play();
     await waitForPlaying(video, 1500);
 
+    // ✅ agora liberou geral
+    hasEntered = true;
+
     videoBlur.play().catch(()=>{});
     if (ambOn) ambience.play().catch(()=>{});
 
@@ -1721,7 +1680,7 @@ enterBox.onclick = async () => {
     hideLoading();
 
     startAscensionProtocol();
-    blip(980, 0.08, 0.02);
+    blip(980, 0.08, 0.040);
 
   } catch (err) {
     spinner.style.display = "none";
