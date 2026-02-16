@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Shadow Temple Interface</title>
+<title>Shadow Temple Interface — Ink Mode</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
 
@@ -13,33 +13,44 @@
   --coal:#0b0d12;
   --fog: rgba(10,12,16,.62);
 
-  /* “tinta + sangue seco” (Shadow Fight vibes) */
   --bone: rgba(245,238,220,.86);
-  --paper: rgba(20,18,16,.55);
-  --paper2: rgba(10,8,7,.55);
+  --bone2: rgba(245,238,220,.62);
+
+  --paper: rgba(20,18,16,.58);
+  --paper2: rgba(10,8,7,.64);
 
   --red: rgba(200,60,60,.55);
   --red2: rgba(200,60,60,.18);
 
-  --a: rgba(160,190,255,.22);   /* só um frio sutil */
-  --a2: rgba(160,190,255,.10);
   --line: rgba(255,255,255,.07);
+  --line2: rgba(245,238,220,.10);
 
   --txt: rgba(245,248,255,.92);
   --dim: rgba(245,248,255,.62);
 
   --blur-amount: 26px;
+
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-sm: 12px;
+
+  --shadowA: 0 18px 58px rgba(0,0,0,.58);
+  --shadowB: 0 22px 70px rgba(0,0,0,.64);
+  --shadowC: 0 12px 44px rgba(0,0,0,.45);
 }
 
-*{margin:0;padding:0;box-sizing:border-box;}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
 body{
   background:var(--ink);
-  overflow:hidden;
   color:var(--txt);
   font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  overflow:hidden;
 }
 
-/* ========= VIDEO LAYERS ========= */
+::selection{background:rgba(200,60,60,.22);}
+
+/* ================= VIDEO ================= */
 #videoBlur{
   position:fixed;
   inset:-20%;
@@ -60,7 +71,7 @@ body{
   background:black;
 }
 
-/* ========= FX OVERLAYS ========= */
+/* ================= OVERLAYS ================= */
 .scanlines{
   position:fixed;
   inset:0;
@@ -96,7 +107,6 @@ body{
   content:"";
   position:absolute;
   inset:0;
-  /* vinheta “ink” (sem blush) */
   background:
     radial-gradient(circle at 50% 48%, transparent 0 62%, rgba(0,0,0,.48) 82%, rgba(0,0,0,.78) 100%),
     radial-gradient(circle at 55% 55%, rgba(200,60,60,.04), transparent 55%);
@@ -116,16 +126,15 @@ body{
   100%{transform:translate(0,0)}
 }
 
-/* Flash de ruptura */
 #glitchFlash{
   position:fixed;
   inset:0;
   pointer-events:none;
-  z-index:9;
+  z-index:60;
   opacity:0;
   background:
     radial-gradient(circle at 50% 50%, rgba(255,255,255,.10), transparent 55%),
-    radial-gradient(circle at 50% 55%, rgba(200,60,60,.10), transparent 55%),
+    radial-gradient(circle at 50% 55%, rgba(200,60,60,.12), transparent 55%),
     repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 5px);
   mix-blend-mode:screen;
 }
@@ -140,7 +149,47 @@ body{
   100%{opacity:0; transform:none}
 }
 
-/* ========= LOADING ========= */
+/* ================= BASE PANELS ================= */
+.hudPanel, .inkPanel{
+  border:1px solid rgba(245,238,220,.10);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(245,238,220,.08), transparent 55%),
+    linear-gradient(180deg, rgba(10,8,7,.62), rgba(0,0,0,.38));
+  box-shadow: var(--shadowA), 0 0 0 1px rgba(0,0,0,.30) inset;
+  backdrop-filter: blur(14px);
+  position:relative;
+  overflow:hidden;
+}
+.hudPanel::after, .inkPanel::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 6px);
+  opacity:.35;
+  mix-blend-mode:overlay;
+}
+
+/* “carimbo” */
+.stamp{
+  position:absolute;
+  right:10px;
+  top:10px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(200,60,60,.28);
+  background:rgba(0,0,0,.34);
+  font-family:Cinzel, serif;
+  font-size:9px;
+  letter-spacing:4px;
+  color:rgba(245,238,220,.82);
+  text-shadow:0 0 12px rgba(0,0,0,.45);
+  transform:rotate(-3deg);
+  opacity:.82;
+}
+
+/* ================= LOADING / ENTER ================= */
 #loadingScreen{
   position:fixed;
   inset:0;
@@ -149,7 +198,7 @@ body{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  z-index:10;
+  z-index:90;
   transition:opacity .6s ease;
   overflow:hidden;
 }
@@ -200,7 +249,7 @@ body{
   inset:-40% -30%;
   background:linear-gradient(90deg, transparent, rgba(245,238,220,.10), transparent);
   transform:rotate(14deg) translateX(-90%);
-  opacity:.0;
+  opacity:0;
 }
 #enterBox.show{opacity:1; pointer-events:auto;}
 #enterBox.show::before{
@@ -221,6 +270,7 @@ body{
   color:rgba(245,238,220,.70);
   text-shadow:0 0 14px rgba(200,60,60,.08);
   user-select:none;
+  font-family:Cinzel, serif;
 }
 #enterHint.show{opacity:.88;}
 
@@ -254,7 +304,7 @@ body{
   position:fixed;
   left:18px;
   bottom:12px;
-  z-index:11;
+  z-index:91;
   font-size:9px;
   letter-spacing:3px;
   opacity:.30;
@@ -268,7 +318,7 @@ body.entered #enterFooterLeft{ display:none; }
   position:fixed;
   right:18px;
   bottom:12px;
-  z-index:6;
+  z-index:10;
   font-size:9px;
   letter-spacing:3px;
   opacity:.30;
@@ -277,49 +327,13 @@ body.entered #enterFooterLeft{ display:none; }
   font-family:Cinzel, serif;
 }
 #versionTag .v{opacity:.88;color:rgba(245,238,220,.70);}
-#loadingScreen #versionTag{ z-index:12; }
 
-/* ========= HUD SHADOW-FIGHT (pergaminho/ink) ========= */
-.hudPanel{
-  border:1px solid rgba(245,238,220,.10);
-  background:
-    radial-gradient(circle at 18% 12%, rgba(245,238,220,.08), transparent 55%),
-    linear-gradient(180deg, rgba(10,8,7,.58), rgba(0,0,0,.38));
-  box-shadow:
-    0 18px 58px rgba(0,0,0,.55),
-    0 0 0 1px rgba(0,0,0,.30) inset;
-  backdrop-filter: blur(14px);
-  position:relative;
-  overflow:hidden;
-}
-.hudPanel::before{
-  content:"";
-  position:absolute;
-  inset:-2px;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at 20% 15%, rgba(200,60,60,.10), transparent 55%),
-    radial-gradient(circle at 80% 80%, rgba(255,255,255,.04), transparent 55%);
-  mix-blend-mode:overlay;
-  opacity:.6;
-}
-.hudPanel::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 6px);
-  opacity:.35;
-  mix-blend-mode:overlay;
-}
-
-/* coords HUD */
+/* ================= HUDS (ENTER ONLY) ================= */
 #coordsHUD{
   position:fixed;
   top:16px;
   right:18px;
-  z-index:6;
+  z-index:12;
   padding:10px 12px;
   border-radius:14px;
   font-size:9px;
@@ -327,18 +341,17 @@ body.entered #enterFooterLeft{ display:none; }
   opacity:.78;
   user-select:none;
   font-family:Cinzel, serif;
+  border-left:2px solid rgba(200,60,60,.18);
 }
-#coordsHUD{ border-left:2px solid rgba(200,60,60,.18); }
 #coordsHUD .line{opacity:.86}
 #coordsHUD .blink{animation:coordsBlink 3.2s infinite}
 @keyframes coordsBlink{0%,100%{opacity:.75}50%{opacity:.28}}
 
-/* tech HUD vira “RITOS” (menos tech, mais placa) */
 #techHUD{
   position:fixed;
   top:78px;
   left:18px;
-  z-index:6;
+  z-index:12;
   width:min(360px, 44vw);
   padding:10px 12px;
   border-radius:14px;
@@ -348,19 +361,18 @@ body.entered #enterFooterLeft{ display:none; }
   user-select:none;
   line-height:1.65;
   font-family:Cinzel, serif;
+  border-left:2px solid rgba(200,60,60,.16);
 }
-#techHUD{ border-left:2px solid rgba(200,60,60,.16); }
 #techHUD .tag{opacity:.78}
 #techHUD .value{opacity:.92; color:rgba(245,238,220,.86)}
 #techHUD .sep{opacity:.22}
 
-/* Status strip vira “marcas” */
 #statusStrip{
   position:fixed;
   left:18px;
   top:198px;
-  width:min(230px, 34vw);
-  z-index:6;
+  width:min(240px, 34vw);
+  z-index:12;
   opacity:.72;
   user-select:none;
   pointer-events:none;
@@ -376,24 +388,25 @@ body.entered #enterFooterLeft{ display:none; }
   padding:7px 10px;
   border-radius:14px;
   margin-bottom:8px;
-}
-#statusStrip .statusLine{
-  background:
-    linear-gradient(180deg, rgba(10,8,7,.62), rgba(0,0,0,.35));
+  background:linear-gradient(180deg, rgba(10,8,7,.62), rgba(0,0,0,.35));
   border:1px solid rgba(245,238,220,.08);
   border-left:2px solid rgba(200,60,60,.14);
-  box-shadow: 0 14px 44px rgba(0,0,0,.45);
+  box-shadow: var(--shadowC);
 }
 #statusStrip .k{opacity:.70}
 #statusStrip .v{opacity:.92; color:rgba(245,238,220,.82)}
 #statusStrip .faint{opacity:.55}
-@media (max-width: 768px){ #statusStrip{display:none;} }
 
-/* ✅ Só na tela ENTER */
 body.entered #coordsHUD,
-body.entered #techHUD{ display:none; }
+body.entered #techHUD,
+body.entered #statusStrip{ display:none; }
 
-/* ========= TOP CONTROLS (INK ICONS) ========= */
+@media (max-width: 768px){
+  :root{ --blur-amount: 22px; }
+  #techHUD, #statusStrip{display:none;}
+}
+
+/* ================= TOP CONTROLS ================= */
 #topControls{
   position:fixed;
   top:14px;
@@ -401,7 +414,7 @@ body.entered #techHUD{ display:none; }
   transform:translateX(-50%);
   display:flex;
   gap:10px;
-  z-index:25;
+  z-index:40;
   opacity:.95;
   transition:.18s ease;
 }
@@ -424,6 +437,7 @@ body.entered #techHUD{ display:none; }
   position:relative;
   overflow:hidden;
   color:rgba(245,238,220,.92);
+  user-select:none;
 }
 .ctrlBtn::before{
   content:"";
@@ -464,12 +478,12 @@ body.entered #techHUD{ display:none; }
   filter: url(#ink) drop-shadow(0 0 10px rgba(0,0,0,.35));
 }
 
-/* ========= SOCIAL CONTROL (SELOS) ========= */
+/* ================= SOCIAL / SELOS ================= */
 #socialControl{
   position:fixed;
   top:12px;
   right:14px;
-  z-index:26;
+  z-index:41;
   opacity:.95;
   transition:.18s ease;
 }
@@ -496,6 +510,7 @@ body.entered #techHUD{ display:none; }
     0 16px 50px rgba(0,0,0,.46);
   position:relative;
   font-family:Cinzel, serif;
+  user-select:none;
 }
 .linkPill svg{
   width:18px;height:18px;
@@ -515,12 +530,12 @@ body.entered #techHUD{ display:none; }
   .linkPill{padding:0 10px;}
 }
 
-/* ========= ROUTES NODE (SELOS) — ritual open ========= */
+/* ================= ROUTES NODE (SELOS) ================= */
 #routesNode{
   position:fixed;
   top:54px;
   right:14px;
-  z-index:40;
+  z-index:80;
   display:none;
   pointer-events:none;
 }
@@ -528,30 +543,27 @@ body.entered #techHUD{ display:none; }
   display:block;
   pointer-events:auto;
 }
-
 .routesBox{
-  width:78px;
-  padding:10px 8px;
+  width:86px;
+  padding:10px 10px;
   border-radius:18px;
   border:1px solid rgba(245,238,220,.10);
   background:
     radial-gradient(circle at 35% 20%, rgba(245,238,220,.06), transparent 62%),
-    linear-gradient(180deg, rgba(10,8,7,.68), rgba(0,0,0,.42));
+    linear-gradient(180deg, rgba(10,8,7,.70), rgba(0,0,0,.46));
   backdrop-filter: blur(14px);
-  box-shadow:0 22px 70px rgba(0,0,0,.62);
+  box-shadow: var(--shadowB);
   display:flex;
   flex-direction:column;
   gap:10px;
   position:relative;
   overflow:visible;
 }
-
-/* anel rúnico + fumaça atrás */
 .routesBox .sigilRing{
   position:absolute;
-  inset:-22px -22px auto auto;
-  width:130px;
-  height:130px;
+  inset:-26px -26px auto auto;
+  width:140px;
+  height:140px;
   pointer-events:none;
   opacity:0;
   transform: translate(14px,-10px) scale(.92);
@@ -587,7 +599,7 @@ body.entered #techHUD{ display:none; }
     radial-gradient(circle at 82% 8%, rgba(200,60,60,.12), transparent 42%),
     radial-gradient(circle at 86% 18%, rgba(245,238,220,.10), transparent 48%),
     radial-gradient(circle at 90% 10%, rgba(0,0,0,.55), transparent 55%);
-  opacity:.0;
+  opacity:0;
 }
 #routesNode.show .routesBox::before{
   opacity:1;
@@ -600,8 +612,8 @@ body.entered #techHUD{ display:none; }
 }
 
 .routeBtn{
-  width:58px;
-  height:58px;
+  width:62px;
+  height:62px;
   border-radius:18px;
   border:1px solid rgba(245,238,220,.10);
   background:
@@ -626,10 +638,7 @@ body.entered #techHUD{ display:none; }
   transform:rotate(14deg) translateX(-90%);
   opacity:0;
 }
-.routeBtn:hover::after{
-  opacity:.9;
-  animation:scanPass2 1.25s ease infinite;
-}
+.routeBtn:hover::after{opacity:.9; animation:scanPass2 1.25s ease infinite;}
 .routeBtn:hover{
   border-color: rgba(200,60,60,.18);
   box-shadow:
@@ -638,22 +647,18 @@ body.entered #techHUD{ display:none; }
     0 0 22px rgba(200,60,60,.08);
   transform: translateY(-1px);
 }
-
 #routesNode.show .routeBtn{ animation: sealPop .22s ease forwards; }
 #routesNode.show .routeBtn:nth-child(2){animation-delay:.06s}
 #routesNode.show .routeBtn:nth-child(3){animation-delay:.12s}
 #routesNode.show .routeBtn:nth-child(4){animation-delay:.18s}
+#routesNode.show .routeBtn:nth-child(5){animation-delay:.24s}
 @keyframes sealPop{
   0%{opacity:0; transform:translateY(-10px) scale(.94); filter: blur(.6px);}
   70%{opacity:1; transform:translateY(1px) scale(1.02); filter:none;}
   100%{opacity:1; transform:translateY(0) scale(1.0);}
 }
+.routeIcon svg{ width:18px;height:18px;opacity:.92;filter:url(#ink) drop-shadow(0 0 10px rgba(0,0,0,.35)); }
 
-.routeIcon svg{
-  width:18px;height:18px;
-  opacity:.92;
-  filter: url(#ink) drop-shadow(0 0 10px rgba(0,0,0,.35));
-}
 .routeTip{
   position:absolute;
   right: calc(100% + 10px);
@@ -667,31 +672,16 @@ body.entered #techHUD{ display:none; }
   border:1px solid rgba(245,238,220,.10);
   background:rgba(0,0,0,.46);
   backdrop-filter: blur(12px);
-  box-shadow:0 18px 58px rgba(0,0,0,.55);
+  box-shadow: var(--shadowA);
   white-space:nowrap;
-  min-width: 170px;
+  min-width: 180px;
   font-family:Cinzel, serif;
 }
-.routeTip .t{
-  display:block;
-  font-size:9px;
-  letter-spacing:4px;
-  color:rgba(245,238,220,.90);
-  text-shadow:0 0 10px rgba(0,0,0,.45);
-}
-.routeTip .s{
-  display:block;
-  margin-top:3px;
-  font-size:8px;
-  letter-spacing:2px;
-  color:rgba(245,238,220,.70);
-}
-.routeBtn:hover .routeTip{
-  opacity:1;
-  transform:translateY(-50%) translateX(0);
-}
+.routeTip .t{display:block;font-size:9px;letter-spacing:4px;color:rgba(245,238,220,.90);}
+.routeTip .s{display:block;margin-top:3px;font-size:8px;letter-spacing:2px;color:rgba(245,238,220,.70);}
+.routeBtn:hover .routeTip{opacity:1; transform:translateY(-50%) translateX(0);}
 
-/* ========= VOLUME (ECO) — estilo “placa” ========= */
+/* ================= VOLUME “ECO” ================= */
 #volumeHUD{
   position:fixed;
   top:18px;
@@ -699,7 +689,7 @@ body.entered #techHUD{ display:none; }
   display:flex;
   align-items:flex-start;
   gap:12px;
-  z-index:20;
+  z-index:50;
   opacity:.78;
   transition:.25s ease;
 }
@@ -716,9 +706,7 @@ body.entered #techHUD{ display:none; }
   place-items:center;
   cursor:pointer;
   padding:0;
-  box-shadow:
-    0 0 0 1px rgba(0,0,0,.34) inset,
-    0 18px 54px rgba(0,0,0,.52);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.34) inset, 0 18px 54px rgba(0,0,0,.52);
   overflow:hidden;
 }
 .vol-btn::after{
@@ -729,10 +717,7 @@ body.entered #techHUD{ display:none; }
   transform:rotate(16deg) translateX(-90%);
   opacity:0;
 }
-#volumeHUD:hover .vol-btn::after{
-  opacity:.7;
-  animation:scanPass2 1.25s ease infinite;
-}
+#volumeHUD:hover .vol-btn::after{opacity:.7; animation:scanPass2 1.25s ease infinite;}
 .vol-svg{width:22px;height:22px;opacity:.92;filter:url(#ink) drop-shadow(0 0 10px rgba(0,0,0,.35));}
 .vol-state{
   position:absolute;
@@ -748,7 +733,6 @@ body.entered #techHUD{ display:none; }
   display:none;
   font-family:Cinzel, serif;
 }
-
 .vol-panel{
   width:0;
   opacity:0;
@@ -762,13 +746,13 @@ body.entered #techHUD{ display:none; }
     linear-gradient(180deg, rgba(10,8,7,.78), rgba(0,0,0,.62)),
     repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 1px, transparent 1px 12px);
   backdrop-filter: blur(14px);
-  box-shadow: 0 18px 62px rgba(0,0,0,.62);
+  box-shadow: var(--shadowB);
   overflow:hidden;
   font-family:Cinzel, serif;
 }
 #volumeHUD:hover .vol-panel,
 #volumeHUD.open .vol-panel{
-  width:240px;
+  width:260px;
   opacity:1;
   pointer-events:auto;
   padding:10px 12px;
@@ -776,7 +760,6 @@ body.entered #techHUD{ display:none; }
 .vol-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .vol-title{font-size:9px;letter-spacing:3px;opacity:.72;color:rgba(245,238,220,.72);}
 .vol-readout{font-size:10px;letter-spacing:2px;color:rgba(245,238,220,.90);text-shadow:0 0 10px rgba(0,0,0,.45);}
-
 #volSlider{
   width:100%;
   height:26px;
@@ -832,26 +815,545 @@ body.entered #techHUD{ display:none; }
   transition: clip-path .08s linear;
 }
 
-/* ========= MODAIS (terminal/catalog/channels/admin/games) ========= */
-/* Mantive suas estruturas — só padronizei o “mood” com bordas/osso */
-#terminal,#catalog,#channels,#admin,#gamesPanel{
+/* ================= MODAL SYSTEM ================= */
+.modal{
   position:fixed;
   inset:0;
   display:none;
+  z-index:70;
+  background:rgba(0,0,0,.62);
   backdrop-filter: blur(14px);
 }
-#terminal.show,#catalog.show,#channels.show,#admin.show,#gamesPanel.show{display:block;}
-#terminal{z-index:30;background:rgba(0,0,0,.62);}
-#catalog{z-index:29;background:rgba(0,0,0,.60);}
-#channels{z-index:28;background:rgba(0,0,0,.56);}
-#admin{z-index:27;background:rgba(0,0,0,.60);}
-#gamesPanel{z-index:31;background:rgba(0,0,0,.60);}
+.modal.show{display:block;}
+.modal .backdropClose{
+  position:absolute;
+  inset:0;
+  cursor:pointer;
+}
 
-/* (o resto do seu CSS dos painéis pode ficar como estava,
-   mas como você pediu 1/4/5, o impacto maior é: HUD+ícones+node ritual.
-   Na Parte 2 eu mantenho o HTML completo e na 3 o JS completo.) */
+.modalShell{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:min(980px, 92vw);
+  height:min(640px, 84vh);
+  border-radius:22px;
+  border:1px solid rgba(245,238,220,.12);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(245,238,220,.08), transparent 58%),
+    linear-gradient(180deg, rgba(10,8,7,.72), rgba(0,0,0,.52));
+  box-shadow: var(--shadowB);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.modalShell::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(200,60,60,.12), transparent 48%),
+    radial-gradient(circle at 88% 78%, rgba(255,255,255,.05), transparent 55%);
+  opacity:.55;
+  mix-blend-mode:overlay;
+}
+.modalShell::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 6px);
+  opacity:.25;
+  mix-blend-mode:overlay;
+}
 
-/* reduced motion */
+.modalHeader{
+  position:relative;
+  z-index:2;
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border-bottom:1px solid rgba(245,238,220,.08);
+}
+.modalTitle{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  font-family:Cinzel, serif;
+  letter-spacing:5px;
+  color:rgba(245,238,220,.90);
+}
+.modalTitle small{
+  letter-spacing:3px;
+  opacity:.62;
+  font-family:Inter, sans-serif;
+}
+.modalActions{display:flex;gap:10px;align-items:center;}
+.pill{
+  height:34px;
+  padding:0 12px;
+  border-radius:999px;
+  border:1px solid rgba(245,238,220,.10);
+  background:rgba(0,0,0,.30);
+  color:rgba(245,238,220,.86);
+  font-family:Cinzel, serif;
+  font-size:9px;
+  letter-spacing:4px;
+  cursor:pointer;
+  user-select:none;
+  position:relative;
+  overflow:hidden;
+}
+.pill::after{
+  content:"";
+  position:absolute;
+  inset:-40% -30%;
+  background:linear-gradient(90deg, transparent, rgba(200,60,60,.10), transparent);
+  transform:rotate(16deg) translateX(-90%);
+  opacity:0;
+}
+.pill:hover::after{opacity:.9; animation:scanPass2 1.25s ease infinite;}
+.pill:hover{transform:translateY(-1px); box-shadow:0 18px 54px rgba(0,0,0,.55);}
+.pill:active{transform:translateY(1px);}
+.pill.danger{border-color:rgba(200,60,60,.22);}
+
+.modalBody{
+  position:relative;
+  z-index:2;
+  flex:1;
+  display:flex;
+  overflow:hidden;
+}
+
+/* side rail */
+.rail{
+  width:260px;
+  border-right:1px solid rgba(245,238,220,.08);
+  padding:12px;
+  overflow:auto;
+}
+.rail .railBlock{
+  border:1px solid rgba(245,238,220,.10);
+  border-radius: var(--radius-lg);
+  padding:12px;
+  margin-bottom:10px;
+  background:rgba(0,0,0,.18);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.35) inset;
+  position:relative;
+  overflow:hidden;
+}
+.rail .railBlock::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0 1px, transparent 1px 12px);
+  opacity:.28;
+  mix-blend-mode:overlay;
+}
+.rail h4{
+  font-family:Cinzel, serif;
+  font-size:10px;
+  letter-spacing:4px;
+  color:rgba(245,238,220,.88);
+  margin-bottom:10px;
+}
+.rail .muted{font-size:11px;opacity:.70;line-height:1.5;}
+.rail .tiny{font-size:9px;letter-spacing:2px;opacity:.55;margin-top:8px;}
+
+.railBtn{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 12px;
+  border-radius: var(--radius-md);
+  border:1px solid rgba(245,238,220,.10);
+  background:linear-gradient(180deg, rgba(10,8,7,.55), rgba(0,0,0,.30));
+  color:rgba(245,238,220,.86);
+  cursor:pointer;
+  user-select:none;
+  font-family:Cinzel, serif;
+  letter-spacing:4px;
+  font-size:9px;
+  margin-bottom:8px;
+  position:relative;
+  overflow:hidden;
+}
+.railBtn::after{
+  content:"";
+  position:absolute;
+  inset:-40% -30%;
+  background:linear-gradient(90deg, transparent, rgba(200,60,60,.10), transparent);
+  transform:rotate(16deg) translateX(-90%);
+  opacity:0;
+}
+.railBtn:hover::after{opacity:.9; animation:scanPass2 1.25s ease infinite;}
+.railBtn:hover{transform:translateY(-1px); box-shadow:0 18px 54px rgba(0,0,0,.45);}
+.railBtn:active{transform:translateY(1px);}
+.railBtn .k{opacity:.75}
+.railBtn .dot{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(200,60,60,.18);
+  border:1px solid rgba(245,238,220,.10);
+  box-shadow:0 0 14px rgba(0,0,0,.35);
+}
+
+.content{
+  flex:1;
+  padding:14px;
+  overflow:auto;
+}
+
+/* ================= TERMINAL (GRIMÓRIO) ================= */
+.terminalWrap{
+  border:1px solid rgba(245,238,220,.10);
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 22% 12%, rgba(245,238,220,.06), transparent 58%),
+    linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.42));
+  box-shadow: var(--shadowA);
+  overflow:hidden;
+  position:relative;
+  min-height: 520px;
+}
+.terminalWrap::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(200,60,60,.14), transparent 52%),
+    radial-gradient(circle at 74% 78%, rgba(255,255,255,.04), transparent 58%);
+  opacity:.55;
+  filter: blur(18px);
+  pointer-events:none;
+}
+.terminalTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 14px;
+  border-bottom:1px solid rgba(245,238,220,.08);
+  position:relative;
+  z-index:2;
+}
+.terminalTop .label{
+  font-family:Cinzel, serif;
+  letter-spacing:5px;
+  font-size:11px;
+  color:rgba(245,238,220,.90);
+}
+.terminalTop .sub{
+  font-size:11px;
+  opacity:.70;
+  letter-spacing:2px;
+}
+.termDots{display:flex;gap:8px;align-items:center;}
+.termDots span{
+  width:10px;height:10px;border-radius:50%;
+  border:1px solid rgba(245,238,220,.10);
+  background:rgba(200,60,60,.12);
+  box-shadow:0 0 14px rgba(0,0,0,.35);
+  opacity:.9;
+}
+.termDots span:nth-child(2){background:rgba(245,238,220,.10)}
+.termDots span:nth-child(3){background:rgba(255,255,255,.06)}
+
+.termBody{
+  position:relative;
+  z-index:2;
+  padding:14px;
+  height: 520px;
+  overflow:auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size:12px;
+  line-height:1.55;
+  color:rgba(245,238,220,.88);
+  text-shadow:0 0 12px rgba(0,0,0,.55);
+}
+.termLine{margin-bottom:8px; opacity:.92;}
+.termLine .prompt{color:rgba(200,60,60,.42)}
+.termLine .mut{opacity:.68}
+.termLine .ok{color:rgba(245,238,220,.92)}
+.termLine .warn{color:rgba(245,238,220,.80)}
+.termLine .bad{color:rgba(200,60,60,.62)}
+.cursor{
+  display:inline-block;
+  width:10px;
+  height:14px;
+  background:rgba(245,238,220,.58);
+  margin-left:6px;
+  transform:translateY(2px);
+  animation:blink 1.05s steps(2) infinite;
+  border-radius:2px;
+  box-shadow:0 0 10px rgba(0,0,0,.45);
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+
+/* ================= CARDS / LISTS / GRIDS ================= */
+.grid{
+  display:grid;
+  gap:12px;
+}
+.grid.two{grid-template-columns: repeat(2, minmax(0, 1fr));}
+.grid.three{grid-template-columns: repeat(3, minmax(0, 1fr));}
+@media (max-width: 980px){ .rail{display:none;} .grid.three{grid-template-columns:repeat(2,minmax(0,1fr));} }
+@media (max-width: 680px){ .grid.two, .grid.three{grid-template-columns:1fr;} }
+
+.card{
+  border:1px solid rgba(245,238,220,.10);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at 20% 12%, rgba(245,238,220,.06), transparent 55%),
+    linear-gradient(180deg, rgba(10,8,7,.55), rgba(0,0,0,.34));
+  box-shadow: var(--shadowC), 0 0 0 1px rgba(0,0,0,.30) inset;
+  padding:12px;
+  position:relative;
+  overflow:hidden;
+}
+.card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0 1px, transparent 1px 12px);
+  opacity:.26;
+  mix-blend-mode:overlay;
+}
+.card h3{
+  font-family:Cinzel, serif;
+  font-size:11px;
+  letter-spacing:5px;
+  color:rgba(245,238,220,.90);
+  margin-bottom:8px;
+  position:relative;
+  z-index:1;
+}
+.card p{
+  font-size:12px;
+  opacity:.72;
+  line-height:1.5;
+  position:relative;
+  z-index:1;
+}
+.badgeRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;position:relative;z-index:1;}
+.badge{
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(245,238,220,.10);
+  background:rgba(0,0,0,.28);
+  font-family:Cinzel, serif;
+  font-size:9px;
+  letter-spacing:4px;
+  color:rgba(245,238,220,.82);
+  opacity:.92;
+}
+.badge.red{border-color:rgba(200,60,60,.22); color:rgba(245,238,220,.86);}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.listItem{
+  border:1px solid rgba(245,238,220,.10);
+  border-radius: var(--radius-lg);
+  padding:12px;
+  background:rgba(0,0,0,.22);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.30) inset, 0 12px 44px rgba(0,0,0,.42);
+  position:relative;
+  overflow:hidden;
+}
+.listItem::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 7px);
+  opacity:.22;
+  mix-blend-mode:overlay;
+}
+.listItem .top{
+  display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+  position:relative; z-index:1;
+}
+.listItem .name{
+  font-family:Cinzel, serif;
+  letter-spacing:5px;
+  font-size:10px;
+  color:rgba(245,238,220,.90);
+}
+.listItem .meta{
+  font-size:10px;
+  letter-spacing:2px;
+  opacity:.65;
+}
+.listItem .desc{
+  margin-top:8px;
+  font-size:12px;
+  opacity:.72;
+  line-height:1.5;
+  position:relative; z-index:1;
+}
+.listItem .actions{
+  margin-top:10px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  position:relative; z-index:1;
+}
+
+.btn{
+  height:34px;
+  padding:0 12px;
+  border-radius:14px;
+  border:1px solid rgba(245,238,220,.10);
+  background:linear-gradient(180deg, rgba(10,8,7,.60), rgba(0,0,0,.36));
+  color:rgba(245,238,220,.86);
+  font-family:Cinzel, serif;
+  font-size:9px;
+  letter-spacing:4px;
+  cursor:pointer;
+  user-select:none;
+  position:relative;
+  overflow:hidden;
+}
+.btn::after{
+  content:"";
+  position:absolute;
+  inset:-40% -30%;
+  background:linear-gradient(90deg, transparent, rgba(200,60,60,.10), transparent);
+  transform:rotate(16deg) translateX(-90%);
+  opacity:0;
+}
+.btn:hover::after{opacity:.9; animation:scanPass2 1.25s ease infinite;}
+.btn:hover{transform:translateY(-1px); box-shadow:0 18px 54px rgba(0,0,0,.55);}
+.btn:active{transform:translateY(1px);}
+.btn.red{border-color:rgba(200,60,60,.24);}
+
+.input{
+  width:100%;
+  height:38px;
+  border-radius:14px;
+  border:1px solid rgba(245,238,220,.10);
+  background:rgba(0,0,0,.28);
+  color:rgba(245,238,220,.88);
+  padding:0 12px;
+  outline:none;
+  letter-spacing:2px;
+  font-size:12px;
+}
+.input::placeholder{color:rgba(245,238,220,.38);}
+
+/* ================= GAMES ARENA LAYOUT ================= */
+.arenaTop{
+  display:flex;
+  gap:12px;
+  align-items:stretch;
+}
+@media (max-width: 900px){ .arenaTop{flex-direction:column;} }
+
+.hero{
+  flex:1.2;
+  border-radius:22px;
+  border:1px solid rgba(245,238,220,.12);
+  background:
+    radial-gradient(circle at 20% 18%, rgba(245,238,220,.08), transparent 58%),
+    linear-gradient(180deg, rgba(10,8,7,.62), rgba(0,0,0,.46));
+  box-shadow: var(--shadowB);
+  padding:14px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 82% 12%, rgba(200,60,60,.14), transparent 48%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 7px);
+  opacity:.30;
+  mix-blend-mode:overlay;
+}
+.hero .title{
+  font-family:Cinzel, serif;
+  letter-spacing:6px;
+  font-size:14px;
+  color:rgba(245,238,220,.92);
+  position:relative; z-index:1;
+}
+.hero .subtitle{
+  margin-top:6px;
+  font-size:12px;
+  opacity:.70;
+  letter-spacing:2px;
+  position:relative; z-index:1;
+}
+.hero .heroGrid{
+  margin-top:12px;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:10px;
+  position:relative; z-index:1;
+}
+@media (max-width: 520px){ .hero .heroGrid{grid-template-columns:1fr;} }
+
+.heroSlot{
+  border:1px solid rgba(245,238,220,.10);
+  border-radius:18px;
+  background:rgba(0,0,0,.22);
+  padding:12px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.30) inset;
+}
+.heroSlot .k{
+  font-family:Cinzel, serif;
+  letter-spacing:5px;
+  font-size:9px;
+  opacity:.75;
+  color:rgba(245,238,220,.82);
+}
+.heroSlot .v{
+  margin-top:6px;
+  font-size:12px;
+  opacity:.86;
+  letter-spacing:2px;
+}
+
+.sideStack{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.quick{
+  border-radius:22px;
+  border:1px solid rgba(245,238,220,.12);
+  background:rgba(0,0,0,.22);
+  box-shadow: var(--shadowC);
+  padding:14px;
+  position:relative;
+  overflow:hidden;
+}
+.quick h3{
+  font-family:Cinzel, serif;
+  letter-spacing:6px;
+  font-size:11px;
+  color:rgba(245,238,220,.90);
+  margin-bottom:10px;
+}
+.quick .row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+/* ================= REDUCED MOTION ================= */
 @media (prefers-reduced-motion: reduce){
   .spinner{animation:none}
   #cinemaFX::before{animation:none}
@@ -860,15 +1362,36 @@ body.entered #techHUD{ display:none; }
   #routesNode.show .routeBtn{animation:none; opacity:1; transform:none;}
   .sigilRing .ring,.sigilRing .runes{animation:none}
 }
-@media (max-width: 768px){
-  :root{ --blur-amount: 22px; }
-  #techHUD{display:none;}
+
+/* ================= KEYBOARD HELP ================= */
+#keyHelp{
+  position:fixed;
+  left:50%;
+  bottom:14px;
+  transform:translateX(-50%);
+  z-index:20;
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid rgba(245,238,220,.10);
+  background:rgba(0,0,0,.32);
+  backdrop-filter: blur(14px);
+  font-family:Cinzel, serif;
+  font-size:9px;
+  letter-spacing:4px;
+  color:rgba(245,238,220,.78);
+  opacity:.0;
+  transition:.25s ease;
+  user-select:none;
+  pointer-events:none;
 }
+body.entered #keyHelp{opacity:.82;}
+@media (max-width: 768px){ #keyHelp{display:none;} }
+
 </style>
 </head>
 <body>
 
-<!-- SVG defs: filtro INK pros ícones ficarem “brush / Shadow Fight” -->
+<!-- SVG defs: filtro INK pros ícones virarem “brush” -->
 <svg width="0" height="0" style="position:absolute">
   <defs>
     <filter id="ink">
@@ -878,7 +1401,7 @@ body.entered #techHUD{ display:none; }
   </defs>
 </svg>
 
-<!-- VÍDEO -->
+<!-- BACKGROUND VIDEO -->
 <video id="videoBlur" playsinline preload="auto" muted loop>
   <source src="https://files.catbox.moe/klaol5.webm" type="video/webm" />
 </video>
@@ -886,7 +1409,7 @@ body.entered #techHUD{ display:none; }
   <source src="https://files.catbox.moe/klaol5.webm" type="video/webm" />
 </video>
 
-<!-- ÁUDIO -->
+<!-- AUDIO -->
 <audio id="ambience" preload="auto" loop>
   <source src="https://files.catbox.moe/99fu05.m4a" type="audio/mp4">
 </audio>
@@ -895,8 +1418,10 @@ body.entered #techHUD{ display:none; }
 <div id="cinemaFX"></div>
 <div id="glitchFlash"></div>
 
-<div id="versionTag"><span class="v">shadow temple interface: v2 (ink)</span></div>
+<div id="versionTag"><span class="v">shadow temple interface: v4 (full theme)</span></div>
+<div id="keyHelp">ESC FECHA // 1 TERMINAL // 2 ARENA // 3 ARQUIVO // 4 CANAIS // 5 CÂMARA</div>
 
+<!-- ENTER -->
 <div id="loadingScreen">
   <div id="enterScan" aria-hidden="true"></div>
   <div class="loading-text" id="dynamicText">O TEMPLO OBSERVA…</div>
@@ -908,7 +1433,7 @@ body.entered #techHUD{ display:none; }
   <div id="enterFooterLeft">SELO ATIVO // PASSO PROIBIDO</div>
 </div>
 
-<!-- HUDs (somente na tela ENTER) -->
+<!-- HUD ENTER -->
 <div id="coordsHUD" class="hudPanel">
   <div class="line blink" id="coordA">SELO: — — —</div>
   <div class="line" id="coordB">PORTAL: LATENTE // VIGIA: PRESENTE</div>
@@ -918,9 +1443,7 @@ body.entered #techHUD{ display:none; }
   <div class="termLine"><span class="tag">RITO</span> <span class="sep">//</span> <span class="value" id="sysClock">--:--:--</span></div>
   <div class="termLine"><span class="tag">PORTAL</span> <span class="sep">//</span> <span class="value" id="sysStream">DORMENTE</span></div>
   <div class="termLine"><span class="tag">ECO</span> <span class="sep">//</span> <span class="value" id="sysNeural">SILÊNCIO</span></div>
-  <div class="termLine"><span class="tag">VOTO</span> <span class="sep">//</span> <span class="value">IRRELEVANTE</span></div>
   <div class="termLine"><span class="tag">VISITANTE</span> <span class="sep">//</span> <span class="value" id="sysSubject">À PORTA</span></div>
-
   <div class="termLine"><span class="tag">FASE</span> <span class="sep">//</span> <span class="value" id="sysPhase">DESPERTAR</span></div>
   <div class="termLine"><span class="tag">JURAMENTO</span> <span class="sep">//</span> <span class="value" id="sysDirective">OBSERVAR</span></div>
 </div>
@@ -931,10 +1454,9 @@ body.entered #techHUD{ display:none; }
   <div class="statusLine faint" id="ss3"><span class="k">ECO</span> <span class="v">—</span></div>
 </div>
 
-<!-- TOP CONTROLS (ícones “ink/brush”) -->
+<!-- TOP CONTROLS -->
 <div id="topControls">
   <button class="ctrlBtn" id="btnFS" title="Ritual: Tela Cheia" aria-label="Tela cheia">
-    <!-- “portal frame” mais agressivo -->
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M7 3H5a2 2 0 0 0-2 2v2M17 3h2a2 2 0 0 1 2 2v2M7 21H5a2 2 0 0 1-2-2v-2M17 21h2a2 2 0 0 0 2-2v-2"
         fill="none" stroke="rgba(245,238,220,.90)" stroke-width="2.2" stroke-linecap="round"/>
@@ -942,16 +1464,22 @@ body.entered #techHUD{ display:none; }
     </svg>
   </button>
 
-  <button class="ctrlBtn" id="btnCat" title="Arquivos" aria-label="Arquivos">
-    <!-- “scroll blade” -->
+  <button class="ctrlBtn" id="btnArena" title="Arena (Games)" aria-label="Arena">
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M6 5h10v14H8.6a3 3 0 0 1 0-6H16" fill="none" stroke="rgba(245,238,220,.88)" stroke-width="2.0" stroke-linejoin="round"/>
-      <path d="M9.8 10h4.8M9.8 13h4.6M9.8 16h3.6" fill="none" stroke="rgba(245,238,220,.70)" stroke-width="2.0" stroke-linecap="round"/>
+      <path d="M4 20l6-2 10-10-4-4L6 14l-2 6Z" fill="none" stroke="rgba(245,238,220,.82)" stroke-width="2.0" stroke-linejoin="round"/>
+      <path d="M13.6 6.4l4 4" fill="none" stroke="rgba(200,60,60,.24)" stroke-width="1.8" stroke-linecap="round"/>
     </svg>
   </button>
 
-  <button class="ctrlBtn" id="btnTerm" title="Grimório" aria-label="Grimório">
-    <!-- “sigil” -->
+  <button class="ctrlBtn" id="btnArchive" title="Arquivo" aria-label="Arquivo">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 7h12v4H6V7Z" fill="none" stroke="rgba(245,238,220,.82)" stroke-width="2.0" stroke-linejoin="round"/>
+      <path d="M7 11v9h10v-9" fill="none" stroke="rgba(245,238,220,.62)" stroke-width="2.0" stroke-linejoin="round"/>
+      <path d="M10 15h4" fill="none" stroke="rgba(200,60,60,.22)" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </button>
+
+  <button class="ctrlBtn" id="btnTerm" title="Grimório (Terminal)" aria-label="Grimório">
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M12 3.8c4.8 0 8.4 3.2 8.4 8.2S16.8 20.2 12 20.2 3.6 17 3.6 12 7.2 3.8 12 3.8Z"
         fill="none" stroke="rgba(245,238,220,.86)" stroke-width="2.0" stroke-linejoin="round"/>
@@ -960,8 +1488,14 @@ body.entered #techHUD{ display:none; }
     </svg>
   </button>
 
+  <button class="ctrlBtn" id="btnChannels" title="Canais" aria-label="Canais">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 7h16M4 12h10M4 17h16" fill="none" stroke="rgba(245,238,220,.86)" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M17 11l3 1-3 1" fill="none" stroke="rgba(200,60,60,.28)" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
   <button class="ctrlBtn" id="btnAdmin" title="Câmara Secreta" aria-label="Câmara secreta">
-    <!-- “mask ink” -->
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M12 3c5 0 8.5 2.9 8.5 7.9 0 7.3-5.6 10.9-8.5 10.9S3.5 18.2 3.5 10.9C3.5 5.9 7 3 12 3Z"
         fill="none" stroke="rgba(245,238,220,.88)" stroke-width="2.0" stroke-linejoin="round"/>
@@ -973,10 +1507,9 @@ body.entered #techHUD{ display:none; }
   </button>
 </div>
 
-<!-- Social / Seals control -->
+<!-- SELOS BUTTON -->
 <div id="socialControl" aria-label="Selos">
   <button class="linkPill" id="btnLinks" type="button" title="SELOS" aria-label="Abrir selos">
-    <!-- “seal knot” -->
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M9 14.5 7.2 16.3a3.2 3.2 0 1 1-4.5-4.5L4.6 10a3.2 3.2 0 0 1 4.5 0"
         fill="none" stroke="rgba(245,238,220,.86)" stroke-width="2.1" stroke-linecap="round"/>
@@ -992,7 +1525,6 @@ body.entered #techHUD{ display:none; }
 <!-- ROUTES NODE -->
 <div id="routesNode" aria-hidden="true">
   <div class="routesBox" role="navigation" aria-label="Selos externos">
-    <!-- sigil ring -->
     <svg class="sigilRing" viewBox="0 0 120 120" aria-hidden="true">
       <g class="ring">
         <circle cx="60" cy="60" r="46" fill="none" stroke="rgba(245,238,220,.26)" stroke-width="2.2"/>
@@ -1007,50 +1539,45 @@ body.entered #techHUD{ display:none; }
       </g>
     </svg>
 
-    <button class="routeBtn" id="rSocial" type="button" aria-label="Selos sociais" data-title="SELOS SOCIAIS" data-sub="Discord / Instagram">
+    <button class="routeBtn" id="rSocial" type="button" aria-label="Selos sociais">
       <span class="routeIcon" aria-hidden="true">
-        <!-- “sigil hex” -->
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 3.6 19.2 8v8L12 20.4 4.8 16V8L12 3.6Z" fill="none" stroke="rgba(245,238,220,.82)" stroke-width="2.0" stroke-linejoin="round"/>
           <path d="M12 7.2v9.6M8.7 10.5 12 12.2l3.3-1.7" fill="none" stroke="rgba(200,60,60,.24)" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
       </span>
-      <span class="routeTip" aria-hidden="true"><span class="t">SELOS SOCIAIS</span><span class="s">Discord / Instagram</span></span>
+      <span class="routeTip" aria-hidden="true"><span class="t">SOCIAL</span><span class="s">Discord / Insta</span></span>
     </button>
 
-    <button class="routeBtn" id="rGames" type="button" aria-label="Arena" data-title="ARENA" data-sub="Vitrine / hub">
+    <button class="routeBtn" id="rGames" type="button" aria-label="Arena">
       <span class="routeIcon" aria-hidden="true">
-        <!-- “katana” -->
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M4 20l6-2 10-10-4-4L6 14l-2 6Z" fill="none" stroke="rgba(245,238,220,.82)" stroke-width="2.0" stroke-linejoin="round"/>
           <path d="M13.6 6.4l4 4" fill="none" stroke="rgba(200,60,60,.24)" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
       </span>
-      <span class="routeTip" aria-hidden="true"><span class="t">ARENA</span><span class="s">Vitrine / hub</span></span>
+      <span class="routeTip" aria-hidden="true"><span class="t">ARENA</span><span class="s">Vitrine</span></span>
     </button>
 
-    <button class="routeBtn" id="rArchive" type="button" aria-label="Arquivo" data-title="ARQUIVO" data-sub="Imagens / memórias">
+    <button class="routeBtn" id="rArchive" type="button" aria-label="Arquivo">
       <span class="routeIcon" aria-hidden="true">
-        <!-- “coffin” -->
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M6 7h12v4H6V7Z" fill="none" stroke="rgba(245,238,220,.82)" stroke-width="2.0" stroke-linejoin="round"/>
           <path d="M7 11v9h10v-9" fill="none" stroke="rgba(245,238,220,.62)" stroke-width="2.0" stroke-linejoin="round"/>
           <path d="M10 15h4" fill="none" stroke="rgba(200,60,60,.22)" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
       </span>
-      <span class="routeTip" aria-hidden="true"><span class="t">ARQUIVO</span><span class="s">Imagens / memórias</span></span>
+      <span class="routeTip" aria-hidden="true"><span class="t">ARQUIVO</span><span class="s">Memórias</span></span>
     </button>
 
-    <button class="routeBtn" id="rTx" type="button" aria-label="Eco" data-title="ECO" data-sub="Presença sonora">
+    <button class="routeBtn" id="rChannels" type="button" aria-label="Canais">
       <span class="routeIcon" aria-hidden="true">
-        <!-- “echo” -->
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 4v16" fill="none" stroke="rgba(245,238,220,.82)" stroke-width="2.0" stroke-linecap="round"/>
-          <path d="M8 8a6 6 0 0 0 0 8" fill="none" stroke="rgba(245,238,220,.62)" stroke-width="2.0" stroke-linecap="round"/>
-          <path d="M16 8a6 6 0 0 1 0 8" fill="none" stroke="rgba(200,60,60,.20)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M4 7h16M4 12h10M4 17h16" fill="none" stroke="rgba(245,238,220,.86)" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M17 11l3 1-3 1" fill="none" stroke="rgba(200,60,60,.28)" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </span>
-      <span class="routeTip" aria-hidden="true"><span class="t">ECO</span><span class="s">Presença sonora</span></span>
+      <span class="routeTip" aria-hidden="true"><span class="t">CANAIS</span><span class="s">Rotas</span></span>
     </button>
   </div>
 </div>
@@ -1058,7 +1585,6 @@ body.entered #techHUD{ display:none; }
 <!-- VOLUME -->
 <div id="volumeHUD" class="vol" aria-label="Controle de eco" style="--bars-w:50%; --bars-a:.55;">
   <button id="volIconBtn" class="vol-btn" type="button" aria-label="Abrir controle de eco">
-    <!-- “gong / bell” -->
     <svg class="vol-svg" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M12 4c3.1 0 5.5 2.4 5.5 5.5v2.6c0 1.8.7 3.1 1.8 4.2l.6.6H4.1l.6-.6c1.1-1.1 1.8-2.4 1.8-4.2V9.5C6.5 6.4 8.9 4 12 4Z"
         fill="none" stroke="rgba(245,238,220,.90)" stroke-width="2.0" stroke-linejoin="round"/>
@@ -1081,18 +1607,343 @@ body.entered #techHUD{ display:none; }
   </div>
 </div>
 
-<!-- (mantive seus modais e conteúdo abaixo — não mexi aqui pra não explodir tamanho).
-     Na Parte 3 eu te mando o JS COMPLETO, e ali eu garanto que:
-     - SELOS abre/fecha com ritual
-     - esc fecha tudo
-     - não fica nada aberto sem clicar
--->
+<!-- ================= MODALS ================= -->
 
-<!-- Seus modais originais (catalog/channels/admin/terminal/gamesPanel) podem ficar como estavam.
-     Se quiser, depois eu refino a estética deles também. -->
+<!-- TERMINAL -->
+<div class="modal" id="modalTerminal" aria-hidden="true">
+  <div class="backdropClose" data-close="modalTerminal"></div>
+  <div class="modalShell">
+    <div class="modalHeader">
+      <div class="modalTitle">GRIMÓRIO <small>// console ritual</small></div>
+      <div class="modalActions">
+        <button class="pill" id="termRun">INICIAR RITO</button>
+        <button class="pill danger" data-close="modalTerminal">FECHAR</button>
+      </div>
+    </div>
+    <div class="modalBody">
+      <div class="rail">
+        <div class="railBlock">
+          <h4>COMANDOS</h4>
+          <button class="railBtn" data-cmd="status"><span class="k">STATUS</span><span class="dot"></span></button>
+          <button class="railBtn" data-cmd="seal"><span class="k">QUEBRAR SELO</span><span class="dot"></span></button>
+          <button class="railBtn" data-cmd="summon"><span class="k">INVOKE</span><span class="dot"></span></button>
+          <button class="railBtn" data-cmd="clear"><span class="k">LIMPAR</span><span class="dot"></span></button>
+          <div class="tiny">Dica: tecla <b>1</b> abre/fecha o Grimório.</div>
+        </div>
+        <div class="railBlock">
+          <h4>JURAMENTO</h4>
+          <div class="muted">Este painel não é “tech”. É tinta, corte e silêncio. Você dita. O templo registra.</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="terminalWrap">
+          <div class="terminalTop">
+            <div>
+              <div class="label">SHELL // INK</div>
+              <div class="sub" id="termSub">conectando ao véu…</div>
+            </div>
+            <div class="termDots" aria-hidden="true"><span></span><span></span><span></span></div>
+          </div>
+          <div class="termBody" id="termBody"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ARENA / GAMES -->
+<div class="modal" id="modalArena" aria-hidden="true">
+  <div class="backdropClose" data-close="modalArena"></div>
+  <div class="modalShell">
+    <div class="modalHeader">
+      <div class="modalTitle">ARENA <small>// game OS</small></div>
+      <div class="modalActions">
+        <button class="pill" id="arenaShuffle">MUDAR ORÁCULO</button>
+        <button class="pill danger" data-close="modalArena">FECHAR</button>
+      </div>
+    </div>
+    <div class="modalBody">
+      <div class="rail">
+        <div class="railBlock">
+          <h4>NAVEGAÇÃO</h4>
+          <button class="railBtn" data-tab="now"><span class="k">JOGANDO AGORA</span><span class="dot"></span></button>
+          <button class="railBtn" data-tab="recent"><span class="k">RECENTES</span><span class="dot"></span></button>
+          <button class="railBtn" data-tab="fav"><span class="k">FAVORITOS</span><span class="dot"></span></button>
+          <button class="railBtn" data-tab="backlog"><span class="k">BACKLOG</span><span class="dot"></span></button>
+          <div class="tiny">Dica: tecla <b>2</b> abre/fecha a Arena.</div>
+        </div>
+        <div class="railBlock">
+          <h4>RITO</h4>
+          <div class="muted">Sua vitrine viva. Um painel que parece um templo — não um launcher.</div>
+        </div>
+      </div>
+
+      <div class="content" id="arenaContent">
+        <div class="arenaTop">
+          <div class="hero">
+            <div class="stamp">ATIVO</div>
+            <div class="title" id="nowTitle">JOGANDO AGORA</div>
+            <div class="subtitle" id="nowSub">Sistema ativo. Jogador online.</div>
+
+            <div class="heroGrid">
+              <div class="heroSlot">
+                <div class="k">JOGO</div>
+                <div class="v" id="nowGame">VALORANT</div>
+              </div>
+              <div class="heroSlot">
+                <div class="k">META</div>
+                <div class="v" id="nowGoal">AIM + CONSISTÊNCIA</div>
+              </div>
+              <div class="heroSlot">
+                <div class="k">PROGRESSO</div>
+                <div class="v" id="nowProg">14% // “subindo o véu”</div>
+              </div>
+              <div class="heroSlot">
+                <div class="k">NOTA</div>
+                <div class="v" id="nowNote">“controle antes do caos”</div>
+              </div>
+            </div>
+
+            <div class="badgeRow">
+              <span class="badge red" id="nowTagA">RANK</span>
+              <span class="badge" id="nowTagB">TREINO</span>
+              <span class="badge" id="nowTagC">CALL</span>
+            </div>
+
+            <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; position:relative; z-index:1;">
+              <button class="btn" id="btnLaunch">ABRIR PORTAL</button>
+              <button class="btn" id="btnNotes">NOTAS</button>
+              <button class="btn red" id="btnBuild">BUILD SALVA</button>
+            </div>
+          </div>
+
+          <div class="sideStack">
+            <div class="quick">
+              <h3>RECENTES</h3>
+              <div class="list" id="recentList"></div>
+            </div>
+
+            <div class="quick">
+              <h3>BACKLOG</h3>
+              <div class="list" id="backlogList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;" class="grid three" id="favGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ARQUIVO / CATALOG -->
+<div class="modal" id="modalArchive" aria-hidden="true">
+  <div class="backdropClose" data-close="modalArchive"></div>
+  <div class="modalShell">
+    <div class="modalHeader">
+      <div class="modalTitle">ARQUIVO <small>// memórias & artefatos</small></div>
+      <div class="modalActions">
+        <input class="input" id="archiveSearch" placeholder="buscar: prints, builds, notas..." />
+        <button class="pill danger" data-close="modalArchive">FECHAR</button>
+      </div>
+    </div>
+
+    <div class="modalBody">
+      <div class="rail">
+        <div class="railBlock">
+          <h4>CATEGORIAS</h4>
+          <button class="railBtn" data-cat="prints"><span class="k">PRINTS</span><span class="dot"></span></button>
+          <button class="railBtn" data-cat="builds"><span class="k">BUILDS</span><span class="dot"></span></button>
+          <button class="railBtn" data-cat="mods"><span class="k">MODS</span><span class="dot"></span></button>
+          <button class="railBtn" data-cat="notes"><span class="k">NOTAS</span><span class="dot"></span></button>
+          <div class="tiny">Dica: tecla <b>3</b> abre/fecha o Arquivo.</div>
+        </div>
+        <div class="railBlock">
+          <h4>CARIMBO</h4>
+          <div class="muted">Tudo que você salva vira um artefato. Com marca, data e intenção.</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="grid three" id="archiveGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CANAIS -->
+<div class="modal" id="modalChannels" aria-hidden="true">
+  <div class="backdropClose" data-close="modalChannels"></div>
+  <div class="modalShell">
+    <div class="modalHeader">
+      <div class="modalTitle">CANAIS <small>// rotas do templo</small></div>
+      <div class="modalActions">
+        <button class="pill" id="channelsPing">PULSAR</button>
+        <button class="pill danger" data-close="modalChannels">FECHAR</button>
+      </div>
+    </div>
+
+    <div class="modalBody">
+      <div class="rail">
+        <div class="railBlock">
+          <h4>ATALHOS</h4>
+          <button class="railBtn" data-open="social"><span class="k">SOCIAL</span><span class="dot"></span></button>
+          <button class="railBtn" data-open="music"><span class="k">MÚSICA</span><span class="dot"></span></button>
+          <button class="railBtn" data-open="clips"><span class="k">CLIPES</span><span class="dot"></span></button>
+          <button class="railBtn" data-open="vault"><span class="k">VAULT</span><span class="dot"></span></button>
+          <div class="tiny">Dica: tecla <b>4</b> abre/fecha os Canais.</div>
+        </div>
+        <div class="railBlock">
+          <h4>SELAGEM</h4>
+          <div class="muted">Cada canal é uma sala. Cada sala tem um propósito. Sem bagunça.</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="grid two">
+          <div class="card">
+            <div class="stamp">SOCIAL</div>
+            <h3>DISCORD</h3>
+            <p>Rotas para call, stream, bio, e “puxar alguém pro templo”.</p>
+            <div class="badgeRow">
+              <span class="badge red">CALL</span><span class="badge">STREAM</span><span class="badge">BIO</span>
+            </div>
+            <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn" id="openDiscord">ABRIR</button>
+              <button class="btn" id="copyBio">COPIAR BIO</button>
+              <button class="btn red" id="copyLink">COPIAR LINK</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="stamp">SELOS</div>
+            <h3>INSTAGRAM</h3>
+            <p>Marca pública. Vitrine. Ou só um sigilo silencioso.</p>
+            <div class="badgeRow">
+              <span class="badge">MIDIA</span><span class="badge red">NOME</span><span class="badge">ROTAS</span>
+            </div>
+            <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn" id="openInsta">ABRIR</button>
+              <button class="btn red" id="copyInsta">COPIAR</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;" class="list">
+          <div class="listItem">
+            <div class="top">
+              <div class="name">CANAL // MÚSICA</div>
+              <div class="meta">ECO & RITMO</div>
+            </div>
+            <div class="desc">Aqui entra um tocador simples, vibe pergaminho. (Depois plugamos o seu player.)</div>
+            <div class="actions">
+              <button class="btn" id="musicMock">ATIVAR MODO</button>
+              <button class="btn red" id="musicMute">SILENCIAR</button>
+            </div>
+          </div>
+
+          <div class="listItem">
+            <div class="top">
+              <div class="name">CANAL // CLIPES</div>
+              <div class="meta">CAPTURAS</div>
+            </div>
+            <div class="desc">Seus melhores momentos viram “artefatos”. Um feed de clipes.</div>
+            <div class="actions">
+              <button class="btn" id="clipsMock">ABRIR FEED</button>
+              <button class="btn red" id="clipsAdd">NOVO ARTEFATO</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN / CÂMARA SECRETA -->
+<div class="modal" id="modalAdmin" aria-hidden="true">
+  <div class="backdropClose" data-close="modalAdmin"></div>
+  <div class="modalShell">
+    <div class="modalHeader">
+      <div class="modalTitle">CÂMARA SECRETA <small>// ajustes do templo</small></div>
+      <div class="modalActions">
+        <button class="pill" id="adminRitual">RITO</button>
+        <button class="pill danger" data-close="modalAdmin">FECHAR</button>
+      </div>
+    </div>
+
+    <div class="modalBody">
+      <div class="rail">
+        <div class="railBlock">
+          <h4>CONTROLES</h4>
+          <button class="railBtn" data-admin="grain"><span class="k">GRAIN</span><span class="dot"></span></button>
+          <button class="railBtn" data-admin="scan"><span class="k">SCANLINES</span><span class="dot"></span></button>
+          <button class="railBtn" data-admin="vibe"><span class="k">VIBE</span><span class="dot"></span></button>
+          <button class="railBtn" data-admin="reset"><span class="k">RESET</span><span class="dot"></span></button>
+          <div class="tiny">Dica: tecla <b>5</b> abre/fecha a Câmara.</div>
+        </div>
+        <div class="railBlock">
+          <h4>AVISO</h4>
+          <div class="muted">Você mexe aqui e o templo muda o humor. Sem neon. Só tinta.</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="grid two">
+          <div class="card">
+            <div class="stamp">RITUAL</div>
+            <h3>ATMOSFERA</h3>
+            <p>Ajuste o véu: blur do fundo, intensidade de vinheta, ruído e linhas.</p>
+            <div style="margin-top:12px;">
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn" id="toggleGrain">TOGGLE GRAIN</button>
+                <button class="btn" id="toggleScan">TOGGLE SCAN</button>
+                <button class="btn red" id="triggerGlitch">QUEBRAR SELO</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="stamp">VÉU</div>
+            <h3>BLUR DO FUNDO</h3>
+            <p>Faz o vídeo virar “pintura” e não tela de PC.</p>
+            <div style="margin-top:12px;">
+              <input class="input" type="range" id="blurRange" min="10" max="46" step="1" value="26" />
+              <div class="badgeRow">
+                <span class="badge" id="blurRead">BLUR: 26</span>
+                <span class="badge red" id="vibeRead">VIBE: INK</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;" class="grid two">
+          <div class="card">
+            <div class="stamp">PERIGO</div>
+            <h3>RESET DO TEMPLO</h3>
+            <p>Volta ao padrão: blur, overlays e tudo fechado.</p>
+            <div style="margin-top:12px;">
+              <button class="btn red" id="hardReset">RESET TOTAL</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="stamp">NOTA</div>
+            <h3>CONFIG DO PROJETO</h3>
+            <p>Depois você troca os links (Discord/Insta) e os dados da Arena (jogos) aqui mesmo.</p>
+            <div class="badgeRow">
+              <span class="badge">LINKS</span><span class="badge red">GAMES</span><span class="badge">ARQUIVO</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-/* ===== ELEMENTS ===== */
+/* ================= ELEMENTS ================= */
 const video = document.getElementById("video");
 const videoBlur = document.getElementById("videoBlur");
 const ambience = document.getElementById("ambience");
@@ -1110,15 +1961,22 @@ const sysClock = document.getElementById("sysClock");
 const sysStream = document.getElementById("sysStream");
 const sysNeural = document.getElementById("sysNeural");
 const sysSubject = document.getElementById("sysSubject");
-
 const sysPhase = document.getElementById("sysPhase");
 const sysDirective = document.getElementById("sysDirective");
 
 const btnFS = document.getElementById("btnFS");
 const btnTerm = document.getElementById("btnTerm");
-const btnCat  = document.getElementById("btnCat");
-const btnLinks = document.getElementById("btnLinks");
+const btnArena = document.getElementById("btnArena");
+const btnArchive = document.getElementById("btnArchive");
+const btnChannels = document.getElementById("btnChannels");
 const btnAdmin = document.getElementById("btnAdmin");
+const btnLinks = document.getElementById("btnLinks");
+
+const routesNode = document.getElementById("routesNode");
+const rSocial = document.getElementById("rSocial");
+const rGames = document.getElementById("rGames");
+const rArchive = document.getElementById("rArchive");
+const rChannels = document.getElementById("rChannels");
 
 const volumeHUD = document.getElementById("volumeHUD");
 const volSlider = document.getElementById("volSlider");
@@ -1126,17 +1984,85 @@ const volIconBtn = document.getElementById("volIconBtn");
 const volReadout = document.getElementById("volReadout");
 const volState = document.getElementById("volState");
 
-const routesNode = document.getElementById("routesNode");
-const rSocial = document.getElementById("rSocial");
-const rGames = document.getElementById("rGames");
-const rArchive = document.getElementById("rArchive");
-const rTx = document.getElementById("rTx");
+const keyHelp = document.getElementById("keyHelp");
 
-/* ===== FLAGS ===== */
+/* MODALS */
+const modalTerminal = document.getElementById("modalTerminal");
+const modalArena = document.getElementById("modalArena");
+const modalArchive = document.getElementById("modalArchive");
+const modalChannels = document.getElementById("modalChannels");
+const modalAdmin = document.getElementById("modalAdmin");
+
+/* Terminal */
+const termBody = document.getElementById("termBody");
+const termSub = document.getElementById("termSub");
+const termRun = document.getElementById("termRun");
+
+/* Arena data hooks */
+const nowGame = document.getElementById("nowGame");
+const nowGoal = document.getElementById("nowGoal");
+const nowProg = document.getElementById("nowProg");
+const nowNote = document.getElementById("nowNote");
+const nowTagA = document.getElementById("nowTagA");
+const nowTagB = document.getElementById("nowTagB");
+const nowTagC = document.getElementById("nowTagC");
+const recentList = document.getElementById("recentList");
+const backlogList = document.getElementById("backlogList");
+const favGrid = document.getElementById("favGrid");
+const arenaShuffle = document.getElementById("arenaShuffle");
+
+/* Archive */
+const archiveGrid = document.getElementById("archiveGrid");
+const archiveSearch = document.getElementById("archiveSearch");
+
+/* Channels */
+const openDiscord = document.getElementById("openDiscord");
+const copyBio = document.getElementById("copyBio");
+const copyLink = document.getElementById("copyLink");
+const openInsta = document.getElementById("openInsta");
+const copyInsta = document.getElementById("copyInsta");
+const channelsPing = document.getElementById("channelsPing");
+const musicMock = document.getElementById("musicMock");
+const musicMute = document.getElementById("musicMute");
+
+/* Admin */
+const toggleGrain = document.getElementById("toggleGrain");
+const toggleScan = document.getElementById("toggleScan");
+const triggerGlitchBtn = document.getElementById("triggerGlitch");
+const blurRange = document.getElementById("blurRange");
+const blurRead = document.getElementById("blurRead");
+const vibeRead = document.getElementById("vibeRead");
+const hardReset = document.getElementById("hardReset");
+const adminRitual = document.getElementById("adminRitual");
+
+/* ================= FLAGS ================= */
 let ambOn = true;
 let hasEntered = false;
+let readyToEnter = false;
+let scanLoopTimer = null;
+let sealsOpen = false;
 
-/* ===== LOADING TEXT ===== */
+let grainOn = true;
+let scanOn = true;
+
+/* ================= HELPERS ================= */
+function pad2(n){ return String(n).padStart(2,"0"); }
+
+function triggerGlitch(){
+  document.body.classList.remove("glitch-on");
+  void document.body.offsetWidth;
+  document.body.classList.add("glitch-on");
+  setTimeout(()=>document.body.classList.remove("glitch-on"), 700);
+}
+
+function hardStopMediaIfNotEntered(){
+  if (hasEntered) return;
+  try{ video.pause(); video.currentTime = 0; }catch(e){}
+  try{ videoBlur.pause(); videoBlur.currentTime = 0; }catch(e){}
+  try{ ambience.pause(); ambience.currentTime = 0; }catch(e){}
+}
+
+/* ================= LOADING TEXT ================= */
 const messages = [
   "O TEMPLO OBSERVA…",
   "SELOS SE FECHAM…",
@@ -1151,20 +2077,6 @@ setInterval(() => {
   dynamicText.textContent = messages[msgIndex];
 }, 2200);
 
-/* ✅ ao carregar/voltar, se não entrou, fica tudo parado */
-function hardStopMediaIfNotEntered(){
-  if (hasEntered) return;
-  try{ video.pause(); video.currentTime = 0; }catch(e){}
-  try{ videoBlur.pause(); videoBlur.currentTime = 0; }catch(e){}
-  try{ ambience.pause(); ambience.currentTime = 0; }catch(e){}
-}
-document.addEventListener("DOMContentLoaded", hardStopMediaIfNotEntered);
-window.addEventListener("pageshow", () => hardStopMediaIfNotEntered());
-
-/* ===== READY / SAFETY ===== */
-let readyToEnter = false;
-let scanLoopTimer = null;
-
 function playEnterScan(){
   loadingScreen.classList.remove("scan-on");
   void loadingScreen.offsetWidth;
@@ -1174,63 +2086,52 @@ function playEnterScan(){
 function startScanLoop(){
   if (scanLoopTimer) return;
   scanLoopTimer = setInterval(() => {
-    const loadingVisible = loadingScreen.style.display !== "none" && getComputedStyle(loadingScreen).display !== "none";
-    if (!loadingVisible) return;
+    const visible = loadingScreen && getComputedStyle(loadingScreen).display !== "none";
+    if (!visible) return;
     if (!enterBox.classList.contains("show")) return;
     playEnterScan();
   }, 5200);
 }
-function setEnterHint(label){
-  enterHint.textContent = (label === "RETRY") ? "PRESSIONE [ENTER] PARA TENTAR DE NOVO" : "PRESSIONE [ENTER] PARA PROSSEGUIR";
-  enterHint.classList.add("show");
-}
 function showEnter(label="ENTRAR"){
-  enterBox.style.pointerEvents = "auto";
   enterBox.textContent = label;
   enterBox.classList.add("show");
-  setEnterHint(label);
+  enterHint.classList.add("show");
   playEnterScan();
   startScanLoop();
 }
-function setLoadingStatus(t){ dynamicText.textContent = t; }
 function markReady(){
   if (readyToEnter) return;
   readyToEnter = true;
   showEnter("ENTRAR");
 }
 
-const SAFETY_TIMEOUT_MS = 9000;
-let safetyTimeout = setTimeout(() => {
+/* Safety timeout */
+setTimeout(() => {
   if (!readyToEnter) {
-    setLoadingStatus("SINAL FRACO // ENTRADA MANUAL LIBERADA");
+    dynamicText.textContent = "SINAL FRACO // ENTRADA MANUAL LIBERADA";
     markReady();
   }
-}, SAFETY_TIMEOUT_MS);
-
-setTimeout(() => {
-  if (!enterBox.classList.contains("show")) {
-    setLoadingStatus("PORTAL NÃO RESPONDE // ENTRADA MANUAL");
-    showEnter("ENTRAR");
-  }
-}, 2500);
+}, 9000);
 
 video.addEventListener("loadeddata", markReady, { once:true });
 video.addEventListener("canplay", markReady, { once:true });
 
 function onVideoError(){
-  clearTimeout(safetyTimeout);
   spinner.style.display = "none";
-  setLoadingStatus("RUPTURA // FALHA NO VÉU // TENTE DE NOVO");
+  dynamicText.textContent = "RUPTURA // FALHA NO VÉU // TENTE DE NOVO";
   showEnter("RETRY");
 }
 video.addEventListener("error", onVideoError);
 videoBlur.addEventListener("error", onVideoError);
 
-/* ===== SYNC BLUR ===== */
+document.addEventListener("DOMContentLoaded", hardStopMediaIfNotEntered);
+window.addEventListener("pageshow", () => hardStopMediaIfNotEntered());
+
+/* Sync blur */
 video.addEventListener("play", () => { videoBlur.play().catch(()=>{}); });
 video.addEventListener("pause", () => { try{ videoBlur.pause(); }catch(e){} });
 
-/* ✅ VISIBILITY */
+/* Visibility */
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     try{ video.pause(); }catch(e){}
@@ -1238,16 +2139,67 @@ document.addEventListener("visibilitychange", () => {
     try{ ambience.pause(); }catch(e){}
     return;
   }
-  if (!hasEntered) {
-    hardStopMediaIfNotEntered();
-    return;
-  }
+  if (!hasEntered) { hardStopMediaIfNotEntered(); return; }
   video.play().catch(()=>{});
   videoBlur.play().catch(()=>{});
   if (ambOn) ambience.play().catch(()=>{});
 });
 
-/* ===== VOLUME UI ===== */
+/* ================= ENTER ================= */
+function doEnter(){
+  if (!readyToEnter || hasEntered) return;
+  hasEntered = true;
+
+  loadingScreen.style.opacity = "0";
+  setTimeout(()=>{ loadingScreen.style.display = "none"; }, 650);
+
+  document.body.classList.add("entered");
+
+  video.currentTime = 0;
+  videoBlur.currentTime = 0;
+  video.play().catch(()=>{});
+  videoBlur.play().catch(()=>{});
+  ambience.currentTime = 0;
+  if (ambOn) ambience.play().catch(()=>{});
+
+  triggerGlitch();
+}
+enterBox.addEventListener("click", doEnter);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !hasEntered) doEnter();
+});
+
+/* ================= HUD DYNAMIC ================= */
+function tickTech(){
+  const d = new Date();
+  sysClock.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+  const r = Math.random();
+  sysStream.textContent = video.readyState >= 3 ? "VIVO" : (video.readyState ? "LATENTE" : "DORMENTE");
+  sysNeural.textContent = r > 0.92 ? "SUSSURROS" : (r > 0.75 ? "ECO" : "SILÊNCIO");
+  sysSubject.textContent = hasEntered ? "NO TEMPLO" : "À PORTA";
+}
+setInterval(tickTech, 900);
+tickTech();
+
+function rndSeal(){
+  const rune = ["Σ","Δ","Ψ","Λ","Ω","ϟ","⟡","⟁","⧫","⟟"][Math.floor(Math.random()*10)];
+  const n = Math.floor(1+Math.random()*99).toString().padStart(2,"0");
+  coordA.textContent = `SELO: ${rune}-${n} // CORROMP: ${Math.random()>.18?"BAIXA":"ALTA"}`;
+  coordB.textContent = `PORTAL: ${Math.random()>.25?"LATENTE":"ABERTO"} // VIGIA: ${Math.random()>.15?"PRESENTE":"ATENTO"}`;
+}
+setInterval(rndSeal, 2200);
+rndSeal();
+
+/* ================= FULLSCREEN ================= */
+async function toggleFullscreen(){
+  try{
+    if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+    else await document.exitFullscreen();
+  } catch(e){}
+}
+btnFS.addEventListener("click", toggleFullscreen);
+
+/* ================= VOLUME ================= */
 video.volume = 0.7;
 volSlider.value = String(video.volume);
 
@@ -1271,48 +2223,7 @@ volIconBtn.addEventListener("click", (e) => {
 });
 document.addEventListener("click", () => volumeHUD.classList.remove("open"));
 
-/* ===== HUD DYNAMIC ===== */
-function pad2(n){ return String(n).padStart(2,"0"); }
-function tickTech(){
-  const d = new Date();
-  sysClock.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
-  const r = Math.random();
-  sysStream.textContent = video.readyState >= 3 ? "VIVO" : (video.readyState ? "LATENTE" : "DORMENTE");
-  sysNeural.textContent = r > 0.92 ? "SUSSURROS" : (r > 0.75 ? "ECO" : "SILÊNCIO");
-  if (sysSubject) sysSubject.textContent = hasEntered ? "NO TEMPLO" : "À PORTA";
-}
-setInterval(tickTech, 900);
-tickTech();
-
-function rndSeal(){
-  const rune = ["Σ","Δ","Ψ","Λ","Ω","ϟ","⟡","⟁","⧫","⟟"][Math.floor(Math.random()*10)];
-  const n = Math.floor(1+Math.random()*99).toString().padStart(2,"0");
-  coordA.textContent = `SELO: ${rune}-${n} // CORROMP: ${Math.random()>.18?"BAIXA":"ALTA"}`;
-  coordB.textContent = `PORTAL: ${Math.random()>.25?"LATENTE":"ABERTO"} // VIGIA: ${Math.random()>.15?"PRESENTE":"ATENTO"}`;
-}
-setInterval(rndSeal, 2200);
-rndSeal();
-
-/* ===== FULLSCREEN ===== */
-async function toggleFullscreen(){
-  try{
-    if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
-    else await document.exitFullscreen();
-  } catch(e){}
-}
-btnFS.addEventListener("click", toggleFullscreen);
-
-/* ===== FLASH ===== */
-function triggerGlitch(){
-  document.body.classList.remove("glitch-on");
-  void document.body.offsetWidth;
-  document.body.classList.add("glitch-on");
-  setTimeout(()=>document.body.classList.remove("glitch-on"), 700);
-}
-
-/* ===== SELOS NODE — ritual open/close ===== */
-let sealsOpen = false;
-
+/* ================= SEALS NODE ================= */
 function openSeals(){
   if (sealsOpen) return;
   sealsOpen = true;
@@ -1323,68 +2234,473 @@ function closeSeals(){
   sealsOpen = false;
   routesNode.classList.remove("show");
 }
-function toggleSeals(){
-  sealsOpen ? closeSeals() : openSeals();
-}
+function toggleSeals(){ sealsOpen ? closeSeals() : openSeals(); }
 
-btnLinks.addEventListener("click", (e) => {
-  e.stopPropagation();
-  toggleSeals();
-});
-
-/* fecha selos ao clicar fora */
+btnLinks.addEventListener("click", (e) => { e.stopPropagation(); toggleSeals(); });
 document.addEventListener("click", (e) => {
   const within = routesNode.contains(e.target) || btnLinks.contains(e.target);
   if (!within) closeSeals();
 });
 
-/* ===== ENTER ===== */
-function doEnter(){
-  if (!readyToEnter || hasEntered) return;
-  hasEntered = true;
+/* ================= MODAL ENGINE ================= */
+const allModals = [modalTerminal, modalArena, modalArchive, modalChannels, modalAdmin];
 
-  loadingScreen.style.opacity = "0";
-  setTimeout(()=>{ loadingScreen.style.display = "none"; }, 650);
-
-  document.body.classList.add("entered");
-
-  // start media
-  video.currentTime = 0;
-  videoBlur.currentTime = 0;
-  video.play().catch(()=>{});
-  videoBlur.play().catch(()=>{});
-  ambience.currentTime = 0;
-  if (ambOn) ambience.play().catch(()=>{});
-
+function closeAllModals(){
+  allModals.forEach(m => m.classList.remove("show"));
+}
+function openModal(modal){
+  closeAllModals();
+  modal.classList.add("show");
   triggerGlitch();
 }
-enterBox.addEventListener("click", doEnter);
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !hasEntered) doEnter();
+function toggleModal(modal){
+  if (modal.classList.contains("show")) modal.classList.remove("show");
+  else openModal(modal);
+}
+
+document.addEventListener("click", (e) => {
+  const t = e.target;
+  if (t && t.dataset && t.dataset.close){
+    const id = t.dataset.close;
+    const el = document.getElementById(id);
+    if (el) el.classList.remove("show");
+  }
+  if (t && t.classList && t.classList.contains("backdropClose")){
+    const id = t.dataset.close;
+    const el = document.getElementById(id);
+    if (el) el.classList.remove("show");
+  }
 });
 
-/* ===== ROUTES ACTIONS (por enquanto: placeholders) =====
-   Como você pediu 1/4/5, aqui eu só deixo “pronto”.
-   Depois você me diz se abre CHANNELS/CATALOG/GAMES etc.
-*/
-function sealPulse(){
+/* Buttons */
+btnTerm.addEventListener("click", ()=>toggleModal(modalTerminal));
+btnArena.addEventListener("click", ()=>toggleModal(modalArena));
+btnArchive.addEventListener("click", ()=>toggleModal(modalArchive));
+btnChannels.addEventListener("click", ()=>toggleModal(modalChannels));
+btnAdmin.addEventListener("click", ()=>toggleModal(modalAdmin));
+
+/* Routes node actions */
+rSocial.addEventListener("click", (e)=>{ e.stopPropagation(); openModal(modalChannels); closeSeals(); });
+rGames.addEventListener("click", (e)=>{ e.stopPropagation(); openModal(modalArena); closeSeals(); });
+rArchive.addEventListener("click", (e)=>{ e.stopPropagation(); openModal(modalArchive); closeSeals(); });
+rChannels.addEventListener("click", (e)=>{ e.stopPropagation(); openModal(modalChannels); closeSeals(); });
+
+/* ESC closes everything */
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape"){
+    closeSeals();
+    closeAllModals();
+    volumeHUD.classList.remove("open");
+  }
+});
+
+/* Keyboard shortcuts 1-5 */
+document.addEventListener("keydown", (e) => {
+  if (!hasEntered) return;
+  if (["INPUT","TEXTAREA"].includes(document.activeElement?.tagName)) return;
+
+  if (e.key === "1") toggleModal(modalTerminal);
+  if (e.key === "2") toggleModal(modalArena);
+  if (e.key === "3") toggleModal(modalArchive);
+  if (e.key === "4") toggleModal(modalChannels);
+  if (e.key === "5") toggleModal(modalAdmin);
+});
+
+/* ================= TERMINAL (INK TYPE) ================= */
+let termBusy = false;
+
+function termPrint(line, cls=""){
+  const div = document.createElement("div");
+  div.className = "termLine " + cls;
+  div.innerHTML = line;
+  termBody.appendChild(div);
+  termBody.scrollTop = termBody.scrollHeight;
+}
+
+function termCursor(on=true){
+  const cur = document.createElement("span");
+  cur.className = "cursor";
+  if (on) termBody.appendChild(cur);
+  termBody.scrollTop = termBody.scrollHeight;
+  return cur;
+}
+
+async function typeLine(text, cls=""){
+  return new Promise((resolve)=>{
+    const div = document.createElement("div");
+    div.className = "termLine " + cls;
+    const span = document.createElement("span");
+    div.appendChild(span);
+    termBody.appendChild(div);
+
+    let i = 0;
+    const speed = 10 + Math.floor(Math.random()*18);
+    const timer = setInterval(()=>{
+      i++;
+      span.textContent = text.slice(0,i);
+      termBody.scrollTop = termBody.scrollHeight;
+      if (i >= text.length){
+        clearInterval(timer);
+        resolve();
+      }
+    }, speed);
+  });
+}
+
+function termClear(){
+  termBody.innerHTML = "";
+}
+
+async function termRitual(){
+  if (termBusy) return;
+  termBusy = true;
+  termSub.textContent = "o véu responde…";
+
+  termPrint(`<span class="prompt">[templo]</span> <span class="mut">invocando logs…</span>`);
+  await typeLine("Ligando runas…");
+  await typeLine("Afiando o silêncio…");
+  await typeLine("Abrindo pergaminho de execução…");
+
+  const r = Math.random();
+  await typeLine(r > 0.18 ? "Voto aceito. Entrada concedida." : "Voto instável. Ajuste sua intenção.", r > 0.18 ? "ok":"warn");
+  await typeLine("Selo: " + ["Σ","Δ","Ψ","Λ","Ω","ϟ"][Math.floor(Math.random()*6)] + "-" + String(Math.floor(Math.random()*99)).padStart(2,"0"));
+
+  termPrint(`<span class="prompt">[cmd]</span> <span class="ok">status</span>`);
+  termPrint(`<span class="mut">portal:</span> <span class="ok">${sysStream.textContent}</span>  <span class="mut">eco:</span> <span class="ok">${sysNeural.textContent}</span>`);
+  termPrint(`<span class="mut">visitante:</span> <span class="ok">${sysSubject.textContent}</span>`);
+
+  const cur = termCursor(true);
+  setTimeout(()=>{ try{cur.remove();}catch(e){} }, 1600);
+
+  termSub.textContent = "conectado.";
+  triggerGlitch();
+  termBusy = false;
+}
+
+/* Terminal UI events */
+termRun.addEventListener("click", termRitual);
+
+document.querySelectorAll("#modalTerminal .railBtn").forEach(btn=>{
+  btn.addEventListener("click", async ()=>{
+    const cmd = btn.dataset.cmd;
+    if (!cmd) return;
+
+    if (cmd === "clear"){ termClear(); termPrint(`<span class="prompt">[cmd]</span> limpar`); return; }
+    if (cmd === "status"){
+      termPrint(`<span class="prompt">[cmd]</span> status`);
+      termPrint(`<span class="mut">portal:</span> <span class="ok">${sysStream.textContent}</span>  <span class="mut">eco:</span> <span class="ok">${sysNeural.textContent}</span>`);
+      return;
+    }
+    if (cmd === "seal"){
+      termPrint(`<span class="prompt">[cmd]</span> quebrar_selo`);
+      triggerGlitch();
+      await typeLine("… rachadura detectada.");
+      await typeLine("… tinta escorrendo.", "warn");
+      return;
+    }
+    if (cmd === "summon"){
+      termPrint(`<span class="prompt">[cmd]</span> invoke`);
+      await typeLine("Chamando a entidade: DOITTORE…");
+      await typeLine("Resultado: presença parcial. Risos no escuro.", "ok");
+    }
+  });
+});
+
+/* Seed terminal once opened */
+function terminalSeed(){
+  if (termBody.dataset.seeded) return;
+  termBody.dataset.seeded = "1";
+  termPrint(`<span class="prompt">[templo]</span> <span class="mut">arquivo de cinzas carregado</span>`);
+  termPrint(`<span class="prompt">[templo]</span> <span class="mut">aguardando comando…</span>`);
+  termCursor(true);
+}
+
+/* When modal opens */
+const obs = new MutationObserver(()=>{
+  if (modalTerminal.classList.contains("show")) terminalSeed();
+});
+obs.observe(modalTerminal, {attributes:true, attributeFilter:["class"]});
+
+/* ================= ARENA DATA ================= */
+const gamePool = [
+  {
+    game:"VALORANT",
+    goal:"AIM + CONSISTÊNCIA",
+    prog:"14% // “subindo o véu”",
+    note:"“controle antes do caos”",
+    tags:["RANK","TREINO","CALL"],
+    fav:["Hades","Sekiro","Elden Ring","Hollow Knight","Devil May Cry 5","Katana ZERO"],
+    recent:["Lethal Company","Phasmophobia","CS2"],
+    backlog:["Baldur’s Gate 3","NieR:Automata","Resident Evil 4"]
+  },
+  {
+    game:"CYBERPUNK 2077",
+    goal:"IMERSÃO + HISTÓRIA",
+    prog:"33% // “cidade sangra”",
+    note:"“aperta o gatilho e some”",
+    tags:["STORY","BUILD","MODS"],
+    fav:["Witcher 3","Metro Exodus","Control","Alan Wake 2","Dishonored 2","Deus Ex"],
+    recent:["Dying Light 2","The Finals","Risk of Rain 2"],
+    backlog:["Red Dead 2","Death Stranding","Outer Wilds"]
+  },
+  {
+    game:"ELDEN RING",
+    goal:"BOSS + DISCIPLINA",
+    prog:"48% // “voto quebrado”",
+    note:"“um golpe por vez”",
+    tags:["SOULS","GRIND","FOCUS"],
+    fav:["Sekiro","Dark Souls 3","Lies of P","Salt & Sanctuary","Blasphemous","Nioh 2"],
+    recent:["Slay the Spire","Dead Cells","Hades 2"],
+    backlog:["Armored Core VI","Bloodborne (ps)","Cuphead"]
+  }
+];
+
+let currentArena = 0;
+
+function renderList(el, arr, kind="recent"){
+  el.innerHTML = "";
+  arr.forEach((name, idx)=>{
+    const item = document.createElement("div");
+    item.className = "listItem";
+    item.innerHTML = `
+      <div class="top">
+        <div class="name">${kind.toUpperCase()} // ${String(idx+1).padStart(2,"0")}</div>
+        <div class="meta">${name}</div>
+      </div>
+      <div class="desc">Artefato registrado. Clique para marcar intenção ou anexar nota.</div>
+      <div class="actions">
+        <button class="btn">ABRIR</button>
+        <button class="btn">NOTA</button>
+        <button class="btn red">CARIMBAR</button>
+      </div>
+    `;
+    el.appendChild(item);
+  });
+}
+
+function renderFav(el, arr){
+  el.innerHTML = "";
+  arr.forEach((name, idx)=>{
+    const c = document.createElement("div");
+    c.className = "card";
+    c.innerHTML = `
+      <div class="stamp">FAV ${String(idx+1).padStart(2,"0")}</div>
+      <h3>${name.toUpperCase()}</h3>
+      <p>Ficha: launcher / mods / progresso / prints / build salva. Tudo aqui.</p>
+      <div class="badgeRow">
+        <span class="badge">NOTAS</span>
+        <span class="badge red">PROGRESSO</span>
+        <span class="badge">PRINTS</span>
+      </div>
+      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn">ABRIR</button>
+        <button class="btn">MODS</button>
+        <button class="btn red">BUILD</button>
+      </div>
+    `;
+    el.appendChild(c);
+  });
+}
+
+function renderArena(){
+  const a = gamePool[currentArena];
+  nowGame.textContent = a.game;
+  nowGoal.textContent = a.goal;
+  nowProg.textContent = a.prog;
+  nowNote.textContent = a.note;
+  nowTagA.textContent = a.tags[0] || "TAG";
+  nowTagB.textContent = a.tags[1] || "TAG";
+  nowTagC.textContent = a.tags[2] || "TAG";
+
+  renderList(recentList, a.recent, "recent");
+  renderList(backlogList, a.backlog, "backlog");
+  renderFav(favGrid, a.fav);
+}
+renderArena();
+
+arenaShuffle.addEventListener("click", ()=>{
+  currentArena = (currentArena + 1) % gamePool.length;
+  renderArena();
+  triggerGlitch();
+});
+
+/* ================= ARCHIVE DATA ================= */
+const archiveItems = [
+  {cat:"prints", title:"PRINT // VALORANT 01", desc:"Headshot + call. Carimbo: sangue seco."},
+  {cat:"prints", title:"PRINT // ARENA 02", desc:"Boss down. Silêncio depois do corte."},
+  {cat:"builds", title:"BUILD // RIFLE", desc:"Sens: 0.29 // DPI: 800 // crosshair: fino"},
+  {cat:"builds", title:"BUILD // SOULS", desc:"Vigor alto, disciplina, sem pressa."},
+  {cat:"mods", title:"MOD // IMMERSION", desc:"Grão, sombras, ruído suave, tinta viva."},
+  {cat:"notes", title:"NOTA // RITUAL", desc:"“Um golpe por vez. Sem ego.”"},
+  {cat:"notes", title:"NOTA // FOCO", desc:"“Treino curto, consistência longa.”"},
+  {cat:"mods", title:"MOD // UI", desc:"Carimbo, pergaminho, selo."},
+];
+
+let archiveCat = "prints";
+
+function renderArchive(){
+  const q = (archiveSearch.value || "").trim().toLowerCase();
+  archiveGrid.innerHTML = "";
+  archiveItems
+    .filter(it => it.cat === archiveCat)
+    .filter(it => !q || (it.title.toLowerCase().includes(q) || it.desc.toLowerCase().includes(q)))
+    .forEach((it, idx)=>{
+      const c = document.createElement("div");
+      c.className = "card";
+      c.innerHTML = `
+        <div class="stamp">${it.cat.toUpperCase()}</div>
+        <h3>${it.title}</h3>
+        <p>${it.desc}</p>
+        <div class="badgeRow">
+          <span class="badge">DATA</span>
+          <span class="badge red">CARIMBO</span>
+          <span class="badge">ANEXO</span>
+        </div>
+        <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn">ABRIR</button>
+          <button class="btn">RENOMEAR</button>
+          <button class="btn red">APAGAR</button>
+        </div>
+      `;
+      archiveGrid.appendChild(c);
+    });
+}
+renderArchive();
+
+archiveSearch.addEventListener("input", renderArchive);
+
+document.querySelectorAll("#modalArchive .railBtn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const cat = btn.dataset.cat;
+    if (!cat) return;
+    archiveCat = cat;
+    renderArchive();
+    triggerGlitch();
+  });
+});
+
+/* ================= CHANNELS ACTIONS ================= */
+const SOCIAL = {
+  discordUrl: "https://discord.com/app",
+  instaUrl: "https://instagram.com/"
+};
+
+function copyText(t){
+  navigator.clipboard?.writeText(t).then(()=>triggerGlitch()).catch(()=>{});
+}
+
+openDiscord.addEventListener("click", ()=> window.open(SOCIAL.discordUrl, "_blank", "noopener,noreferrer"));
+openInsta.addEventListener("click", ()=> window.open(SOCIAL.instaUrl, "_blank", "noopener,noreferrer"));
+
+copyBio.addEventListener("click", ()=>{
+  const bio = "Sistema ativo. Jogador online. // DOITTORE observa.";
+  copyText(bio);
+});
+copyLink.addEventListener("click", ()=> copyText(SOCIAL.discordUrl));
+copyInsta.addEventListener("click", ()=> copyText(SOCIAL.instaUrl));
+
+channelsPing.addEventListener("click", ()=>{
+  triggerGlitch();
   rndSeal();
-  triggerGlitch();
-}
-
-rSocial?.addEventListener("click", (e)=>{ e.stopPropagation(); sealPulse(); /* abrir seu modal social aqui */ });
-rGames?.addEventListener("click", (e)=>{ e.stopPropagation(); sealPulse(); /* abrir arena aqui */ });
-rArchive?.addEventListener("click", (e)=>{ e.stopPropagation(); sealPulse(); /* abrir arquivo aqui */ });
-rTx?.addEventListener("click", (e)=>{ e.stopPropagation(); sealPulse(); volumeHUD.classList.toggle("open"); });
-
-/* ===== ESC: fecha o que estiver aberto (aqui: seals + volume) ===== */
-document.addEventListener("keydown", (e) => {
-  if (e.key !== "Escape") return;
-  closeSeals();
-  volumeHUD.classList.remove("open");
 });
 
-/* fim */
+musicMock.addEventListener("click", ()=>{
+  triggerGlitch();
+  rndSeal();
+});
+musicMute.addEventListener("click", ()=>{
+  ambOn = !ambOn;
+  if (!hasEntered) return;
+  if (ambOn) ambience.play().catch(()=>{});
+  else ambience.pause();
+  triggerGlitch();
+});
+
+/* ================= ADMIN CONTROLS ================= */
+function applyBlur(v){
+  document.documentElement.style.setProperty("--blur-amount", v + "px");
+  blurRead.textContent = "BLUR: " + v;
+}
+applyBlur(Number(blurRange.value));
+
+blurRange.addEventListener("input", ()=>{
+  applyBlur(Number(blurRange.value));
+});
+
+toggleGrain.addEventListener("click", ()=>{
+  grainOn = !grainOn;
+  document.getElementById("cinemaFX").style.display = grainOn ? "block" : "none";
+  vibeRead.textContent = "VIBE: " + (grainOn ? "INK" : "CLEAN");
+  triggerGlitch();
+});
+
+toggleScan.addEventListener("click", ()=>{
+  scanOn = !scanOn;
+  const sl = document.querySelector(".scanlines");
+  if (sl) sl.style.display = scanOn ? "block" : "none";
+  triggerGlitch();
+});
+
+triggerGlitchBtn.addEventListener("click", triggerGlitch);
+
+adminRitual.addEventListener("click", ()=>{
+  triggerGlitch();
+  rndSeal();
+});
+
+hardReset.addEventListener("click", ()=>{
+  // reset overlays
+  grainOn = true; scanOn = true;
+  const sl = document.querySelector(".scanlines");
+  if (sl) sl.style.display = "block";
+  document.getElementById("cinemaFX").style.display = "block";
+
+  // reset blur
+  blurRange.value = "26";
+  applyBlur(26);
+  vibeRead.textContent = "VIBE: INK";
+
+  // close everything
+  closeSeals();
+  closeAllModals();
+  volumeHUD.classList.remove("open");
+
+  // reset volume
+  video.volume = 0.7; volSlider.value = "0.7"; updateVolumeUI();
+
+  triggerGlitch();
+});
+
+/* ================= MISC ================= */
+document.querySelectorAll("#modalAdmin .railBtn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const a = btn.dataset.admin;
+    if (a === "grain") toggleGrain.click();
+    if (a === "scan") toggleScan.click();
+    if (a === "vibe") triggerGlitch();
+    if (a === "reset") hardReset.click();
+  });
+});
+
+document.querySelectorAll("#modalChannels .railBtn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const open = btn.dataset.open;
+    if (!open) return;
+    triggerGlitch();
+    rndSeal();
+  });
+});
+
+document.querySelectorAll("#modalArena .railBtn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const tab = btn.dataset.tab;
+    if (!tab) return;
+    triggerGlitch();
+  });
+});
+
+/* ================= INITIAL STATE ================= */
+hardStopMediaIfNotEntered();
 </script>
 </body>
 </html>
