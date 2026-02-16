@@ -5,62 +5,74 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Shadow Temple Interface</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-  background:#000;
-  overflow:hidden;
-  font-family:'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color:#eaf0ff;
+:root{
+  --ink:#06070a;
+  --coal:#0b0d12;
+  --fog: rgba(10,12,16,.58);
+
+  /* “frio ritual” */
+  --a: rgba(160,185,255,.75);
+  --a2: rgba(160,185,255,.16);
+  --a3: rgba(160,185,255,.10);
+
+  --line: rgba(255,255,255,.08);
+  --line2: rgba(160,185,255,.22);
+
+  --txt: rgba(245,248,255,.92);
+  --dim: rgba(245,248,255,.62);
+
+  --blur-amount: 26px;
 }
 
-/* ========= VIDEO LAYERS ========= */
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--ink);
+  overflow:hidden;
+  color:var(--txt);
+  font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* ========= VIDEO ========= */
 #videoBlur{
   position:fixed;
   inset:-20%;
   width:140%;
   height:140%;
-  object-fit:cover;                 /* ✅ acompanha o cover */
-  filter: blur(var(--blur-amount, 70px)) brightness(.42) saturate(1.2);
-  will-change: transform, filter;
+  object-fit:cover;
+  filter: blur(var(--blur-amount)) brightness(.50) saturate(1.0) contrast(1.08);
   transform: translateZ(0);
   z-index:-5;
-  opacity:.55;                      /* ✅ mais contido (portal no fundo) */
 }
 #video{
   position:fixed;
   inset:0;
   width:100%;
   height:100%;
-  object-fit:cover;                 /* ✅ VIDEO FULL */
+  object-fit:cover;
   z-index:-4;
-  background:#000;
-
-  /* ✅ REMOVE O “BLUR/FADE” DAS LATERAIS */
-  -webkit-mask-image:none !important;
-  mask-image:none !important;
+  background:black;
 }
 
-/* ========= FX OVERLAYS ========= */
+/* ========= FX ========= */
 .scanlines{
   position:fixed;
   inset:0;
   background:repeating-linear-gradient(
     to bottom,
-    rgba(255,255,255,0.025),
-    rgba(255,255,255,0.025) 1px,
+    rgba(255,255,255,0.018),
+    rgba(255,255,255,0.018) 1px,
     transparent 1px,
-    transparent 3px
+    transparent 4px
   );
   pointer-events:none;
   z-index:3;
   mix-blend-mode:overlay;
-  opacity:.55;
+  opacity:.48;
 }
 
-/* Grain + vinheta (✅ vinheta MUITO mais fraca) */
 #cinemaFX{
   position:fixed;
   inset:0;
@@ -72,19 +84,18 @@ body{
   position:absolute;
   inset:-20%;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
-  opacity:.07;
+  opacity:.055;
   mix-blend-mode:overlay;
-  transform: translateZ(0);
-  animation:grain 5s steps(10) infinite;
+  animation:grain 6s steps(10) infinite;
 }
 #cinemaFX::after{
   content:"";
   position:absolute;
   inset:0;
   background:
-    radial-gradient(circle at 50% 48%, transparent 0 74%, rgba(0,0,0,.22) 88%, rgba(0,0,0,.35) 100%),
-    linear-gradient(90deg, rgba(120,150,255,.03), transparent 35%, transparent 65%, rgba(120,150,255,.025));
-  opacity:.55;
+    radial-gradient(circle at 50% 48%, transparent 0 66%, rgba(0,0,0,.34) 82%, rgba(0,0,0,.62) 100%),
+    radial-gradient(circle at 55% 55%, rgba(160,185,255,.035), transparent 55%);
+  opacity:.62;
 }
 @keyframes grain{
   0%{transform:translate(0,0)}
@@ -100,7 +111,6 @@ body{
   100%{transform:translate(0,0)}
 }
 
-/* Glitch flash (só na entrada) */
 #glitchFlash{
   position:fixed;
   inset:0;
@@ -108,25 +118,29 @@ body{
   z-index:9;
   opacity:0;
   background:
-    linear-gradient(90deg, rgba(120,150,255,.10), transparent 35%, rgba(255,90,90,.06)),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 4px);
+    radial-gradient(circle at 50% 50%, rgba(160,185,255,.10), transparent 58%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.045) 0 1px, transparent 1px 5px);
   mix-blend-mode:screen;
 }
 .glitch-on #glitchFlash{ animation:glitchFlash .55s steps(6) 1; }
 @keyframes glitchFlash{
   0%{opacity:0}
-  10%{opacity:1; transform:translateX(8px)}
-  25%{opacity:.28; transform:translateX(-10px)}
-  40%{opacity:1; transform:translateX(6px)}
-  60%{opacity:.16; transform:translateX(-5px)}
-  80%{opacity:.85; transform:translateX(2px)}
+  10%{opacity:1; transform:translateX(6px)}
+  25%{opacity:.25; transform:translateX(-8px)}
+  40%{opacity:1; transform:translateX(4px)}
+  60%{opacity:.16; transform:translateX(-4px)}
+  80%{opacity:.82; transform:translateX(2px)}
   100%{opacity:0; transform:none}
 }
 
-/* ===== Sub-layer glitch (HUD/scanlines only, never center) ===== */
-body.subglitch .scanlines{
-  opacity:.8;
-  filter: hue-rotate(10deg) contrast(1.1);
+/* sub-ruptura */
+body.subglitch .scanlines{opacity:.66; filter:contrast(1.12);}
+body.subglitch #coordsHUD,
+body.subglitch #techHUD,
+body.subglitch #statusStrip{
+  filter: blur(.25px) contrast(1.06);
+  opacity:.44;
+  transform: translateX(.4px);
 }
 
 /* ========= LOADING ========= */
@@ -145,54 +159,55 @@ body.subglitch .scanlines{
 .loading-text{
   letter-spacing:6px;
   margin-bottom:20px;
-  font-size:12px;
-  opacity:.86;
+  font-size:11px;
+  opacity:.82;
   text-align:center;
   animation:flicker 2.2s infinite;
   max-width:90vw;
-  font-family:'Cinzel', serif;
+  font-family:Cinzel, serif;
 }
 @keyframes flicker{0%,100%{opacity:.78}50%{opacity:1}}
 .spinner{
   width:40px;height:40px;
   border:3px solid rgba(255,255,255,.08);
-  border-top:3px solid rgba(120,150,255,.85);
+  border-top:3px solid rgba(160,185,255,.65);
   border-radius:50%;
   animation:spin 1s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
+
 #enterBox{
   margin-top:34px;
   padding:18px 70px;
   border-radius:12px;
-  background:rgba(8,10,14,0.62);
-  border:1px solid rgba(120,150,255,0.36);
-  backdrop-filter:blur(22px);
-  letter-spacing:10px;
+  background:rgba(10,12,16,0.62);
+  border:1px solid rgba(160,185,255,0.30);
+  backdrop-filter:blur(18px);
+  letter-spacing:8px;
   font-weight:700;
-  font-size:14px;
-  color:#dfe8ff;
-  text-shadow:0 0 10px rgba(120,150,255,0.35);
+  font-size:13px;
+  color:rgba(245,248,255,.92);
+  text-shadow:0 0 16px rgba(160,185,255,.14);
   opacity:0;
   pointer-events:none;
   transition:.4s ease;
   cursor:pointer;
   user-select:none;
-  font-family:'Cinzel', serif;
+  font-family:Cinzel, serif;
 }
 #enterBox.show{opacity:1; pointer-events:auto;}
-
 #enterHint{
   margin-top:12px;
-  font-size:10px;
+  font-size:9px;
   letter-spacing:4px;
   opacity:0;
   transition:.35s ease;
-  color:rgba(223,232,255,.75);
-  text-shadow:0 0 10px rgba(120,150,255,.16);
+  color:rgba(245,248,255,.72);
+  text-shadow:0 0 14px rgba(160,185,255,.10);
   user-select:none;
+  font-family:Cinzel, serif;
 }
-#enterHint.show{opacity:.85;}
+#enterHint.show{opacity:.88;}
 
 #enterScan{
   position:absolute;
@@ -208,7 +223,7 @@ body.subglitch .scanlines{
   top:0;
   width:45%;
   height:100%;
-  background:linear-gradient(90deg, transparent, rgba(120,150,255,.08), rgba(223,232,255,.10), rgba(120,150,255,.08), transparent);
+  background:linear-gradient(90deg, transparent, rgba(160,185,255,.08), rgba(245,248,255,.08), rgba(160,185,255,.08), transparent);
   transform:skewX(-14deg) translateX(-120%);
   filter: blur(1px);
 }
@@ -220,7 +235,6 @@ body.subglitch .scanlines{
   100%{transform:skewX(-14deg) translateX(380%); opacity:0}
 }
 
-/* ✅ ENTER-only footer left */
 #enterFooterLeft{
   position:fixed;
   left:18px;
@@ -228,14 +242,13 @@ body.subglitch .scanlines{
   z-index:11;
   font-size:9px;
   letter-spacing:3px;
-  opacity:.35;
+  opacity:.32;
   user-select:none;
-  text-shadow:0 0 10px rgba(120,150,255,.08);
-  font-family:'Cinzel', serif;
+  text-shadow:0 0 12px rgba(160,185,255,.06);
+  font-family:Cinzel, serif;
 }
 body.entered #enterFooterLeft{ display:none; }
 
-/* ✅ Version tag (sempre) */
 #versionTag{
   position:fixed;
   right:18px;
@@ -243,88 +256,83 @@ body.entered #enterFooterLeft{ display:none; }
   z-index:6;
   font-size:9px;
   letter-spacing:3px;
-  opacity:.35;
+  opacity:.33;
   user-select:none;
-  text-shadow:0 0 10px rgba(120,150,255,.08);
-  font-family:'Cinzel', serif;
+  text-shadow:0 0 12px rgba(160,185,255,.06);
+  font-family:Cinzel, serif;
 }
-#versionTag .v{opacity:.9;color:rgba(223,232,255,.86);}
+#versionTag .v{opacity:.88;color:rgba(245,248,255,.80);}
 #loadingScreen #versionTag{ z-index:12; }
 
-/* ========= HUDS ========= */
+/* ========= HUDS (mais “Shadow Fight”: seco, ritual, runas) ========= */
 #coordsHUD{
   position:fixed;
   top:18px;
   right:22px;
-  font-size:10px;
-  letter-spacing:2px;
-  opacity:.45;
+  font-size:9px;
+  letter-spacing:3px;
+  opacity:.44;
   z-index:6;
   text-align:right;
   user-select:none;
-  font-family:'Cinzel', serif;
+  font-family:Cinzel, serif;
 }
-#coordsHUD .line{opacity:.7}
-#coordsHUD .blink{animation:coordsBlink 2.8s infinite}
-@keyframes coordsBlink{0%,100%{opacity:.55}50%{opacity:.15}}
+#coordsHUD .line{opacity:.78}
+#coordsHUD .blink{animation:coordsBlink 3.2s infinite}
+@keyframes coordsBlink{0%,100%{opacity:.55}50%{opacity:.18}}
 
 #techHUD{
   position:fixed;
   top:80px;
   left:24px;
   width:min(360px, 42vw);
-  font-size:10px;
-  letter-spacing:2px;
-  opacity:.35;
+  font-size:9px;
+  letter-spacing:3px;
+  opacity:.30;
   z-index:6;
   user-select:none;
-  line-height:1.55;
-  font-family:'Cinzel', serif;
+  line-height:1.65;
+  font-family:Cinzel, serif;
 }
-#techHUD .tag{opacity:.85}
-#techHUD .value{opacity:.9; color:rgba(223,232,255,.95)}
-#techHUD .sep{opacity:.25}
+#techHUD .tag{opacity:.82}
+#techHUD .value{opacity:.92; color:rgba(245,248,255,.88)}
+#techHUD .sep{opacity:.18}
 
-/* ✅ Só na tela ENTER (some após entrar) */
+/* Só na tela ENTER */
 body.entered #coordsHUD,
-body.entered #techHUD{
-  display:none;
-}
+body.entered #techHUD{ display:none; }
 
-/* ===== Status Strip ===== */
 #statusStrip{
   position:fixed;
   left:10px;
   top:140px;
-  width:min(180px, 30vw);
+  width:min(190px, 30vw);
   z-index:6;
-  opacity:.28;
+  opacity:.26;
   user-select:none;
   pointer-events:none;
   font-size:9px;
   letter-spacing:2px;
   line-height:1.45;
-  text-shadow:0 0 10px rgba(120,150,255,.08);
-  filter: drop-shadow(0 0 18px rgba(120,150,255,.08));
-  font-family:'Cinzel', serif;
+  text-shadow:0 0 10px rgba(160,185,255,.06);
+  filter: drop-shadow(0 0 18px rgba(160,185,255,.06));
+  font-family:Cinzel, serif;
 }
 #statusStrip .statusLine{
   display:flex;
   gap:8px;
   align-items:baseline;
   padding:4px 6px;
-  border-left:1px solid rgba(120,150,255,.18);
-  background:linear-gradient(90deg, rgba(120,150,255,.03), transparent 70%);
+  border-left:1px solid rgba(160,185,255,.14);
+  background:linear-gradient(90deg, rgba(160,185,255,.028), transparent 70%);
 }
 #statusStrip .statusLine + .statusLine{ margin-top:4px; }
-#statusStrip .k{opacity:.75}
-#statusStrip .v{opacity:.9; color:rgba(223,232,255,.92)}
-#statusStrip .faint{opacity:.6}
-@media (max-width: 768px){
-  #statusStrip{display:none;}
-}
+#statusStrip .k{opacity:.72}
+#statusStrip .v{opacity:.88; color:rgba(245,248,255,.82)}
+#statusStrip .faint{opacity:.55}
+@media (max-width: 768px){ #statusStrip{display:none;} }
 
-/* ===== Top controls ===== */
+/* ========= TOP CONTROLS (Shadow Fight icons: mask / shuriken / scroll / blade) ========= */
 #topControls{
   position:fixed;
   top:16px;
@@ -335,68 +343,68 @@ body.entered #techHUD{
   z-index:25;
   opacity:.92;
   transition:.18s ease;
-  filter: drop-shadow(0 0 18px rgba(120,150,255,.14));
+  filter: drop-shadow(0 0 18px rgba(160,185,255,.10));
 }
 #topControls:hover{opacity:1}
 
 .ctrlBtn{
-  width:42px;height:36px;
+  width:44px;height:36px;
   border-radius:14px;
-  border:1px solid rgba(120,150,255,.40);
+  border:1px solid rgba(160,185,255,.18);
   background:
-    radial-gradient(circle at 30% 30%, rgba(120,150,255,.08), transparent 55%),
-    linear-gradient(180deg, rgba(10,12,18,.78), rgba(0,0,0,.55));
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.05), transparent 58%),
+    linear-gradient(180deg, rgba(10,12,16,.68), rgba(0,0,0,.52));
   backdrop-filter: blur(16px);
-  color:rgba(223,232,255,.98);
   cursor:pointer;
   display:grid;
   place-items:center;
   box-shadow:
-    0 0 0 1px rgba(0,0,0,.25) inset,
-    0 12px 34px rgba(0,0,0,.32);
+    0 0 0 1px rgba(0,0,0,.30) inset,
+    0 14px 38px rgba(0,0,0,.36);
   position:relative;
   overflow:hidden;
+  color:rgba(245,248,255,.92);
 }
-.ctrlBtn svg{width:18px;height:18px;opacity:.95;filter:drop-shadow(0 0 10px rgba(120,150,255,.16));}
 .ctrlBtn::before{
   content:"";
   position:absolute;
   inset:2px;
   border-radius:12px;
-  border:1px solid rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.045);
   pointer-events:none;
 }
 .ctrlBtn::after{
   content:"";
   position:absolute;
   inset:-40% -30%;
-  background:linear-gradient(90deg, transparent, rgba(120,150,255,.16), transparent);
-  transform:rotate(12deg) translateX(-90%);
-  opacity:.0;
+  background:linear-gradient(90deg, transparent, rgba(160,185,255,.08), transparent);
+  transform:rotate(14deg) translateX(-90%);
+  opacity:0;
   pointer-events:none;
 }
 #topControls:hover .ctrlBtn::after{
   opacity:1;
-  animation:scanPass 1.05s ease infinite;
+  animation:scanPass 1.25s ease infinite;
 }
 @keyframes scanPass{
-  0%{transform:rotate(12deg) translateX(-90%);}
-  100%{transform:rotate(12deg) translateX(90%);}
+  0%{transform:rotate(14deg) translateX(-90%);}
+  100%{transform:rotate(14deg) translateX(90%);}
 }
 .ctrlBtn:hover{
   transform: translateY(-1px);
   box-shadow:
-    0 0 0 1px rgba(0,0,0,.25) inset,
-    0 16px 42px rgba(0,0,0,.38),
-    0 0 26px rgba(120,150,255,.12);
+    0 0 0 1px rgba(0,0,0,.30) inset,
+    0 18px 46px rgba(0,0,0,.44),
+    0 0 22px rgba(160,185,255,.08);
 }
 .ctrlBtn:active{transform:translateY(1px)}
-.ctrlBtn:focus-visible{
-  outline:none;
-  box-shadow: 0 0 0 2px rgba(120,150,255,.35), 0 16px 42px rgba(0,0,0,.38);
+.ctrlBtn svg{
+  width:20px;height:20px;
+  opacity:.92;
+  filter: drop-shadow(0 0 10px rgba(160,185,255,.08));
 }
 
-/* ===== Social control ===== */
+/* ========= SELOS (pill) ========= */
 #socialControl{
   position:fixed;
   top:14px;
@@ -404,37 +412,38 @@ body.entered #techHUD{
   z-index:26;
   opacity:.92;
   transition:.18s ease;
-  filter: drop-shadow(0 0 16px rgba(120,150,255,.12));
+  filter: drop-shadow(0 0 16px rgba(160,185,255,.08));
 }
 #socialControl:hover{opacity:1}
+
 .linkPill{
   height:36px;
   padding:0 12px;
   border-radius:999px;
-  border:1px solid rgba(120,150,255,.30);
+  border:1px solid rgba(160,185,255,.16);
   background:
-    radial-gradient(circle at 30% 30%, rgba(120,150,255,.10), transparent 58%),
-    linear-gradient(180deg, rgba(10,12,18,.48), rgba(0,0,0,.22));
-  backdrop-filter: blur(14px);
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.05), transparent 60%),
+    linear-gradient(180deg, rgba(10,12,16,.58), rgba(0,0,0,.36));
+  backdrop-filter: blur(16px);
   cursor:pointer;
   display:flex;
   align-items:center;
   gap:8px;
-  color:rgba(235,242,255,.96);
-  letter-spacing:3px;
+  color:rgba(245,248,255,.90);
+  letter-spacing:4px;
   font-size:9px;
   box-shadow:
-    0 0 0 1px rgba(255,255,255,.04) inset,
-    0 10px 30px rgba(0,0,0,.26);
+    0 0 0 1px rgba(255,255,255,.03) inset,
+    0 12px 34px rgba(0,0,0,.28);
   position:relative;
-  font-family:'Cinzel', serif;
+  font-family:Cinzel, serif;
 }
-.linkPill svg{width:18px;height:18px;opacity:.95;filter:drop-shadow(0 0 10px rgba(120,150,255,.14));}
+.linkPill svg{width:18px;height:18px;opacity:.92;filter:drop-shadow(0 0 10px rgba(160,185,255,.08));}
 .linkPill:hover{
   box-shadow:
-    0 0 0 1px rgba(255,255,255,.06) inset,
-    0 14px 36px rgba(0,0,0,.32),
-    0 0 18px rgba(120,150,255,.10);
+    0 0 0 1px rgba(255,255,255,.05) inset,
+    0 16px 40px rgba(0,0,0,.36),
+    0 0 16px rgba(160,185,255,.06);
   transform: translateY(-1px);
 }
 .linkPill:active{transform:translateY(1px);}
@@ -443,35 +452,44 @@ body.entered #techHUD{
   .linkPill{padding:0 10px;}
 }
 
-/* ===== ROUTES NODE ===== */
-#routesNode{ position:fixed; top:52px; right:18px; z-index:26; display:none; }
+/* ========= ROUTES NODE ========= */
+#routesNode{
+  position:fixed;
+  top:52px;
+  right:18px;
+  z-index:26;
+  display:none;
+}
 #routesNode.show{display:block;}
 .routesBox{
   width:66px;
   padding:8px 7px;
   border-radius:16px;
-  border:1px solid rgba(120,150,255,.16);
+  border:1px solid rgba(160,185,255,.12);
   background:
-    radial-gradient(circle at 30% 15%, rgba(120,150,255,.08), transparent 60%),
-    linear-gradient(180deg, rgba(10,12,18,.38), rgba(0,0,0,.26));
+    radial-gradient(circle at 30% 15%, rgba(255,255,255,.04), transparent 60%),
+    linear-gradient(180deg, rgba(10,12,16,.52), rgba(0,0,0,.34));
   backdrop-filter: blur(18px);
-  box-shadow:0 16px 50px rgba(0,0,0,.42);
+  box-shadow:0 18px 54px rgba(0,0,0,.45);
   display:flex;
   flex-direction:column;
   gap:8px;
 }
 .routeBtn{
-  width:52px;height:52px;border-radius:16px;
-  border:1px solid rgba(120,150,255,.12);
+  width:50px;
+  height:50px;
+  border-radius:16px;
+  border:1px solid rgba(160,185,255,.11);
   background:
-    radial-gradient(circle at 30% 30%, rgba(120,150,255,.08), transparent 62%),
-    linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.28));
-  box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
-  display:grid;place-items:center;
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.04), transparent 64%),
+    linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.28));
+  box-shadow:0 0 0 1px rgba(0,0,0,.28) inset;
+  display:grid;
+  place-items:center;
   cursor:pointer;
   position:relative;
-
-  opacity:0; transform:translateY(-6px);
+  opacity:0;
+  transform:translateY(-6px);
 }
 #routesNode.show .routeBtn{ animation: dockIn .20s ease forwards; }
 #routesNode.show .routeBtn:nth-child(1){animation-delay:.02s}
@@ -479,15 +497,14 @@ body.entered #techHUD{
 #routesNode.show .routeBtn:nth-child(3){animation-delay:.10s}
 #routesNode.show .routeBtn:nth-child(4){animation-delay:.14s}
 @keyframes dockIn{ to{opacity:1; transform:none;} }
-
 .routeBtn:hover{
-  border-color: rgba(120,150,255,.22);
+  border-color: rgba(160,185,255,.20);
   box-shadow:
-    0 0 0 1px rgba(0,0,0,.25) inset,
-    0 0 22px rgba(120,150,255,.10);
+    0 0 0 1px rgba(0,0,0,.28) inset,
+    0 0 22px rgba(160,185,255,.06);
   transform: translateY(-1px);
 }
-.routeIcon svg{ width:16px;height:16px; opacity:.92; filter:drop-shadow(0 0 10px rgba(120,150,255,.14)); }
+.routeIcon svg{width:18px;height:18px;opacity:.92;filter:drop-shadow(0 0 10px rgba(160,185,255,.08));}
 .routeTip{
   position:absolute;
   right: calc(100% + 10px);
@@ -496,35 +513,21 @@ body.entered #techHUD{
   opacity:0;
   pointer-events:none;
   transition:.18s ease;
-
   padding:9px 11px;
   border-radius:14px;
-  border:1px solid rgba(120,150,255,.16);
+  border:1px solid rgba(160,185,255,.12);
   background:rgba(0,0,0,.40);
   backdrop-filter: blur(12px);
-  box-shadow:0 14px 40px rgba(0,0,0,.40);
-
+  box-shadow:0 14px 40px rgba(0,0,0,.44);
   white-space:nowrap;
   min-width: 170px;
-  font-family:'Cinzel', serif;
+  font-family:Cinzel, serif;
 }
-.routeTip .t{
-  display:block;
-  font-size:9px;
-  letter-spacing:4px;
-  color:rgba(235,242,255,.98);
-  text-shadow:0 0 10px rgba(120,150,255,.12);
-}
-.routeTip .s{
-  display:block;
-  margin-top:3px;
-  font-size:8px;
-  letter-spacing:2px;
-  color:rgba(160,185,255,.85);
-}
-.routeBtn:hover .routeTip{ opacity:1; transform:translateY(-50%) translateX(0); }
+.routeTip .t{display:block;font-size:9px;letter-spacing:4px;color:rgba(245,248,255,.92);text-shadow:0 0 10px rgba(160,185,255,.08);}
+.routeTip .s{display:block;margin-top:3px;font-size:8px;letter-spacing:2px;color:rgba(245,248,255,.70);}
+.routeBtn:hover .routeTip{opacity:1; transform:translateY(-50%) translateX(0);}
 
-/* ========= VOLUME ========= */
+/* ========= VOLUME (ECO) ========= */
 #volumeHUD{
   position:fixed;
   top:22px;
@@ -533,24 +536,34 @@ body.entered #techHUD{
   align-items:flex-start;
   gap:12px;
   z-index:20;
-  opacity:.52;
+  opacity:.55;
   transition:.25s ease;
 }
 #volumeHUD:hover{ opacity:1; }
+
 .vol-btn{
   position:relative;
   width:40px;height:40px;
-  border-radius:12px;
-  border:1px solid rgba(120,150,255,.28);
-  background:linear-gradient(180deg, rgba(10,12,18,.68), rgba(5,7,10,.55));
+  border-radius:14px;
+  border:1px solid rgba(160,185,255,.14);
+  background:linear-gradient(180deg, rgba(10,12,16,.62), rgba(0,0,0,.52));
   backdrop-filter: blur(16px);
   display:grid;
   place-items:center;
   cursor:pointer;
   padding:0;
-  box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
+  box-shadow:0 0 0 1px rgba(0,0,0,.28) inset;
 }
-.vol-svg{width:26px;height:26px;filter:drop-shadow(0 0 10px rgba(120,150,255,.18));}
+.vol-btn::before{
+  content:"";
+  position:absolute; inset:-1px;
+  border-radius:14px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.05), transparent 55%),
+    radial-gradient(circle at 70% 70%, rgba(160,185,255,.06), transparent 55%);
+  pointer-events:none;
+}
+.vol-svg{width:22px;height:22px;filter:drop-shadow(0 0 10px rgba(160,185,255,.08));opacity:.92;}
 .vol-state{
   position:absolute;
   left:50%; bottom:-9px;
@@ -559,12 +572,11 @@ body.entered #techHUD{
   letter-spacing:2px;
   padding:2px 6px;
   border-radius:999px;
-  border:1px solid rgba(255,90,90,.40);
-  background:rgba(0,0,0,.35);
-  color:rgba(255,210,210,.95);
-  text-shadow:0 0 8px rgba(255,90,90,.18);
+  border:1px solid rgba(255,120,120,.26);
+  background:rgba(0,0,0,.40);
+  color:rgba(255,210,210,.90);
   display:none;
-  font-family:'Cinzel', serif;
+  font-family:Cinzel, serif;
 }
 .vol-panel{
   width:0;
@@ -574,13 +586,14 @@ body.entered #techHUD{
   transition:.25s ease;
   padding:10px 0;
   border-radius:14px;
-  border:1px solid rgba(120,150,255,.22);
+  border:1px solid rgba(160,185,255,.12);
   background:
-    linear-gradient(180deg, rgba(10,12,18,.78), rgba(0,0,0,.58)),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0 1px, transparent 1px 10px);
+    linear-gradient(180deg, rgba(10,12,16,.72), rgba(0,0,0,.62)),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 12px);
   backdrop-filter: blur(18px);
-  box-shadow: 0 12px 40px rgba(0,0,0,.45);
+  box-shadow: 0 12px 44px rgba(0,0,0,.50);
   overflow:hidden;
+  font-family:Cinzel, serif;
 }
 #volumeHUD:hover .vol-panel,
 #volumeHUD.open .vol-panel{
@@ -590,8 +603,9 @@ body.entered #techHUD{
   padding:10px 12px;
 }
 .vol-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.vol-title{font-size:9px;letter-spacing:3px;opacity:.75;font-family:'Cinzel', serif;}
-.vol-readout{font-size:10px;letter-spacing:2px;color:#dfe8ff;text-shadow:0 0 10px rgba(120,150,255,.18);font-family:'Cinzel', serif;}
+.vol-title{font-size:9px;letter-spacing:3px;opacity:.72;}
+.vol-readout{font-size:10px;letter-spacing:2px;color:rgba(245,248,255,.90);text-shadow:0 0 10px rgba(160,185,255,.08);}
+
 #volSlider{
   width:100%;
   height:26px;
@@ -603,31 +617,31 @@ body.entered #techHUD{
 #volSlider::-webkit-slider-runnable-track{
   height:6px;border-radius:999px;
   background:
-    linear-gradient(90deg, rgba(120,150,255,.92), rgba(120,150,255,.20)),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.12) 0 1px, transparent 1px 8px);
-  box-shadow:0 0 18px rgba(120,150,255,.10);
-  border:1px solid rgba(120,150,255,.18);
+    linear-gradient(90deg, rgba(245,248,255,.72), rgba(160,185,255,.18)),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.085) 0 1px, transparent 1px 10px);
+  box-shadow:0 0 14px rgba(160,185,255,.06);
+  border:1px solid rgba(160,185,255,.12);
 }
 #volSlider::-webkit-slider-thumb{
   -webkit-appearance:none;
-  width:16px;height:16px;border-radius:6px;
+  width:16px;height:16px;border-radius:7px;
   margin-top:-6px;
-  background: radial-gradient(circle at 30% 30%, rgba(223,232,255,1), rgba(120,150,255,.55));
-  border:1px solid rgba(120,150,255,.45);
-  box-shadow:0 0 18px rgba(120,150,255,.25);
+  background: radial-gradient(circle at 30% 30%, rgba(245,248,255,1), rgba(160,185,255,.30));
+  border:1px solid rgba(160,185,255,.18);
+  box-shadow:0 0 14px rgba(160,185,255,.08);
 }
 #volSlider::-moz-range-track{
   height:6px;border-radius:999px;
   background:
-    linear-gradient(90deg, rgba(120,150,255,.92), rgba(120,150,255,.20)),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.12) 0 1px, transparent 1px 8px);
-  border:1px solid rgba(120,150,255,.18);
+    linear-gradient(90deg, rgba(245,248,255,.72), rgba(160,185,255,.18)),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.085) 0 1px, transparent 1px 10px);
+  border:1px solid rgba(160,185,255,.12);
 }
 #volSlider::-moz-range-thumb{
-  width:16px;height:16px;border-radius:6px;
-  background: radial-gradient(circle at 30% 30%, rgba(223,232,255,1), rgba(120,150,255,.55));
-  border:1px solid rgba(120,150,255,.45);
-  box-shadow:0 0 18px rgba(120,150,255,.25);
+  width:16px;height:16px;border-radius:7px;
+  background: radial-gradient(circle at 30% 30%, rgba(245,248,255,1), rgba(160,185,255,.30));
+  border:1px solid rgba(160,185,255,.18);
+  box-shadow:0 0 14px rgba(160,185,255,.08);
 }
 .vol-footer{
   margin-top:8px;
@@ -636,39 +650,43 @@ body.entered #techHUD{
   justify-content:space-between;
   font-size:9px;
   letter-spacing:3px;
-  opacity:.65;
-  font-family:'Cinzel', serif;
+  opacity:.62;
 }
 .vol-bars{
   width:70px;
   height:10px;
   border-radius:6px;
-  background:repeating-linear-gradient(90deg, rgba(120,150,255,var(--bars-a,.55)) 0 6px, transparent 6px 10px);
-  filter: drop-shadow(0 0 10px rgba(120,150,255,.14));
+  background:repeating-linear-gradient(90deg, rgba(245,248,255,var(--bars-a,.55)) 0 6px, transparent 6px 10px);
+  filter: drop-shadow(0 0 10px rgba(160,185,255,.05));
   clip-path: inset(0 calc(100% - var(--bars-w,50%)) 0 0 round 6px);
   transition: clip-path .08s linear;
 }
 
-/* ========= TERMINAL (GRIMÓRIO) ========= */
-#terminal{
+/* ========= MODAIS BASE ========= */
+#terminal,#catalog,#channels,#admin,#gamesPanel{
   position:fixed;
   inset:0;
+  display:none;           /* ✅ nada abre sozinho */
   z-index:30;
-  display:none;
-  background:rgba(0,0,0,.62);
-  backdrop-filter: blur(16px);
+  background:rgba(0,0,0,.58);
+  backdrop-filter: blur(14px);
 }
-#terminal.show{display:block;}
+#terminal.show,#catalog.show,#channels.show,#admin.show,#gamesPanel.show{display:block;}
+
+.termBox,.catBox,.chBox,.adminBox,.gamesWrap{
+  border-radius:16px;
+  border:1px solid rgba(160,185,255,.12);
+  background:linear-gradient(180deg, rgba(10,12,16,.74), rgba(0,0,0,.60));
+  box-shadow:0 18px 66px rgba(0,0,0,.62);
+  overflow:hidden;
+}
+
+/* ========= TERMINAL ========= */
 .termBox{
   position:absolute;
   left:24px;
   bottom:24px;
-  width:min(720px, calc(100vw - 48px));
-  border-radius:16px;
-  border:1px solid rgba(120,150,255,.22);
-  background:linear-gradient(180deg, rgba(10,12,18,.78), rgba(0,0,0,.62));
-  box-shadow:0 18px 60px rgba(0,0,0,.55);
-  overflow:hidden;
+  width:min(760px, calc(100vw - 48px));
 }
 .termHeader{
   display:flex;
@@ -676,91 +694,329 @@ body.entered #techHUD{
   padding:10px 12px;
   font-size:10px;
   letter-spacing:4px;
-  opacity:.85;
+  opacity:.86;
   border-bottom:1px solid rgba(255,255,255,.07);
-  font-family:'Cinzel', serif;
+  font-family:Cinzel, serif;
 }
 .termLog{
   max-height:min(46vh, 420px);
   overflow:auto;
   padding:12px;
   font-size:11px;
-  line-height:1.55;
-  letter-spacing:1px;
+  line-height:1.6;
+  letter-spacing:.5px;
   opacity:.92;
 }
 .termLog .dim{opacity:.58}
 .termLine{margin:2px 0}
-.cursor{
-  display:inline-block;
-  margin-left:6px;
-  opacity:.9;
-  animation:cursorBlink 1s steps(2) infinite;
-}
-@keyframes cursorBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
 .termInputBar{
   display:flex;
   align-items:center;
   gap:10px;
   padding:10px 12px 12px 12px;
   border-top:1px solid rgba(255,255,255,.07);
-  background:linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.22));
+  background:linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.20));
 }
 .termPrompt{
   font-size:10px;
-  letter-spacing:2px;
+  letter-spacing:3px;
   opacity:.78;
   user-select:none;
   white-space:nowrap;
-  font-family:'Cinzel', serif;
+  font-family:Cinzel, serif;
 }
 #termInput{
   flex:1;
-  height:32px;
+  height:34px;
   border-radius:12px;
-  border:1px solid rgba(120,150,255,.16);
+  border:1px solid rgba(160,185,255,.12);
   background:rgba(0,0,0,.35);
-  color:rgba(223,232,255,.95);
+  color:rgba(245,248,255,.92);
   padding:0 12px;
-  letter-spacing:1px;
-  font-size:11px;
+  font-family:Inter, system-ui, sans-serif;
+  letter-spacing:.5px;
+  font-size:12px;
   outline:none;
   box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
 }
-#termInput::placeholder{ color:rgba(223,232,255,.40); }
-#termInput:disabled{ opacity:.55; cursor:not-allowed; }
+#termInput::placeholder{ color:rgba(245,248,255,.40); }
 .termHint{
   font-size:9px;
-  letter-spacing:2px;
+  letter-spacing:3px;
   opacity:.55;
   user-select:none;
   white-space:nowrap;
-  font-family:'Cinzel', serif;
+  font-family:Cinzel, serif;
 }
 
-/* ========= CATALOG (SELOS) ========= */
-#catalog{
-  position:fixed;
+/* ========= CATALOG ========= */
+.catBox{
+  position:absolute;
+  right:24px;
+  bottom:24px;
+  width:min(900px, calc(100vw - 48px));
+}
+.catHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:10px 12px;
+  font-size:10px;
+  letter-spacing:4px;
+  opacity:.88;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  flex-wrap:wrap;
+  font-family:Cinzel, serif;
+}
+.catHeader .dim{opacity:.55}
+.catBody{ padding:12px; max-height:min(56vh, 520px); overflow:auto; }
+.catGrid{ display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; }
+@media (max-width: 900px){ .catGrid{grid-template-columns:1fr;} }
+
+.catCard{
+  border-radius:14px;
+  border:1px solid rgba(160,185,255,.10);
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.035), transparent 55%),
+    linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.35));
+  overflow:hidden;
+  box-shadow:0 0 0 1px rgba(0,0,0,.28) inset;
+}
+.catThumb{
+  position:relative;
+  width:100%;
+  aspect-ratio: 16 / 9;
+  background:
+    radial-gradient(circle at 40% 35%, rgba(160,185,255,.07), transparent 60%),
+    linear-gradient(180deg, rgba(20,22,28,.55), rgba(0,0,0,.72));
+  border-bottom:1px solid rgba(255,255,255,.06);
+  overflow:hidden;
+}
+.catThumb img{ width:100%; height:100%; object-fit:cover; filter: grayscale(.50) contrast(1.08) brightness(.78); }
+.catThumb::after{
+  content:"";
+  position:absolute;
   inset:0;
-  z-index:29;
-  display:none;
-  background:rgba(0,0,0,.58);
-  backdrop-filter: blur(16px);
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.66)),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 5px);
+  mix-blend-mode:overlay;
+  opacity:.52;
+  pointer-events:none;
 }
-#catalog.show{display:block;}
-/* (restante do catalog/games/channels/admin mantido — só mudamos BUG + video + ícones + textos) */
+.catStamp{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  z-index:2;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(160,185,255,.12);
+  background:rgba(0,0,0,.48);
+  backdrop-filter: blur(10px);
+  font-size:9px;
+  letter-spacing:2px;
+  color:rgba(245,248,255,.88);
+  box-shadow:0 0 0 1px rgba(0,0,0,.28) inset;
+  font-family:Cinzel, serif;
+}
+.catContent{ padding:10px 12px 12px 12px; }
+.catTitle{ font-size:11px; letter-spacing:2px; opacity:.92; margin-bottom:6px; font-family:Cinzel, serif;}
+.catDesc{ font-size:10px; letter-spacing:.4px; line-height:1.55; opacity:.78; }
+.catMeta{
+  margin-top:10px;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:9px;
+  letter-spacing:2px;
+  opacity:.55;
+  font-family:Cinzel, serif;
+}
+.catDot{width:7px;height:7px;border-radius:50%;background:rgba(245,248,255,.72);box-shadow:0 0 12px rgba(160,185,255,.06);}
 
-/* ========= CHANNELS / ADMIN / GAMES (mantidos do seu base) ========= */
-#channels{position:fixed;inset:0;z-index:28;display:none;background:rgba(0,0,0,.58);backdrop-filter: blur(16px);}
-#channels.show{display:block;}
-#admin{position:fixed;inset:0;z-index:27;display:none;background:rgba(0,0,0,.62);backdrop-filter: blur(18px);}
-#admin.show{display:block;}
-#gamesPanel{position:fixed;inset:0;z-index:31;display:none;background:rgba(0,0,0,.62);backdrop-filter: blur(16px);}
-#gamesPanel.show{display:block;}
+/* ========= CHANNELS ========= */
+.chBox{
+  position:absolute;
+  left:50%;
+  bottom:24px;
+  transform:translateX(-50%);
+  width:min(1040px, calc(100vw - 48px));
+}
+.chHeader{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 12px;
+  font-size:10px;
+  letter-spacing:4px;
+  opacity:.88;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  font-family:Cinzel, serif;
+}
+.chHeader .dim{opacity:.55}
+.chGrid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:16px;
+  padding:14px;
+}
+@media (max-width: 900px){ .chGrid{grid-template-columns:1fr;} }
+.chTopCard{
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.06);
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.18));
+  padding:18px 18px 16px 18px;
+  position:relative;
+  overflow:hidden;
+  text-decoration:none;
+  color:inherit;
+}
+.chTopCard::before{
+  content:"";
+  position:absolute;
+  inset:-40% -30%;
+  background:linear-gradient(90deg, transparent, rgba(160,185,255,.07), transparent);
+  transform:rotate(14deg) translateX(-90%);
+  opacity:0;
+}
+.chTopCard:hover::before{opacity:1; animation:scanPass 1.25s ease infinite;}
+.chCircle{
+  width:150px;height:150px;
+  margin:6px auto 14px auto;
+  border-radius:50%;
+  border:2px solid rgba(245,248,255,.20);
+  box-shadow:0 0 26px rgba(160,185,255,.06);
+  display:grid;
+  place-items:center;
+  background:radial-gradient(circle at 30% 30%, rgba(160,185,255,.05), transparent 58%);
+}
+.chCircle img{width:56px;height:56px;filter: drop-shadow(0 0 12px rgba(160,185,255,.08));opacity:.92;}
+.chLabel{text-align:center;font-size:20px;letter-spacing:3px;opacity:.92;margin-bottom:6px;font-family:Cinzel, serif;}
+.chSub{text-align:center;font-size:10px;letter-spacing:3px;opacity:.55;font-family:Cinzel, serif;}
+
+/* ========= ADMIN ========= */
+.adminBox{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:min(980px, calc(100vw - 48px));
+}
+.adminHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 12px;
+  font-size:10px;
+  letter-spacing:4px;
+  opacity:.88;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  font-family:Cinzel, serif;
+}
+.adminHeader .dim{opacity:.55}
+.adminBody{ padding:14px; }
+.adminField{
+  border-radius:14px;
+  border:1px solid rgba(160,185,255,.10);
+  background:
+    radial-gradient(circle at 30% 20%, rgba(160,185,255,.05), transparent 55%),
+    linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.35));
+  box-shadow:0 0 0 1px rgba(0,0,0,.28) inset;
+  padding:12px;
+}
+.adminLabel{ font-size:9px; letter-spacing:3px; opacity:.55; margin-bottom:8px; font-family:Cinzel, serif;}
+.adminValue{ font-size:14px; letter-spacing:2px; opacity:.92; font-family:Cinzel, serif;}
+.adminInput{
+  width:100%;
+  height:40px;
+  border-radius:12px;
+  border:1px solid rgba(160,185,255,.12);
+  background:rgba(0,0,0,.35);
+  color:rgba(245,248,255,.92);
+  padding:0 12px;
+  font-family:Inter, system-ui, sans-serif;
+  letter-spacing:.5px;
+  font-size:12px;
+  outline:none;
+  box-shadow:0 0 0 1px rgba(0,0,0,.28) inset;
+}
+.adminActions{margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.aBtn{
+  height:34px;
+  padding:0 14px;
+  border-radius:12px;
+  border:1px solid rgba(160,185,255,.14);
+  background:linear-gradient(180deg, rgba(10,12,16,.68), rgba(0,0,0,.45));
+  color:rgba(245,248,255,.90);
+  cursor:pointer;
+  letter-spacing:3px;
+  font-size:10px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.28) inset;
+  font-family:Cinzel, serif;
+}
+.aBtn:hover{ box-shadow:0 0 0 1px rgba(0,0,0,.28) inset, 0 0 20px rgba(160,185,255,.06); }
+.aBtn:active{ transform: translateY(1px); }
+.aBtn.danger{ border-color: rgba(255,120,120,.22); color: rgba(255,230,230,.92); }
+.aPill{font-size:10px;letter-spacing:2px;opacity:.82;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.22);font-family:Cinzel, serif;}
+.aPill.ok{ border-color: rgba(160,185,255,.12); }
+.aPill.bad{ border-color: rgba(255,120,120,.20); }
+
+/* ========= GAMES PANEL ========= */
+#gamesPanel{ z-index:31; }
+.gamesWrap{
+  --gm-border: rgba(160,185,255,.12);
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:min(1080px, calc(100vw - 56px));
+  height:min(820px, calc(100vh - 56px));
+  border-radius:16px;
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.24));
+  box-shadow:0 24px 92px rgba(0,0,0,.72);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.06);
+}
+.gamesWrap::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border-radius:16px;
+  box-shadow: inset 0 0 0 2px var(--gm-border);
+  opacity:.9;
+}
+.gamesTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  padding:12px 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.16));
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.gamesBrand{font-size:14px;letter-spacing:3px;opacity:.95;font-family:Cinzel, serif;}
+.gamesBrand .mix{color:rgba(245,248,255,.90);text-shadow:0 0 16px rgba(160,185,255,.08);margin-left:6px;}
+.gamesNav{display:flex;gap:14px;align-items:center;font-size:9px;letter-spacing:3px;opacity:.78;user-select:none;font-family:Cinzel, serif;}
+.gamesNav a{color:rgba(245,248,255,.84);text-decoration:none;padding:6px 8px;border-radius:10px;}
+.gamesNav a:hover{background: rgba(160,185,255,.06); box-shadow: inset 0 0 0 1px rgba(160,185,255,.10);}
+.gamesBody{
+  display:grid;
+  grid-template-columns: 1.6fr 0.9fr;
+  gap:14px;
+  padding:14px;
+  height:calc(100% - 54px);
+  background: rgba(0,0,0,.84);
+}
+@media (max-width: 980px){
+  .gamesBody{grid-template-columns:1fr; height:auto;}
+  .gamesWrap{height:auto; max-height:calc(100vh - 56px); overflow:auto;}
+}
 
 /* reduced motion */
 @media (prefers-reduced-motion: reduce){
-  .scanlines{opacity:.25}
+  .scanlines{opacity:.28}
   .spinner{animation:none}
   #cinemaFX::before{animation:none}
   #topControls .ctrlBtn::after{animation:none; opacity:0;}
@@ -768,15 +1024,13 @@ body.entered #techHUD{
   #routesNode.show .routeBtn{animation:none; opacity:1; transform:none;}
 }
 @media (max-width: 768px){
-  :root{ --blur-amount: 46px; }
+  :root{ --blur-amount: 22px; }
   #techHUD{display:none;}
 }
 </style>
 </head>
-
 <body>
 
-<!-- ✅ NOVO VÍDEO (Shadow) -->
 <video id="videoBlur" playsinline preload="auto" muted loop>
   <source src="https://files.catbox.moe/klaol5.webm" type="video/webm" />
 </video>
@@ -785,7 +1039,6 @@ body.entered #techHUD{
   <source src="https://files.catbox.moe/klaol5.webm" type="video/webm" />
 </video>
 
-<!-- ✅ NOVO ÁUDIO (Shadow) -->
 <audio id="ambience" preload="auto" loop>
   <source src="https://files.catbox.moe/99fu05.m4a" type="audio/mp4">
 </audio>
@@ -794,154 +1047,161 @@ body.entered #techHUD{
 <div id="cinemaFX"></div>
 <div id="glitchFlash"></div>
 
-<!-- ✅ version always -->
 <div id="versionTag"><span class="v">shadow temple interface: v1</span></div>
 
 <div id="loadingScreen">
   <div id="enterScan" aria-hidden="true"></div>
-  <div class="loading-text" id="dynamicText">AWAKENING THE SEAL...</div>
+  <div class="loading-text" id="dynamicText">O TEMPLO OBSERVA…</div>
   <div class="spinner" id="spinner"></div>
 
-  <div id="enterBox">ENTER</div>
-  <div id="enterHint">PRESS [ENTER] TO PROCEED</div>
+  <div id="enterBox">ENTRAR</div>
+  <div id="enterHint">PRESSIONE [ENTER] PARA PROSSEGUIR</div>
 
-  <div id="enterFooterLeft">TEMPLE GATE // SEALED // LISTENING</div>
+  <div id="enterFooterLeft">SELO ATIVO // PASSO PROIBIDO</div>
 </div>
 
+<!-- HUD (apenas ENTER) -->
 <div id="coordsHUD">
-  <div class="line blink" id="coordA">SEAL: --.---- / --.----</div>
-  <div class="line" id="coordB">TEMPLE: Δ-07 // PORTAL: DORMANT</div>
+  <div class="line blink" id="coordA">SELO: — — —</div>
+  <div class="line" id="coordB">PORTAL: LATENTE // VIGIA: PRESENTE</div>
 </div>
 
 <div id="techHUD">
-  <div class="termLine"><span class="tag">TIME</span> <span class="sep">//</span> <span class="value" id="sysClock">--:--:--</span></div>
-  <div class="termLine"><span class="tag">PORTAL</span> <span class="sep">//</span> <span class="value" id="sysStream">LISTENING</span></div>
-  <div class="termLine"><span class="tag">ECHO</span> <span class="sep">//</span> <span class="value" id="sysNeural">CALM</span></div>
-  <div class="termLine"><span class="tag">OATH</span> <span class="sep">//</span> <span class="value">BROKEN</span></div>
-  <div class="termLine"><span class="tag">WITNESS</span> <span class="sep">//</span> <span class="value" id="sysSubject">PRESENT</span></div>
-
-  <div class="termLine"><span class="tag">RITUAL</span> <span class="sep">//</span> <span class="value" id="sysPhase">SEAL</span></div>
-  <div class="termLine"><span class="tag">DECREE</span> <span class="sep">//</span> <span class="value" id="sysDirective">OBSERVE</span></div>
+  <div class="termLine"><span class="tag">RITO</span> <span class="sep">//</span> <span class="value" id="sysClock">--:--:--</span></div>
+  <div class="termLine"><span class="tag">PORTAL</span> <span class="sep">//</span> <span class="value" id="sysStream">DORMENTE</span></div>
+  <div class="termLine"><span class="tag">ECO</span> <span class="sep">//</span> <span class="value" id="sysNeural">SILÊNCIO</span></div>
+  <div class="termLine"><span class="tag">VISITANTE</span> <span class="sep">//</span> <span class="value" id="sysSubject">À PORTA</span></div>
+  <div class="termLine"><span class="tag">FASE</span> <span class="sep">//</span> <span class="value" id="sysPhase">DESPERTAR</span></div>
+  <div class="termLine"><span class="tag">JURAMENTO</span> <span class="sep">//</span> <span class="value" id="sysDirective">OBSERVAR</span></div>
 </div>
 
 <div id="statusStrip" aria-hidden="true">
-  <div class="statusLine" id="ss1"><span class="k">TEMPLE</span> <span class="v">IDLE</span></div>
-  <div class="statusLine faint" id="ss2"><span class="k">PORTAL</span> <span class="v">STANDBY</span></div>
-  <div class="statusLine faint" id="ss3"><span class="k">ECHO</span> <span class="v">—</span></div>
+  <div class="statusLine" id="ss1"><span class="k">TEMPLO</span> <span class="v">IMÓVEL</span></div>
+  <div class="statusLine faint" id="ss2"><span class="k">PORTAL</span> <span class="v">LATENTE</span></div>
+  <div class="statusLine faint" id="ss3"><span class="k">ECO</span> <span class="v">—</span></div>
 </div>
 
-<!-- ✅ TOP CONTROLS (ícones “shadow-ish” em SVG) -->
+<!-- TOP CONTROLS (Shadow Fight vibe) -->
 <div id="topControls">
-  <button class="ctrlBtn" id="btnFS" title="Tela cheia" aria-label="Tela cheia">
+  <!-- Fullscreen: “portal frame” -->
+  <button class="ctrlBtn" id="btnFS" title="Ritual: Tela Cheia" aria-label="Tela cheia">
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" fill="none" stroke="rgba(223,232,255,.92)" stroke-width="1.7" stroke-linecap="round"/>
+      <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"
+        fill="none" stroke="rgba(245,248,255,.86)" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M7.2 7.2h9.6v9.6H7.2z" fill="none" stroke="rgba(245,248,255,.22)" stroke-width="1.2"/>
     </svg>
   </button>
 
-  <button class="ctrlBtn" id="btnCat" title="Selos" aria-label="Abrir selos">
+  <!-- Catalog: “scroll” -->
+  <button class="ctrlBtn" id="btnCat" title="Pergaminhos" aria-label="Arquivos">
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M7 7h10M7 12h10M7 17h10" fill="none" stroke="rgba(223,232,255,.92)" stroke-width="1.7" stroke-linecap="round"/>
+      <path d="M7 4h10v16H7a3 3 0 0 1 0-6h10" fill="none" stroke="rgba(245,248,255,.86)" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M10 9h5M10 12h5M10 15h4" fill="none" stroke="rgba(245,248,255,.70)" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M6.2 17.2c.6-.8 1.5-1.2 2.6-1.2" fill="none" stroke="rgba(245,248,255,.36)" stroke-width="1.4" stroke-linecap="round"/>
     </svg>
   </button>
 
-  <button class="ctrlBtn" id="btnTerm" title="Grimório" aria-label="Abrir grimório">
+  <!-- Terminal: “shuriken/sigil” -->
+  <button class="ctrlBtn" id="btnTerm" title="Grimório" aria-label="Grimório">
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M6 4h9a3 3 0 0 1 3 3v13H9a3 3 0 0 0-3 3V4Z" fill="none" stroke="rgba(223,232,255,.92)" stroke-width="1.7" stroke-linejoin="round"/>
-      <path d="M9 8h6M9 12h6" fill="none" stroke="rgba(160,185,255,.85)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M12 3.5l2.1 5.1 5.4.7-4 3.4 1.2 5.3-4.7-2.8-4.7 2.8 1.2-5.3-4-3.4 5.4-.7L12 3.5z"
+        fill="none" stroke="rgba(245,248,255,.84)" stroke-width="1.7" stroke-linejoin="round"/>
+      <circle cx="12" cy="12" r="1.2" fill="rgba(245,248,255,.72)"/>
     </svg>
   </button>
 
-  <button class="ctrlBtn" id="btnAdmin" title="Câmara" aria-label="Abrir câmara">
+  <!-- Admin: “mask” -->
+  <button class="ctrlBtn" id="btnAdmin" title="Câmara Secreta" aria-label="Câmara secreta">
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 3l7 6v12H5V9l7-6Z" fill="none" stroke="rgba(223,232,255,.92)" stroke-width="1.7" stroke-linejoin="round"/>
-      <path d="M9 21v-7h6v7" fill="none" stroke="rgba(160,185,255,.85)" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M12 3c4.8 0 8.5 2.8 8.5 7.9 0 7.3-5.5 10.9-8.5 10.9S3.5 18.2 3.5 10.9C3.5 5.8 7.2 3 12 3Z"
+        fill="none" stroke="rgba(245,248,255,.86)" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M8.6 11.2c1-1.1 2.4-1 3.4 0m3.4 0c1-1.1 2.4-1 3.4 0"
+        fill="none" stroke="rgba(245,248,255,.66)" stroke-width="1.7" stroke-linecap="round"/>
+      <path d="M9.2 15.2c1.1.9 2.1 1 2.8 1s1.7-.1 2.8-1"
+        fill="none" stroke="rgba(245,248,255,.55)" stroke-width="1.7" stroke-linecap="round"/>
     </svg>
   </button>
 </div>
 
-<!-- Social / Links control -->
-<div id="socialControl" aria-label="Outbound links">
-  <button class="linkPill" id="btnLinks" type="button" title="Nó de rotas" aria-label="Abrir node de rotas">
+<!-- SELOS -->
+<div id="socialControl" aria-label="Selos">
+  <button class="linkPill" id="btnLinks" type="button" title="SELOS" aria-label="Abrir selos">
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M9 12a3 3 0 0 1 3-3h5a3 3 0 1 1 0 6h-5" fill="none" stroke="rgba(223,232,255,.92)" stroke-width="1.7" stroke-linecap="round"/>
-      <path d="M15 12a3 3 0 0 1-3 3H7a3 3 0 1 1 0-6h5" fill="none" stroke="rgba(160,185,255,.80)" stroke-width="1.7" stroke-linecap="round"/>
+      <path d="M12 4.2c4.3 0 7.8 3.5 7.8 7.8S16.3 19.8 12 19.8 4.2 16.3 4.2 12 7.7 4.2 12 4.2Z"
+        fill="none" stroke="rgba(245,248,255,.84)" stroke-width="1.8"/>
+      <path d="M12 7.2v9.6M7.2 12h9.6" fill="none" stroke="rgba(245,248,255,.55)" stroke-width="1.6" stroke-linecap="round"/>
     </svg>
     <span>SELOS</span>
   </button>
 </div>
 
-<!-- ROUTES NODE (mantido) -->
+<!-- ROUTES NODE -->
 <div id="routesNode" aria-hidden="true">
-  <div class="routesBox" role="navigation" aria-label="Rotas externas">
-    <button class="routeBtn" id="rSocial" type="button" aria-label="Redes sociais" data-title="SINAIS" data-sub="Discord / Instagram">
+  <div class="routesBox" role="navigation" aria-label="Selos externos">
+    <!-- Social -->
+    <button class="routeBtn" id="rSocial" type="button" aria-label="Selos sociais" data-title="SELOS SOCIAIS" data-sub="Discord / Instagram">
       <span class="routeIcon" aria-hidden="true">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 20s7-4 7-10a7 7 0 0 0-14 0c0 6 7 10 7 10Z" fill="none" stroke="rgba(223,232,255,.92)" stroke-width="1.7" stroke-linejoin="round"/>
+          <path d="M12 3.4 19 8v8l-7 4.6L5 16V8l7-4.6Z" fill="none" stroke="rgba(245,248,255,.80)" stroke-width="1.7" stroke-linejoin="round"/>
+          <path d="M8.6 9.7 12 12l3.4-2.3M12 12v7.2" fill="none" stroke="rgba(245,248,255,.58)" stroke-width="1.7" stroke-linecap="round"/>
         </svg>
       </span>
-      <span class="routeTip" aria-hidden="true">
-        <span class="t">SINAIS</span>
-        <span class="s">Discord / Instagram</span>
-      </span>
+      <span class="routeTip" aria-hidden="true"><span class="t">SELOS SOCIAIS</span><span class="s">Discord / Instagram</span></span>
     </button>
 
-    <button class="routeBtn" id="rGames" type="button" aria-label="Arena" data-title="ARENA" data-sub="Hub / vitrine">
+    <!-- Games -->
+    <button class="routeBtn" id="rGames" type="button" aria-label="Arena" data-title="ARENA" data-sub="Vitrine / hub">
       <span class="routeIcon" aria-hidden="true">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 18l6-12 6 12" fill="none" stroke="rgba(223,232,255,.92)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M8.5 14h7" fill="none" stroke="rgba(160,185,255,.80)" stroke-width="1.7" stroke-linecap="round"/>
+          <path d="M4 20l5.8-2 10.2-10.2-4-4L5.8 14 4 20Z" fill="none" stroke="rgba(245,248,255,.80)" stroke-width="1.7" stroke-linejoin="round"/>
+          <path d="M13.8 6.2l4 4" fill="none" stroke="rgba(245,248,255,.54)" stroke-width="1.7" stroke-linecap="round"/>
+          <path d="M6.8 17.2l2-2" fill="none" stroke="rgba(245,248,255,.40)" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
       </span>
-      <span class="routeTip" aria-hidden="true">
-        <span class="t">ARENA</span>
-        <span class="s">Hub / vitrine</span>
-      </span>
+      <span class="routeTip" aria-hidden="true"><span class="t">ARENA</span><span class="s">Vitrine / hub</span></span>
     </button>
 
-    <button class="routeBtn" id="rArchive" type="button" aria-label="Arquivo" data-title="ARQUIVO" data-sub="Galeria / imagens">
+    <!-- Archive -->
+    <button class="routeBtn" id="rArchive" type="button" aria-label="Arquivo" data-title="ARQUIVO" data-sub="Imagens / memórias">
       <span class="routeIcon" aria-hidden="true">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M5 7h14v4H5V7Z" fill="none" stroke="rgba(223,232,255,.92)" stroke-width="1.7" stroke-linejoin="round"/>
-          <path d="M7 11v10h10V11" fill="none" stroke="rgba(160,185,255,.80)" stroke-width="1.7" stroke-linejoin="round"/>
+          <path d="M6 7h12v4H6V7Z" fill="none" stroke="rgba(245,248,255,.80)" stroke-width="1.7" stroke-linejoin="round"/>
+          <path d="M7 11v9h10v-9" fill="none" stroke="rgba(245,248,255,.62)" stroke-width="1.7" stroke-linejoin="round"/>
+          <path d="M10 15h4" fill="none" stroke="rgba(245,248,255,.55)" stroke-width="1.7" stroke-linecap="round"/>
         </svg>
       </span>
-      <span class="routeTip" aria-hidden="true">
-        <span class="t">ARQUIVO</span>
-        <span class="s">Galeria / imagens</span>
-      </span>
+      <span class="routeTip" aria-hidden="true"><span class="t">ARQUIVO</span><span class="s">Imagens / memórias</span></span>
     </button>
 
-    <button class="routeBtn" id="rTx" type="button" aria-label="Eco" data-title="ECO" data-sub="Som / presença">
+    <!-- Echo -->
+    <button class="routeBtn" id="rTx" type="button" aria-label="Eco" data-title="ECO" data-sub="Presença sonora">
       <span class="routeIcon" aria-hidden="true">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 4v16" fill="none" stroke="rgba(223,232,255,.92)" stroke-width="1.7" stroke-linecap="round"/>
-          <path d="M8 8a6 6 0 0 0 0 8" fill="none" stroke="rgba(160,185,255,.80)" stroke-width="1.7" stroke-linecap="round"/>
-          <path d="M16 8a6 6 0 0 1 0 8" fill="none" stroke="rgba(160,185,255,.80)" stroke-width="1.7" stroke-linecap="round"/>
+          <path d="M12 5v14" fill="none" stroke="rgba(245,248,255,.80)" stroke-width="1.7" stroke-linecap="round"/>
+          <path d="M8.2 8.2a6.2 6.2 0 0 0 0 7.6" fill="none" stroke="rgba(245,248,255,.60)" stroke-width="1.7" stroke-linecap="round"/>
+          <path d="M15.8 8.2a6.2 6.2 0 0 1 0 7.6" fill="none" stroke="rgba(245,248,255,.60)" stroke-width="1.7" stroke-linecap="round"/>
         </svg>
       </span>
-      <span class="routeTip" aria-hidden="true">
-        <span class="t">ECO</span>
-        <span class="s">Som / presença</span>
-      </span>
+      <span class="routeTip" aria-hidden="true"><span class="t">ECO</span><span class="s">Presença sonora</span></span>
     </button>
   </div>
 </div>
 
-<!-- ✅ Volume (mantido) -->
-<div id="volumeHUD" class="vol" aria-label="Controle de volume" style="--bars-w:50%; --bars-a:.55;">
-  <button id="volIconBtn" class="vol-btn" type="button" aria-label="Abrir controle de volume">
+<!-- VOLUME / ECO -->
+<div id="volumeHUD" class="vol" aria-label="Controle de eco" style="--bars-w:50%; --bars-a:.55;">
+  <button id="volIconBtn" class="vol-btn" type="button" aria-label="Abrir controle de eco">
+    <!-- “wind chime rune” (menos tech) -->
     <svg class="vol-svg" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M3 10v4a2 2 0 0 0 2 2h3l5 4V4L8 8H5a2 2 0 0 0-2 2Z"
-            fill="none" stroke="rgba(223,232,255,.95)" stroke-width="1.8" stroke-linejoin="round"/>
-      <path d="M16 9c1 .8 1.5 1.8 1.5 3S17 14.2 16 15"
-            fill="none" stroke="rgba(160,185,255,.85)" stroke-width="1.8" stroke-linecap="round"/>
-      <path d="M18.5 7c1.6 1.4 2.5 3 2.5 5s-.9 3.6-2.5 5"
-            fill="none" stroke="rgba(120,150,255,.55)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M12 4.2c2.7 0 4.8 2.1 4.8 4.8v2.4c0 1.6.6 2.8 1.7 3.9l.7.7H5.1l.7-.7c1.1-1.1 1.7-2.3 1.7-3.9V9c0-2.7 2.1-4.8 4.8-4.8Z"
+        fill="none" stroke="rgba(245,248,255,.84)" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M10 19c.4 1 1.1 1.6 2 1.6s1.6-.6 2-1.6"
+        fill="none" stroke="rgba(245,248,255,.58)" stroke-width="1.7" stroke-linecap="round"/>
+      <path d="M12 6.6v2" fill="none" stroke="rgba(245,248,255,.42)" stroke-width="1.5" stroke-linecap="round"/>
     </svg>
-    <span id="volState" class="vol-state">MUTED</span>
+    <span id="volState" class="vol-state">MUDO</span>
   </button>
 
-  <div id="volPanel" class="vol-panel" role="group" aria-label="Ajuste de volume">
+  <div id="volPanel" class="vol-panel" role="group" aria-label="Ajuste de eco">
     <div class="vol-top">
       <div class="vol-title">ECO // MIX</div>
       <div id="volReadout" class="vol-readout">70%</div>
@@ -954,36 +1214,121 @@ body.entered #techHUD{
   </div>
 </div>
 
-<!-- =========================================================
-     ✅ IMPORTANTE:
-     A engine original tinha MUITA coisa aqui (catalog/channels/admin/games).
-     Para não “reescrever do zero”, eu mantive a estrutura e só corrigi:
-     - BUG: overlays abrindo sozinhos ao entrar
-     - VIDEO: full cover + remove fade lateral
-     - TEMA: textos/ícones principais + novos assets (video/audio)
-     ---------------------------------------------------------
-     Abaixo, mantém seus overlays do base (pode colar do seu código antigo sem mudar),
-     porque o BUG foi resolvido no JS com closeAllOverlays() no ENTER/hideLoading().
-========================================================= -->
-
 <!-- CATALOG -->
 <div id="catalog" aria-hidden="true">
-  <!-- (cole aqui o seu bloco do catalog ORIGINAL se quiser; não mexi na estrutura do JS) -->
+  <div class="catBox">
+    <div class="catHeader">
+      <div>PERGAMINHOS // ÍNDICE: Σ</div>
+      <div class="dim">ESC para fechar</div>
+    </div>
+    <div class="catBody">
+      <div id="catGrid" class="catGrid"></div>
+    </div>
+  </div>
 </div>
 
 <!-- CHANNELS -->
 <div id="channels" aria-hidden="true">
-  <!-- (cole aqui o seu bloco channels ORIGINAL) -->
+  <div class="chBox">
+    <div class="chHeader">
+      <div>SELOS EXTERNOS // ACESSO</div>
+      <div class="dim">ESC para fechar</div>
+    </div>
+
+    <div class="chGrid">
+      <a class="chTopCard" id="linkDiscord" href="https://discord.gg/example" target="_blank" rel="noopener noreferrer">
+        <div class="chCircle" aria-hidden="true">
+          <img alt="" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" decoding="async" loading="lazy">
+        </div>
+        <div class="chLabel">DISCORD</div>
+        <div class="chSub">PORTA // CONEXÃO</div>
+      </a>
+
+      <a class="chTopCard" id="linkInstagram" href="https://instagram.com/example" target="_blank" rel="noopener noreferrer">
+        <div class="chCircle" aria-hidden="true">
+          <img alt="" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" decoding="async" loading="lazy">
+        </div>
+        <div class="chLabel">INSTAGRAM</div>
+        <div class="chSub">ARQUIVO // VISUAL</div>
+      </a>
+    </div>
+  </div>
 </div>
 
-<!-- GAMES PANEL -->
+<!-- GAMES PANEL (só placeholder estrutural aqui; você troca depois) -->
 <div id="gamesPanel" aria-hidden="true">
-  <!-- (cole aqui o seu bloco gamesPanel ORIGINAL) -->
+  <div class="gamesWrap" role="dialog" aria-label="Arena">
+    <div class="gamesTop">
+      <div class="gamesBrand">PORTAL <span class="mix">ARENA</span></div>
+      <div class="gamesNav" aria-label="Navigation">
+        <a href="#" onclick="return false;">HOME</a>
+        <a href="#" onclick="return false;">HUB</a>
+        <a href="#" onclick="return false;">ARCHIVE</a>
+        <a href="#" onclick="return false;">LAB</a>
+        <a href="#" onclick="return false;">VAULT</a>
+      </div>
+    </div>
+
+    <div class="gamesBody" style="display:flex;align-items:center;justify-content:center;">
+      <div style="max-width:720px;text-align:center;opacity:.82;line-height:1.7;">
+        <div style="font-family:Cinzel, serif; letter-spacing:5px; font-size:12px; opacity:.9;">ARENA</div>
+        <div style="margin-top:10px;font-size:12px;">
+          Aqui vira teu HUB de jogos (Jogando agora / Recentes / Favoritos / Backlog).
+          Depois eu deixo 100% Shadow Fight: cards secos, “selos”, e botões tipo ritual.
+        </div>
+        <div style="margin-top:14px;font-family:Cinzel, serif;letter-spacing:3px;font-size:10px;opacity:.65;">
+          ESC para fechar
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ADMIN -->
 <div id="admin" aria-hidden="true">
-  <!-- (cole aqui o seu bloco admin ORIGINAL) -->
+  <div class="adminBox">
+    <div class="adminHeader">
+      <div>CÂMARA SECRETA // CHAVE NECESSÁRIA</div>
+      <div class="dim">ESC para fechar</div>
+    </div>
+
+    <div class="adminBody">
+      <div id="adminLogin">
+        <div class="adminField" style="margin-bottom:12px;">
+          <div class="adminLabel">PORTADOR</div>
+          <div class="adminValue">SOMBRA</div>
+        </div>
+
+        <div class="adminField">
+          <div class="adminLabel">CHAVE</div>
+          <input id="adminPass" class="adminInput" type="password" autocomplete="off" spellcheck="false" placeholder="•••••••••" />
+        </div>
+
+        <div class="adminActions">
+          <button class="aBtn" id="adminAuth">ABRIR</button>
+          <button class="aBtn" id="adminClear">LIMPAR</button>
+          <div id="adminStatus" class="aPill">Aguardando…</div>
+        </div>
+      </div>
+
+      <div id="adminDash" style="display:none;">
+        <div class="adminField">
+          <div class="adminLabel">MÉTRICAS LOCAIS</div>
+          <div class="adminValue" id="mViews">0</div>
+        </div>
+
+        <div class="adminActions" style="margin-top:12px;">
+          <button class="aBtn danger" id="adminReset">ZERAR</button>
+          <button class="aBtn" id="adminLock">SELAR</button>
+          <div class="aPill ok" id="mLast">—</div>
+        </div>
+
+        <div style="margin-top:12px;opacity:.55;font-size:9px;letter-spacing:2px;line-height:1.45;">
+          Nota: sem backend, isso conta só nesse navegador.
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- TERMINAL -->
@@ -1002,457 +1347,495 @@ body.entered #techHUD{
     </div>
   </div>
 </div>
-
 <script>
-/* ===== ELEMENTS ===== */
-const video = document.getElementById("video");
-const videoBlur = document.getElementById("videoBlur");
-const ambience = document.getElementById("ambience");
+/* ===========================
+   SHADOW TEMPLE — CONTROLES
+   - Nada abre sozinho
+   - ENTER gate
+   - SELOS abre NODE (routesNode)
+   - ESC fecha tudo
+   =========================== */
 
-const enterBox = document.getElementById("enterBox");
-const enterHint = document.getElementById("enterHint");
-const loadingScreen = document.getElementById("loadingScreen");
-const dynamicText = document.getElementById("dynamicText");
-const spinner = document.getElementById("spinner");
+const $ = (q, root=document) => root.querySelector(q);
 
-const coordA = document.getElementById("coordA");
-const coordB = document.getElementById("coordB");
+const els = {
+  body: document.body,
+  loading: $("#loadingScreen"),
+  spinner: $("#spinner"),
+  dynText: $("#dynamicText"),
+  enterBox: $("#enterBox"),
+  enterHint: $("#enterHint"),
+  enterScan: $("#enterScan"),
 
-const sysClock = document.getElementById("sysClock");
-const sysStream = document.getElementById("sysStream");
-const sysNeural = document.getElementById("sysNeural");
-const sysSubject = document.getElementById("sysSubject");
+  video: $("#video"),
+  videoBlur: $("#videoBlur"),
+  ambience: $("#ambience"),
 
-const sysPhase = document.getElementById("sysPhase");
-const sysDirective = document.getElementById("sysDirective");
+  coordA: $("#coordA"),
+  coordB: $("#coordB"),
+  sysClock: $("#sysClock"),
+  sysStream: $("#sysStream"),
+  sysNeural: $("#sysNeural"),
+  sysSubject: $("#sysSubject"),
+  sysPhase: $("#sysPhase"),
+  sysDirective: $("#sysDirective"),
 
-const btnFS = document.getElementById("btnFS");
-const btnTerm = document.getElementById("btnTerm");
-const btnCat  = document.getElementById("btnCat");
-const btnLinks = document.getElementById("btnLinks");
-const btnAdmin = document.getElementById("btnAdmin");
+  ss1: $("#ss1"),
+  ss2: $("#ss2"),
+  ss3: $("#ss3"),
 
-const volumeHUD = document.getElementById("volumeHUD");
-const volSlider = document.getElementById("volSlider");
-const volIconBtn = document.getElementById("volIconBtn");
-const volReadout = document.getElementById("volReadout");
-const volState = document.getElementById("volState");
+  // top buttons
+  btnFS: $("#btnFS"),
+  btnCat: $("#btnCat"),
+  btnTerm: $("#btnTerm"),
+  btnAdmin: $("#btnAdmin"),
 
-const terminal = document.getElementById("terminal");
-const termLog = document.getElementById("termLog");
-const termInput = document.getElementById("termInput");
-const termPrompt = document.getElementById("termPrompt");
-const termHint = document.getElementById("termHint");
+  // seals/node
+  btnLinks: $("#btnLinks"),
+  routesNode: $("#routesNode"),
+  rSocial: $("#rSocial"),
+  rGames: $("#rGames"),
+  rArchive: $("#rArchive"),
+  rTx: $("#rTx"),
 
-/* Overlays que existem no base (se você colar os blocos originais, isso funciona igual) */
-const catalog = document.getElementById("catalog");
-const channels = document.getElementById("channels");
-const admin = document.getElementById("admin");
-const gamesPanel = document.getElementById("gamesPanel");
+  // modals
+  terminal: $("#terminal"),
+  catalog: $("#catalog"),
+  channels: $("#channels"),
+  admin: $("#admin"),
+  gamesPanel: $("#gamesPanel"),
 
-/* routes node */
-const routesNode = document.getElementById("routesNode");
-const rSocial = document.getElementById("rSocial");
-const rGames = document.getElementById("rGames");
-const rArchive = document.getElementById("rArchive");
-const rTx = document.getElementById("rTx");
+  // terminal bits
+  termLog: $("#termLog"),
+  termInput: $("#termInput"),
+  termPrompt: $("#termPrompt"),
+  termHint: $("#termHint"),
 
-/* Status Strip */
-const ss1 = document.getElementById("ss1");
-const ss2 = document.getElementById("ss2");
-const ss3 = document.getElementById("ss3");
+  // catalog
+  catGrid: $("#catGrid"),
 
-/* ===== FLAGS ===== */
-let ambOn = true;
-let hasEntered = false;
+  // volume
+  volumeHUD: $("#volumeHUD"),
+  volIconBtn: $("#volIconBtn"),
+  volPanel: $("#volPanel"),
+  volState: $("#volState"),
+  volSlider: $("#volSlider"),
+  volReadout: $("#volReadout"),
 
-/* ===== STATUS STRIP ===== */
-let stripTimers = [];
-function setStripLine(el, key, val){
-  if (!el) return;
-  el.innerHTML = `<span class="k">${key}</span> <span class="v">${val}</span>`;
-}
-function clearStripTimers(){
-  for (const t of stripTimers) clearTimeout(t);
-  stripTimers.length = 0;
-}
-function pulseStrip(a,b,c){
-  if (a) setStripLine(ss1, "TEMPLE", a);
-  if (b) setStripLine(ss2, "PORTAL", b);
-  if (c) setStripLine(ss3, "ECHO", c);
-
-  clearStripTimers();
-  stripTimers.push(setTimeout(() => { setStripLine(ss2,"PORTAL","STANDBY"); ss2.classList.add("faint"); }, 5200));
-  stripTimers.push(setTimeout(() => { setStripLine(ss3,"ECHO","—"); ss3.classList.add("faint"); }, 8200));
-}
-
-/* ===== LOADING TEXT ===== */
-const messages = [
-  "AWAKENING THE SEAL...",
-  "TEMPLE BREATH: STABLE...",
-  "PORTAL PRESSURE: RISING...",
-  "ECHOES DETECTED...",
-  "WITNESS STATUS: PRESENT",
-  "DO NOT LOOK AWAY..."
-];
-let msgIndex = 0;
-const msgTimer = setInterval(() => {
-  msgIndex = (msgIndex + 1) % messages.length;
-  dynamicText.textContent = messages[msgIndex];
-}, 2200);
-
-/* ✅ garante que ao carregar/voltar pro site, se não entrou, fica tudo parado */
-function hardStopMediaIfNotEntered(){
-  if (hasEntered) return;
-  try{ video.pause(); video.currentTime = 0; }catch(e){}
-  try{ videoBlur.pause(); videoBlur.currentTime = 0; }catch(e){}
-  try{ ambience.pause(); ambience.currentTime = 0; }catch(e){}
-}
-document.addEventListener("DOMContentLoaded", hardStopMediaIfNotEntered);
-window.addEventListener("pageshow", () => hardStopMediaIfNotEntered());
-
-/* ===== READY / SAFETY ===== */
-let readyToEnter = false;
-let scanLoopTimer = null;
-
-function playEnterScan(){
-  loadingScreen.classList.remove("scan-on");
-  void loadingScreen.offsetWidth;
-  loadingScreen.classList.add("scan-on");
-  setTimeout(()=>loadingScreen.classList.remove("scan-on"), 1100);
-}
-function startScanLoop(){
-  if (scanLoopTimer) return;
-  scanLoopTimer = setInterval(() => {
-    const loadingVisible = loadingScreen.style.display !== "none" && getComputedStyle(loadingScreen).display !== "none";
-    if (!loadingVisible) return;
-    if (!enterBox.classList.contains("show")) return;
-    playEnterScan();
-  }, 5000);
-}
-function stopScanLoop(){
-  if (!scanLoopTimer) return;
-  clearInterval(scanLoopTimer);
-  scanLoopTimer = null;
-}
-function setEnterHint(label){
-  enterHint.textContent = (label === "RETRY") ? "PRESS [ENTER] TO RETRY" : "PRESS [ENTER] TO PROCEED";
-  enterHint.classList.add("show");
-}
-function showEnter(label="ENTER"){
-  enterBox.style.pointerEvents = "auto";
-  enterBox.textContent = label;
-  enterBox.classList.add("show");
-  setEnterHint(label);
-  playEnterScan();
-  startScanLoop();
-}
-function setLoadingStatus(t){ dynamicText.textContent = t; }
-function markReady(){
-  if (readyToEnter) return;
-  readyToEnter = true;
-  showEnter("ENTER");
-}
-
-const SAFETY_TIMEOUT_MS = 9000;
-let safetyTimeout = setTimeout(() => {
-  if (!readyToEnter) {
-    setLoadingStatus("SEAL WEAK // MANUAL ENTRY ENABLED");
-    markReady();
-  }
-}, SAFETY_TIMEOUT_MS);
-
-setTimeout(() => {
-  if (!enterBox.classList.contains("show")) {
-    setLoadingStatus("AWAITING PORTAL SIGNAL // MANUAL ENTRY ENABLED");
-    showEnter("ENTER");
-  }
-}, 2500);
-
-video.addEventListener("loadeddata", markReady, { once:true });
-video.addEventListener("canplay", markReady, { once:true });
-
-function onVideoError(){
-  clearTimeout(safetyTimeout);
-  spinner.style.display = "none";
-  setLoadingStatus("ERROR // SEAL FRACTURED // TAP TO RETRY");
-  showEnter("RETRY");
-}
-video.addEventListener("error", onVideoError);
-videoBlur.addEventListener("error", onVideoError);
-
-/* ===== SYNC BLUR ===== */
-video.addEventListener("play", () => { videoBlur.play().catch(()=>{}); });
-video.addEventListener("pause", () => { try{ videoBlur.pause(); }catch(e){} });
-
-/* ✅ VISIBILITY */
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    try{ video.pause(); }catch(e){}
-    try{ videoBlur.pause(); }catch(e){}
-    try{ ambience.pause(); }catch(e){}
-    return;
-  }
-  if (!hasEntered) { hardStopMediaIfNotEntered(); return; }
-  video.play().catch(()=>{});
-  videoBlur.play().catch(()=>{});
-  if (ambOn) ambience.play().catch(()=>{});
-});
-
-/* ===== VOLUME UI ===== */
-video.volume = 0.7;
-volSlider.value = String(video.volume);
-
-function updateVolumeUI(){
-  const pct = Math.round(Number(video.volume) * 100);
-  volReadout.textContent = pct + "%";
-  volumeHUD.style.setProperty("--bars-w", Math.max(6, pct) + "%");
-  volumeHUD.style.setProperty("--bars-a", String(0.25 + (pct/100) * 0.55));
-  volState.style.display = (pct === 0) ? "inline-block" : "none";
-  ambience.volume = Math.min(0.35, Math.max(0.02, Number(video.volume) * 0.25));
-}
-volSlider.addEventListener("input", () => {
-  video.volume = Number(volSlider.value);
-  updateVolumeUI();
-});
-updateVolumeUI();
-
-volIconBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-  volumeHUD.classList.toggle("open");
-});
-document.addEventListener("click", () => volumeHUD.classList.remove("open"));
-
-/* ===== TECH HUD DYNAMIC ===== */
-function pad2(n){ return String(n).padStart(2,"0"); }
-function tickTech(){
-  const d = new Date();
-  sysClock.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
-  const r = Math.random();
-  sysStream.textContent = video.readyState >= 3 ? "OPEN" : (video.readyState ? "LISTENING" : "SILENT");
-  sysNeural.textContent = r > 0.92 ? "DISTORTION" : (r > 0.75 ? "ECHOING" : "CALM");
-}
-setInterval(tickTech, 900);
-tickTech();
-
-function rndCoord(){
-  const a = (Math.random()*180 - 90).toFixed(4);
-  const b = (Math.random()*360 - 180).toFixed(4);
-  coordA.textContent = `SEAL: ${a} / ${b}`;
-  coordB.textContent = `TEMPLE: Δ-${Math.floor(1+Math.random()*99).toString().padStart(2,"0")} // PORTAL: ${Math.random()>.15?"DORMANT":"STIRRING"}`;
-}
-setInterval(rndCoord, 2200);
-rndCoord();
-
-/* ===== FULLSCREEN ===== */
-async function toggleFullscreen(){
-  try{
-    if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
-    else await document.exitFullscreen();
-  } catch(e){}
-}
-btnFS.addEventListener("click", toggleFullscreen);
-
-/* ===== GLITCH ===== */
-function triggerGlitch(){
-  document.body.classList.remove("glitch-on");
-  void document.body.offsetWidth;
-  document.body.classList.add("glitch-on");
-  setTimeout(()=>document.body.classList.remove("glitch-on"), 700);
-}
-
-/* ===== BUG FIX PRINCIPAL: FECHAR TUDO AO ENTRAR ===== */
-function closeRoutes(){
-  if (!routesNode) return;
-  routesNode.classList.remove("show");
-  routesNode.setAttribute("aria-hidden","true");
-}
-function closeTerminal(){
-  if (!terminal) return;
-  terminal.classList.remove("show");
-  terminal.setAttribute("aria-hidden","true");
-}
-function closeCatalog(){
-  if (!catalog) return;
-  catalog.classList.remove("show");
-  catalog.setAttribute("aria-hidden","true");
-}
-function closeChannels(){
-  if (!channels) return;
-  channels.classList.remove("show");
-  channels.setAttribute("aria-hidden","true");
-}
-function closeAdmin(){
-  if (!admin) return;
-  admin.classList.remove("show");
-  admin.setAttribute("aria-hidden","true");
-}
-function closeGames(){
-  if (!gamesPanel) return;
-  gamesPanel.classList.remove("show");
-  gamesPanel.setAttribute("aria-hidden","true");
-}
-
-/* ✅ Um “hard close” que mata qualquer overlay que esteja vazando */
-function closeAllOverlays(){
-  closeTerminal();
-  closeCatalog();
-  closeChannels();
-  closeAdmin();
-  closeRoutes();
-  closeGames();
-}
-
-/* ===== Routes node toggle ===== */
-function openRoutes(){
-  closeAllOverlays();
-  routesNode.classList.add("show");
-  routesNode.setAttribute("aria-hidden","false");
-  pulseStrip("ROUTES:OPEN", "NODE:ACTIVE", "TRACE:LINK");
-  ss2.classList.remove("faint"); ss3.classList.remove("faint");
-}
-function toggleRoutes(){
-  if (routesNode.classList.contains("show")) closeRoutes();
-  else openRoutes();
-}
-btnLinks.addEventListener("click", (e) => { e.stopPropagation(); toggleRoutes(); });
-routesNode.addEventListener("click", (e) => e.stopPropagation());
-document.addEventListener("click", () => closeRoutes());
-
-/* ===== Terminal toggle (mantém engine simples aqui) ===== */
-function openTerminal(){
-  closeAllOverlays();
-  terminal.classList.add("show");
-  terminal.setAttribute("aria-hidden","false");
-  pulseStrip("GRIMOIRE:OPEN", "PORTAL:LISTEN", "ECHO:ACTIVE");
-  ss2.classList.remove("faint"); ss3.classList.remove("faint");
-  if (termInput) termInput.focus({preventScroll:true});
-}
-btnTerm.addEventListener("click", (e) => {
-  e.stopPropagation();
-  if (terminal.classList.contains("show")) closeTerminal();
-  else openTerminal();
-});
-
-/* ===== Cat/Admin (se você colar o HTML dos overlays, isso volta a funcionar) ===== */
-btnCat.addEventListener("click", (e) => { e.stopPropagation(); if (catalog) { catalog.classList.toggle("show"); } });
-btnAdmin.addEventListener("click", (e) => { e.stopPropagation(); if (admin) { admin.classList.toggle("show"); } });
-
-/* Routes actions (se overlays existirem) */
-if (rSocial) rSocial.addEventListener("click", () => { closeRoutes(); if (channels){ channels.classList.add("show"); channels.setAttribute("aria-hidden","false"); } });
-if (rGames) rGames.addEventListener("click", () => { closeRoutes(); if (gamesPanel){ gamesPanel.classList.add("show"); gamesPanel.setAttribute("aria-hidden","false"); } });
-if (rArchive) rArchive.addEventListener("click", () => { closeRoutes(); pulseStrip("ROUTE:ARQUIVO", "STATUS:PENDING", "ECHO:—"); ss2.classList.remove("faint"); ss3.classList.remove("faint"); });
-if (rTx) rTx.addEventListener("click", () => { closeRoutes(); pulseStrip("ROUTE:ECO", "STATUS:PENDING", "ECHO:—"); ss2.classList.remove("faint"); ss3.classList.remove("faint"); });
-
-/* ===== Keyboard routing ===== */
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape"){
-    closeAllOverlays();
-  }
-});
-
-/* ===== HELPERS ===== */
-function hideLoading(){
-  /* ✅ BUG FIX: ao sair do loading, garante que nada está aberto */
-  closeAllOverlays();
-
-  loadingScreen.style.opacity = "0";
-  setTimeout(() => loadingScreen.style.display = "none", 600);
-  clearInterval(msgTimer);
-  sysSubject.textContent = "PRESENT";
-  stopScanLoop();
-  document.body.classList.add("entered");
-
-  pulseStrip("TEMPLE:ONLINE", "PORTAL:SEALED", "ECHO:Δ");
-  ss2.classList.remove("faint"); ss3.classList.remove("faint");
-}
-function waitForPlaying(el, timeoutMs=1200){
-  return new Promise((resolve, reject) => {
-    let done = false;
-    const onPlay = () => { if(done) return; done=true; cleanup(); resolve(); };
-    const onErr = () => { if(done) return; done=true; cleanup(); reject(new Error("play error")); };
-    const t = setTimeout(() => { if(done) return; done=true; cleanup(); resolve(); }, timeoutMs);
-    function cleanup(){
-      clearTimeout(t);
-      el.removeEventListener("playing", onPlay);
-      el.removeEventListener("error", onErr);
-    }
-    el.addEventListener("playing", onPlay, { once:true });
-    el.addEventListener("error", onErr, { once:true });
-  });
-}
-
-/* ===== ENTER / RETRY ===== */
-enterBox.onclick = async () => {
-  enterBox.style.pointerEvents = "none";
-
-  if (enterBox.textContent === "RETRY") {
-    spinner.style.display = "";
-    setLoadingStatus("RESEALING STREAM...");
-    enterBox.classList.remove("show");
-    enterHint.classList.remove("show");
-    readyToEnter = false;
-
-    try { video.load(); videoBlur.load(); ambience.load(); } catch(e){}
-
-    clearTimeout(safetyTimeout);
-    safetyTimeout = setTimeout(() => {
-      if (!readyToEnter) { setLoadingStatus("SEAL WEAK // MANUAL ENTRY ENABLED"); markReady(); }
-    }, SAFETY_TIMEOUT_MS);
-
-    setTimeout(() => enterBox.style.pointerEvents = "auto", 200);
-    return;
-  }
-
-  try {
-    /* ✅ antes de tocar, mata qualquer overlay “vazando” */
-    closeAllOverlays();
-
-    video.muted = false;
-    await video.play();
-    await waitForPlaying(video, 1500);
-
-    hasEntered = true;
-
-    videoBlur.play().catch(()=>{});
-    if (ambOn) ambience.play().catch(()=>{});
-
-    updateVolumeUI();
-    triggerGlitch();
-    hideLoading();
-
-  } catch (err) {
-    spinner.style.display = "none";
-    setLoadingStatus("PLAYBACK BLOCKED // CLICK AGAIN");
-    showEnter("ENTER");
-  } finally {
-    if (loadingScreen.style.display !== "none") {
-      enterBox.style.pointerEvents = "auto";
-    }
-  }
+  // admin
+  adminPass: $("#adminPass"),
+  adminAuth: $("#adminAuth"),
+  adminClear: $("#adminClear"),
+  adminStatus: $("#adminStatus"),
+  adminLogin: $("#adminLogin"),
+  adminDash: $("#adminDash"),
+  adminReset: $("#adminReset"),
+  adminLock: $("#adminLock"),
+  mViews: $("#mViews"),
+  mLast: $("#mLast"),
 };
 
-/* teclado ENTER dispara o botão ENTER (quando loading está ativo) */
-document.addEventListener("keydown", (e) => {
-  if (e.key !== "Enter") return;
+const MODALS = ["terminal","catalog","channels","admin","gamesPanel"];
 
-  if (terminal && terminal.classList.contains("show")) return;
-  if (admin && admin.classList.contains("show")) return;
+// ===== util =====
+function isShown(el){ return el && el.classList.contains("show"); }
+function show(el){ if(el){ el.classList.add("show"); el.setAttribute("aria-hidden","false"); } }
+function hide(el){ if(el){ el.classList.remove("show"); el.setAttribute("aria-hidden","true"); } }
+function anyModalOpen(){ return MODALS.some(id => isShown(els[id])); }
 
-  const a = document.activeElement;
-  const isTypingField = a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA" || a.isContentEditable);
-  if (isTypingField) return;
+function closeAllModals(){
+  MODALS.forEach(id => hide(els[id]));
+  hideRoutesNode();
+}
 
-  const loadingVisible = loadingScreen.style.display !== "none" && getComputedStyle(loadingScreen).display !== "none";
-  if (!loadingVisible) return;
+function toggleModal(modalEl){
+  if(!modalEl) return;
+  const opening = !isShown(modalEl);
+  closeAllModals();
+  if(opening) show(modalEl);
+}
 
-  if (enterBox.classList.contains("show") && enterBox.style.pointerEvents !== "none") {
-    enterBox.click();
+function showRoutesNode(){
+  // não abre se estiver na tela ENTER
+  if(!els.body.classList.contains("entered")) return;
+  els.routesNode.classList.add("show");
+}
+function hideRoutesNode(){
+  els.routesNode.classList.remove("show");
+}
+function toggleRoutesNode(){
+  if(!els.body.classList.contains("entered")) return;
+  // se algum modal aberto, fecha primeiro
+  MODALS.forEach(id => hide(els[id]));
+  els.routesNode.classList.toggle("show");
+}
+
+function microGlitch(){
+  els.body.classList.add("subglitch");
+  setTimeout(()=>els.body.classList.remove("subglitch"), 180);
+}
+
+function hardGlitch(){
+  els.body.classList.add("glitch-on");
+  microGlitch();
+  setTimeout(()=>els.body.classList.remove("glitch-on"), 650);
+}
+
+// ===== HUD updates =====
+function pad(n){ return String(n).padStart(2,"0"); }
+function tickHUD(){
+  const d = new Date();
+  const h = pad(d.getHours()), m = pad(d.getMinutes()), s = pad(d.getSeconds());
+  if(els.sysClock) els.sysClock.textContent = `${h}:${m}:${s}`;
+
+  // coords fake
+  if(els.coordA){
+    const a = (Math.sin(d.getTime()/16000)*9 + 12).toFixed(2);
+    els.coordA.textContent = `SELO: ${a} // VIGIA: ${ (d.getSeconds()%2===0) ? "ATENTO" : "SILENTE" }`;
+  }
+}
+setInterval(tickHUD, 1000);
+tickHUD();
+
+// ===== Catalog content (placeholders) =====
+const CATALOG_ITEMS = [
+  { title:"RITUAL NOTES", stamp:"SELO • MEMO", desc:"Notas rápidas do templo. Toques de lore, builds e lembretes.", thumb:"" },
+  { title:"SHADOW ARCHIVE", stamp:"ARQUIVO • FRAME", desc:"Repositório de screenshots, clipes e marcas de batalha.", thumb:"" },
+  { title:"LAB: TESTES", stamp:"LAB • PROTO", desc:"Experimentos com layout, animações e widgets do hub.", thumb:"" },
+  { title:"VAULT", stamp:"COFRE • CHAVE", desc:"Conteúdo trancado: configs, saves, segredos e backups.", thumb:"" },
+];
+
+function renderCatalog(){
+  if(!els.catGrid) return;
+  els.catGrid.innerHTML = CATALOG_ITEMS.map(it => `
+    <div class="catCard">
+      <div class="catThumb">
+        ${it.thumb ? `<img src="${it.thumb}" alt="">` : ``}
+        <div class="catStamp">${it.stamp}</div>
+      </div>
+      <div class="catContent">
+        <div class="catTitle">${it.title}</div>
+        <div class="catDesc">${it.desc}</div>
+        <div class="catMeta">
+          <span><span class="catDot"></span> LATENTE</span>
+          <span>Σ-${Math.floor(Math.random()*90+10)}</span>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+renderCatalog();
+
+// ===== Terminal =====
+function logLine(text, cls=""){
+  const div = document.createElement("div");
+  div.className = `termLine ${cls}`.trim();
+  div.textContent = text;
+  els.termLog.appendChild(div);
+  els.termLog.scrollTop = els.termLog.scrollHeight;
+}
+
+const TERM_HELP = [
+  "help — lista comandos",
+  "clear — limpa log",
+  "seal — abre/fecha SELOS (node)",
+  "catalog — abre pergaminhos",
+  "arena — abre hub de jogos",
+  "links — abre janela de selos sociais",
+  "glitch — ruptura curta",
+  "echo [0-100] — ajusta volume",
+];
+
+function openTerminal(){
+  toggleModal(els.terminal);
+  if(isShown(els.terminal)){
+    setTimeout(()=>els.termInput?.focus(), 60);
+    if(!els.termLog.dataset.booted){
+      els.termLog.dataset.booted = "1";
+      logLine("RITO INICIADO // grimório conectado.", "dim");
+      logLine("Digite 'help' para comandos.", "dim");
+    }
+  }
+}
+
+function runCommand(raw){
+  const cmd = (raw||"").trim();
+  if(!cmd) return;
+  logLine(`${els.termPrompt.textContent} ${cmd}`, "dim");
+
+  const [c, ...rest] = cmd.split(" ");
+  const arg = rest.join(" ").trim();
+
+  switch(c.toLowerCase()){
+    case "help":
+      TERM_HELP.forEach(x=>logLine(x));
+      break;
+    case "clear":
+      els.termLog.innerHTML = "";
+      break;
+    case "seal":
+      toggleRoutesNode();
+      logLine(`SELOS: ${els.routesNode.classList.contains("show") ? "ABERTO" : "FECHADO"}`);
+      break;
+    case "catalog":
+      toggleModal(els.catalog);
+      logLine("PERGAMINHOS: alternado.");
+      break;
+    case "arena":
+      toggleModal(els.gamesPanel);
+      logLine("ARENA: alternada.");
+      break;
+    case "links":
+      toggleModal(els.channels);
+      logLine("SELOS SOCIAIS: janela alternada.");
+      break;
+    case "glitch":
+      hardGlitch();
+      logLine("RUPTURA: breve.");
+      break;
+    case "echo": {
+      const v = Number(arg);
+      if(Number.isFinite(v)){
+        setVolume(v/100);
+        logLine(`ECO: ${Math.max(0, Math.min(100, v))}%`);
+      } else {
+        logLine("Uso: echo 70", "dim");
+      }
+      break;
+    }
+    default:
+      logLine("Comando desconhecido. Digite 'help'.", "dim");
+  }
+}
+
+els.termInput?.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    const v = els.termInput.value;
+    els.termInput.value = "";
+    runCommand(v);
   }
 });
 
-/* ===== Initial defaults ===== */
-pulseStrip("TEMPLE:BOOT", "PORTAL:IDLE", "ECHO:—");
+// ===== Volume / ECO =====
+function setVolume(v){
+  const clamped = Math.max(0, Math.min(1, v));
+  if(els.ambience) els.ambience.volume = clamped;
+
+  if(els.volSlider) els.volSlider.value = String(clamped);
+  if(els.volReadout) els.volReadout.textContent = `${Math.round(clamped*100)}%`;
+
+  // bars
+  const pct = Math.round(clamped*100);
+  els.volumeHUD.style.setProperty("--bars-w", `${pct}%`);
+  els.volumeHUD.style.setProperty("--bars-a", `${0.25 + clamped*0.6}`);
+
+  // mute badge
+  if(els.volState){
+    if(pct === 0){
+      els.volState.style.display = "block";
+    }else{
+      els.volState.style.display = "none";
+    }
+  }
+}
+setVolume(0.7);
+
+els.volIconBtn?.addEventListener("click", ()=>{
+  els.volumeHUD.classList.toggle("open");
+});
+els.volSlider?.addEventListener("input", (e)=>{
+  setVolume(Number(e.target.value));
+});
+
+// ===== Admin local =====
+const ADMIN_KEY = "shadow_admin_views";
+const ADMIN_LAST = "shadow_admin_last";
+const ADMIN_PASS = "shadow"; // você pode trocar
+
+function getViews(){
+  return Number(localStorage.getItem(ADMIN_KEY) || "0");
+}
+function setViews(n){
+  localStorage.setItem(ADMIN_KEY, String(n));
+  localStorage.setItem(ADMIN_LAST, new Date().toISOString());
+}
+function refreshAdmin(){
+  const v = getViews();
+  if(els.mViews) els.mViews.textContent = String(v);
+  const last = localStorage.getItem(ADMIN_LAST) || "—";
+  if(els.mLast) els.mLast.textContent = last === "—" ? "—" : `LAST: ${last.slice(0,19).replace("T"," ")}`;
+}
+function adminSetStatus(text, ok=true){
+  if(!els.adminStatus) return;
+  els.adminStatus.textContent = text;
+  els.adminStatus.classList.remove("ok","bad");
+  els.adminStatus.classList.add(ok ? "ok" : "bad");
+}
+
+function openAdmin(){
+  toggleModal(els.admin);
+  if(isShown(els.admin)){
+    // sempre volta pro login quando abre
+    els.adminDash.style.display = "none";
+    els.adminLogin.style.display = "block";
+    adminSetStatus("Aguardando…", true);
+    setTimeout(()=>els.adminPass?.focus(), 60);
+  }
+}
+
+els.adminClear?.addEventListener("click", ()=>{
+  els.adminPass.value = "";
+  adminSetStatus("Limpo.", true);
+});
+
+els.adminAuth?.addEventListener("click", ()=>{
+  const p = (els.adminPass.value || "").trim();
+  if(p === ADMIN_PASS){
+    adminSetStatus("Aberto.", true);
+    els.adminLogin.style.display = "none";
+    els.adminDash.style.display = "block";
+    refreshAdmin();
+    microGlitch();
+  }else{
+    adminSetStatus("Chave inválida.", false);
+    hardGlitch();
+  }
+});
+
+els.adminReset?.addEventListener("click", ()=>{
+  setViews(0);
+  refreshAdmin();
+  adminSetStatus("Zerado.", true);
+  microGlitch();
+});
+els.adminLock?.addEventListener("click", ()=>{
+  els.adminDash.style.display = "none";
+  els.adminLogin.style.display = "block";
+  els.adminPass.value = "";
+  adminSetStatus("Selado.", true);
+  microGlitch();
+});
+
+// ===== Buttons =====
+els.btnFS?.addEventListener("click", ()=>{
+  // fullscreen no documento (mais compatível)
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen?.();
+  }else{
+    document.exitFullscreen?.();
+  }
+  microGlitch();
+});
+
+els.btnCat?.addEventListener("click", ()=>{ toggleModal(els.catalog); microGlitch(); });
+els.btnTerm?.addEventListener("click", ()=>{ openTerminal(); microGlitch(); });
+els.btnAdmin?.addEventListener("click", ()=>{ openAdmin(); microGlitch(); });
+
+// ===== SELOS -> NODE =====
+els.btnLinks?.addEventListener("click", ()=>{
+  toggleRoutesNode();
+  microGlitch();
+});
+
+// routes actions
+els.rSocial?.addEventListener("click", ()=>{
+  toggleModal(els.channels);
+  microGlitch();
+});
+els.rGames?.addEventListener("click", ()=>{
+  toggleModal(els.gamesPanel);
+  microGlitch();
+});
+els.rArchive?.addEventListener("click", ()=>{
+  // Por enquanto: reaproveita catalog como "arquivo"
+  toggleModal(els.catalog);
+  microGlitch();
+});
+els.rTx?.addEventListener("click", ()=>{
+  // abre/fecha painel de volume (eco)
+  els.volumeHUD.classList.toggle("open");
+  microGlitch();
+});
+
+// click fora do node fecha
+document.addEventListener("click", (e)=>{
+  if(!els.routesNode.classList.contains("show")) return;
+  const clickedInside = els.routesNode.contains(e.target) || els.btnLinks.contains(e.target);
+  if(!clickedInside) hideRoutesNode();
+});
+
+// ===== ESC fecha tudo =====
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape"){
+    closeAllModals();
+    els.volumeHUD.classList.remove("open");
+    microGlitch();
+  }
+});
+
+// ===== ENTER gate =====
+let entered = false;
+
+function showEnter(){
+  els.spinner.style.display = "none";
+  els.enterBox.classList.add("show");
+  els.enterHint.classList.add("show");
+  els.loading.classList.add("scan-on");
+  setTimeout(()=>els.loading.classList.remove("scan-on"), 900);
+}
+
+function enterNow(){
+  if(entered) return;
+  entered = true;
+
+  // conta view local
+  setViews(getViews() + 1);
+
+  els.body.classList.add("entered");
+  els.loading.style.opacity = "0";
+  setTimeout(()=>{ els.loading.style.display = "none"; }, 650);
+
+  // iniciar mídia apenas agora
+  try{
+    els.video.muted = false;
+    els.video.play?.();
+  }catch(_){}
+  try{
+    els.videoBlur.play?.();
+  }catch(_){}
+  try{
+    els.ambience.volume = Number(els.volSlider?.value ?? 0.7);
+    els.ambience.play?.();
+  }catch(_){}
+
+  // updates HUD
+  if(els.sysStream) els.sysStream.textContent = "ATIVO";
+  if(els.sysNeural) els.sysNeural.textContent = "ECO";
+  if(els.sysSubject) els.sysSubject.textContent = "DENTRO";
+  if(els.sysPhase) els.sysPhase.textContent = "VIGÍLIA";
+  if(els.sysDirective) els.sysDirective.textContent = "MANTER SELO";
+
+  // efeito
+  hardGlitch();
+}
+
+els.enterBox?.addEventListener("click", enterNow);
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter" && !entered){
+    enterNow();
+  }
+});
+
+// mostrar ENTER depois de um “loading” curto
+setTimeout(showEnter, 1100);
+
+// ===== segurança: garantir que nada toque antes do ENTER =====
+try{
+  els.video.pause?.();
+  els.videoBlur.pause?.();
+  els.ambience.pause?.();
+  els.video.muted = true;
+}catch(_){}
 </script>
 
 </body>
