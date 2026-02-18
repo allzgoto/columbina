@@ -12,10 +12,8 @@
       --muted:#9b927f;
       --gold:#8b6a2b;
       --gold2:#caa15a;
-      --ember:#b93a1f;
       --glass: rgba(12,12,14,.55);
       --stroke: rgba(202,161,90,.18);
-      --stroke2: rgba(202,161,90,.10);
       --shadow: rgba(0,0,0,.72);
     }
 
@@ -24,9 +22,8 @@
     body{
       margin:0;
       background:
-        radial-gradient(1200px 700px at 50% 40%, rgba(120,70,20,.12), transparent 60%),
-        radial-gradient(900px 500px at 50% 70%, rgba(180,30,30,.10), transparent 55%),
-        linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.85)),
+        radial-gradient(1200px 700px at 50% 40%, rgba(120,70,20,.10), transparent 60%),
+        radial-gradient(900px 500px at 50% 70%, rgba(180,30,30,.08), transparent 55%),
         var(--bg);
       color:var(--ink);
       overflow:hidden;
@@ -34,82 +31,90 @@
       letter-spacing:.04em;
     }
 
+    /* Vinheta + ruído */
     .vignette{
       position:fixed; inset:0;
       pointer-events:none;
       background:
-        radial-gradient(1200px 700px at 50% 45%, transparent 22%, rgba(0,0,0,.55) 75%),
-        radial-gradient(900px 560px at 50% 55%, rgba(0,0,0,.18), rgba(0,0,0,.82));
-      opacity:.98;
+        radial-gradient(1200px 700px at 50% 45%, transparent 25%, rgba(0,0,0,.55) 75%),
+        radial-gradient(900px 560px at 50% 55%, rgba(0,0,0,.15), rgba(0,0,0,.78));
+      mix-blend-mode: multiply;
+      opacity:.95;
       z-index:10;
     }
     .grain{
       position:fixed; inset:-20%;
       pointer-events:none;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='.26'/%3E%3C/svg%3E");
-      opacity:.09;
+      opacity:.08;
       transform:rotate(7deg);
       z-index:11;
-      mix-blend-mode: overlay;
     }
 
-    #fx{ position:fixed; inset:0; z-index:9; pointer-events:none; }
-
-    .temple-bg{
+    /* CANVAS FX (partículas/rachaduras, opcional) */
+    #fx{
       position:fixed; inset:0;
-      z-index:1;
+      z-index:9;
       pointer-events:none;
-      opacity:.75;
-      background:
-        radial-gradient(900px 540px at 50% 70%, rgba(0,0,0,.00), rgba(0,0,0,.75)),
-        linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.70));
-    }
-    .temple-bg::before{
-      content:"";
-      position:absolute; inset:0;
-      background:
-        radial-gradient(520px 380px at 18% 72%, rgba(20,20,20,.0) 52%, rgba(0,0,0,.55) 68%, rgba(0,0,0,0) 76%),
-        radial-gradient(620px 420px at 82% 72%, rgba(20,20,20,.0) 52%, rgba(0,0,0,.55) 68%, rgba(0,0,0,0) 76%),
-        linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.65));
-      opacity:.85;
-      filter: blur(0.2px);
     }
 
+    /* Flash/impacto */
+    .impact{
+      position:fixed; inset:0;
+      background:
+        radial-gradient(600px 420px at 50% 55%, rgba(255,90,40,.22), rgba(0,0,0,0) 60%),
+        radial-gradient(900px 700px at 50% 55%, rgba(180,20,20,.16), rgba(0,0,0,0) 62%),
+        rgba(0,0,0,.15);
+      opacity:0;
+      z-index:25;
+      pointer-events:none;
+    }
+    .impact.on{ animation: impact .95s ease-out both; }
+    @keyframes impact{
+      0%{opacity:0}
+      12%{opacity:1}
+      40%{opacity:.55}
+      100%{opacity:0}
+    }
+
+    /* ====== INTRO ====== */
     .intro{
       position:fixed; inset:0;
       display:grid;
       place-items:center;
       z-index:20;
       opacity:1;
-      transition: opacity .7s ease;
+      transition: opacity .65s ease;
     }
-    .intro.hidden{ opacity:0; pointer-events:none; }
+    .intro.hidden{
+      opacity:0;
+      pointer-events:none;
+    }
 
     .altar{
       position:relative;
-      width:min(920px, 94vw);
-      height:min(540px, 72vh);
+      width:min(900px, 92vw);
+      height:min(520px, 70vh);
       border-radius:22px;
       background:
-        radial-gradient(900px 520px at 50% 40%, rgba(160,90,20,.14), transparent 62%),
-        radial-gradient(700px 420px at 50% 75%, rgba(185,58,31,.12), transparent 70%),
-        linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.28)),
-        rgba(10,10,12,.30);
+        radial-gradient(900px 520px at 50% 35%, rgba(160,90,20,.10), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.20)),
+        rgba(10,10,12,.35);
       box-shadow:
-        0 46px 140px rgba(0,0,0,.68),
+        0 40px 120px rgba(0,0,0,.65),
         inset 0 0 0 1px rgba(255,255,255,.05),
-        inset 0 0 0 2px rgba(202,161,90,.07);
+        inset 0 0 0 2px rgba(202,161,90,.06);
       overflow:hidden;
       backdrop-filter: blur(10px);
     }
+
     .altar::before{
       content:"";
       position:absolute; inset:0;
       background:
-        linear-gradient(to right, transparent 49.85%, rgba(255,255,255,.05) 50%, transparent 50.15%),
-        radial-gradient(700px 360px at 50% 48%, rgba(202,161,90,.10), transparent 70%),
-        radial-gradient(900px 520px at 50% 85%, rgba(0,0,0,.55), transparent 55%);
-      opacity:.70;
+        linear-gradient(to right, transparent 49.8%, rgba(255,255,255,.05) 50%, transparent 50.2%),
+        radial-gradient(600px 300px at 50% 45%, rgba(202,161,90,.08), transparent 70%);
+      opacity:.65;
       pointer-events:none;
     }
     .altar::after{
@@ -122,12 +127,12 @@
 
     .intro-top{
       position:absolute;
-      top:34px; left:0; right:0;
+      top:38px; left:0; right:0;
       text-align:center;
       font-size:12px;
-      letter-spacing:.58em;
+      letter-spacing:.55em;
       text-transform:uppercase;
-      color:rgba(214,207,191,.90);
+      color:rgba(214,207,191,.86);
       text-shadow:0 0 18px rgba(0,0,0,.7);
     }
 
@@ -147,86 +152,86 @@
     .sigils .d{opacity:.6}
     .sigils .f{opacity:.35}
 
-    .seal-wrap{
+    /* ===== SEL0 (agora é vídeo) ===== */
+    .seal-stage{
       position:absolute;
-      left:50%; top:52%;
+      left:50%; top:54%;
       transform:translate(-50%,-50%);
-      width:340px; height:340px;
+      width:240px; height:240px;
       display:grid;
       place-items:center;
+      z-index:2;
     }
+
     .ring{
       position:absolute; inset:0;
       border-radius:999px;
       border:1px solid rgba(202,161,90,.18);
-      opacity:.72;
-      filter: drop-shadow(0 0 10px rgba(202,161,90,.10));
+      opacity:.55;
     }
     .ring.inner{
-      inset:34px;
-      opacity:.40;
+      inset:28px;
+      opacity:.25;
       border-style:dashed;
       border-color: rgba(202,161,90,.14);
     }
-    .aura{
-      position:absolute;
-      inset:14px;
-      border-radius:999px;
-      background: radial-gradient(circle at 50% 55%, rgba(185,58,31,.18), rgba(0,0,0,0) 62%);
-      opacity:.45;
-      animation: auraPulse 2.8s ease-in-out infinite;
-      pointer-events:none;
-    }
-    @keyframes auraPulse{
-      0%,100%{transform:scale(1); opacity:.35}
-      50%{transform:scale(1.04); opacity:.60}
-    }
 
-    .seal{
-      width:160px; height:160px;
+    .seal-video-btn{
+      width:140px; height:140px;
       border-radius:999px;
-      overflow:hidden;
+      border:none;
+      padding:0;
+      background:transparent;
       cursor:pointer;
       position:relative;
       box-shadow:
-        0 18px 48px rgba(0,0,0,.62),
+        0 16px 44px rgba(0,0,0,.65),
         0 0 0 1px rgba(255,255,255,.06),
-        0 0 0 2px rgba(202,161,90,.12);
-      transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
+        0 0 0 2px rgba(202,161,90,.10);
+      overflow:hidden;
+      transition: transform .15s ease, filter .15s ease;
       user-select:none;
     }
-    .seal:hover{
-      transform: scale(1.03);
-      filter: contrast(1.06) brightness(1.06);
-      box-shadow:
-        0 22px 58px rgba(0,0,0,.68),
-        0 0 0 1px rgba(255,255,255,.08),
-        0 0 0 2px rgba(202,161,90,.16);
-    }
-    .seal:active{ transform: scale(.98); }
-    .seal img{
-      width:100%; height:100%;
+    .seal-video-btn:hover{ transform: scale(1.02); filter: contrast(1.06) brightness(1.06); }
+    .seal-video-btn:active{ transform: scale(.98); }
+
+    /* o vídeo dentro do “selo” */
+    #sealVid{
+      width:100%;
+      height:100%;
       object-fit:cover;
       display:block;
-      filter:saturate(.92) contrast(1.12);
+      filter:saturate(.95) contrast(1.12);
+      transform:scale(1.04);
+    }
+
+    /* quando começa a animação do portal: o selo “cresce” e vira foco */
+    .seal-stage.playing{
+      animation: sealZoom 1.15s ease-in-out both;
+    }
+    @keyframes sealZoom{
+      0%{transform:translate(-50%,-50%) scale(1)}
+      45%{transform:translate(-50%,-50%) scale(1.30)}
+      100%{transform:translate(-50%,-50%) scale(1.05)}
     }
 
     .prompt{
       position:absolute;
-      left:50%; top:78%;
+      left:50%; top:76%;
       transform:translateX(-50%);
       text-align:center;
-      width:min(680px, 92%);
-      color:rgba(214,207,191,.78);
+      width:min(620px, 92%);
+      color:rgba(214,207,191,.74);
       font-size:12px;
-      letter-spacing:.26em;
+      letter-spacing:.22em;
       text-transform:uppercase;
-      text-shadow:0 0 18px rgba(0,0,0,.90);
+      text-shadow:0 0 18px rgba(0,0,0,.85);
+      z-index:3;
     }
     .prompt small{
       display:block;
       margin-top:8px;
-      letter-spacing:.34em;
+      letter-spacing:.32em;
       color:rgba(214,207,191,.38);
       font-size:10px;
     }
@@ -240,60 +245,12 @@
       color:rgba(214,207,191,.30);
       text-transform:uppercase;
       user-select:none;
+      z-index:3;
     }
     .corner.left{left:18px}
     .corner.right{right:18px}
 
-    .shake{ animation: shake .55s linear both; }
-    @keyframes shake{
-      0%{transform:translate3d(0,0,0)}
-      10%{transform:translate3d(-4px,2px,0)}
-      20%{transform:translate3d(5px,-3px,0)}
-      30%{transform:translate3d(-6px,-2px,0)}
-      40%{transform:translate3d(7px,3px,0)}
-      50%{transform:translate3d(-5px,4px,0)}
-      60%{transform:translate3d(4px,-3px,0)}
-      70%{transform:translate3d(-3px,2px,0)}
-      80%{transform:translate3d(2px,-2px,0)}
-      90%{transform:translate3d(-2px,1px,0)}
-      100%{transform:translate3d(0,0,0)}
-    }
-
-    .impact{
-      position:fixed; inset:0;
-      background:
-        radial-gradient(600px 420px at 50% 55%, rgba(255,90,40,.22), rgba(0,0,0,0) 60%),
-        radial-gradient(900px 700px at 50% 55%, rgba(180,20,20,.16), rgba(0,0,0,0) 62%),
-        rgba(0,0,0,.12);
-      opacity:0;
-      z-index:25;
-      pointer-events:none;
-    }
-    .impact.on{ animation: impact 1.0s ease-out both; }
-    @keyframes impact{
-      0%{opacity:0}
-      12%{opacity:1}
-      40%{opacity:.55}
-      100%{opacity:0}
-    }
-
-    .portal{
-      position:fixed; inset:0;
-      z-index:40;
-      background:#000;
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .35s ease;
-    }
-    .portal.on{ opacity:1; pointer-events:auto; }
-    .portal video{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-      filter: contrast(1.05) brightness(.96) saturate(.98);
-    }
-
+    /* ====== SITE (VÍDEO PRINCIPAL) ====== */
     .site{
       position:fixed; inset:0;
       z-index:5;
@@ -303,25 +260,34 @@
     }
     .site.on{ opacity:1; pointer-events:auto; }
 
-    .video-wrap{ position:fixed; inset:0; z-index:6; background:#000; }
-    #bgVideo{
-      width:100%; height:100%;
+    .video-wrap{
+      position:fixed; inset:0;
+      z-index:6;
+      background:#000;
+    }
+    video#bgVideo{
+      width:100%;
+      height:100%;
       object-fit:cover;
       display:block;
       filter: contrast(1.05) brightness(.95) saturate(.95);
     }
-
+    /* HUD topo (fullscreen + volume) */
     .hud{
       position:fixed;
-      top:14px; left:14px;
+      top:14px;
+      left:14px;
       display:flex;
       gap:10px;
       align-items:center;
       z-index:60;
       transition: .35s ease;
     }
-    .hud.hide{ opacity:0; pointer-events:none; transform: translateY(-8px); }
-
+    .hud.hide{
+      opacity:0;
+      pointer-events:none;
+      transform: translateY(-8px);
+    }
     .btn{
       border:1px solid rgba(255,255,255,.10);
       background: rgba(12,12,14,.40);
@@ -337,9 +303,13 @@
       gap:10px;
       user-select:none;
     }
-    .btn:hover{ transform: translateY(-1px); border-color: rgba(202,161,90,.22); background: rgba(12,12,14,.52); }
-    .btn:active{ transform: translateY(0px) scale(.99); }
-    .btn svg{ width:18px; height:18px; opacity:.92; }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(202,161,90,.22);
+      background: rgba(12,12,14,.52);
+    }
+    .btn:active{transform: translateY(0px) scale(.99)}
+    .btn svg{width:18px;height:18px;opacity:.92}
 
     .vol{ position:relative; }
     .vol-panel{
@@ -361,8 +331,15 @@
       transition: opacity .15s ease, transform .15s ease;
       min-width:220px;
     }
-    .vol.open .vol-panel{ opacity:1; transform: translateX(0); pointer-events:auto; }
-    .vol-panel input[type="range"]{ width:160px; accent-color: var(--gold2); }
+    .vol.open .vol-panel{
+      opacity:1;
+      transform: translateX(0);
+      pointer-events:auto;
+    }
+    .vol-panel input[type="range"]{
+      width:160px;
+      accent-color: var(--gold2);
+    }
     .vol-panel .lab{
       font-family: ui-monospace, "Consolas", monospace;
       font-size:10px;
@@ -373,21 +350,21 @@
     }
 
     @media (max-width:520px){
-      .altar{height:min(560px, 72vh)}
-      .seal-wrap{width:300px;height:300px}
-      .seal{width:145px;height:145px}
+      .altar{height:min(520px, 64vh)}
+      .seal-stage{width:210px;height:210px}
+      .seal-video-btn{width:124px;height:124px}
       .sigils{display:none}
     }
   </style>
 </head>
+
 <body>
-  <div class="temple-bg"></div>
   <canvas id="fx"></canvas>
   <div class="impact" id="impact"></div>
   <div class="vignette"></div>
   <div class="grain"></div>
 
-  <!-- HUD -->
+  <!-- HUD (aparece no vídeo principal) -->
   <div class="hud hide" id="hud">
     <button class="btn" id="btnFs" title="Tela cheia">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -416,8 +393,7 @@
       </div>
     </div>
   </div>
-
-  <!-- INTRO -->
+  <!-- INTRO (INÍCIO) -->
   <section class="intro" id="intro">
     <div class="altar" id="altar">
       <div class="intro-top">SELOS SE FECHAM…</div>
@@ -434,17 +410,19 @@
         <div class="row"><span class="g">•</span><span class="d">◊</span><span class="f">Δ</span></div>
       </div>
 
-      <div class="seal-wrap">
+      <div class="seal-stage" id="sealStage">
         <div class="ring"></div>
         <div class="ring inner"></div>
-        <div class="aura"></div>
 
-        <div class="seal" id="seal" role="button" aria-label="Romper o selo">
-          <img src="https://files.catbox.moe/l6h4rv.png" alt="Selo" draggable="false">
-        </div>
+        <!-- SELO = VÍDEO (fica parado até clicar) -->
+        <button class="seal-video-btn" id="sealBtn" aria-label="Romper o selo">
+          <video id="sealVid" playsinline muted preload="auto">
+            <source src="https://files.catbox.moe/5ci6gd.mp4" type="video/mp4">
+          </video>
+        </button>
       </div>
 
-      <div class="prompt">
+      <div class="prompt" id="prompt">
         CLIQUE NO SELO PARA ROMPER O PORTAL
         <small>ou pressione [ENTER]</small>
       </div>
@@ -454,186 +432,142 @@
     </div>
   </section>
 
-  <!-- PORTAL (vídeo do clique) -->
-  <section class="portal" id="portal">
-    <video id="portalVid" playsinline preload="auto">
-      <source src="https://files.catbox.moe/5ci6gd.mp4" type="video/mp4">
-    </video>
-  </section>
-
-  <!-- SITE (vídeo principal) -->
+  <!-- SITE (VÍDEO PRINCIPAL) -->
   <section class="site" id="site">
     <div class="video-wrap">
-      <video id="bgVideo" playsinline preload="auto" loop muted>
+      <video id="bgVideo" playsinline preload="metadata">
         <source src="https://files.catbox.moe/klaol5.webm" type="video/webm">
       </video>
     </div>
   </section>
-
-  <!-- ÁUDIO principal (controle total no slider) -->
-  <audio id="bgAudio" preload="auto" loop>
-    <source src="https://files.catbox.moe/99fu05.m4a" type="audio/mp4">
-  </audio>
   <script>
     const intro = document.getElementById('intro');
-    const altar = document.getElementById('altar');
-    const seal  = document.getElementById('seal');
-    const impact = document.getElementById('impact');
+    const site  = document.getElementById('site');
+    const hud   = document.getElementById('hud');
 
-    const portal = document.getElementById('portal');
-    const portalVid = document.getElementById('portalVid');
+    const sealBtn   = document.getElementById('sealBtn');
+    const sealVid   = document.getElementById('sealVid');
+    const sealStage = document.getElementById('sealStage');
+    const impact    = document.getElementById('impact');
+    const prompt    = document.getElementById('prompt');
 
-    const site = document.getElementById('site');
     const video = document.getElementById('bgVideo');
 
-    const bgAudio = document.getElementById('bgAudio');
-
-    const hud = document.getElementById('hud');
     const btnFs = document.getElementById('btnFs');
-
-    const vol = document.getElementById('vol');
-    const btnVol = document.getElementById('btnVol');
+    const vol   = document.getElementById('vol');
+    const btnVol= document.getElementById('btnVol');
     const volRange = document.getElementById('volRange');
-    const volPct = document.getElementById('volPct');
+    const volPct   = document.getElementById('volPct');
     const wave1 = document.getElementById('wave1');
     const wave2 = document.getElementById('wave2');
 
-    // ===== Canvas embers =====
-    const canvas = document.getElementById('fx');
-    const ctx = canvas.getContext('2d');
-    let W=0,H=0;
-    function resize(){
-      W = canvas.width = window.innerWidth * devicePixelRatio;
-      H = canvas.height = window.innerHeight * devicePixelRatio;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    const embers = Array.from({length: 90}, () => ({
-      x: Math.random(),
-      y: Math.random(),
-      r: 0.6 + Math.random()*1.6,
-      s: 0.0007 + Math.random()*0.0016,
-      o: 0.08 + Math.random()*0.12
-    }));
-
-    function draw(){
-      ctx.clearRect(0,0,W,H);
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      for(const p of embers){
-        p.y -= p.s;
-        p.x += (Math.sin((Date.now()*0.001)+(p.y*6)))*0.00015;
-        if(p.y < -0.05){ p.y = 1.05; p.x = Math.random(); }
-
-        const x = p.x * W, y = p.y * H;
-        const rr = p.r * devicePixelRatio;
-
-        const g = ctx.createRadialGradient(x,y,0,x,y,rr*10);
-        g.addColorStop(0, `rgba(185,58,31,${p.o})`);
-        g.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(x,y,rr*10,0,Math.PI*2);
-        ctx.fill();
-      }
-      ctx.restore();
-      requestAnimationFrame(draw);
-    }
-    draw();
-
-    // ===== Volume =====
-    function setVolumeFromRange(){
-      const v = Math.max(0, Math.min(100, parseInt(volRange.value,10))) / 100;
-      volPct.textContent = Math.round(v*100) + "%";
-
-      // vídeo fica mudo (p/ não duplicar som), mas mantemos volume por segurança
-      video.volume = v;
-
-      // áudio principal é o que importa
-      bgAudio.volume = v;
-
-      const show = (v > 0 && !bgAudio.muted);
-      wave1.style.opacity = show ? '1' : '0';
-      wave2.style.opacity = v > 0.55 ? '1' : (show ? '.35' : '0');
-    }
-
-    // inicia em 45%
-    bgAudio.muted = false;
-    bgAudio.volume = 0.45;
-    video.volume = 0.45;
-    setVolumeFromRange();
-
-    btnVol.addEventListener('click', () => vol.classList.toggle('open'));
-
-    volRange.addEventListener('input', () => {
-      bgAudio.muted = false;
-      setVolumeFromRange();
-    });
-
-    btnFs.addEventListener('click', async () => {
+    // ===== Fix: garantir selo parado no frame 0 =====
+    function resetSeal(){
       try{
-        if(!document.fullscreenElement) await document.documentElement.requestFullscreen();
-        else await document.exitFullscreen();
+        sealVid.pause();
+        sealVid.currentTime = 0;
       }catch(e){}
-    });
-
-    window.addEventListener('keydown', (e)=>{
-      if(e.key.toLowerCase()==='m' && site.classList.contains('on')){
-        bgAudio.muted = !bgAudio.muted;
-        setVolumeFromRange();
-      }
-      if(e.key === 'Escape') vol.classList.remove('open');
-      if(e.key === 'Enter' && !opened){
-        e.preventDefault();
-        openPortal();
-      }
-    });
-
-    // ===== Fluxo: Intro -> Portal -> Site =====
-    let opened = false;
-
-    async function openPortal(){
-      if(opened) return;
-      opened = true;
-
-      impact.classList.remove('on'); void impact.offsetWidth;
-      impact.classList.add('on');
-      altar.classList.add('shake');
-      setTimeout(()=>altar.classList.remove('shake'), 650);
-
-      portal.classList.add('on');
-
-      portalVid.currentTime = 0;
-      portalVid.muted = true; // evita bloqueio
-      portalVid.playsInline = true;
-
-      portalVid.play().catch(()=>{});
-
-      const fallback = setTimeout(()=>{ goToSite(); }, 2200);
-
-      portalVid.onended = () => { clearTimeout(fallback); goToSite(); };
-
-      portal.addEventListener('click', () => {
-        clearTimeout(fallback);
-        goToSite();
-      }, { once:true });
     }
+    sealVid.addEventListener('loadedmetadata', resetSeal);
+    window.addEventListener('load', resetSeal);
 
-    async function goToSite(){
-      portal.classList.remove('on');
-      try{ portalVid.pause(); }catch(e){}
-
+    // ===== Transição para o vídeo principal =====
+    function enterSite(){
       intro.classList.add('hidden');
       site.classList.add('on');
       hud.classList.remove('hide');
 
-      // Tenta tocar vídeo + áudio (clique já aconteceu então costuma liberar)
-      try{ await video.play(); }catch(e){}
-      try{ await bgAudio.play(); }catch(e){}
+      // volume inicial 45%
+      const v = 45;
+      volRange.value = v;
+      volPct.textContent = `${v}%`;
+      video.volume = v/100;
+      video.muted = false;
+
+      video.play().catch(()=>{});
     }
 
-    seal.addEventListener('click', openPortal);
+    // ===== Clicar no selo: tocar animação do portal =====
+    let portalStarted = false;
+    function startPortal(){
+      if(portalStarted) return;
+      portalStarted = true;
+
+      impact.classList.add('on');
+      sealStage.classList.add('playing');
+      prompt.style.opacity = '0.25';
+
+      // garante que o navegador permite autoplay: como é clique do usuário, vai.
+      sealVid.muted = false; // se quiser som aqui, coloca true/false. Eu deixei false pra permitir se vc quiser trocar depois.
+      sealVid.volume = 1;
+
+      // some com hover e impede double click
+      sealBtn.disabled = true;
+      sealBtn.style.cursor = 'default';
+
+      sealVid.play().catch(()=>{});
+
+      // fallback: se não disparar "ended" por qualquer motivo, entra depois de X segundos
+      setTimeout(()=>{ if(!site.classList.contains('on')) enterSite(); }, 4200);
+    }
+
+    // quando terminar o vídeo do portal -> entra no site
+    sealVid.addEventListener('ended', enterSite);
+
+    sealBtn.addEventListener('click', startPortal);
+
+    // ENTER também inicia
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' && !portalStarted){
+        e.preventDefault();
+        startPortal();
+      }
+    });
+
+    // ===== Fullscreen =====
+    btnFs.addEventListener('click', async ()=>{
+      try{
+        if(!document.fullscreenElement){
+          await document.documentElement.requestFullscreen();
+        }else{
+          await document.exitFullscreen();
+        }
+      }catch(e){}
+    });
+
+    // ===== Volume UI =====
+    btnVol.addEventListener('click', ()=>{
+      vol.classList.toggle('open');
+    });
+
+    function syncWaves(){
+      const v = parseInt(volRange.value,10);
+      const show = (v > 0 && !video.muted);
+      wave1.style.opacity = show ? '1' : '0';
+      wave2.style.opacity = v > 55 ? '1' : (show ? '.35' : '0');
+    }
+
+    volRange.addEventListener('input', ()=>{
+      const v = parseInt(volRange.value,10);
+      volPct.textContent = `${v}%`;
+      video.volume = v/100;
+      video.muted = (v === 0);
+      syncWaves();
+    });
+
+    // tecla M mute/unmute quando já estiver no site
+    window.addEventListener('keydown', (e)=>{
+      if(e.key.toLowerCase() === 'm' && site.classList.contains('on')){
+        video.muted = !video.muted;
+        syncWaves();
+      }
+    });
+
+    // clique no vídeo (opcional) play/pause
+    video.addEventListener('click', ()=>{
+      if(video.paused) video.play().catch(()=>{});
+      else video.pause();
+    });
   </script>
 </body>
 </html>
