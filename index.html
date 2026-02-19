@@ -1,148 +1,213 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shadow Fight — Cinematic</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shadow Fight — Portal</title>
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;background:#000;overflow:hidden}
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;height:100%;background:#000;overflow:hidden}
 
-.stage{
-  position:relative;
-  width:100%;
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#000;
-}
+    .stage{
+      position:relative;
+      width:100%;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:radial-gradient(circle at center,#0b0b0b 0%, #000 72%);
+    }
 
-/* VIDEO PRINCIPAL */
-#mainVideo{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  opacity:0;
-  transition:opacity .6s ease;
-  z-index:1;
-}
-#mainVideo.active{opacity:1}
+    /* vídeo principal (fundo) */
+    #mainVideo{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      opacity:0;
+      transition:opacity 450ms ease;
+      z-index:1;
+      background:#000;
+    }
+    #mainVideo.active{opacity:1}
 
-/* INTRO */
-#intro{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:2;
-}
+    /* intro por cima */
+    #intro{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:2;
+      opacity:1;
+      transition:opacity 320ms ease;
+    }
+    #intro.hide{
+      opacity:0;
+      pointer-events:none;
+    }
 
-/* camada escura pra dar clima quando expande */
-#intro::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:#000;
-  opacity:.0;
-  transition:opacity .8s ease;
-  pointer-events:none;
-}
-#intro.dim::before{opacity:.85}
+    /* portal redondo SEM esticar nada */
+    .portal{
+      width:min(360px, 78vw);
+      aspect-ratio:1/1;
+      border-radius:50%;
+      overflow:hidden;
+      position:relative;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:
+        0 0 35px rgba(255,255,255,.10),
+        0 0 120px rgba(255,255,255,.05);
+    }
 
-/* PORTAL */
-.portal{
-  width:320px;
-  height:320px;
-  border-radius:50%;
-  overflow:hidden;
-  position:relative;
-  transition:width 1s ease, height 1s ease, border-radius 1s ease;
-}
+    .portal video{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      pointer-events:none;
+    }
 
-/* expande, mas sem forçar o vídeo a “cover” */
-.portal.expand{
-  width:100vw;
-  height:100vh;
-  border-radius:0;
-}
+    /* overlay clicável (pra Opera GX não comer o clique) */
+    #hit{
+      position:absolute;
+      inset:0;
+      cursor:pointer;
+      z-index:5;
+      background:radial-gradient(circle at center, rgba(255,255,255,0.05), rgba(0,0,0,0) 58%);
+    }
 
-/* VIDEO DO PORTAL */
-.portal video{
-  width:100%;
-  height:100%;
-  /* AQUI É A CHAVE: sem zoom */
-  object-fit:contain;
-  background:#000;
-  pointer-events:none;
-}
-</style>
+    /* vinheta geral */
+    .vignette{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:3;
+      background:radial-gradient(circle at center, rgba(0,0,0,0) 45%, rgba(0,0,0,0.70) 100%);
+    }
+
+    /* fade-to-black rápido antes do corte */
+    #fade{
+      position:absolute;
+      inset:0;
+      background:#000;
+      opacity:0;
+      pointer-events:none;
+      z-index:4;
+      transition:opacity 260ms ease;
+    }
+    #fade.on{opacity:1}
+  </style>
 </head>
 
 <body>
-<main class="stage">
+  <main class="stage">
+    <video
+      id="mainVideo"
+      src="https://files.catbox.moe/klaol5.webm"
+      playsinline
+      preload="auto"
+      muted
+      loop
+    ></video>
 
-  <video
-    id="mainVideo"
-    src="https://files.catbox.moe/klaol5.webm"
-    muted
-    loop
-    playsinline
-    preload="auto"
-  ></video>
+    <section id="intro">
+      <div class="portal">
+        <video
+          id="portalVideo"
+          src="https://files.catbox.moe/5ci6gd.mp4"
+          playsinline
+          preload="auto"
+          muted
+        ></video>
+        <div id="hit" role="button" tabindex="0" aria-label="Abrir portal"></div>
+      </div>
+    </section>
 
-  <section id="intro">
-    <div class="portal" id="portal">
-      <video
-        id="portalVideo"
-        src="https://files.catbox.moe/5ci6gd.mp4"
-        muted
-        playsinline
-        preload="auto"
-      ></video>
-    </div>
-  </section>
+    <div id="fade"></div>
+    <div class="vignette"></div>
+  </main>
 
-</main>
+  <script>
+    const intro = document.getElementById("intro");
+    const fade = document.getElementById("fade");
+    const hit = document.getElementById("hit");
+    const portalVideo = document.getElementById("portalVideo");
+    const mainVideo = document.getElementById("mainVideo");
 
-<script>
-const intro = document.getElementById("intro");
-const portal = document.getElementById("portal");
-const portalVideo = document.getElementById("portalVideo");
-const mainVideo = document.getElementById("mainVideo");
+    let running = false;
+    let cutTimer = null;
 
-let started = false;
+    // portal parado no primeiro frame
+    portalVideo.addEventListener("loadeddata", () => {
+      try { portalVideo.currentTime = 0; } catch(e) {}
+      portalVideo.pause();
+    }, { once:true });
 
-portalVideo.addEventListener("loadeddata", () => {
-  try { portalVideo.currentTime = 0; } catch(e) {}
-  portalVideo.pause();
-}, { once:true });
+    function cutToMain() {
+      // evita duplo corte
+      if (cutTimer) { clearTimeout(cutTimer); cutTimer = null; }
 
-async function startSequence(){
-  if(started) return;
-  started = true;
+      // fade rápido
+      fade.classList.add("on");
 
-  // toca o portal
-  try { portalVideo.currentTime = 0; } catch(e) {}
-  await portalVideo.play();
+      // troca após o fade
+      setTimeout(() => {
+        intro.classList.add("hide");
 
-  // escurece o fundo e expande o container
-  intro.classList.add("dim");
-  portal.classList.add("expand");
+        mainVideo.classList.add("active");
+        mainVideo.play().catch(()=>{});
 
-  portalVideo.addEventListener("ended", ()=>{
-    intro.style.display = "none";
-    mainVideo.classList.add("active");
-    mainVideo.play().catch(()=>{});
-  }, { once:true });
-}
+        // tira o fade depois de entrar
+        setTimeout(() => fade.classList.remove("on"), 220);
+      }, 220);
+    }
 
-portal.addEventListener("click", startSequence);
-</script>
+    function armCutByDuration() {
+      const d = portalVideo.duration;
+      const ms = (Number.isFinite(d) && d > 0) ? Math.ceil(d * 1000) : 2200;
 
+      cutTimer = setTimeout(() => {
+        running = false;
+        cutToMain();
+      }, ms);
+    }
+
+    async function start() {
+      if (running) return;
+      running = true;
+
+      // reset e play
+      try { portalVideo.currentTime = 0; } catch(e) {}
+
+      if (portalVideo.readyState < 1) {
+        await new Promise(res => portalVideo.addEventListener("loadedmetadata", res, { once:true }));
+        try { portalVideo.currentTime = 0; } catch(e) {}
+      }
+
+      armCutByDuration();
+
+      try {
+        await portalVideo.play();
+      } catch (err) {
+        running = false;
+        if (cutTimer) { clearTimeout(cutTimer); cutTimer = null; }
+        console.warn("portal play fail:", err);
+      }
+    }
+
+    portalVideo.addEventListener("ended", () => {
+      if (!running) return;
+      running = false;
+      cutToMain();
+    });
+
+    hit.addEventListener("pointerdown", start);
+    hit.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); start(); }
+    });
+  </script>
 </body>
 </html>
