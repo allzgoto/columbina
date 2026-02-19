@@ -12,6 +12,9 @@
   :root{
     --ember: rgba(255,140,70,0.9);
     --emberSoft: rgba(255,190,120,0.20);
+    --gold: rgba(255,190,120,0.22);
+    --gold2: rgba(255,140,70,0.22);
+    --ink: rgba(0,0,0,0.92);
   }
 
   /* ===== vídeo principal ===== */
@@ -33,144 +36,271 @@
     background:#000;
     cursor:pointer;
     user-select:none;
+    outline:none;
   }
 
-  /* vinheta + glow quente */
+  /* vinheta geral + glow quente */
   #entry::after{
     content:"";
     position:absolute; inset:0;
     pointer-events:none;
-    z-index:9;
+    z-index:50;
     background:
       radial-gradient(circle at center, rgba(0,0,0,0.06) 20%, rgba(0,0,0,0.96) 100%),
-      radial-gradient(circle at 50% 85%, rgba(255,140,70,0.06), transparent 62%);
+      radial-gradient(circle at 50% 85%, rgba(255,140,70,0.07), transparent 62%);
   }
 
-  /* flash de clique (cinema) */
+  /* flash do clique */
   #flash{
     position:absolute; inset:0;
-    z-index:12;
+    z-index:80;
     pointer-events:none;
     opacity:0;
-    background:radial-gradient(circle at 50% 55%, rgba(255,140,70,0.55), rgba(255,140,70,0.0) 60%);
+    background:
+      radial-gradient(circle at 50% 55%, rgba(255,140,70,0.55), rgba(255,140,70,0.0) 60%),
+      radial-gradient(circle at 50% 55%, rgba(255,255,255,0.12), rgba(255,255,255,0.0) 62%);
     transition:opacity 160ms ease;
   }
   body.flashOn #flash{ opacity:1; }
 
-  /* fundo full-screen (mesma imagem, blur) */
+  /* ===== fundo full-screen (mesma imagem, blur) ===== */
   .bgFill{
     position:absolute; inset:0;
     background:url("https://files.catbox.moe/pamypi.png") center/cover no-repeat;
-    filter:blur(18px) brightness(0.33) contrast(1.06) saturate(0.95);
-    transform:scale(1.08);
+    filter:blur(20px) brightness(0.30) contrast(1.06) saturate(0.95);
+    transform:scale(1.10);
     z-index:1;
+  }
+
+  /* glow diagonal bem sutil (dá clima) */
+  .bgLight{
+    position:absolute; inset:-20%;
+    z-index:2;
+    pointer-events:none;
+    background:
+      radial-gradient(circle at 55% 40%, rgba(255,140,70,0.09), transparent 55%),
+      linear-gradient(115deg, transparent 30%, rgba(255,190,120,0.05) 48%, transparent 66%);
+    filter:blur(10px);
+    opacity:0.9;
+    transform:rotate(-6deg);
   }
 
   /* canvas FX */
   #fx{
     position:absolute; inset:0;
-    z-index:4;
+    z-index:20;
     pointer-events:none;
   }
 
-  /* barras cinema sutis */
+  /* barras cinema */
   .cinemaTop,.cinemaBot{
     position:absolute; left:0; right:0;
     height:6.5vh;
-    z-index:8;
+    z-index:40;
     pointer-events:none;
-    background:linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(0,0,0,0));
+    background:linear-gradient(to bottom, rgba(0,0,0,0.80), rgba(0,0,0,0));
   }
   .cinemaBot{
     top:auto; bottom:0;
-    background:linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
+    background:linear-gradient(to top, rgba(0,0,0,0.80), rgba(0,0,0,0));
   }
 
-  /* palco */
+  /* ===== palco ===== */
   .stage{
     position:absolute; inset:0;
     display:grid;
     place-items:center;
-    z-index:3;
+    z-index:30;
   }
 
+  /* quadro com moldura e “cara de tela” */
   .frameWrap{
-    width:min(1020px, 94vw);
+    width:min(1040px, 94vw);
     aspect-ratio: 16 / 9;
     position:relative;
-    border-radius:14px;
+    border-radius:16px;
     overflow:hidden;
-    box-shadow:
-      0 0 0 1px rgba(255,170,90,0.10),
-      0 14px 50px rgba(0,0,0,0.75);
     transform:translateZ(0) scale(1);
     transition:transform 320ms ease, filter 320ms ease, opacity 420ms ease;
+
+    /* moldura externa (metal queimado) */
+    box-shadow:
+      0 0 0 1px rgba(255,170,90,0.10),
+      0 18px 70px rgba(0,0,0,0.78);
   }
 
-  /* vinheta interna do quadro */
+  /* borda decorativa + “inner frame” */
+  .frameWrap::after{
+    content:"";
+    position:absolute; inset:0;
+    pointer-events:none;
+    z-index:60;
+    border-radius:16px;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,190,120,0.10),
+      inset 0 0 0 2px rgba(0,0,0,0.45),
+      inset 0 0 34px rgba(0,0,0,0.55);
+    background:
+      linear-gradient(135deg, rgba(255,190,120,0.05), transparent 40%),
+      linear-gradient(315deg, rgba(255,140,70,0.04), transparent 42%);
+    mix-blend-mode:screen;
+    opacity:0.65;
+  }
+
+  /* vinheta interna do quadro (anti “retângulo colado”) */
   .frameWrap::before{
     content:"";
     position:absolute; inset:-2px;
     pointer-events:none;
-    z-index:6;
+    z-index:55;
     background:
       radial-gradient(circle at center,
-        rgba(0,0,0,0.0) 55%,
-        rgba(0,0,0,0.45) 82%,
-        rgba(0,0,0,0.90) 100%);
+        rgba(0,0,0,0.0) 56%,
+        rgba(0,0,0,0.42) 82%,
+        rgba(0,0,0,0.92) 100%);
   }
 
+  /* imagem/gif */
   .frame{
     position:absolute; inset:0;
     width:100%; height:100%;
     object-fit:cover;
     filter:contrast(1.05) saturate(0.92);
+    transform:translateZ(0);
   }
 
-  /* gif do golpe */
+  /* gif do golpe (blend pra não parecer sticker) */
   #strike{
     opacity:0;
     transition:opacity 140ms ease;
-    filter:contrast(1.10) saturate(0.95);
+    filter:contrast(1.12) saturate(0.95);
     mix-blend-mode:screen;
   }
 
-  /* HUD leve */
+  /* ===== overlays “game feel” dentro do quadro ===== */
+  .scanlines{
+    position:absolute; inset:0;
+    z-index:62;
+    pointer-events:none;
+    opacity:0.10;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.07) 0px,
+        rgba(255,255,255,0.07) 1px,
+        transparent 2px,
+        transparent 5px
+      );
+    mix-blend-mode:overlay;
+  }
+
+  .grain{
+    position:absolute; inset:-30%;
+    z-index:63;
+    pointer-events:none;
+    opacity:0.10;
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0px, transparent 2px, transparent 6px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0px, transparent 3px, transparent 9px);
+    filter:blur(0.35px);
+    transform:rotate(9deg);
+    mix-blend-mode:overlay;
+  }
+
+  /* névoa por cima do quadro (animada) */
+  .mist{
+    position:absolute; inset:-20%;
+    z-index:64;
+    pointer-events:none;
+    opacity:0.22;
+    background:
+      radial-gradient(circle at 30% 55%, rgba(255,255,255,0.10), transparent 55%),
+      radial-gradient(circle at 60% 50%, rgba(255,255,255,0.08), transparent 58%),
+      radial-gradient(circle at 75% 65%, rgba(255,255,255,0.06), transparent 60%);
+    filter:blur(14px);
+    transform:translateX(-2%) translateY(0);
+    animation: mistDrift 4.6s ease-in-out infinite;
+    mix-blend-mode:screen;
+  }
+  @keyframes mistDrift{
+    0%,100%{ transform:translateX(-2%) translateY(0) scale(1.02); opacity:0.18; }
+    50%{ transform:translateX(2%) translateY(-1.5%) scale(1.05); opacity:0.26; }
+  }
+
+  /* riscos diagonais sutis (velho/filme) */
+  .scratches{
+    position:absolute; inset:0;
+    z-index:65;
+    pointer-events:none;
+    opacity:0.09;
+    background:
+      repeating-linear-gradient(115deg,
+        rgba(255,255,255,0.08) 0px,
+        rgba(255,255,255,0.08) 1px,
+        transparent 6px,
+        transparent 14px
+      );
+    mix-blend-mode:overlay;
+  }
+
+  /* ===== decoração lateral (runas) ===== */
+  .runes{
+    position:absolute; inset:0;
+    z-index:45;
+    pointer-events:none;
+    opacity:0.35;
+    background:
+      radial-gradient(circle at 12% 50%, rgba(255,140,70,0.10), transparent 40%),
+      radial-gradient(circle at 88% 50%, rgba(255,140,70,0.10), transparent 40%);
+  }
+  .runes::before, .runes::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    width:130px;
+    height:420px;
+    transform:translateY(-50%);
+    opacity:0.40;
+    filter:blur(0.2px);
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        rgba(255,190,120,0.22) 0px,
+        rgba(255,190,120,0.22) 2px,
+        transparent 8px,
+        transparent 18px
+      );
+    mask-image: radial-gradient(circle at 50% 50%, black 55%, transparent 100%);
+  }
+  .runes::before{ left:18px; }
+  .runes::after{ right:18px; }
+
+  /* ===== HUD leve dentro do quadro ===== */
   .hudTop{
     position:absolute; inset:0;
-    z-index:5;
-    opacity:0.14;
+    z-index:61;
+    opacity:0.12;
     pointer-events:none;
     background:
-      linear-gradient(to bottom, rgba(255,190,120,0.35), transparent 40%),
-      linear-gradient(to top, rgba(0,0,0,0.55), transparent 55%);
+      linear-gradient(to bottom, rgba(255,190,120,0.32), transparent 40%),
+      linear-gradient(to top, rgba(0,0,0,0.60), transparent 55%);
   }
   .hudCorners{
     position:absolute; inset:0;
-    z-index:5;
-    opacity:0.18;
+    z-index:61;
+    opacity:0.16;
     pointer-events:none;
     background:
-      radial-gradient(circle at 8% 14%, rgba(255,170,90,0.33), transparent 35%),
-      radial-gradient(circle at 92% 14%, rgba(255,170,90,0.33), transparent 35%),
-      radial-gradient(circle at 8% 86%, rgba(255,170,90,0.20), transparent 40%),
-      radial-gradient(circle at 92% 86%, rgba(255,170,90,0.20), transparent 40%);
-  }
-  .hudScan{
-    position:absolute; inset:-30%;
-    z-index:5;
-    opacity:0.10;
-    pointer-events:none;
-    background:
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 3px, transparent 9px);
-    transform:rotate(-10deg);
-    filter:blur(0.3px);
+      radial-gradient(circle at 9% 14%, rgba(255,170,90,0.33), transparent 35%),
+      radial-gradient(circle at 91% 14%, rgba(255,170,90,0.33), transparent 35%),
+      radial-gradient(circle at 9% 86%, rgba(255,170,90,0.18), transparent 40%),
+      radial-gradient(circle at 91% 86%, rgba(255,170,90,0.18), transparent 40%);
   }
 
-  /* ====== Cara de entrada: VS + CTA ====== */
+  /* ===== Cara de entrada: VS + READY + CTA ===== */
   .introUI{
     position:absolute; inset:0;
-    z-index:10;
+    z-index:70;
     pointer-events:none;
     display:grid;
     place-items:center;
@@ -178,17 +308,37 @@
 
   .vs{
     font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(44px, 6vw, 92px);
+    font-size: clamp(46px, 6.3vw, 96px);
     letter-spacing: 6px;
     color: rgba(255, 190, 120, 0.22);
     text-shadow: 0 0 18px rgba(255,140,70,0.18);
-    transform: translateY(-12px);
+    transform: translateY(-10px);
     opacity: 0.9;
     animation: vsPulse 1.6s ease-in-out infinite;
   }
   @keyframes vsPulse{
     0%,100%{ opacity:0.55; filter:blur(0px); }
     50%{ opacity:0.95; filter:blur(0.2px); }
+  }
+
+  .ready{
+    position:absolute;
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:11px;
+    letter-spacing:8px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.10);
+    opacity:0;
+    transition:opacity 180ms ease;
+    text-shadow: 0 0 18px rgba(255,140,70,0.16);
+  }
+
+  /* aparece no hover/focus da entrada */
+  #entry:hover .ready,
+  #entry:focus-visible .ready{
+    opacity:0.55;
   }
 
   .cta{
@@ -205,23 +355,22 @@
   }
   @keyframes ctaBreathe{
     0%,100%{ opacity:0.20; }
-    50%{ opacity:0.45; }
+    50%{ opacity:0.50; }
   }
 
-  /* pequeno brilho “ready line” */
   .readyLine{
     position:absolute;
-    width:min(520px, 82vw);
+    width:min(560px, 84vw);
     height:2px;
     background:linear-gradient(90deg, transparent, rgba(255,140,70,0.35), transparent);
-    opacity:0.18;
+    opacity:0.16;
     filter:blur(0.1px);
-    transform:translateY(54px);
+    transform:translateY(56px);
     animation: lineSweep 1.8s ease-in-out infinite;
   }
   @keyframes lineSweep{
-    0%,100%{ transform:translateY(54px) scaleX(0.85); opacity:0.10; }
-    50%{ transform:translateY(54px) scaleX(1.08); opacity:0.22; }
+    0%,100%{ transform:translateY(56px) scaleX(0.86); opacity:0.10; }
+    50%{ transform:translateY(56px) scaleX(1.10); opacity:0.20; }
   }
 
   /* impacto */
@@ -233,17 +382,18 @@
     80%{ transform:translate(1px, 1px) }
     100%{ transform:translate(0,0) }
   }
+
   body.strikeOn .stage{ animation:microShake 260ms linear 1; }
   body.strikeOn #strike{ opacity:0.88; }
 
   /* no clique: zoom e “corta” UI */
   body.strikeOn .frameWrap{
-    transform:scale(1.04);
-    filter:contrast(1.08);
+    transform:scale(1.06);
+    filter:contrast(1.10) saturate(1.0);
   }
   body.strikeOn .introUI{
     opacity:0;
-    transition:opacity 220ms ease;
+    transition:opacity 200ms ease;
   }
 
   /* some a entrada */
@@ -253,8 +403,10 @@
     transition:opacity 600ms ease;
   }
 
+  /* reduz motion */
   @media (prefers-reduced-motion: reduce){
     .vs,.cta,.readyLine{ animation:none; }
+    .mist{ animation:none; }
     body.strikeOn .stage{ animation:none; }
     .frameWrap{ transition:none; }
     #strike{ transition:none; }
@@ -274,12 +426,15 @@
     loop
   ></video>
 
-  <section id="entry" aria-label="Entrada Shadow Fight 2">
+  <section id="entry" aria-label="Entrada Shadow Fight 2" tabindex="0">
     <div class="bgFill" aria-hidden="true"></div>
+    <div class="bgLight" aria-hidden="true"></div>
     <canvas id="fx"></canvas>
 
     <div class="cinemaTop" aria-hidden="true"></div>
     <div class="cinemaBot" aria-hidden="true"></div>
+
+    <div class="runes" aria-hidden="true"></div>
 
     <div class="stage" aria-hidden="true">
       <div class="frameWrap">
@@ -288,9 +443,14 @@
 
         <div class="hudTop"></div>
         <div class="hudCorners"></div>
-        <div class="hudScan"></div>
+
+        <div class="scanlines"></div>
+        <div class="grain"></div>
+        <div class="mist"></div>
+        <div class="scratches"></div>
 
         <div class="introUI">
+          <div class="ready">READY</div>
           <div class="vs">VS</div>
           <div class="readyLine"></div>
           <div class="cta">CLIQUE PARA LUTAR</div>
@@ -308,6 +468,93 @@
   // Ajuste a duração do GIF (ms)
   const STRIKE_MS = 1800;
 
+  // ===== WebAudio: clink (hover) e hit (click) sem baixar arquivo =====
+  let audioCtx = null;
+  function ensureAudio(){
+    if(!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if(audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
+  }
+
+  function playClink(){
+    if(!audioCtx) return;
+    const t = audioCtx.currentTime;
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    const hp = audioCtx.createBiquadFilter();
+
+    hp.type = "highpass";
+    hp.frequency.setValueAtTime(800, t);
+
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(880, t);
+    osc.frequency.exponentialRampToValueAtTime(1320, t + 0.05);
+
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.04, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+
+    osc.connect(hp);
+    hp.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(t);
+    osc.stop(t + 0.10);
+  }
+
+  function playHit(){
+    if(!audioCtx) return;
+    const t = audioCtx.currentTime;
+
+    // sub grave curto + ruído leve
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(95, t);
+    osc.frequency.exponentialRampToValueAtTime(55, t + 0.12);
+
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.08, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(t);
+    osc.stop(t + 0.24);
+
+    // “clack” bem sutil
+    const osc2 = audioCtx.createOscillator();
+    const gain2 = audioCtx.createGain();
+    osc2.type = "square";
+    osc2.frequency.setValueAtTime(220, t);
+
+    gain2.gain.setValueAtTime(0.0001, t);
+    gain2.gain.exponentialRampToValueAtTime(0.02, t + 0.005);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
+
+    osc2.connect(gain2);
+    gain2.connect(audioCtx.destination);
+
+    osc2.start(t);
+    osc2.stop(t + 0.07);
+  }
+
+  // hover/focus -> clink (uma vez a cada ~900ms)
+  let lastClink = 0;
+  function maybeClink(){
+    ensureAudio();
+    const now = performance.now();
+    if(now - lastClink > 900){
+      playClink();
+      lastClink = now;
+    }
+  }
+  entry.addEventListener("pointerenter", maybeClink);
+  entry.addEventListener("focus", maybeClink);
+
   // ===== Canvas FX: fumaça sutil + brasas pequenas =====
   const canvas = document.getElementById("fx");
   const ctx = canvas.getContext("2d", { alpha:true });
@@ -317,8 +564,8 @@
 
   const smoke = [];
   const embers = [];
-  const SMOKE_N = 45;
-  const EMBER_N = 90;
+  const SMOKE_N = 50;
+  const EMBER_N = 105;
 
   function resize(){
     DPR = devicePixelRatio || 1;
@@ -332,8 +579,8 @@
     return {
       x: rand(-W*0.1, W*1.1),
       y: H + rand(0,H*0.3),
-      r: rand(24, 88)*DPR,
-      vy: rand(0.08, 0.35)*DPR,
+      r: rand(24, 92)*DPR,
+      vy: rand(0.08, 0.38)*DPR,
       vx: rand(-0.07, 0.14)*DPR,
       a: rand(0.008, 0.040),
       phase: rand(0, Math.PI*2),
@@ -346,8 +593,8 @@
       x: rand(-W*0.1, W*1.1),
       y: H + rand(0,H*0.35),
       r: rand(0.6, 2.0)*DPR,
-      vy: rand(0.18, 0.72)*DPR,
-      vx: rand(-0.10, 0.22)*DPR,
+      vy: rand(0.18, 0.78)*DPR,
+      vx: rand(-0.10, 0.25)*DPR,
       a: rand(0.02, 0.10),
       wob: rand(0.0015, 0.008),
     };
@@ -365,6 +612,7 @@
       s.y -= s.vy;
 
       const a = Math.max(0, Math.min(0.10, s.a));
+
       ctx.beginPath();
       ctx.fillStyle = `rgba(220, 210, 200, ${a})`;
       ctx.shadowColor = `rgba(255, 140, 70, ${a*0.20})`;
@@ -384,6 +632,7 @@
       p.y -= p.vy;
 
       const a = Math.max(0, Math.min(0.30, p.a));
+
       ctx.beginPath();
       ctx.fillStyle = `rgba(255, 140, 70, ${a*0.55})`;
       ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
@@ -412,6 +661,10 @@
     if(started) return;
     started = true;
 
+    ensureAudio();
+    playHit();
+
+    // inicia o vídeo no gesto do clique
     mainVideo.play().catch(()=>{});
 
     document.body.classList.add("flashOn");
@@ -429,7 +682,6 @@
   entry.addEventListener("keydown", (e)=>{
     if(e.key==="Enter" || e.key===" "){ e.preventDefault(); start(); }
   });
-  entry.tabIndex = 0;
 </script>
 
 </body>
