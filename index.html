@@ -3,108 +3,142 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shadow Fight — Cinematic</title>
+<title>Shadow Fight II</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;background:#000;overflow:hidden}
-
-/* Vídeo principal */
-#mainVideo{
-  position:absolute;
-  inset:0;
+html,body{
   width:100%;
   height:100%;
-  object-fit:cover;
-  opacity:0;
-  transition:opacity .6s ease;
-  z-index:1;
+  overflow:hidden;
+  background:#000;
+  font-family:serif;
 }
-#mainVideo.active{opacity:1}
 
-/* Portal fullscreen */
-#portalVideo{
+/* Fumaça animada */
+.smoke{
   position:absolute;
   inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  z-index:2;
+  background:
+    radial-gradient(circle at 30% 50%, rgba(255,255,255,0.04), transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(255,255,255,0.03), transparent 50%);
+  animation: smokeMove 12s linear infinite alternate;
+}
+
+@keyframes smokeMove{
+  from{transform:translateX(-2%)}
+  to{transform:translateX(2%)}
+}
+
+/* Silhueta */
+.shadow{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:120px;
+  color:#000;
+  text-shadow:
+    0 0 25px rgba(255,255,255,0.15),
+    0 0 80px rgba(255,255,255,0.08);
   cursor:pointer;
 }
 
-/* fade */
-#fade{
+/* Título */
+.title{
+  position:absolute;
+  bottom:80px;
+  width:100%;
+  text-align:center;
+  font-size:42px;
+  letter-spacing:8px;
+  color:#888;
+  opacity:.7;
+}
+
+/* Slash */
+.slash{
+  position:absolute;
+  width:200%;
+  height:4px;
+  background:white;
+  top:50%;
+  left:-50%;
+  transform:rotate(-25deg) scaleX(0);
+  transform-origin:left;
+  opacity:0;
+}
+
+/* Flash */
+.flash{
   position:absolute;
   inset:0;
-  background:#000;
+  background:white;
   opacity:0;
-  transition:opacity .25s ease;
-  z-index:3;
+  pointer-events:none;
 }
-#fade.on{opacity:1}
+
+body.active .slash{
+  animation: slashAnim .4s ease forwards;
+}
+
+body.active .flash{
+  animation: flashAnim .3s ease forwards;
+}
+
+@keyframes slashAnim{
+  0%{transform:rotate(-25deg) scaleX(0);opacity:1}
+  100%{transform:rotate(-25deg) scaleX(1);opacity:1}
+}
+
+@keyframes flashAnim{
+  0%{opacity:0}
+  40%{opacity:1}
+  100%{opacity:0}
+}
+
+/* Tremor */
+body.active{
+  animation: shake .3s ease;
+}
+
+@keyframes shake{
+  0%{transform:translate(0)}
+  25%{transform:translate(-4px,2px)}
+  50%{transform:translate(4px,-2px)}
+  75%{transform:translate(-2px,1px)}
+  100%{transform:translate(0)}
+}
 </style>
 </head>
 
 <body>
 
-<video
-  id="mainVideo"
-  src="https://files.catbox.moe/klaol5.webm"
-  muted
-  loop
-  playsinline
-></video>
+<div class="smoke"></div>
 
-<video
-  id="portalVideo"
-  src="https://files.catbox.moe/5ci6gd.mp4"
-  muted
-  playsinline
-></video>
+<div class="shadow" id="start">
+  ⚔
+</div>
 
-<div id="fade"></div>
+<div class="title">
+  SHADOW FIGHT II
+</div>
+
+<div class="slash"></div>
+<div class="flash"></div>
 
 <script>
-const portal = document.getElementById("portalVideo");
-const mainVideo = document.getElementById("mainVideo");
-const fade = document.getElementById("fade");
+const start = document.getElementById("start");
 
-let started = false;
+start.addEventListener("click", ()=>{
+  document.body.classList.add("active");
 
-// deixa parado no primeiro frame
-portal.addEventListener("loadeddata", ()=>{
-  try{ portal.currentTime = 0; }catch(e){}
-  portal.pause();
-}, {once:true});
-
-async function start(){
-  if(started) return;
-  started = true;
-
-  try{
-    portal.currentTime = 0;
-    await portal.play();
-  }catch(e){
-    started = false;
-    return;
-  }
-
-  // quando acabar animação
-  portal.addEventListener("ended", ()=>{
-    fade.classList.add("on");
-
-    setTimeout(()=>{
-      portal.style.display="none";
-      mainVideo.classList.add("active");
-      mainVideo.play().catch(()=>{});
-      fade.classList.remove("on");
-    }, 200);
-
-  }, {once:true});
-}
-
-portal.addEventListener("pointerdown", start);
+  setTimeout(()=>{
+    // aqui entraria o site principal
+    alert("ENTROU NO JOGO");
+  },400);
+});
 </script>
 
 </body>
