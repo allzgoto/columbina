@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Shadow Fight — Eye Entry</title>
+<title>Shadow Fight — Shadow Eye v2</title>
 
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -21,198 +21,282 @@
   }
   body.entered #mainVideo{opacity:1}
 
-  /* tela de entrada */
+  /* ENTRY */
   #entry{
     position:fixed; inset:0;
     z-index:10;
-    background:#000;
     display:grid;
     place-items:center;
     cursor:pointer;
     user-select:none;
+    background:#050506;
   }
 
-  /* vinheta + textura mínima */
+  /* vinheta + “neblina” */
   #entry::before{
     content:"";
-    position:absolute; inset:0;
+    position:absolute; inset:-40px;
     background:
-      radial-gradient(circle at center, rgba(120,40,255,0.06), transparent 55%),
-      radial-gradient(circle at center, rgba(0,0,0,0) 25%, rgba(0,0,0,0.85) 100%);
+      radial-gradient(circle at 50% 45%, rgba(155,70,255,0.10), transparent 58%),
+      radial-gradient(circle at 20% 60%, rgba(255,255,255,0.04), transparent 52%),
+      radial-gradient(circle at 80% 55%, rgba(255,255,255,0.03), transparent 55%),
+      radial-gradient(circle at center, rgba(0,0,0,0.0) 20%, rgba(0,0,0,0.86) 100%),
+      repeating-linear-gradient(115deg, rgba(255,255,255,0.018) 0 2px, transparent 2px 16px);
+    opacity:.95;
+    filter:blur(0.35px);
     pointer-events:none;
+    animation:fogDrift 10s ease-in-out infinite alternate;
+  }
+  @keyframes fogDrift{
+    from{transform:translateX(-1.2%) translateY(-0.6%)}
+    to{transform:translateX(1.2%) translateY(0.6%)}
   }
 
-  /* O OLHO */
-  .eye-wrap{
-    position:relative;
-    width:min(520px, 86vw);
-    aspect-ratio: 2.6 / 1;
-    display:grid;
-    place-items:center;
-    transform:translateZ(0);
+  /* partículas */
+  #particles{
+    position:absolute; inset:0;
+    z-index:1;
+    pointer-events:none;
+    opacity:.95;
   }
 
-  /* “glow roxo” ambiente */
+  /* aura global */
   .aura{
     position:absolute;
-    inset:-30%;
-    background:radial-gradient(circle at center, rgba(160,70,255,0.18), transparent 60%);
+    width:min(980px, 120vw);
+    aspect-ratio:1/1;
+    border-radius:50%;
+    background:radial-gradient(circle at center, rgba(165,70,255,0.16), rgba(0,0,0,0) 62%);
     filter:blur(18px);
-    opacity:.45;
-    animation:auraPulse 2.6s ease-in-out infinite;
+    opacity:.55;
+    animation:auraPulse 2.8s ease-in-out infinite;
     pointer-events:none;
+    z-index:2;
   }
   @keyframes auraPulse{
-    0%,100%{opacity:.35; transform:scale(0.98)}
-    50%{opacity:.55; transform:scale(1.02)}
+    0%,100%{opacity:.42; transform:scale(0.98)}
+    50%{opacity:.62; transform:scale(1.02)}
   }
 
-  /* Esclera/olho (forma base) */
-  .eye{
+  /* ===== OLHO ===== */
+  .eye-wrap{
+    position:relative;
+    width:min(720px, 92vw);
+    aspect-ratio: 2.7 / 1;
+    display:grid;
+    place-items:center;
+    z-index:5;
+    transform:translateZ(0);
+    transition:transform 900ms cubic-bezier(.14,.92,.14,1), filter 900ms ease;
+    will-change:transform;
+  }
+
+  /* “casca” do olho (profundidade) */
+  .eye-shell{
     position:relative;
     width:100%;
     height:100%;
     border-radius:999px;
     overflow:hidden;
     background:
-      radial-gradient(circle at 50% 50%, rgba(180,90,255,0.18), rgba(0,0,0,0) 60%),
-      radial-gradient(circle at 50% 55%, rgba(255,255,255,0.06), transparent 58%),
-      linear-gradient(to bottom, rgba(255,255,255,0.04), rgba(0,0,0,0.12));
+      radial-gradient(circle at 50% 55%, rgba(180,90,255,0.16), rgba(0,0,0,0) 62%),
+      radial-gradient(circle at 50% 52%, rgba(255,255,255,0.06), transparent 60%),
+      linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.12));
     box-shadow:
       0 0 0 1px rgba(255,255,255,0.10),
-      0 0 60px rgba(160,70,255,0.10),
-      inset 0 0 120px rgba(0,0,0,0.75);
-    transform:scale(0.98);
-    animation:idleBreath 2.8s ease-in-out infinite;
+      0 0 70px rgba(150,60,255,0.10),
+      inset 0 0 160px rgba(0,0,0,0.86);
+    animation:breath 2.9s ease-in-out infinite;
   }
-  @keyframes idleBreath{
-    0%,100%{transform:scale(0.98)}
-    50%{transform:scale(1.00)}
+  @keyframes breath{
+    0%,100%{transform:scale(0.99)}
+    50%{transform:scale(1.01)}
   }
 
-  /* Iris */
+  /* veias (bem sutis) */
+  .veins{
+    position:absolute; inset:-10%;
+    background:
+      radial-gradient(circle at 20% 60%, rgba(255,255,255,0.035), transparent 50%),
+      radial-gradient(circle at 80% 40%, rgba(255,255,255,0.028), transparent 55%),
+      repeating-linear-gradient(35deg, rgba(255,255,255,0.018) 0 1px, transparent 1px 14px);
+    opacity:.35;
+    filter:blur(1px);
+    mix-blend-mode:screen;
+    pointer-events:none;
+  }
+
+  /* íris com swirl girando (vida) */
   .iris{
     position:absolute;
     left:50%; top:50%;
-    width:38%;
+    width:42%;
     aspect-ratio:1/1;
     transform:translate(-50%,-50%);
     border-radius:50%;
     background:
       radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0 22%, rgba(0,0,0,0.35) 48%, rgba(0,0,0,0.0) 60%),
-      radial-gradient(circle at 50% 50%, rgba(190,110,255,0.75), rgba(110,25,200,0.45) 55%, rgba(0,0,0,0.0) 72%),
-      repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,0.10) 0 2px, rgba(0,0,0,0) 2px 7px);
-    filter:drop-shadow(0 0 18px rgba(170,80,255,0.20));
-    opacity:.95;
+      radial-gradient(circle at 50% 50%, rgba(190,110,255,0.78), rgba(110,25,200,0.45) 55%, rgba(0,0,0,0.0) 72%),
+      repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,0.09) 0 2px, rgba(0,0,0,0) 2px 7px);
+    filter:drop-shadow(0 0 24px rgba(170,80,255,0.22));
+    overflow:hidden;
   }
+  .iris::after{
+    content:"";
+    position:absolute; inset:-40%;
+    background:
+      conic-gradient(from 0deg,
+        rgba(255,255,255,0.0),
+        rgba(255,255,255,0.06),
+        rgba(255,255,255,0.0),
+        rgba(255,255,255,0.05),
+        rgba(255,255,255,0.0)
+      );
+    opacity:.55;
+    filter:blur(0.2px);
+    animation:swirl 4.6s linear infinite;
+  }
+  @keyframes swirl{to{transform:rotate(360deg)}}
 
-  /* Pupila (portal) */
+  /* pupila (portal) — será movida pelo mouse via CSS vars */
   .pupil{
     position:absolute;
     left:50%; top:50%;
-    width:14%;
+    width:13%;
     aspect-ratio:1/1;
-    transform:translate(-50%,-50%);
+    transform:translate(calc(-50% + var(--px, 0px)), calc(-50% + var(--py, 0px)));
     border-radius:50%;
-    background:radial-gradient(circle at 50% 50%, #000 0 60%, rgba(0,0,0,0) 72%);
+    background:radial-gradient(circle at 50% 50%, #000 0 62%, rgba(0,0,0,0) 76%);
     box-shadow:0 0 0 1px rgba(255,255,255,0.08);
-    animation:pupilIdle 2.2s ease-in-out infinite;
-  }
-  @keyframes pupilIdle{
-    0%,100%{transform:translate(-50%,-50%) scale(0.98)}
-    50%{transform:translate(-50%,-50%) scale(1.05)}
+    transition:transform 120ms ease;
+    will-change:transform;
   }
 
-  /* “reflexo” */
+  /* highlight */
   .shine{
     position:absolute;
-    left:43%; top:42%;
+    left:44%; top:40%;
     width:12%;
     aspect-ratio:1/1;
     transform:translate(-50%,-50%);
     border-radius:50%;
-    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), rgba(255,255,255,0) 70%);
-    opacity:.65;
+    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.22), rgba(255,255,255,0) 70%);
+    opacity:.7;
     mix-blend-mode:screen;
-    filter:blur(0.2px);
   }
 
-  /* Pálpebras (fechadas no idle -> abre no clique) */
+  /* sombra de “ameaça” ao redor */
+  .menace{
+    position:absolute; inset:-25%;
+    background:radial-gradient(circle at 50% 55%, rgba(0,0,0,0), rgba(0,0,0,0.72) 60%, rgba(0,0,0,0.88) 100%);
+    pointer-events:none;
+    z-index:4;
+  }
+
+  /* OLHO SELADO: pálpebras quase fechadas no idle */
   .lid{
     position:absolute;
-    left:-2%; width:104%;
-    height:52%;
-    background:radial-gradient(circle at 50% 100%, rgba(0,0,0,0.0), rgba(0,0,0,0.92) 75%), #000;
-    z-index:5;
+    left:-2%;
+    width:104%;
+    height:55%;
+    background:#000;
+    box-shadow:inset 0 -40px 120px rgba(0,0,0,0.95);
+    z-index:6;
     pointer-events:none;
-    transition:transform 900ms cubic-bezier(.2,.9,.2,1);
+    transition:transform 1050ms cubic-bezier(.12,.94,.12,1);
   }
-  .lid.top{ top:-2%; transform:translateY(35%); }
-  .lid.bottom{ bottom:-2%; transform:translateY(-35%); }
+  .lid.top{ top:-2%; transform:translateY(48%); }
+  .lid.bottom{ bottom:-2%; transform:translateY(-48%); }
+
+  /* linha fina “fenda” no selo */
+  .seal-line{
+    position:absolute;
+    left:50%; top:50%;
+    width:52%;
+    height:2px;
+    transform:translate(-50%,-50%);
+    background:linear-gradient(90deg, transparent, rgba(170,80,255,0.35), transparent);
+    opacity:.35;
+    z-index:7;
+    pointer-events:none;
+    filter:blur(0.2px);
+    animation:sealPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes sealPulse{
+    0%,100%{opacity:.20}
+    50%{opacity:.45}
+  }
 
   /* texto */
   .hint{
     position:absolute;
-    bottom:-26px;
+    bottom:-30px;
     width:100%;
     text-align:center;
     font-size:12px;
     letter-spacing:5px;
-    color:rgba(255,255,255,0.20);
+    color:rgba(255,255,255,0.22);
     text-transform:uppercase;
+    z-index:7;
   }
 
-  /* Flash */
-  .flash{
+  /* “engolir roxo” */
+  .engulf{
     position:fixed; inset:0;
-    background:#fff;
-    opacity:0;
-    z-index:12;
+    z-index:11;
     pointer-events:none;
+    opacity:0;
+    background:radial-gradient(circle at center, rgba(170,80,255,0.0) 0%, rgba(170,80,255,0.35) 35%, rgba(0,0,0,1) 72%);
+    transform:scale(0.8);
   }
 
-  /* ===== Sequência no clique ===== */
+  /* ===== clique sequência ===== */
+  body.opening .lid.top{ transform:translateY(0%); }
+  body.opening .lid.bottom{ transform:translateY(0%); }
 
-  /* abre o olho */
-  body.opening .lid.top{ transform:translateY(-18%); }
-  body.opening .lid.bottom{ transform:translateY(18%); }
-
-  /* pupila vira portal (dilata + escurece) */
+  /* pupila contrai antes de virar portal */
   body.opening .pupil{
-    animation:none;
-    transition:transform 900ms cubic-bezier(.2,.9,.2,1), box-shadow 900ms ease;
-    transform:translate(-50%,-50%) scale(4.2);
-    box-shadow:0 0 0 2px rgba(255,255,255,0.10), 0 0 55px rgba(170,80,255,0.18);
+    transition:transform 120ms ease, width 220ms ease, box-shadow 400ms ease;
+    width:10%;
+    box-shadow:0 0 0 1px rgba(255,255,255,0.10), 0 0 38px rgba(170,80,255,0.14);
   }
 
-  /* “câmera entra no olho”: zoom no wrap */
+  /* explode portal + zoom */
+  body.portal .pupil{
+    width:18%;
+    box-shadow:0 0 0 2px rgba(255,255,255,0.12), 0 0 75px rgba(170,80,255,0.22);
+  }
   body.zooming .eye-wrap{
-    transition:transform 900ms cubic-bezier(.12,.92,.12,1), filter 900ms ease;
-    transform:scale(2.6);
+    transform:scale(2.9);
     filter:blur(0.2px);
   }
-
-  /* flash curtinho no corte */
-  body.cutting .flash{
-    animation:flash 230ms ease forwards;
-  }
-  @keyframes flash{
-    0%{opacity:0}
-    35%{opacity:0.50}
-    100%{opacity:0}
+  body.zooming .engulf{
+    opacity:1;
+    transform:scale(1.35);
+    transition:opacity 520ms ease, transform 520ms cubic-bezier(.12,.92,.12,1);
   }
 
-  /* some com entry */
+  /* some entry */
   body.entered #entry{
     opacity:0;
     pointer-events:none;
     transition:opacity 520ms ease;
   }
 
+  /* tremor bem sutil no clique */
+  body.opening{
+    animation:shake 260ms ease;
+  }
+  @keyframes shake{
+    0%{transform:translate(0)}
+    30%{transform:translate(-2px,1px)}
+    60%{transform:translate(2px,-1px)}
+    100%{transform:translate(0)}
+  }
+
   @media (prefers-reduced-motion: reduce){
-    .aura,.eye,.pupil{animation:none}
-    body.opening .lid.top, body.opening .lid.bottom{transition:none}
-    body.opening .pupil{transition:none}
+    #entry::before, .aura, .eye-shell, .iris::after, .seal-line{animation:none}
+    body.opening .lid.top, body.opening .lid.bottom{transition:none; transform:translateY(0)}
     body.zooming .eye-wrap{transition:none; transform:scale(2.0)}
   }
 </style>
@@ -228,50 +312,156 @@
     loop
   ></video>
 
-  <section id="entry" aria-label="Entrada do olho">
-    <div class="eye-wrap" id="eyeWrap">
-      <div class="aura"></div>
+  <section id="entry" aria-label="Olho da sombra">
+    <canvas id="particles"></canvas>
+    <div class="aura"></div>
+    <div class="menace" aria-hidden="true"></div>
 
-      <div class="eye">
+    <div class="eye-wrap" id="eyeWrap">
+      <div class="eye-shell" id="eyeShell">
+        <div class="veins"></div>
         <div class="iris"></div>
         <div class="pupil" id="pupil"></div>
         <div class="shine"></div>
 
         <div class="lid top"></div>
         <div class="lid bottom"></div>
+        <div class="seal-line"></div>
       </div>
 
-      <div class="hint">CLIQUE — OLHO DA SOMBRA</div>
+      <div class="hint">CLIQUE — OLHO SELADO</div>
     </div>
 
-    <div class="flash" id="flash" aria-hidden="true"></div>
+    <div class="engulf" id="engulf" aria-hidden="true"></div>
   </section>
 
 <script>
   const entry = document.getElementById("entry");
   const mainVideo = document.getElementById("mainVideo");
+  const pupil = document.getElementById("pupil");
+  const eyeShell = document.getElementById("eyeShell");
 
+  // ===== partículas subindo (idle) =====
+  const canvas = document.getElementById("particles");
+  const ctx = canvas.getContext("2d", { alpha:true });
+  let W=0,H=0,DPR=1;
+  const parts = [];
+  const COUNT = 110;
+
+  const rand = (a,b)=>Math.random()*(b-a)+a;
+
+  function resize(){
+    DPR = devicePixelRatio || 1;
+    W = canvas.width = innerWidth * DPR;
+    H = canvas.height = innerHeight * DPR;
+  }
+  addEventListener("resize", resize);
+  resize();
+
+  function spawn(){
+    return {
+      x: rand(0, W),
+      y: H + rand(0, H*0.25),
+      r: rand(0.8, 2.6)*DPR,
+      vy: rand(0.25, 1.10)*DPR,
+      vx: rand(-0.18, 0.18)*DPR,
+      a: rand(0.03, 0.16),
+      wob: rand(0.002, 0.008),
+      life: rand(0.6, 1.2)
+    };
+  }
+  for(let i=0;i<COUNT;i++) parts.push(spawn());
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    // base roxa sutil embaixo
+    const g = ctx.createRadialGradient(W*0.5, H*0.95, 0, W*0.5, H*0.95, H*0.85);
+    g.addColorStop(0, "rgba(160,70,255,0.06)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,W,H);
+
+    for(const p of parts){
+      p.x += p.vx + Math.sin(p.y*p.wob)*(0.35*DPR);
+      p.y -= p.vy;
+
+      const alpha = Math.max(0, Math.min(0.28, p.a))*p.life;
+
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(220, 190, 255, ${alpha})`;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fill();
+
+      // trail
+      ctx.beginPath();
+      ctx.strokeStyle = `rgba(170, 80, 255, ${alpha*0.25})`;
+      ctx.lineWidth = p.r*1.3;
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x - p.vx*10, p.y + p.vy*12);
+      ctx.stroke();
+
+      if(p.y < -60) Object.assign(p, spawn());
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  // ===== pupila segue mouse (sutil) =====
+  let mouseX = 0, mouseY = 0;
+  let tx = 0, ty = 0;
+
+  function onMove(e){
+    const rect = eyeShell.getBoundingClientRect();
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top + rect.height/2;
+
+    const dx = (e.clientX - cx) / rect.width;  // -0.5..0.5 aprox
+    const dy = (e.clientY - cy) / rect.height;
+
+    // clamp e escala (bem sutil)
+    mouseX = Math.max(-0.22, Math.min(0.22, dx)) * 22; // px
+    mouseY = Math.max(-0.18, Math.min(0.18, dy)) * 18; // px
+  }
+  window.addEventListener("pointermove", onMove);
+
+  function lerp(a,b,t){ return a+(b-a)*t; }
+
+  function pupilTick(){
+    // suaviza (vida)
+    tx = lerp(tx, mouseX, 0.10);
+    ty = lerp(ty, mouseY, 0.10);
+
+    // aplica via CSS vars
+    pupil.style.setProperty("--px", tx.toFixed(2)+"px");
+    pupil.style.setProperty("--py", ty.toFixed(2)+"px");
+    requestAnimationFrame(pupilTick);
+  }
+  pupilTick();
+
+  // ===== clique sequência =====
   let started = false;
-
   function start(){
     if(started) return;
     started = true;
 
-    // garante play no gesto do clique
     mainVideo.play().catch(()=>{});
 
-    // 1) abre olho + pupila dilata
+    // abre o olho (pálpebras) + pupila contrai
     document.body.classList.add("opening");
 
-    // 2) zoom “entrando”
-    setTimeout(()=> document.body.classList.add("zooming"), 520);
+    // pupila vira portal + brilho aumenta
+    setTimeout(()=> document.body.classList.add("portal"), 380);
 
-    // 3) flash + corte pro vídeo
+    // zoom + “engolir roxo”
+    setTimeout(()=> document.body.classList.add("zooming"), 760);
+
+    // entra no vídeo
     setTimeout(()=>{
-      document.body.classList.add("cutting");
       document.body.classList.add("entered");
       setTimeout(()=>{ entry.style.display="none"; }, 650);
-    }, 1200);
+    }, 1350);
   }
 
   entry.addEventListener("pointerdown", start);
