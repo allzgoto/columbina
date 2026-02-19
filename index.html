@@ -30,10 +30,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden}
   transition:opacity .6s ease;
   z-index:1;
 }
-
-#mainVideo.active{
-  opacity:1;
-}
+#mainVideo.active{opacity:1}
 
 /* INTRO */
 #intro{
@@ -45,6 +42,18 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden}
   z-index:2;
 }
 
+/* camada escura pra dar clima quando expande */
+#intro::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:#000;
+  opacity:.0;
+  transition:opacity .8s ease;
+  pointer-events:none;
+}
+#intro.dim::before{opacity:.85}
+
 /* PORTAL */
 .portal{
   width:320px;
@@ -52,10 +61,10 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden}
   border-radius:50%;
   overflow:hidden;
   position:relative;
-  transition:all 1s ease;
+  transition:width 1s ease, height 1s ease, border-radius 1s ease;
 }
 
-/* Quando ativa, vira fullscreen */
+/* expande, mas sem forçar o vídeo a “cover” */
 .portal.expand{
   width:100vw;
   height:100vh;
@@ -66,7 +75,9 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden}
 .portal video{
   width:100%;
   height:100%;
-  object-fit:cover;
+  /* AQUI É A CHAVE: sem zoom */
+  object-fit:contain;
+  background:#000;
   pointer-events:none;
 }
 </style>
@@ -81,6 +92,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden}
     muted
     loop
     playsinline
+    preload="auto"
   ></video>
 
   <section id="intro">
@@ -90,6 +102,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden}
         src="https://files.catbox.moe/5ci6gd.mp4"
         muted
         playsinline
+        preload="auto"
       ></video>
     </div>
   </section>
@@ -97,15 +110,15 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden}
 </main>
 
 <script>
+const intro = document.getElementById("intro");
 const portal = document.getElementById("portal");
 const portalVideo = document.getElementById("portalVideo");
 const mainVideo = document.getElementById("mainVideo");
 
 let started = false;
 
-// deixa no frame inicial
 portalVideo.addEventListener("loadeddata", () => {
-  portalVideo.currentTime = 0;
+  try { portalVideo.currentTime = 0; } catch(e) {}
   portalVideo.pause();
 }, { once:true });
 
@@ -113,17 +126,18 @@ async function startSequence(){
   if(started) return;
   started = true;
 
-  // começa animação
+  // toca o portal
+  try { portalVideo.currentTime = 0; } catch(e) {}
   await portalVideo.play();
 
-  // expande para tela inteira
+  // escurece o fundo e expande o container
+  intro.classList.add("dim");
   portal.classList.add("expand");
 
-  // quando terminar animação
   portalVideo.addEventListener("ended", ()=>{
-    document.getElementById("intro").style.display="none";
+    intro.style.display = "none";
     mainVideo.classList.add("active");
-    mainVideo.play();
+    mainVideo.play().catch(()=>{});
   }, { once:true });
 }
 
