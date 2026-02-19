@@ -14,7 +14,7 @@
     --emberSoft: rgba(255,190,120,0.20);
   }
 
-  /* ===== vídeo principal (seu site) ===== */
+  /* ===== vídeo principal ===== */
   #mainVideo{
     position:fixed; inset:0;
     width:100%; height:100%;
@@ -35,18 +35,29 @@
     user-select:none;
   }
 
-  /* vinheta forte + glow quente bem sutil */
+  /* vinheta + glow quente */
   #entry::after{
     content:"";
     position:absolute; inset:0;
     pointer-events:none;
-    z-index:7;
+    z-index:9;
     background:
-      radial-gradient(circle at center, rgba(0,0,0,0.08) 20%, rgba(0,0,0,0.96) 100%),
+      radial-gradient(circle at center, rgba(0,0,0,0.06) 20%, rgba(0,0,0,0.96) 100%),
       radial-gradient(circle at 50% 85%, rgba(255,140,70,0.06), transparent 62%);
   }
 
-  /* ===== fundo full-screen (mesma imagem, blur/escuro) ===== */
+  /* flash de clique (cinema) */
+  #flash{
+    position:absolute; inset:0;
+    z-index:12;
+    pointer-events:none;
+    opacity:0;
+    background:radial-gradient(circle at 50% 55%, rgba(255,140,70,0.55), rgba(255,140,70,0.0) 60%);
+    transition:opacity 160ms ease;
+  }
+  body.flashOn #flash{ opacity:1; }
+
+  /* fundo full-screen (mesma imagem, blur) */
   .bgFill{
     position:absolute; inset:0;
     background:url("https://files.catbox.moe/pamypi.png") center/cover no-repeat;
@@ -55,14 +66,27 @@
     z-index:1;
   }
 
-  /* canvas FX (fumaça/brasas) por cima do fundo */
+  /* canvas FX */
   #fx{
     position:absolute; inset:0;
     z-index:4;
     pointer-events:none;
   }
 
-  /* palco central */
+  /* barras cinema sutis */
+  .cinemaTop,.cinemaBot{
+    position:absolute; left:0; right:0;
+    height:6.5vh;
+    z-index:8;
+    pointer-events:none;
+    background:linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(0,0,0,0));
+  }
+  .cinemaBot{
+    top:auto; bottom:0;
+    background:linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
+  }
+
+  /* palco */
   .stage{
     position:absolute; inset:0;
     display:grid;
@@ -70,7 +94,6 @@
     z-index:3;
   }
 
-  /* quadro com fade nas bordas (anti “quadradão colado”) */
   .frameWrap{
     width:min(1020px, 94vw);
     aspect-ratio: 16 / 9;
@@ -80,10 +103,11 @@
     box-shadow:
       0 0 0 1px rgba(255,170,90,0.10),
       0 14px 50px rgba(0,0,0,0.75);
-    transform:translateZ(0);
+    transform:translateZ(0) scale(1);
+    transition:transform 320ms ease, filter 320ms ease, opacity 420ms ease;
   }
 
-  /* fade/vinheta interna do quadro */
+  /* vinheta interna do quadro */
   .frameWrap::before{
     content:"";
     position:absolute; inset:-2px;
@@ -96,24 +120,22 @@
         rgba(0,0,0,0.90) 100%);
   }
 
-  /* imagem/gif ocupando o quadro */
   .frame{
     position:absolute; inset:0;
     width:100%; height:100%;
     object-fit:cover;
     filter:contrast(1.05) saturate(0.92);
-    transform:translateZ(0);
   }
 
-  /* GIF do golpe: começa invisível, entra com blend */
+  /* gif do golpe */
   #strike{
     opacity:0;
     transition:opacity 140ms ease;
     filter:contrast(1.10) saturate(0.95);
-    mix-blend-mode:screen; /* integra com a cena */
+    mix-blend-mode:screen;
   }
 
-  /* HUD/decorações leves (só pra casar com a tela) */
+  /* HUD leve */
   .hudTop{
     position:absolute; inset:0;
     z-index:5;
@@ -123,7 +145,6 @@
       linear-gradient(to bottom, rgba(255,190,120,0.35), transparent 40%),
       linear-gradient(to top, rgba(0,0,0,0.55), transparent 55%);
   }
-
   .hudCorners{
     position:absolute; inset:0;
     z-index:5;
@@ -135,39 +156,75 @@
       radial-gradient(circle at 8% 86%, rgba(255,170,90,0.20), transparent 40%),
       radial-gradient(circle at 92% 86%, rgba(255,170,90,0.20), transparent 40%);
   }
-
   .hudScan{
     position:absolute; inset:-30%;
     z-index:5;
     opacity:0.10;
     pointer-events:none;
     background:
-      repeating-linear-gradient(
-        90deg,
-        rgba(255,255,255,0.06) 0px,
-        rgba(255,255,255,0.06) 1px,
-        transparent 3px,
-        transparent 9px
-      );
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 3px, transparent 9px);
     transform:rotate(-10deg);
     filter:blur(0.3px);
   }
 
-  /* texto discreto */
-  .hint{
+  /* ====== Cara de entrada: VS + CTA ====== */
+  .introUI{
+    position:absolute; inset:0;
+    z-index:10;
+    pointer-events:none;
+    display:grid;
+    place-items:center;
+  }
+
+  .vs{
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(44px, 6vw, 92px);
+    letter-spacing: 6px;
+    color: rgba(255, 190, 120, 0.22);
+    text-shadow: 0 0 18px rgba(255,140,70,0.18);
+    transform: translateY(-12px);
+    opacity: 0.9;
+    animation: vsPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes vsPulse{
+    0%,100%{ opacity:0.55; filter:blur(0px); }
+    50%{ opacity:0.95; filter:blur(0.2px); }
+  }
+
+  .cta{
     position:absolute;
+    bottom: 18px;
     left:50%;
-    bottom:26px;
     transform:translateX(-50%);
-    z-index:8;
     font-size:12px;
     letter-spacing:6px;
     text-transform:uppercase;
-    color:rgba(255,255,255,0.16);
-    pointer-events:none;
+    color:rgba(255,255,255,0.22);
+    text-shadow: 0 0 18px rgba(255,140,70,0.18);
+    animation: ctaBreathe 1.35s ease-in-out infinite;
+  }
+  @keyframes ctaBreathe{
+    0%,100%{ opacity:0.20; }
+    50%{ opacity:0.45; }
   }
 
-  /* impacto adulto (bem leve) */
+  /* pequeno brilho “ready line” */
+  .readyLine{
+    position:absolute;
+    width:min(520px, 82vw);
+    height:2px;
+    background:linear-gradient(90deg, transparent, rgba(255,140,70,0.35), transparent);
+    opacity:0.18;
+    filter:blur(0.1px);
+    transform:translateY(54px);
+    animation: lineSweep 1.8s ease-in-out infinite;
+  }
+  @keyframes lineSweep{
+    0%,100%{ transform:translateY(54px) scaleX(0.85); opacity:0.10; }
+    50%{ transform:translateY(54px) scaleX(1.08); opacity:0.22; }
+  }
+
+  /* impacto */
   @keyframes microShake{
     0%{ transform:translate(0,0) }
     20%{ transform:translate(-1px, 1px) }
@@ -176,10 +233,18 @@
     80%{ transform:translate(1px, 1px) }
     100%{ transform:translate(0,0) }
   }
-
   body.strikeOn .stage{ animation:microShake 260ms linear 1; }
-  body.strikeOn .frameWrap{ transform:scale(1.01); transition:transform 260ms ease; }
   body.strikeOn #strike{ opacity:0.88; }
+
+  /* no clique: zoom e “corta” UI */
+  body.strikeOn .frameWrap{
+    transform:scale(1.04);
+    filter:contrast(1.08);
+  }
+  body.strikeOn .introUI{
+    opacity:0;
+    transition:opacity 220ms ease;
+  }
 
   /* some a entrada */
   body.entered #entry{
@@ -189,16 +254,17 @@
   }
 
   @media (prefers-reduced-motion: reduce){
+    .vs,.cta,.readyLine{ animation:none; }
     body.strikeOn .stage{ animation:none; }
     .frameWrap{ transition:none; }
     #strike{ transition:none; }
+    #flash{ transition:none; }
   }
 </style>
 </head>
 
 <body>
 
-  <!-- vídeo principal do seu site -->
   <video
     id="mainVideo"
     src="https://files.catbox.moe/klaol5.webm"
@@ -208,15 +274,13 @@
     loop
   ></video>
 
-  <!-- entrada -->
   <section id="entry" aria-label="Entrada Shadow Fight 2">
-    <!-- fundo blur/escuro -->
     <div class="bgFill" aria-hidden="true"></div>
-
-    <!-- efeitos de fumaça/brasas -->
     <canvas id="fx"></canvas>
 
-    <!-- quadro central -->
+    <div class="cinemaTop" aria-hidden="true"></div>
+    <div class="cinemaBot" aria-hidden="true"></div>
+
     <div class="stage" aria-hidden="true">
       <div class="frameWrap">
         <img id="still" class="frame" src="https://files.catbox.moe/pamypi.png" alt="" draggable="false">
@@ -225,18 +289,23 @@
         <div class="hudTop"></div>
         <div class="hudCorners"></div>
         <div class="hudScan"></div>
+
+        <div class="introUI">
+          <div class="vs">VS</div>
+          <div class="readyLine"></div>
+          <div class="cta">CLIQUE PARA LUTAR</div>
+        </div>
       </div>
     </div>
 
-    <div class="hint">CLIQUE PARA ENTRAR</div>
+    <div id="flash" aria-hidden="true"></div>
   </section>
 
 <script>
   const entry = document.getElementById("entry");
   const mainVideo = document.getElementById("mainVideo");
 
-  // ====== AJUSTE AQUI A DURAÇÃO DO GIF (ms) ======
-  // Se cortar cedo ou tarde, muda isso.
+  // Ajuste a duração do GIF (ms)
   const STRIKE_MS = 1800;
 
   // ===== Canvas FX: fumaça sutil + brasas pequenas =====
@@ -296,7 +365,6 @@
       s.y -= s.vy;
 
       const a = Math.max(0, Math.min(0.10, s.a));
-
       ctx.beginPath();
       ctx.fillStyle = `rgba(220, 210, 200, ${a})`;
       ctx.shadowColor = `rgba(255, 140, 70, ${a*0.20})`;
@@ -316,7 +384,6 @@
       p.y -= p.vy;
 
       const a = Math.max(0, Math.min(0.30, p.a));
-
       ctx.beginPath();
       ctx.fillStyle = `rgba(255, 140, 70, ${a*0.55})`;
       ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
@@ -338,15 +405,17 @@
   }
   draw();
 
-  // ===== clique -> mostra gif -> depois entra no vídeo =====
+  // ===== clique -> flash -> gif -> entra no vídeo =====
   let started = false;
 
   function start(){
     if(started) return;
     started = true;
 
-    // inicia o vídeo no gesto do clique
     mainVideo.play().catch(()=>{});
+
+    document.body.classList.add("flashOn");
+    setTimeout(()=>document.body.classList.remove("flashOn"), 160);
 
     document.body.classList.add("strikeOn");
 
