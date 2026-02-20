@@ -11,7 +11,12 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;background:#000}
 
-:root{ --ember: rgba(255,140,70,1); }
+:root{
+  --ember: rgba(255,140,70,1);
+  --goldA: #fff2de;
+  --goldB: #d9a56a;
+  --goldC: #a8642c;
+}
 
 /* ===== VIDEO ===== */
 #mainVideo{
@@ -42,7 +47,7 @@ body.entered #mainVideo{opacity:1}
   z-index:1;
 }
 
-/* ===== PARTÍCULAS CINZA / CINZAS VULCÂNICAS ===== */
+/* ===== PARTÍCULAS CINZA / CINZAS ===== */
 #ashCanvas{
   position:absolute; inset:0;
   z-index:2;
@@ -70,7 +75,6 @@ body.entered #mainVideo{opacity:1}
 }
 #entry:hover .frameWrap{ transform:scale(1.01); }
 
-/* imagem principal */
 .frame{
   position:absolute; inset:0;
   width:100%; height:100%;
@@ -78,7 +82,6 @@ body.entered #mainVideo{opacity:1}
   filter:contrast(1.12) brightness(0.82) saturate(0.9);
 }
 
-/* suavização */
 .softOverlay{
   position:absolute; inset:0;
   z-index:2;
@@ -88,7 +91,6 @@ body.entered #mainVideo{opacity:1}
   backdrop-filter: blur(2px);
 }
 
-/* gif */
 #strike{
   opacity:0;
   z-index:3;
@@ -109,7 +111,6 @@ body.strikeOn #strike{opacity:0.95}
 
 .enterBox{ background:none; padding:0; }
 
-/* ENTER estilo logo (polido) */
 .title{
   font-family: "Cinzel", serif;
   font-weight:800;
@@ -119,10 +120,10 @@ body.strikeOn #strike{opacity:0.95}
 
   background: linear-gradient(
     to bottom,
-    #fff2de 0%,
+    var(--goldA) 0%,
     #f0cfa2 18%,
-    #d9a56a 45%,
-    #a8642c 68%,
+    var(--goldB) 45%,
+    var(--goldC) 68%,
     #f6d5a8 100%
   );
   -webkit-background-clip:text;
@@ -137,7 +138,6 @@ body.strikeOn #strike{opacity:0.95}
   animation:pulse 2.6s ease-in-out infinite;
 }
 
-/* aura atrás do texto */
 .title::after{
   content:"";
   position:absolute;
@@ -152,7 +152,6 @@ body.strikeOn #strike{opacity:0.95}
   opacity:0.85;
 }
 
-/* brilho passando (metal shine) */
 .title::before{
   content:"";
   position:absolute;
@@ -195,16 +194,155 @@ body.strikeOn #strike{opacity:0.95}
 }
 
 /* fade enter */
-body.strikeOn .introUI{
-  opacity:0;
-  transition:opacity 300ms ease;
-}
+body.strikeOn .introUI{ opacity:0; transition:opacity 300ms ease; }
 
 /* entrada some */
 body.entered #entry{
   opacity:0;
   pointer-events:none;
   transition:opacity 900ms ease;
+}
+
+/* ===== GRIMÓRIO DE VOLUME ===== */
+#grimoire{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:30;
+  user-select:none;
+}
+
+.grimoireBtn{
+  width:64px; height:64px;
+  border-radius:14px;
+  border:1px solid rgba(255,170,90,0.22);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,140,70,0.18), rgba(0,0,0,0.75)),
+    linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(0,0,0,0.55));
+  box-shadow:
+    0 18px 60px rgba(0,0,0,0.75),
+    0 0 30px rgba(255,140,70,0.18),
+    inset 0 0 18px rgba(255,140,70,0.12);
+  color:rgba(255,230,200,0.85);
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+}
+
+.grimoireBtn::after{
+  content:"";
+  position:absolute; inset:-40%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,140,70,0.18), transparent 60%);
+  filter:blur(18px);
+  opacity:0.8;
+}
+
+.grimoireIcon{
+  position:relative;
+  width:28px; height:28px;
+  z-index:2;
+}
+.grimoireIcon svg{ width:28px; height:28px; display:block; }
+
+.panel{
+  position:absolute;
+  right:0;
+  bottom:76px;
+  width:260px;
+  padding:14px 14px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,170,90,0.20);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,140,70,0.12), rgba(0,0,0,0.82)),
+    linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(0,0,0,0.55));
+  box-shadow:
+    0 28px 120px rgba(0,0,0,0.85),
+    inset 0 0 26px rgba(255,140,70,0.08);
+  transform-origin: 90% 100%;
+  transform: scale(0.92) translateY(8px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 180ms ease, transform 220ms ease;
+}
+
+#grimoire.open .panel{
+  opacity:1;
+  transform: scale(1) translateY(0);
+  pointer-events:auto;
+}
+
+.panelTitle{
+  font-family:"Cinzel",serif;
+  font-weight:800;
+  letter-spacing:4px;
+  font-size:12px;
+  color:rgba(255,220,190,0.85);
+  text-transform:uppercase;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+
+.muteBtn{
+  border:1px solid rgba(255,170,90,0.22);
+  background:rgba(0,0,0,0.35);
+  color:rgba(255,220,190,0.85);
+  border-radius:10px;
+  padding:6px 10px;
+  cursor:pointer;
+  font-size:11px;
+  letter-spacing:1px;
+}
+
+.row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.volValue{
+  min-width:44px;
+  text-align:right;
+  font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size:12px;
+  color:rgba(255,255,255,0.55);
+}
+
+/* Slider custom */
+#vol{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:10px;
+  border-radius:99px;
+  outline:none;
+  background:
+    linear-gradient(to right, rgba(255,140,70,0.9) var(--p,45%), rgba(255,255,255,0.10) var(--p,45%));
+  border:1px solid rgba(255,170,90,0.20);
+  box-shadow: inset 0 0 18px rgba(0,0,0,0.65);
+}
+
+#vol::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:18px; height:18px;
+  border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #fff2de, #d9a56a 55%, #8a4a1f);
+  border:1px solid rgba(0,0,0,0.55);
+  box-shadow: 0 0 18px rgba(255,140,70,0.35);
+  cursor:pointer;
+}
+#vol::-moz-range-thumb{
+  width:18px; height:18px;
+  border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #fff2de, #d9a56a 55%, #8a4a1f);
+  border:1px solid rgba(0,0,0,0.55);
+  box-shadow: 0 0 18px rgba(255,140,70,0.35);
+  cursor:pointer;
 }
 
 /* acessibilidade */
@@ -221,7 +359,7 @@ body.entered #entry{
   src="https://files.catbox.moe/klaol5.webm"
   playsinline preload="auto" loop></video>
 
-<!-- Áudio separado (o que você mandou) -->
+<!-- Áudio separado -->
 <audio id="bgAudio" src="https://files.catbox.moe/99fu05.m4a" preload="auto"></audio>
 
 <section id="entry" tabindex="0" aria-label="Entrada Shadow Fight 2">
@@ -231,10 +369,8 @@ body.entered #entry{
 
   <div class="stage">
     <div class="frameWrap">
-
       <img class="frame" src="https://files.catbox.moe/5yp48z.png" alt="Shadow Fight 2 Entry">
       <div class="softOverlay"></div>
-
       <img id="strike" class="frame" src="https://files.catbox.moe/er48bx.gif" alt="Golpe">
 
       <div class="introUI">
@@ -243,22 +379,51 @@ body.entered #entry{
           <div class="sub">clique para iniciar</div>
         </div>
       </div>
-
     </div>
   </div>
 
 </section>
+
+<!-- Grimório de volume -->
+<div id="grimoire" aria-label="Controle de volume">
+  <button class="grimoireBtn" id="grimBtn" aria-label="Abrir grimório de volume">
+    <span class="grimoireIcon" aria-hidden="true">
+      <!-- Ícone “grimório/selo” -->
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M6 4.8h9.2c1.6 0 2.8 1.2 2.8 2.8v11.6c0 .6-.4 1-1 1H6.8c-1.6 0-2.8-1.2-2.8-2.8V6.8c0-1.1.9-2 2-2Z" stroke="rgba(255,220,190,0.85)" stroke-width="1.4"/>
+        <path d="M7.2 8.2h7.6M7.2 11.4h7.6M7.2 14.6h5.6" stroke="rgba(255,220,190,0.55)" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M18 7.2c-1.2.2-2.1.6-2.8 1.4" stroke="rgba(255,140,70,0.55)" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </span>
+  </button>
+
+  <div class="panel" role="dialog" aria-label="Grimório do Som">
+    <div class="panelTitle">
+      <span>GRIMÓRIO DO SOM</span>
+      <button class="muteBtn" id="muteBtn" type="button">MUTE</button>
+    </div>
+
+    <div class="row">
+      <input id="vol" type="range" min="0" max="100" value="45" />
+      <div class="volValue" id="volValue">45%</div>
+    </div>
+  </div>
+</div>
 
 <script>
 const entry = document.getElementById("entry");
 const mainVideo = document.getElementById("mainVideo");
 const bgAudio = document.getElementById("bgAudio");
 
-/* ===== CINZAS VULCÂNICAS ===== */
+/* ===== VOLUME PADRÃO 45% ===== */
+let currentVol = 0.45;
+bgAudio.volume = currentVol;
+
+/* ===== CINZAS ===== */
 const canvas = document.getElementById("ashCanvas");
 const ctx = canvas.getContext("2d");
-
 let DPR=1, W=0, H=0;
+
 function resize(){
   DPR = devicePixelRatio || 1;
   canvas.width = Math.floor(innerWidth * DPR);
@@ -286,7 +451,6 @@ for(let i=0;i<ASH_N;i++){
 
 function drawAsh(){
   ctx.clearRect(0,0,W,H);
-
   for(const p of ash){
     p.y -= p.v;
     p.x += p.drift;
@@ -295,18 +459,17 @@ function drawAsh(){
     if(p.x < -12) p.x = W + 12;
     if(p.x > W + 12) p.x = -12;
 
-    const a = 0.12 + p.tw*0.18;
+    const a = 0.10 + p.tw*0.16;
     ctx.beginPath();
-    ctx.fillStyle = `rgba(200,200,200,${a})`;
+    ctx.fillStyle = `rgba(205,205,205,${a})`;
     ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
     ctx.fill();
   }
-
   requestAnimationFrame(drawAsh);
 }
 drawAsh();
 
-/* ===== CLICK ===== */
+/* ===== CLICK ENTER ===== */
 let started=false;
 
 async function start(){
@@ -316,19 +479,17 @@ async function start(){
   // golpe (gif)
   document.body.classList.add("strikeOn");
 
-  // Áudio separado (garante o som mesmo se o webm vier mudo)
+  // audio separado
   try{
     bgAudio.currentTime = 0;
-    bgAudio.volume = 1;
+    bgAudio.volume = currentVol;
     await bgAudio.play();
-  }catch(e){
-    // se bloquear, ainda seguimos com o vídeo
-  }
+  }catch(e){}
 
-  // vídeo entra depois do impacto
+  // vídeo entra depois do impacto (mudo pra não conflitar)
   setTimeout(async ()=>{
     try{
-      mainVideo.muted = true; // evita conflito de áudio (som vem do .m4a)
+      mainVideo.muted = true;
       mainVideo.volume = 0;
       await mainVideo.play();
     }catch(e){}
@@ -339,6 +500,56 @@ async function start(){
 entry.addEventListener("pointerdown", start);
 entry.addEventListener("keydown", (e)=>{
   if(e.key==="Enter" || e.key===" "){ e.preventDefault(); start(); }
+});
+
+/* ===== GRIMÓRIO DE VOLUME ===== */
+const grimoire = document.getElementById("grimoire");
+const grimBtn = document.getElementById("grimBtn");
+const vol = document.getElementById("vol");
+const volValue = document.getElementById("volValue");
+const muteBtn = document.getElementById("muteBtn");
+
+function setSliderVisual(v){
+  vol.style.setProperty("--p", `${v}%`);
+  volValue.textContent = `${v}%`;
+}
+
+setSliderVisual(45);
+
+grimBtn.addEventListener("click",(e)=>{
+  e.stopPropagation();
+  grimoire.classList.toggle("open");
+});
+
+document.addEventListener("click",(e)=>{
+  // fecha se clicar fora
+  if(!grimoire.contains(e.target)) grimoire.classList.remove("open");
+});
+
+vol.addEventListener("input", ()=>{
+  const v = Number(vol.value);
+  setSliderVisual(v);
+
+  currentVol = v/100;
+  bgAudio.volume = currentVol;
+
+  // se estava mutado e mexeu no slider, desmuta
+  if(bgAudio.muted) bgAudio.muted = false;
+  muteBtn.textContent = (bgAudio.muted || currentVol === 0) ? "UNMUTE" : "MUTE";
+});
+
+muteBtn.addEventListener("click", ()=>{
+  // mute alterna
+  bgAudio.muted = !bgAudio.muted;
+  muteBtn.textContent = bgAudio.muted ? "UNMUTE" : "MUTE";
+});
+
+/* opcional: tecla M para mutar */
+document.addEventListener("keydown",(e)=>{
+  if(e.key.toLowerCase() === "m"){
+    bgAudio.muted = !bgAudio.muted;
+    muteBtn.textContent = bgAudio.muted ? "UNMUTE" : "MUTE";
+  }
 });
 </script>
 
