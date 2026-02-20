@@ -183,10 +183,10 @@ body.entered #entry{
   transition:opacity 900ms ease;
 }
 
-/* ===== VOLUME ===== */
+/* ===== VOLUME (top-left) ===== */
 #grimoire{ position:fixed; left:14px; top:14px; z-index:60; user-select:none; }
 .grimoireBtn{
-  width:46px; height:46px;
+  width:44px; height:44px;           /* menor */
   border-radius:12px;
   border:1px solid rgba(255,170,90,0.18);
   background:
@@ -202,13 +202,13 @@ body.entered #entry{
   transition:transform .2s ease;
 }
 .grimoireBtn:hover{ transform:scale(1.05); }
-.grimoireIcon{ width:22px; height:22px; }
+.grimoireIcon{ width:21px; height:21px; }
 .grimoireIcon svg{ width:100%; height:100%; display:block; }
 .panel{
   position:absolute;
   left:0;
-  top:58px;
-  width:210px;
+  top:54px;
+  width:200px;                       /* menor */
   padding:10px;
   border-radius:12px;
   border:1px solid rgba(255,170,90,0.18);
@@ -241,7 +241,7 @@ body.entered #entry{
   border-radius:99px;
   outline:none;
   background:
-    linear-gradient(to right, rgba(255,140,70,0.9) var(--p,25%), rgba(255,255,255,0.10) var(--p,25%));
+    linear-gradient(to right, rgba(255,140,70,0.9) var(--p,10%), rgba(255,255,255,0.10) var(--p,10%));
   border:1px solid rgba(255,170,90,0.16);
   box-shadow: inset 0 0 18px rgba(0,0,0,0.65);
 }
@@ -264,13 +264,14 @@ body.entered #entry{
   cursor:pointer;
 }
 
-/* ===== BOTÃO DO PERGAMINHO ===== */
+/* ===== BOTÃO DO PERGAMINHO (top-center) ===== */
 #scrollBtn{
   position:fixed;
-  left:14px;
-  top:68px;
+  left:50%;
+  top:14px;
+  transform:translateX(-50%);
   z-index:60;
-  width:46px;height:46px;
+  width:44px;height:44px;
   border-radius:12px;
   border:1px solid rgba(255,170,90,0.18);
   background:
@@ -287,7 +288,7 @@ body.entered #entry{
   pointer-events:none;
 }
 body.entered #scrollBtn{ opacity:1; pointer-events:auto; }
-#scrollBtn:hover{ transform:scale(1.05); }
+#scrollBtn:hover{ transform:translateX(-50%) scale(1.05); }
 #scrollBtn svg{ width:22px;height:22px; opacity:.9; }
 
 /* ===== OVERLAY DO PERGAMINHO ===== */
@@ -318,32 +319,23 @@ body.scrollOpen .scroll{
   pointer-events:auto;
 }
 
-/* ===== PERGAMINHO MAIS VELHO/QUEIMADO ===== */
+/* ===== PERGAMINHO (mesma vibe, mas com área segura) ===== */
 .scrollPaper{
   position:absolute; inset:0;
   border-radius:18px;
-
-  /* base envelhecida + manchas */
   background:
-    /* queimado nas bordas */
     radial-gradient(circle at 10% 10%, rgba(90,35,10,0.40), transparent 42%),
     radial-gradient(circle at 92% 14%, rgba(80,28,8,0.38), transparent 46%),
     radial-gradient(circle at 18% 92%, rgba(80,28,8,0.34), transparent 48%),
     radial-gradient(circle at 90% 90%, rgba(80,28,8,0.36), transparent 50%),
-
-    /* manchas / sujeira */
     radial-gradient(circle at 28% 38%, rgba(0,0,0,0.08), transparent 38%),
     radial-gradient(circle at 70% 62%, rgba(0,0,0,0.07), transparent 42%),
     radial-gradient(circle at 55% 28%, rgba(0,0,0,0.06), transparent 44%),
-
-    /* textura “fibra” */
     repeating-linear-gradient(12deg,
       rgba(0,0,0,0.03) 0px,
       rgba(0,0,0,0.03) 2px,
       rgba(255,255,255,0.02) 3px,
       rgba(255,255,255,0.02) 5px),
-
-    /* base do papel */
     linear-gradient(0deg, #cdb081, #eedcb6 22%, #e6cc9f 58%, #c7a572);
 
   box-shadow:
@@ -354,8 +346,6 @@ body.scrollOpen .scroll{
   filter:contrast(1.06) saturate(0.92);
   overflow:hidden;
 }
-
-/* vinheta interna pra “papel gasto” */
 .scrollPaper::after{
   content:"";
   position:absolute; inset:0;
@@ -366,8 +356,6 @@ body.scrollOpen .scroll{
   mix-blend-mode:multiply;
   opacity:.95;
 }
-
-/* máscara rasgada */
 .scrollMask{
   position:absolute; inset:0;
   clip-path: polygon(
@@ -378,10 +366,10 @@ body.scrollOpen .scroll{
   );
 }
 
-/* conteúdo */
+/* MAIS PADDING (pra não cortar TITAN e FECHAR) */
 .scrollInner{
   position:absolute; inset:0;
-  padding:22px 22px 16px;
+  padding:26px 30px 18px; /* ↑↑ */
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   color:rgba(25,15,5,0.90);
 }
@@ -392,6 +380,7 @@ body.scrollOpen .scroll{
   justify-content:space-between;
   gap:12px;
   margin-bottom:10px;
+  padding-right:6px; /* área segura pro carimbo */
 }
 
 .scrollTitle{
@@ -404,7 +393,6 @@ body.scrollOpen .scroll{
   text-shadow:0 1px 0 rgba(255,255,255,0.25);
 }
 
-/* FECHAR “carimbado” (sem fundo) */
 .scrollClose{
   border:none;
   background:transparent;
@@ -415,15 +403,11 @@ body.scrollOpen .scroll{
   letter-spacing:2px;
   text-transform:uppercase;
   font-size:12px;
-
   color:rgba(45,24,10,0.55);
   text-shadow: 0 1px 0 rgba(255,255,255,0.25);
-
-  /* aparência de carimbo */
   outline: 2px solid rgba(45,24,10,0.28);
   outline-offset: -2px;
   border-radius:10px;
-
   box-shadow:
     0 0 0 1px rgba(0,0,0,0.08) inset,
     0 1px 0 rgba(255,255,255,0.18);
@@ -443,8 +427,6 @@ body.scrollOpen .scroll{
   gap:10px;
   overflow:hidden;
 }
-
-/* área de texto (rola) */
 .scrollLog{
   flex:1;
   overflow:auto;
@@ -452,8 +434,6 @@ body.scrollOpen .scroll{
   line-height:1.45;
   font-size:13px;
 }
-
-/* input “terminal” */
 .scrollInputBar{
   display:flex;
   align-items:center;
@@ -463,14 +443,12 @@ body.scrollOpen .scroll{
   background:rgba(0,0,0,0.08);
   border:1px solid rgba(0,0,0,0.16);
 }
-
 .prompt{
   font-family:inherit;
   font-weight:900;
   color:rgba(20,10,0,0.85);
   letter-spacing:1px;
 }
-
 #cmdInput{
   flex:1;
   border:none;
@@ -483,8 +461,6 @@ body.scrollOpen .scroll{
 #cmdInput::placeholder{
   color:rgba(20,10,0,0.45);
 }
-
-/* linhas */
 .typeLine{ margin:0 0 8px 0; white-space:pre-wrap; }
 .cursor{
   display:inline-block;
@@ -512,7 +488,6 @@ body.scrollOpen .scroll{
   color:rgba(60,28,8,0.78);
 }
 
-/* animação desenrolar */
 body.scrollOpen .scrollPaper{
   animation:unroll 520ms cubic-bezier(.12,.92,.12,1) both;
 }
@@ -570,8 +545,8 @@ body.scrollOpen .scrollPaper{
 
   <div class="panel">
     <div class="row">
-      <input id="vol" type="range" min="0" max="100" value="25" />
-      <div class="volValue" id="volValue">25%</div>
+      <input id="vol" type="range" min="0" max="100" value="10" />
+      <div class="volValue" id="volValue">10%</div>
     </div>
   </div>
 </div>
@@ -599,14 +574,14 @@ body.scrollOpen .scrollPaper{
 
           <div class="scrollBody">
             <div class="scrollLog" id="scrollLog">
-              <!-- linhas digitadas entram aqui -->
               <div class="typeLine" id="typeLine"></div><span class="cursor" id="cursor"></span>
               <div id="out"></div>
             </div>
 
             <div class="scrollInputBar">
               <div class="prompt">&gt;</div>
-              <input id="cmdInput" autocomplete="off" spellcheck="false" placeholder="digite um comando (ex: hub, arquivo, lore, ajuda) e ENTER">
+              <input id="cmdInput" autocomplete="off" spellcheck="false"
+                     placeholder="digite um comando (ex: hub, arquivo, lore, ajuda) e ENTER">
             </div>
           </div>
 
@@ -621,8 +596,8 @@ const entry = document.getElementById("entry");
 const mainVideo = document.getElementById("mainVideo");
 const bgAudio = document.getElementById("bgAudio");
 
-/* ===== VOLUME PADRÃO 25% ===== */
-let currentVol = 0.25;
+/* ===== VOLUME PADRÃO 10% ===== */
+let currentVol = 0.10;
 bgAudio.volume = currentVol;
 
 /* ===== CINZAS ===== */
@@ -636,7 +611,7 @@ function resize(){
   canvas.height = Math.floor(innerHeight * DPR);
   canvas.style.width = innerWidth + "px";
   canvas.style.height = innerHeight + "px";
-  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.setTransform(1,0,0,1,0,0);
   W = innerWidth; H = innerHeight;
 }
 resize();
@@ -709,7 +684,7 @@ function setSliderVisual(v){
   vol.style.setProperty("--p", `${v}%`);
   volValue.textContent = `${v}%`;
 }
-setSliderVisual(25);
+setSliderVisual(10);
 
 grimBtn.addEventListener("click",(e)=>{
   e.stopPropagation();
@@ -782,8 +757,29 @@ document.addEventListener("keydown",(e)=>{
 });
 
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-function scrollToBottom(){
-  scrollLog.scrollTop = scrollLog.scrollHeight;
+function scrollToBottom(){ scrollLog.scrollTop = scrollLog.scrollHeight; }
+
+function writeOut(html){
+  const line = document.createElement("div");
+  line.className = "outputLine";
+  line.innerHTML = html;
+  out.appendChild(line);
+  scrollToBottom();
+}
+
+/* ===== NÃO TRAVA O CHAT: se o user digitar, finaliza a lore na hora ===== */
+function finishTypingNow(){
+  typing = false;
+  cursor.style.display = "none";
+
+  // Renderiza tudo de uma vez (se ainda não foi)
+  typeLine.innerHTML = loreLines.map(l => `<div class="typeLine">${l}</div>`).join("");
+
+  // Se ainda não tiver a dica, coloca
+  const hasHint = out.textContent.includes("Digite ajuda");
+  if(!hasHint){
+    writeOut(`<span class="sys">SISTEMA:</span> Digite <b>ajuda</b> para ver comandos.`);
+  }
 }
 
 async function startTyping(){
@@ -796,6 +792,8 @@ async function startTyping(){
   cursor.style.display = "inline-block";
 
   for(let i=0; i<loreLines.length; i++){
+    if(!typing) break;
+
     const plain = loreLines[i].replace(/<[^>]*>/g, "");
     const holder = document.createElement("div");
     holder.className = "typeLine";
@@ -803,65 +801,59 @@ async function startTyping(){
 
     let acc = "";
     for(let c=0; c<plain.length; c++){
+      if(!typing) break;
       acc += plain[c];
       holder.textContent = acc;
       scrollToBottom();
       await sleep(12 + Math.random()*18);
     }
+    if(!typing) break;
+
     holder.innerHTML = loreLines[i];
     scrollToBottom();
-    await sleep(260 + Math.random()*240);
+    await sleep(220 + Math.random()*220);
   }
 
-  cursor.style.display = "none";
-  typing = false;
-  scrollToBottom();
-
-  // sugestão inicial no output
-  writeOut(`<span class="sys">SISTEMA:</span> Digite <b>ajuda</b> para ver comandos.`);
+  if(typing){
+    typing = false;
+    cursor.style.display = "none";
+    scrollToBottom();
+    writeOut(`<span class="sys">SISTEMA:</span> Digite <b>ajuda</b> para ver comandos.`);
+  }else{
+    // já foi finalizado manualmente
+    scrollToBottom();
+  }
 }
 
-function writeOut(html){
-  const line = document.createElement("div");
-  line.className = "outputLine";
-  line.innerHTML = html;
-  out.appendChild(line);
-  scrollToBottom();
-}
-
-/* comandos via digitação */
 cmdInput.addEventListener("keydown", (e)=>{
   if(e.key !== "Enter") return;
   const raw = cmdInput.value.trim();
   if(!raw) return;
   cmdInput.value = "";
 
-  // eco do comando
-  writeOut(`<span class="sys">VOCÊ:</span> ${escapeHtml(raw)}`);
+  // Se ainda tá digitando lore, não trava: corta e libera
+  if(typing) finishTypingNow();
 
+  writeOut(`<span class="sys">VOCÊ:</span> ${escapeHtml(raw)}`);
   const cmd = raw.toLowerCase();
 
   if(cmd === "ajuda" || cmd === "help" || cmd === "?"){
     writeOut(`<span class="sys">COMANDOS:</span> <b>hub</b>, <b>arquivo</b>, <b>lore</b>, <b>fechar</b>`);
     return;
   }
-
   if(cmd === "fechar" || cmd === "close" || cmd === "exit"){
     writeOut(`<span class="sys">SISTEMA:</span> Pergaminho selado.`);
     setTimeout(closeScroll, 250);
     return;
   }
-
   if(cmd === "hub"){
     writeOut(`<span class="sys">SISTEMA:</span> (placeholder) Abrindo HUB...`);
     return;
   }
-
   if(cmd === "arquivo" || cmd === "archive"){
     writeOut(`<span class="sys">SISTEMA:</span> (placeholder) Abrindo ARQUIVO...`);
     return;
   }
-
   if(cmd === "lore"){
     writeOut(`<span class="sys">SISTEMA:</span> Você já ouviu as vozes... agora escolha um caminho.`);
     return;
@@ -871,7 +863,11 @@ cmdInput.addEventListener("keydown", (e)=>{
 });
 
 function escapeHtml(s){
-  return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  return s.replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#039;");
 }
 </script>
 
