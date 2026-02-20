@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Shadow Fight 2 — Entry</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cormorant+Garamond:wght@500;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -164,16 +164,45 @@ body.strikeOn #strike{opacity:0.95}
   65%{ opacity:0.55; }
   100%{ transform:translateX(70%); opacity:0.0; }
 }
+
 .sub{
-  margin-top:10px;
+  margin-top:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
   font-size:10px;
-  letter-spacing:5px;
-  color:rgba(255,255,255,0.35);
+  letter-spacing:4px;
+  color:rgba(255,255,255,0.42);
   text-transform:uppercase;
   animation:blink 1.2s steps(2,end) infinite;
 }
+
+.kbdEnter{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 10px;
+  border-radius:10px;
+  border:1px solid rgba(255,170,90,0.22);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,140,70,0.10), rgba(0,0,0,0.72));
+  box-shadow:
+    inset 0 0 14px rgba(255,140,70,0.08),
+    0 10px 40px rgba(0,0,0,0.55);
+  color:rgba(255,220,190,0.80);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size:11px;
+  letter-spacing:1px;
+}
+.kbdEnter svg{
+  width:14px;height:14px;
+  margin-left:7px;
+  opacity:0.9;
+}
+
 @keyframes pulse{ 0%,100%{transform:translateY(0);opacity:.88} 50%{transform:translateY(-3px);opacity:1} }
-@keyframes blink{ 0%,49%{opacity:.18} 50%,100%{opacity:.55} }
+@keyframes blink{ 0%,49%{opacity:.22} 50%,100%{opacity:.62} }
 
 body.strikeOn .introUI{ opacity:0; transition:opacity 300ms ease; }
 
@@ -186,7 +215,7 @@ body.entered #entry{
 /* ===== VOLUME (top-left) ===== */
 #grimoire{ position:fixed; left:14px; top:14px; z-index:60; user-select:none; }
 .grimoireBtn{
-  width:44px; height:44px;           /* menor */
+  width:44px; height:44px;
   border-radius:12px;
   border:1px solid rgba(255,170,90,0.18);
   background:
@@ -208,7 +237,7 @@ body.entered #entry{
   position:absolute;
   left:0;
   top:54px;
-  width:200px;                       /* menor */
+  width:200px;
   padding:10px;
   border-radius:12px;
   border:1px solid rgba(255,170,90,0.18);
@@ -241,7 +270,7 @@ body.entered #entry{
   border-radius:99px;
   outline:none;
   background:
-    linear-gradient(to right, rgba(255,140,70,0.9) var(--p,10%), rgba(255,255,255,0.10) var(--p,10%));
+    linear-gradient(to right, rgba(255,140,70,0.9) var(--p,8%), rgba(255,255,255,0.10) var(--p,8%));
   border:1px solid rgba(255,170,90,0.16);
   box-shadow: inset 0 0 18px rgba(0,0,0,0.65);
 }
@@ -319,7 +348,7 @@ body.scrollOpen .scroll{
   pointer-events:auto;
 }
 
-/* ===== PERGAMINHO (mesma vibe, mas com área segura) ===== */
+/* ===== PERGAMINHO ===== */
 .scrollPaper{
   position:absolute; inset:0;
   border-radius:18px;
@@ -366,12 +395,13 @@ body.scrollOpen .scroll{
   );
 }
 
-/* MAIS PADDING (pra não cortar TITAN e FECHAR) */
+/* ===== AQUI: FONTES MAIS "PERGAMINHO" ===== */
 .scrollInner{
   position:absolute; inset:0;
-  padding:26px 30px 18px; /* ↑↑ */
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  color:rgba(25,15,5,0.90);
+  padding:26px 30px 18px;
+  font-family: "Cormorant Garamond", serif;
+  color:rgba(35,18,8,0.90);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.18);
 }
 
 .scrollTop{
@@ -380,9 +410,8 @@ body.scrollOpen .scroll{
   justify-content:space-between;
   gap:12px;
   margin-bottom:10px;
-  padding-right:6px; /* área segura pro carimbo */
+  padding-right:6px;
 }
-
 .scrollTitle{
   font-family:"Cinzel", serif;
   font-weight:800;
@@ -427,24 +456,45 @@ body.scrollOpen .scroll{
   gap:10px;
   overflow:hidden;
 }
+
+/* log com cara de escrita no papel */
 .scrollLog{
   flex:1;
   overflow:auto;
   padding-right:10px;
-  line-height:1.45;
-  font-size:13px;
+  line-height:1.55;
+  font-size:16px;
+  letter-spacing:0.2px;
+  color:rgba(35,18,8,0.90);
+  filter: contrast(1.02);
 }
+
+/* nomes mais "tinta" */
+.scrollLog .who{
+  font-family:"IM Fell English", serif;
+  font-weight:400;
+  font-style:italic;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:rgba(60,28,10,0.86);
+  margin-right:6px;
+}
+.scrollLog .mestre{ color:rgba(70,34,12,0.86); }
+.scrollLog .shadow{ color:rgba(20,20,20,0.92); }
+.scrollLog .titan{ color:rgba(55,25,10,0.86); }
+
+/* input bar continua terminalzinho, mas encaixado no pergaminho */
 .scrollInputBar{
   display:flex;
   align-items:center;
   gap:10px;
   padding:10px 12px;
   border-radius:12px;
-  background:rgba(0,0,0,0.08);
-  border:1px solid rgba(0,0,0,0.16);
+  background:rgba(0,0,0,0.07);
+  border:1px solid rgba(0,0,0,0.14);
 }
 .prompt{
-  font-family:inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-weight:900;
   color:rgba(20,10,0,0.85);
   letter-spacing:1px;
@@ -454,38 +504,36 @@ body.scrollOpen .scroll{
   border:none;
   outline:none;
   background:transparent;
-  font-family:inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size:13px;
   color:rgba(20,10,0,0.92);
 }
 #cmdInput::placeholder{
   color:rgba(20,10,0,0.45);
 }
-.typeLine{ margin:0 0 8px 0; white-space:pre-wrap; }
+
+.typeLine{ margin:0 0 10px 0; white-space:pre-wrap; }
 .cursor{
   display:inline-block;
   width:10px;
-  height:14px;
-  transform:translateY(2px);
-  background:rgba(20,10,0,0.75);
+  height:16px;
+  transform:translateY(3px);
+  background:rgba(20,10,0,0.62);
   margin-left:4px;
   animation:cur 0.8s steps(1,end) infinite;
 }
 @keyframes cur{ 0%,49%{opacity:0} 50%,100%{opacity:1} }
 
-.scrollLog .who{ font-weight:900; letter-spacing:1px; }
-.scrollLog .mestre{ color:#4b2c14; }
-.scrollLog .shadow{ color:#171717; }
-.scrollLog .titan{ color:#2b1a10; }
-
 .outputLine{
-  margin:0 0 8px 0;
+  margin:0 0 10px 0;
   color:rgba(20,10,0,0.92);
+  font-size:15px;
 }
 .outputLine .sys{
-  font-weight:900;
-  letter-spacing:1px;
-  color:rgba(60,28,8,0.78);
+  font-family:"IM Fell English", serif;
+  font-style:italic;
+  letter-spacing:0.6px;
+  color:rgba(60,28,8,0.74);
 }
 
 body.scrollOpen .scrollPaper{
@@ -525,7 +573,16 @@ body.scrollOpen .scrollPaper{
       <div class="introUI">
         <div>
           <div class="title">ENTER</div>
-          <div class="sub">clique para iniciar</div>
+          <div class="sub">
+            pressione <span class="kbdEnter">ENTER
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M8 7v5h10" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M14 9l4 3-4 3" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8 12H6" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </span>
+            / clique
+          </div>
         </div>
       </div>
     </div>
@@ -545,8 +602,8 @@ body.scrollOpen .scrollPaper{
 
   <div class="panel">
     <div class="row">
-      <input id="vol" type="range" min="0" max="100" value="10" />
-      <div class="volValue" id="volValue">10%</div>
+      <input id="vol" type="range" min="0" max="100" value="8" />
+      <div class="volValue" id="volValue">8%</div>
     </div>
   </div>
 </div>
@@ -596,22 +653,18 @@ const entry = document.getElementById("entry");
 const mainVideo = document.getElementById("mainVideo");
 const bgAudio = document.getElementById("bgAudio");
 
-/* ===== VOLUME PADRÃO 10% ===== */
-let currentVol = 0.10;
+/* ===== VOLUME PADRÃO 8% ===== */
+let currentVol = 0.08;
 bgAudio.volume = currentVol;
 
 /* ===== CINZAS ===== */
 const canvas = document.getElementById("ashCanvas");
 const ctx = canvas.getContext("2d");
-let DPR=1, W=0, H=0;
+let W=0, H=0;
 
 function resize(){
-  DPR = devicePixelRatio || 1;
-  canvas.width = Math.floor(innerWidth * DPR);
-  canvas.height = Math.floor(innerHeight * DPR);
-  canvas.style.width = innerWidth + "px";
-  canvas.style.height = innerHeight + "px";
-  ctx.setTransform(1,0,0,1,0,0);
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
   W = innerWidth; H = innerHeight;
 }
 resize();
@@ -647,7 +700,7 @@ function drawAsh(){
 }
 drawAsh();
 
-/* ===== CLICK ENTER ===== */
+/* ===== CLICK / ENTER ===== */
 let started=false;
 async function start(){
   if(started) return;
@@ -684,7 +737,7 @@ function setSliderVisual(v){
   vol.style.setProperty("--p", `${v}%`);
   volValue.textContent = `${v}%`;
 }
-setSliderVisual(10);
+setSliderVisual(8);
 
 grimBtn.addEventListener("click",(e)=>{
   e.stopPropagation();
@@ -767,15 +820,10 @@ function writeOut(html){
   scrollToBottom();
 }
 
-/* ===== NÃO TRAVA O CHAT: se o user digitar, finaliza a lore na hora ===== */
 function finishTypingNow(){
   typing = false;
   cursor.style.display = "none";
-
-  // Renderiza tudo de uma vez (se ainda não foi)
   typeLine.innerHTML = loreLines.map(l => `<div class="typeLine">${l}</div>`).join("");
-
-  // Se ainda não tiver a dica, coloca
   const hasHint = out.textContent.includes("Digite ajuda");
   if(!hasHint){
     writeOut(`<span class="sys">SISTEMA:</span> Digite <b>ajuda</b> para ver comandos.`);
@@ -820,7 +868,6 @@ async function startTyping(){
     scrollToBottom();
     writeOut(`<span class="sys">SISTEMA:</span> Digite <b>ajuda</b> para ver comandos.`);
   }else{
-    // já foi finalizado manualmente
     scrollToBottom();
   }
 }
@@ -831,7 +878,6 @@ cmdInput.addEventListener("keydown", (e)=>{
   if(!raw) return;
   cmdInput.value = "";
 
-  // Se ainda tá digitando lore, não trava: corta e libera
   if(typing) finishTypingNow();
 
   writeOut(`<span class="sys">VOCÊ:</span> ${escapeHtml(raw)}`);
