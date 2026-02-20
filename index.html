@@ -109,8 +109,6 @@ body.strikeOn #strike{opacity:0.95}
   pointer-events:none;
 }
 
-.enterBox{ background:none; padding:0; }
-
 .title{
   font-family: "Cinzel", serif;
   font-weight:800;
@@ -203,17 +201,17 @@ body.entered #entry{
   transition:opacity 900ms ease;
 }
 
-/* ===== GRIMÓRIO DE VOLUME ===== */
+/* ===== VOLUME (CANTO SUPERIOR ESQUERDO) ===== */
 #grimoire{
   position:fixed;
-  right:18px;
-  bottom:18px;
+  left:18px;
+  top:18px;
   z-index:30;
   user-select:none;
 }
 
 .grimoireBtn{
-  width:64px; height:64px;
+  width:58px; height:58px;
   border-radius:14px;
   border:1px solid rgba(255,170,90,0.22);
   background:
@@ -223,36 +221,24 @@ body.entered #entry{
     0 18px 60px rgba(0,0,0,0.75),
     0 0 30px rgba(255,140,70,0.18),
     inset 0 0 18px rgba(255,140,70,0.12);
-  color:rgba(255,230,200,0.85);
   display:grid;
   place-items:center;
   cursor:pointer;
   position:relative;
   overflow:hidden;
+  transition:transform .2s ease;
 }
+.grimoireBtn:hover{ transform:scale(1.05); }
 
-.grimoireBtn::after{
-  content:"";
-  position:absolute; inset:-40%;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(255,140,70,0.18), transparent 60%);
-  filter:blur(18px);
-  opacity:0.8;
-}
-
-.grimoireIcon{
-  position:relative;
-  width:28px; height:28px;
-  z-index:2;
-}
-.grimoireIcon svg{ width:28px; height:28px; display:block; }
+.grimoireIcon{ width:26px; height:26px; }
+.grimoireIcon svg{ width:100%; height:100%; display:block; }
 
 .panel{
   position:absolute;
-  right:0;
-  bottom:76px;
-  width:260px;
-  padding:14px 14px 12px;
+  left:0;
+  top:70px;
+  width:240px;
+  padding:12px;
   border-radius:14px;
   border:1px solid rgba(255,170,90,0.20);
   background:
@@ -261,48 +247,19 @@ body.entered #entry{
   box-shadow:
     0 28px 120px rgba(0,0,0,0.85),
     inset 0 0 26px rgba(255,140,70,0.08);
-  transform-origin: 90% 100%;
+  transform-origin: 0% 0%;
   transform: scale(0.92) translateY(8px);
   opacity:0;
   pointer-events:none;
   transition:opacity 180ms ease, transform 220ms ease;
 }
-
 #grimoire.open .panel{
   opacity:1;
   transform: scale(1) translateY(0);
   pointer-events:auto;
 }
 
-.panelTitle{
-  font-family:"Cinzel",serif;
-  font-weight:800;
-  letter-spacing:4px;
-  font-size:12px;
-  color:rgba(255,220,190,0.85);
-  text-transform:uppercase;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:10px;
-}
-
-.muteBtn{
-  border:1px solid rgba(255,170,90,0.22);
-  background:rgba(0,0,0,0.35);
-  color:rgba(255,220,190,0.85);
-  border-radius:10px;
-  padding:6px 10px;
-  cursor:pointer;
-  font-size:11px;
-  letter-spacing:1px;
-}
-
-.row{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+.row{ display:flex; align-items:center; gap:10px; }
 
 .volValue{
   min-width:44px;
@@ -345,7 +302,6 @@ body.entered #entry{
   cursor:pointer;
 }
 
-/* acessibilidade */
 @media (prefers-reduced-motion: reduce){
   .title, .sub{ animation:none; }
   .title::before{ display:none; }
@@ -359,7 +315,6 @@ body.entered #entry{
   src="https://files.catbox.moe/klaol5.webm"
   playsinline preload="auto" loop></video>
 
-<!-- Áudio separado -->
 <audio id="bgAudio" src="https://files.catbox.moe/99fu05.m4a" preload="auto"></audio>
 
 <section id="entry" tabindex="0" aria-label="Entrada Shadow Fight 2">
@@ -374,7 +329,7 @@ body.entered #entry{
       <img id="strike" class="frame" src="https://files.catbox.moe/er48bx.gif" alt="Golpe">
 
       <div class="introUI">
-        <div class="enterBox">
+        <div>
           <div class="title">ENTER</div>
           <div class="sub">clique para iniciar</div>
         </div>
@@ -384,25 +339,27 @@ body.entered #entry{
 
 </section>
 
-<!-- Grimório de volume -->
+<!-- Botão/Slider de Volume -->
 <div id="grimoire" aria-label="Controle de volume">
-  <button class="grimoireBtn" id="grimBtn" aria-label="Abrir grimório de volume">
+  <button class="grimoireBtn" id="grimBtn" aria-label="Abrir controle de volume">
     <span class="grimoireIcon" aria-hidden="true">
-      <!-- Ícone “grimório/selo” -->
+      <!-- Ícone alto-falante -->
       <svg viewBox="0 0 24 24" fill="none">
-        <path d="M6 4.8h9.2c1.6 0 2.8 1.2 2.8 2.8v11.6c0 .6-.4 1-1 1H6.8c-1.6 0-2.8-1.2-2.8-2.8V6.8c0-1.1.9-2 2-2Z" stroke="rgba(255,220,190,0.85)" stroke-width="1.4"/>
-        <path d="M7.2 8.2h7.6M7.2 11.4h7.6M7.2 14.6h5.6" stroke="rgba(255,220,190,0.55)" stroke-width="1.2" stroke-linecap="round"/>
-        <path d="M18 7.2c-1.2.2-2.1.6-2.8 1.4" stroke="rgba(255,140,70,0.55)" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M4 10v4h4l5 4V6L8 10H4Z"
+              fill="rgba(255,220,190,0.85)"/>
+        <path d="M16 9c1 .8 1.5 1.8 1.5 3s-.5 2.2-1.5 3"
+              stroke="rgba(255,140,70,0.85)"
+              stroke-width="1.6"
+              stroke-linecap="round"/>
+        <path d="M18.5 7.5c1.6 1.5 2.5 3 2.5 4.5s-.9 3-2.5 4.5"
+              stroke="rgba(255,140,70,0.55)"
+              stroke-width="1.4"
+              stroke-linecap="round"/>
       </svg>
     </span>
   </button>
 
-  <div class="panel" role="dialog" aria-label="Grimório do Som">
-    <div class="panelTitle">
-      <span>GRIMÓRIO DO SOM</span>
-      <button class="muteBtn" id="muteBtn" type="button">MUTE</button>
-    </div>
-
+  <div class="panel">
     <div class="row">
       <input id="vol" type="range" min="0" max="100" value="45" />
       <div class="volValue" id="volValue">45%</div>
@@ -476,10 +433,9 @@ async function start(){
   if(started) return;
   started=true;
 
-  // golpe (gif)
   document.body.classList.add("strikeOn");
 
-  // audio separado
+  // toca áudio no clique (gesto)
   try{
     bgAudio.currentTime = 0;
     bgAudio.volume = currentVol;
@@ -502,18 +458,16 @@ entry.addEventListener("keydown", (e)=>{
   if(e.key==="Enter" || e.key===" "){ e.preventDefault(); start(); }
 });
 
-/* ===== GRIMÓRIO DE VOLUME ===== */
+/* ===== CONTROLE DE VOLUME ===== */
 const grimoire = document.getElementById("grimoire");
 const grimBtn = document.getElementById("grimBtn");
 const vol = document.getElementById("vol");
 const volValue = document.getElementById("volValue");
-const muteBtn = document.getElementById("muteBtn");
 
 function setSliderVisual(v){
   vol.style.setProperty("--p", `${v}%`);
   volValue.textContent = `${v}%`;
 }
-
 setSliderVisual(45);
 
 grimBtn.addEventListener("click",(e)=>{
@@ -522,34 +476,14 @@ grimBtn.addEventListener("click",(e)=>{
 });
 
 document.addEventListener("click",(e)=>{
-  // fecha se clicar fora
   if(!grimoire.contains(e.target)) grimoire.classList.remove("open");
 });
 
 vol.addEventListener("input", ()=>{
   const v = Number(vol.value);
   setSliderVisual(v);
-
   currentVol = v/100;
   bgAudio.volume = currentVol;
-
-  // se estava mutado e mexeu no slider, desmuta
-  if(bgAudio.muted) bgAudio.muted = false;
-  muteBtn.textContent = (bgAudio.muted || currentVol === 0) ? "UNMUTE" : "MUTE";
-});
-
-muteBtn.addEventListener("click", ()=>{
-  // mute alterna
-  bgAudio.muted = !bgAudio.muted;
-  muteBtn.textContent = bgAudio.muted ? "UNMUTE" : "MUTE";
-});
-
-/* opcional: tecla M para mutar */
-document.addEventListener("keydown",(e)=>{
-  if(e.key.toLowerCase() === "m"){
-    bgAudio.muted = !bgAudio.muted;
-    muteBtn.textContent = bgAudio.muted ? "UNMUTE" : "MUTE";
-  }
 });
 </script>
 
