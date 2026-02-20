@@ -21,6 +21,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
   z-index:0;
   opacity:0;
   transition:opacity 900ms ease;
+  filter:contrast(1.05) saturate(0.95);
 }
 body.entered #mainVideo{opacity:1}
 
@@ -65,7 +66,9 @@ body.entered #mainVideo{opacity:1}
   box-shadow:
     0 0 0 1px rgba(255,170,90,0.1),
     0 40px 140px rgba(0,0,0,0.95);
+  transition:transform 450ms ease;
 }
+#entry:hover .frameWrap{ transform:scale(1.01); }
 
 /* imagem principal */
 .frame{
@@ -80,8 +83,8 @@ body.entered #mainVideo{opacity:1}
   position:absolute; inset:0;
   z-index:2;
   background:
-    radial-gradient(circle at center, rgba(0,0,0,0.2), rgba(0,0,0,0.7)),
-    linear-gradient(to bottom, rgba(0,0,0,0.3), transparent 40%, rgba(0,0,0,0.5));
+    radial-gradient(circle at center, rgba(0,0,0,0.18), rgba(0,0,0,0.72)),
+    linear-gradient(to bottom, rgba(0,0,0,0.28), transparent 40%, rgba(0,0,0,0.55));
   backdrop-filter: blur(2px);
 }
 
@@ -104,25 +107,22 @@ body.strikeOn #strike{opacity:0.95}
   pointer-events:none;
 }
 
-/* remove caixa pesada */
-.enterBox{
-  background:none;
-  padding:0;
-}
+.enterBox{ background:none; padding:0; }
 
-/* ENTER estilo logo */
+/* ENTER estilo logo (polido) */
 .title{
   font-family: "Cinzel", serif;
   font-weight:800;
-  font-size: clamp(34px, 4.5vw, 64px);
-  letter-spacing:6px;
+  font-size: clamp(34px, 4.4vw, 62px);
+  letter-spacing:7px;
   text-transform:uppercase;
 
   background: linear-gradient(
     to bottom,
-    #f6d5a8 0%,
-    #e2b07a 35%,
-    #b87333 60%,
+    #fff2de 0%,
+    #f0cfa2 18%,
+    #d9a56a 45%,
+    #a8642c 68%,
     #f6d5a8 100%
   );
   -webkit-background-clip:text;
@@ -130,26 +130,50 @@ body.strikeOn #strike{opacity:0.95}
 
   text-shadow:
     0 2px 0 #000,
-    0 0 12px rgba(255,140,70,0.6),
-    0 0 35px rgba(255,100,0,0.4);
+    0 0 10px rgba(255,140,70,0.55),
+    0 0 34px rgba(255,100,0,0.35);
 
   position:relative;
-  animation:pulse 2.5s ease-in-out infinite;
+  animation:pulse 2.6s ease-in-out infinite;
 }
 
 /* aura atrás do texto */
 .title::after{
   content:"";
   position:absolute;
-  inset:-18px -40px;
+  inset:-16px -44px;
   background:
     radial-gradient(circle at center,
-      rgba(255,120,0,0.15),
-      rgba(0,0,0,0.7));
-  z-index:-1;
+      rgba(255,120,0,0.14),
+      rgba(0,0,0,0.75));
+  z-index:-2;
   filter:blur(18px);
-  border-radius:50px;
-  opacity:0.8;
+  border-radius:60px;
+  opacity:0.85;
+}
+
+/* brilho passando (metal shine) */
+.title::before{
+  content:"";
+  position:absolute;
+  inset:-8px -60px;
+  z-index:-1;
+  background: linear-gradient(120deg,
+    transparent 0%,
+    rgba(255,255,255,0.10) 35%,
+    rgba(255,255,255,0.22) 50%,
+    rgba(255,255,255,0.10) 65%,
+    transparent 100%);
+  transform:translateX(-70%);
+  filter:blur(8px);
+  opacity:0.55;
+  animation:shine 2.8s ease-in-out infinite;
+}
+
+@keyframes shine{
+  0%,55%{ transform:translateX(-70%); opacity:0.0; }
+  65%{ opacity:0.55; }
+  100%{ transform:translateX(70%); opacity:0.0; }
 }
 
 .sub{
@@ -162,13 +186,12 @@ body.strikeOn #strike{opacity:0.95}
 }
 
 @keyframes pulse{
-  0%,100%{transform:translateY(0);opacity:.85}
+  0%,100%{transform:translateY(0);opacity:.88}
   50%{transform:translateY(-3px);opacity:1}
 }
-
 @keyframes blink{
-  0%,49%{opacity:.2}
-  50%,100%{opacity:.6}
+  0%,49%{opacity:.18}
+  50%,100%{opacity:.55}
 }
 
 /* fade enter */
@@ -181,7 +204,13 @@ body.strikeOn .introUI{
 body.entered #entry{
   opacity:0;
   pointer-events:none;
-  transition:opacity 800ms ease;
+  transition:opacity 900ms ease;
+}
+
+/* acessibilidade */
+@media (prefers-reduced-motion: reduce){
+  .title, .sub{ animation:none; }
+  .title::before{ display:none; }
 }
 </style>
 </head>
@@ -190,7 +219,10 @@ body.entered #entry{
 
 <video id="mainVideo"
   src="https://files.catbox.moe/klaol5.webm"
-  playsinline preload="auto"></video>
+  playsinline preload="auto" loop></video>
+
+<!-- Áudio separado (o que você mandou) -->
+<audio id="bgAudio" src="https://files.catbox.moe/99fu05.m4a" preload="auto"></audio>
 
 <section id="entry" tabindex="0" aria-label="Entrada Shadow Fight 2">
 
@@ -201,7 +233,6 @@ body.entered #entry{
     <div class="frameWrap">
 
       <img class="frame" src="https://files.catbox.moe/5yp48z.png" alt="Shadow Fight 2 Entry">
-
       <div class="softOverlay"></div>
 
       <img id="strike" class="frame" src="https://files.catbox.moe/er48bx.gif" alt="Golpe">
@@ -221,51 +252,53 @@ body.entered #entry{
 <script>
 const entry = document.getElementById("entry");
 const mainVideo = document.getElementById("mainVideo");
+const bgAudio = document.getElementById("bgAudio");
 
 /* ===== CINZAS VULCÂNICAS ===== */
 const canvas = document.getElementById("ashCanvas");
 const ctx = canvas.getContext("2d");
 
-let W,H,DPR=1;
+let DPR=1, W=0, H=0;
 function resize(){
   DPR = devicePixelRatio || 1;
-  W = canvas.width = Math.floor(window.innerWidth * DPR);
-  H = canvas.height = Math.floor(window.innerHeight * DPR);
-  canvas.style.width = window.innerWidth + "px";
-  canvas.style.height = window.innerHeight + "px";
+  canvas.width = Math.floor(innerWidth * DPR);
+  canvas.height = Math.floor(innerHeight * DPR);
+  canvas.style.width = innerWidth + "px";
+  canvas.style.height = innerHeight + "px";
   ctx.setTransform(DPR,0,0,DPR,0,0);
+  W = innerWidth; H = innerHeight;
 }
 resize();
-window.addEventListener("resize",resize);
+addEventListener("resize", resize);
 
 const ash=[];
-const ASH_N = 140;
+const ASH_N = 160;
 for(let i=0;i<ASH_N;i++){
   ash.push({
-    x:Math.random()*window.innerWidth,
-    y:Math.random()*window.innerHeight,
-    r:Math.random()*2+0.6,
+    x:Math.random()*W,
+    y:Math.random()*H,
+    r:Math.random()*2+0.5,
     v:Math.random()*0.55+0.18,
-    drift:(Math.random()-0.5)*0.45,
-    tw:Math.random()*0.6+0.2
+    drift:(Math.random()-0.5)*0.5,
+    tw:Math.random()*0.8+0.2
   });
 }
 
 function drawAsh(){
-  ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+  ctx.clearRect(0,0,W,H);
 
-  // cinzas (cinza) + uns pontos mais escuros (sombra)
   for(const p of ash){
     p.y -= p.v;
     p.x += p.drift;
-    if(p.y < -10){ p.y = window.innerHeight + 10; p.x = Math.random()*window.innerWidth; }
-    if(p.x < -10) p.x = window.innerWidth + 10;
-    if(p.x > window.innerWidth + 10) p.x = -10;
 
-    const alpha = 0.18 + p.tw*0.22;
+    if(p.y < -12){ p.y = H + 12; p.x = Math.random()*W; }
+    if(p.x < -12) p.x = W + 12;
+    if(p.x > W + 12) p.x = -12;
+
+    const a = 0.12 + p.tw*0.18;
     ctx.beginPath();
-    ctx.fillStyle = `rgba(190,190,190,${alpha})`;
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle = `rgba(200,200,200,${a})`;
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
     ctx.fill();
   }
 
@@ -276,20 +309,31 @@ drawAsh();
 /* ===== CLICK ===== */
 let started=false;
 
-function start(){
+async function start(){
   if(started) return;
   started=true;
 
-  // gif aparece por cima
+  // golpe (gif)
   document.body.classList.add("strikeOn");
 
-  // áudio + vídeo no clique
-  setTimeout(()=>{
-    mainVideo.muted = false;
-    mainVideo.volume = 1;
-    mainVideo.play().catch(()=>{});
+  // Áudio separado (garante o som mesmo se o webm vier mudo)
+  try{
+    bgAudio.currentTime = 0;
+    bgAudio.volume = 1;
+    await bgAudio.play();
+  }catch(e){
+    // se bloquear, ainda seguimos com o vídeo
+  }
+
+  // vídeo entra depois do impacto
+  setTimeout(async ()=>{
+    try{
+      mainVideo.muted = true; // evita conflito de áudio (som vem do .m4a)
+      mainVideo.volume = 0;
+      await mainVideo.play();
+    }catch(e){}
     document.body.classList.add("entered");
-  },1200);
+  }, 1100);
 }
 
 entry.addEventListener("pointerdown", start);
