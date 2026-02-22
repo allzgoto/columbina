@@ -307,7 +307,7 @@ body.entered #entry{
   gap:10px;
   align-items:center;
   justify-content:center;
-  pointer-events:none; /* libera somente nos botões */
+  pointer-events:none;
 }
 .topBtn{
   width:44px;height:44px;
@@ -526,7 +526,6 @@ body.scrollOpen .scroll{
 .scrollInner{
   position:absolute; inset:0;
   padding:26px 30px 18px;
-
   font-family: "Cormorant Garamond", serif;
   color:rgba(35,18,8,0.90);
   text-shadow: 0 1px 0 rgba(255,255,255,0.18);
@@ -585,7 +584,7 @@ body.scrollOpen .scroll{
   overflow:hidden;
 }
 
-/* ===== V2: FONTE MAIS "PERGAMINHO" + NOMES MAIS DESTACADOS ===== */
+/* ===== V2 FIX: NOMES MENORES ===== */
 .scrollLog{
   flex:1;
   overflow:auto;
@@ -595,19 +594,19 @@ body.scrollOpen .scroll{
   letter-spacing:0.25px;
   color:rgba(30,16,7,0.92);
   filter: contrast(1.03);
-  font-family:"IM Fell English", serif; /* mais pergaminho */
+  font-family:"IM Fell English", serif;
 }
 .scrollLog .typeLine{ margin:0 0 10px 0; white-space:pre-wrap; }
 
 .scrollLog .who{
   font-family:"Cinzel", serif;
   font-weight:800;
-  letter-spacing:2px;
+  letter-spacing:1.4px;      /* menor */
   text-transform:uppercase;
   color:rgba(40,18,8,0.92);
   margin-right:8px;
-  font-size:0.92em;
-  padding:3px 8px;
+  font-size:0.76em;          /* menor */
+  padding:2px 6px;           /* menor */
   border-radius:999px;
   display:inline-block;
   transform: translateY(-1px);
@@ -709,8 +708,6 @@ body.adminOpen .adminPanel{
   transform:translate(-50%,-50%) scale(1);
   pointer-events:auto;
 }
-
-/* “A e C infudido”: overlay escuro + painel pedra antigo */
 .adminStone{
   position:absolute; inset:0;
   border-radius:18px;
@@ -785,14 +782,18 @@ body.adminOpen .adminPanel{
 }
 .adminClose:hover{ opacity:1; outline-color: rgba(255,170,90,0.32); }
 
+/* LOCKED: só login. UNLOCKED: login + dashboard */
 .adminBody{
   height:calc(100% - 52px);
   display:grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: 1fr;
   gap:14px;
 }
+#adminOverlay.unlocked .adminBody{
+  grid-template-columns: 1.05fr 0.95fr;
+}
 @media (max-width: 860px){
-  .adminBody{ grid-template-columns:1fr; }
+  #adminOverlay.unlocked .adminBody{ grid-template-columns:1fr; }
 }
 
 .adminCard{
@@ -813,7 +814,6 @@ body.adminOpen .adminPanel{
   pointer-events:none;
   opacity:.8;
 }
-
 .adminCard h3{
   font-family:"Cinzel", serif;
   font-weight:800;
@@ -854,6 +854,15 @@ body.adminOpen .adminPanel{
 }
 .adminInput::placeholder{ color:rgba(255,255,255,0.35); }
 
+/* username travado */
+.adminInput.readonly{
+  opacity:0.85;
+  filter:saturate(0.95);
+}
+.adminInput.readonly:focus{
+  outline:none;
+}
+
 .adminActions{
   display:flex; gap:10px; align-items:center; margin-top:12px; position:relative; z-index:1;
 }
@@ -880,7 +889,6 @@ body.adminOpen .adminPanel{
   color:rgba(255,235,210,0.55);
   font-size:14px;
 }
-
 .badgeErr{
   margin-top:10px;
   padding:8px 10px;
@@ -895,7 +903,10 @@ body.adminOpen .adminPanel{
   z-index:1;
 }
 
-/* Dashboard */
+/* Dashboard (somente após unlock) */
+#dashCard{ display:none; }
+#adminOverlay.unlocked #dashCard{ display:block; }
+
 .metrics{
   display:grid;
   grid-template-columns: repeat(2, minmax(0,1fr));
@@ -1008,7 +1019,7 @@ body.adminOpen .adminPanel{
   </div>
 </div>
 
-<!-- TOP CENTER: Pergaminho + Admin (lado a lado) -->
+<!-- TOP CENTER: Pergaminho + Admin -->
 <div id="topCenter" aria-label="Ações centrais">
   <button class="topBtn" id="scrollBtn" aria-label="Abrir pergaminho (lore)">
     <svg viewBox="0 0 24 24" fill="none">
@@ -1020,7 +1031,6 @@ body.adminOpen .adminPanel{
   </button>
 
   <button class="topBtn" id="adminBtn" aria-label="Abrir painel confidencial (admin)">
-    <!-- Ícone tipo selo/olho -->
     <svg viewBox="0 0 24 24" fill="none">
       <path d="M12 4c4.6 0 8.5 3 10 8-1.5 5-5.4 8-10 8S3.5 17 2 12c1.5-5 5.4-8 10-8Z" stroke="rgba(255,220,190,0.9)" stroke-width="1.6"/>
       <path d="M12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6Z" stroke="rgba(255,140,70,0.7)" stroke-width="1.6"/>
@@ -1114,7 +1124,7 @@ body.adminOpen .adminPanel{
         </div>
 
         <div class="adminBody">
-          <!-- LEFT: Login / Contexto -->
+          <!-- LOGIN (sempre visível) -->
           <div class="adminCard" id="loginCard">
             <h3>Portão do Selo</h3>
             <p>
@@ -1124,7 +1134,7 @@ body.adminOpen .adminPanel{
 
             <div class="formRow">
               <label for="adminUser">Usuário</label>
-              <input class="adminInput" id="adminUser" autocomplete="off" placeholder="insira o nome marcado">
+              <input class="adminInput readonly" id="adminUser" autocomplete="off" readonly>
             </div>
 
             <div class="formRow">
@@ -1138,15 +1148,9 @@ body.adminOpen .adminPanel{
             </div>
 
             <div class="badgeErr" id="adminErr">Acesso negado. As sombras não reconhecem você.</div>
-
-            <div class="adminDivider"></div>
-            <p style="opacity:.72;font-size:14px;">
-              <span style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;">Obs:</span>
-              Estes números são <b>locais</b> (contam neste navegador). Depois a gente liga em algo real se você quiser.
-            </p>
           </div>
 
-          <!-- RIGHT: Dashboard -->
+          <!-- DASHBOARD (somente após senha certa) -->
           <div class="adminCard" id="dashCard">
             <h3>Registros do Portal</h3>
 
@@ -1178,13 +1182,9 @@ body.adminOpen .adminPanel{
 
             <div class="adminDivider"></div>
 
-            <p id="dashLockNote" style="opacity:.72;">
-              Bloqueado. Insira o usuário e a senha para revelar os registros.
-            </p>
-
-            <p id="dashUnlockedNote" style="display:none; opacity:.82;">
-              Acesso concedido. Os registros foram revelados.
-              <br><span style="opacity:.7;font-style:italic;font-family:'IM Fell English',serif">Aqui a gente vai enfiar um monte de coisa na V2.</span>
+            <p style="opacity:.72;font-size:14px;">
+              <span style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;">Obs:</span>
+              Estes números são <b>locais</b> (contam neste navegador). Depois a gente liga em algo real se você quiser.
             </p>
           </div>
         </div>
@@ -1268,7 +1268,6 @@ async function start(){
   if(started) return;
   started=true;
 
-  // métricas
   metrics.enter += 1;
   saveMetrics(metrics);
 
@@ -1336,12 +1335,9 @@ document.addEventListener("click",(e)=>{
 });
 
 function sysPing(msg){
-  // se o pergaminho estiver aberto, escreve lá; senão, abre e escreve
   if(!document.body.classList.contains("entered")) return;
-  if(!document.body.classList.contains("scrollOpen")){
-    openScroll();
-    setTimeout(()=>writeOut(`<span class="sys">SISTEMA:</span> ${msg}`), 240);
-  }else{
+  // sem atalhos: só escreve no pergaminho se ele estiver aberto
+  if(document.body.classList.contains("scrollOpen")){
     writeOut(`<span class="sys">SISTEMA:</span> ${msg}`);
   }
 }
@@ -1383,13 +1379,11 @@ const loreLines = [
 
 function openScroll(){
   if(!document.body.classList.contains("entered")) return;
-  // se admin estiver aberto, fecha admin primeiro
   if(document.body.classList.contains("adminOpen")) closeAdmin();
 
   document.body.classList.add("scrollOpen");
   scrollOverlay.setAttribute("aria-hidden","false");
 
-  // métricas
   metrics.scrollOpen += 1;
   saveMetrics(metrics);
 
@@ -1430,13 +1424,7 @@ const mEnter = document.getElementById("mEnter");
 const mScroll = document.getElementById("mScroll");
 const mAdmin = document.getElementById("mAdmin");
 
-const dashLockNote = document.getElementById("dashLockNote");
-const dashUnlockedNote = document.getElementById("dashUnlockedNote");
-
-const ADMIN_USER_OK = "sombra";
 const ADMIN_PASS_OK = "projeto26";
-
-let adminUnlocked = false;
 
 function updateDashboard(){
   const m = loadMetrics();
@@ -1444,37 +1432,33 @@ function updateDashboard(){
   mEnter.textContent = String(m.enter ?? 0);
   mScroll.textContent = String(m.scrollOpen ?? 0);
   mAdmin.textContent = String(m.admin ?? 0);
-
-  if(adminUnlocked){
-    dashLockNote.style.display = "none";
-    dashUnlockedNote.style.display = "block";
-  }else{
-    dashLockNote.style.display = "block";
-    dashUnlockedNote.style.display = "none";
-  }
 }
 
 function openAdmin(){
   if(!document.body.classList.contains("entered")) return;
-
-  // se pergaminho estiver aberto, fecha
   if(document.body.classList.contains("scrollOpen")) closeScroll();
+
+  // LOCKA dashboard sempre que abrir
+  adminOverlay.classList.remove("unlocked");
+  adminErr.style.display = "none";
+  adminPass.value = "";
+
+  // Usuário travado como "Sombra"
+  adminUser.value = "Sombra";
 
   document.body.classList.add("adminOpen");
   adminOverlay.setAttribute("aria-hidden","false");
-  adminErr.style.display = "none";
 
-  // métrica admin (abrir painel)
   metrics.admin += 1;
   saveMetrics(metrics);
 
-  updateDashboard();
-  setTimeout(()=>adminUser.focus(), 90);
+  setTimeout(()=>adminPass.focus(), 90);
 }
 function closeAdmin(){
   document.body.classList.remove("adminOpen");
   adminOverlay.setAttribute("aria-hidden","true");
 }
+
 adminBtn.addEventListener("click",(e)=>{
   e.stopPropagation();
   openAdmin();
@@ -1485,38 +1469,19 @@ adminOverlay.addEventListener("click",(e)=>{
 });
 
 function attemptLogin(){
-  const u = (adminUser.value || "").trim().toLowerCase();
   const p = (adminPass.value || "").trim().toLowerCase();
 
-  if(u === ADMIN_USER_OK && p === ADMIN_PASS_OK){
-    adminUnlocked = true;
+  if(p === ADMIN_PASS_OK){
     adminErr.style.display = "none";
+    adminOverlay.classList.add("unlocked");
     updateDashboard();
   }else{
-    adminUnlocked = false;
+    adminOverlay.classList.remove("unlocked");
     adminErr.style.display = "block";
-    updateDashboard();
   }
 }
-
 adminLogin.addEventListener("click", attemptLogin);
 adminPass.addEventListener("keydown", (e)=>{ if(e.key==="Enter") attemptLogin(); });
-adminUser.addEventListener("keydown", (e)=>{ if(e.key==="Enter") adminPass.focus(); });
-
-/* ===== HOTKEYS (ESC / T) ===== */
-document.addEventListener("keydown",(e)=>{
-  if(e.key === "Escape"){
-    if(document.body.classList.contains("scrollOpen")) closeScroll();
-    if(document.body.classList.contains("adminOpen")) closeAdmin();
-    rightMenu.classList.remove("open");
-  }
-  if(e.key.toLowerCase() === "t" && document.body.classList.contains("entered")){
-    openScroll();
-  }
-  if(e.key.toLowerCase() === "a" && document.body.classList.contains("entered")){
-    openAdmin();
-  }
-});
 
 /* ===== Terminal / Typing ===== */
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
@@ -1594,22 +1559,12 @@ cmdInput.addEventListener("keydown", (e)=>{
   const cmd = raw.toLowerCase();
 
   if(cmd === "ajuda" || cmd === "help" || cmd === "?"){
-    writeOut(`<span class="sys">COMANDOS:</span> <b>hub</b>, <b>arquivo</b>, <b>lore</b>, <b>admin</b>, <b>menu</b>, <b>fechar</b>`);
+    writeOut(`<span class="sys">COMANDOS:</span> <b>hub</b>, <b>arquivo</b>, <b>lore</b>, <b>fechar</b>`);
     return;
   }
   if(cmd === "fechar" || cmd === "close" || cmd === "exit"){
     writeOut(`<span class="sys">SISTEMA:</span> Pergaminho selado.`);
     setTimeout(closeScroll, 250);
-    return;
-  }
-  if(cmd === "admin"){
-    writeOut(`<span class="sys">SISTEMA:</span> Abrindo o <b>Painel Confidencial</b>...`);
-    setTimeout(openAdmin, 250);
-    return;
-  }
-  if(cmd === "menu"){
-    writeOut(`<span class="sys">SISTEMA:</span> Abrindo o <b>Menu</b>...`);
-    rightMenu.classList.add("open");
     return;
   }
   if(cmd === "hub"){
@@ -1635,9 +1590,6 @@ function escapeHtml(s){
           .replaceAll('"',"&quot;")
           .replaceAll("'","&#039;");
 }
-
-/* ===== INIT DASHBOARD ===== */
-updateDashboard();
 </script>
 
 </body>
