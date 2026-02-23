@@ -32,21 +32,12 @@ body.entered #mainVideo{
   opacity:1;
   filter:contrast(1.06) saturate(0.92) blur(3px) brightness(0.82);
 }
-body.scrollOpen #mainVideo{
-  filter:contrast(1.06) saturate(0.92) blur(6px) brightness(0.62);
-}
+body.scrollOpen #mainVideo{ filter:contrast(1.06) saturate(0.92) blur(6px) brightness(0.62); }
 body.adminOpen #mainVideo,
-body.socialOpen #mainVideo{
-  filter:contrast(1.06) saturate(0.92) blur(7px) brightness(0.56);
-}
+body.socialOpen #mainVideo{ filter:contrast(1.06) saturate(0.92) blur(7px) brightness(0.56); }
 
 /* ===== ENTRY ===== */
-#entry{
-  position:fixed; inset:0;
-  z-index:10;
-  cursor:pointer;
-  background:#000;
-}
+#entry{ position:fixed; inset:0; z-index:10; cursor:pointer; background:#000; }
 .bgFill{
   position:absolute; inset:0;
   background:url("https://files.catbox.moe/5yp48z.png") center/cover no-repeat;
@@ -54,26 +45,15 @@ body.socialOpen #mainVideo{
   transform:scale(1.2);
   z-index:1;
 }
-#ashCanvas{
-  position:absolute; inset:0;
-  z-index:2;
-  pointer-events:none;
-}
-.stage{
-  position:absolute; inset:0;
-  display:grid;
-  place-items:center;
-  z-index:5;
-}
+#ashCanvas{ position:absolute; inset:0; z-index:2; pointer-events:none; }
+.stage{ position:absolute; inset:0; display:grid; place-items:center; z-index:5; }
 .frameWrap{
   width:min(1000px,88vw);
   aspect-ratio:16/9;
   position:relative;
   border-radius:16px;
   overflow:hidden;
-  box-shadow:
-    0 0 0 1px rgba(255,170,90,0.1),
-    0 40px 140px rgba(0,0,0,0.95);
+  box-shadow: 0 0 0 1px rgba(255,170,90,0.1), 0 40px 140px rgba(0,0,0,0.95);
   transition:transform 450ms ease;
 }
 #entry:hover .frameWrap{ transform:scale(1.01); }
@@ -91,19 +71,13 @@ body.socialOpen #mainVideo{
     linear-gradient(to bottom, rgba(0,0,0,0.28), transparent 40%, rgba(0,0,0,0.55));
   backdrop-filter: blur(2px);
 }
-#strike{
-  opacity:0;
-  z-index:3;
-  mix-blend-mode:screen;
-  transition:opacity 200ms ease;
-}
+#strike{ opacity:0; z-index:3; mix-blend-mode:screen; transition:opacity 200ms ease; }
 body.strikeOn #strike{opacity:0.95}
 
 /* ===== ENTER UI ===== */
 .introUI{
   position:absolute; inset:0;
-  display:grid;
-  place-items:center;
+  display:grid; place-items:center;
   text-align:center;
   z-index:4;
   pointer-events:none;
@@ -116,8 +90,7 @@ body.strikeOn #strike{opacity:0.95}
   text-transform:uppercase;
 
   background: linear-gradient(
-    to bottom,
-    var(--goldA) 0%,
+    to bottom, var(--goldA) 0%,
     #f0cfa2 18%,
     var(--goldB) 45%,
     var(--goldC) 68%,
@@ -138,10 +111,7 @@ body.strikeOn #strike{opacity:0.95}
   content:"";
   position:absolute;
   inset:-14px -42px;
-  background:
-    radial-gradient(circle at center,
-      rgba(255,120,0,0.14),
-      rgba(0,0,0,0.75));
+  background: radial-gradient(circle at center, rgba(255,120,0,0.14), rgba(0,0,0,0.75));
   z-index:-2;
   filter:blur(18px);
   border-radius:60px;
@@ -187,11 +157,8 @@ body.strikeOn #strike{opacity:0.95}
   padding:6px 10px;
   border-radius:10px;
   border:1px solid rgba(255,170,90,0.22);
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255,140,70,0.10), rgba(0,0,0,0.72));
-  box-shadow:
-    inset 0 0 14px rgba(255,140,70,0.08),
-    0 10px 40px rgba(0,0,0,0.55);
+  background: radial-gradient(circle at 30% 30%, rgba(255,140,70,0.10), rgba(0,0,0,0.72));
+  box-shadow: inset 0 0 14px rgba(255,140,70,0.08), 0 10px 40px rgba(0,0,0,0.55);
   color:rgba(255,220,190,0.80);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size:11px;
@@ -203,12 +170,7 @@ body.strikeOn #strike{opacity:0.95}
 @keyframes blink{ 0%,49%{opacity:.22} 50%,100%{opacity:.62} }
 
 body.strikeOn .introUI{ opacity:0; transition:opacity 300ms ease; }
-
-body.entered #entry{
-  opacity:0;
-  pointer-events:none;
-  transition:opacity 900ms ease;
-}
+body.entered #entry{ opacity:0; pointer-events:none; transition:opacity 900ms ease; }
 
 /* ===== VOLUME (top-left) ===== */
 #grimoire{ position:fixed; left:14px; top:14px; z-index:72; user-select:none; }
@@ -268,8 +230,7 @@ body.entered #entry{
   height:10px;
   border-radius:99px;
   outline:none;
-  background:
-    linear-gradient(to right, rgba(255,140,70,0.9) var(--p,8%), rgba(255,255,255,0.10) var(--p,8%));
+  background: linear-gradient(to right, rgba(255,140,70,0.9) var(--p,8%), rgba(255,255,255,0.10) var(--p,8%));
   border:1px solid rgba(255,170,90,0.16);
   box-shadow: inset 0 0 18px rgba(0,0,0,0.65);
 }
@@ -292,7 +253,7 @@ body.entered #entry{
   cursor:pointer;
 }
 
-/* ===== FULLSCREEN (abaixo do volume) ===== */
+/* ===== FULLSCREEN ===== */
 #fsWrap{
   position:fixed;
   left:14px;
@@ -304,8 +265,6 @@ body.entered #entry{
   transition: top 220ms ease, opacity 200ms ease;
 }
 body.entered #fsWrap{ opacity:1; pointer-events:auto; }
-
-/* quando abrir volume -> fullscreen DESCE pra não ficar atrás/atrapalhar */
 body.volOpen #fsWrap{ top:124px; }
 
 .fsBtn{
@@ -330,7 +289,7 @@ body.volOpen #fsWrap{ top:124px; }
 body.fsOn .fsOffIcon{ display:none; }
 body.fsOn .fsOnIcon{ display:block; }
 
-/* ===== TOP-CENTER BUTTONS (Pergaminho + Admin) ===== */
+/* ===== TOP CENTER BUTTONS ===== */
 #topCenter{
   position:fixed;
   left:50%;
@@ -350,9 +309,7 @@ body.fsOn .fsOnIcon{ display:block; }
   background:
     radial-gradient(circle at 30% 30%, rgba(255,140,70,0.12), rgba(0,0,0,0.80)),
     linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.55));
-  box-shadow:
-    0 14px 44px rgba(0,0,0,0.75),
-    0 0 22px rgba(255,140,70,0.12);
+  box-shadow: 0 14px 44px rgba(0,0,0,0.75), 0 0 22px rgba(255,140,70,0.12);
   cursor:pointer;
   display:grid;
   place-items:center;
@@ -365,13 +322,7 @@ body.entered .topBtn{ opacity:1; pointer-events:auto; }
 .topBtn svg{ width:22px;height:22px; opacity:.9; }
 
 /* ===== MENU TOP-RIGHT ===== */
-#rightMenu{
-  position:fixed;
-  right:14px;
-  top:14px;
-  z-index:60;
-  user-select:none;
-}
+#rightMenu{ position:fixed; right:14px; top:14px; z-index:60; user-select:none; }
 .menuBtn{
   width:44px;height:44px;
   border-radius:12px;
@@ -390,11 +341,10 @@ body.entered .topBtn{ opacity:1; pointer-events:auto; }
   opacity:0;
   pointer-events:none;
   position:relative;
-  overflow:hidden;
 }
 body.entered .menuBtn{ opacity:1; pointer-events:auto; }
 .menuBtn:hover{ transform:scale(1.05); }
-.menuBtn svg{ width:22px;height:22px; position:relative; z-index:1; opacity:.92; }
+.menuBtn svg{ width:22px;height:22px; opacity:.92; }
 
 .menuPanel{
   position:absolute;
@@ -436,8 +386,7 @@ body.entered .menuBtn{ opacity:1; pointer-events:auto; }
   padding:10px 10px;
   border-radius:12px;
   border:1px solid rgba(255,170,90,0.14);
-  background:
-    radial-gradient(circle at 20% 30%, rgba(255,140,70,0.10), rgba(0,0,0,0.72));
+  background: radial-gradient(circle at 20% 30%, rgba(255,140,70,0.10), rgba(0,0,0,0.72));
   color:rgba(255,235,210,0.86);
   cursor:pointer;
   font-family:"Cormorant Garamond", serif;
@@ -465,21 +414,13 @@ body.entered .menuBtn{ opacity:1; pointer-events:auto; }
   flex:0 0 auto;
 }
 
-/* ===== OVERLAY DO PERGAMINHO ===== */
-#scrollOverlay{
-  position:fixed; inset:0;
-  z-index:80;
-  display:none;
-}
+/* ===== PERGAMINHO OVERLAY ===== */
+#scrollOverlay{ position:fixed; inset:0; z-index:80; display:none; }
 body.scrollOpen #scrollOverlay{ display:block; }
-#scrollOverlay .dim{
-  position:absolute; inset:0;
-  background:rgba(0,0,0,0.55);
-}
+#scrollOverlay .dim{ position:absolute; inset:0; background:rgba(0,0,0,0.55); }
 .scroll{
   position:absolute;
-  left:50%;
-  top:50%;
+  left:50%; top:50%;
   transform:translate(-50%,-50%) scale(.92);
   width:min(860px, 92vw);
   height:min(560px, 80vh);
@@ -488,8 +429,7 @@ body.scrollOpen #scrollOverlay{ display:block; }
   pointer-events:none;
 }
 body.scrollOpen .scroll{
-  opacity:1;
-  transform:translate(-50%,-50%) scale(1);
+  opacity:1; transform:translate(-50%,-50%) scale(1);
   pointer-events:auto;
 }
 
@@ -511,12 +451,10 @@ body.scrollOpen .scroll{
       rgba(255,255,255,0.02) 3px,
       rgba(255,255,255,0.02) 5px),
     linear-gradient(0deg, #cdb081, #eedcb6 22%, #e6cc9f 58%, #c7a572);
-
   box-shadow:
     0 40px 160px rgba(0,0,0,0.85),
     inset 0 0 0 1px rgba(0,0,0,0.18),
     inset 0 0 90px rgba(95,45,10,0.22);
-
   filter:contrast(1.06) saturate(0.92);
   overflow:hidden;
 }
@@ -547,7 +485,6 @@ body.scrollOpen .scroll{
   color:rgba(35,18,8,0.90);
   text-shadow: 0 1px 0 rgba(255,255,255,0.18);
 }
-
 .scrollTop{
   display:flex;
   align-items:center;
@@ -565,7 +502,6 @@ body.scrollOpen .scroll{
   color:rgba(40,22,8,0.92);
   text-shadow:0 1px 0 rgba(255,255,255,0.25);
 }
-
 .scrollClose{
   border:none;
   background:transparent;
@@ -581,17 +517,11 @@ body.scrollOpen .scroll{
   outline: 2px solid rgba(45,24,10,0.28);
   outline-offset: -2px;
   border-radius:10px;
-  box-shadow:
-    0 0 0 1px rgba(0,0,0,0.08) inset,
-    0 1px 0 rgba(255,255,255,0.18);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08) inset, 0 1px 0 rgba(255,255,255,0.18);
   opacity:0.9;
   transform:rotate(-1.5deg);
 }
-.scrollClose:hover{
-  opacity:1;
-  outline-color: rgba(45,24,10,0.38);
-  color:rgba(45,24,10,0.62);
-}
+.scrollClose:hover{ opacity:1; outline-color: rgba(45,24,10,0.38); color:rgba(45,24,10,0.62); }
 
 .scrollBody{
   height:calc(100% - 44px);
@@ -611,8 +541,6 @@ body.scrollOpen .scroll{
   filter: contrast(1.03);
   font-family:"IM Fell English", serif;
 }
-
-/* nomes menores e destacados */
 .scrollLog .who{
   font-family:"Cinzel", serif;
   font-weight:800;
@@ -685,10 +613,7 @@ body.scrollOpen .scroll{
   letter-spacing:0.6px;
   color:rgba(60,28,8,0.74);
 }
-
-body.scrollOpen .scrollPaper{
-  animation:unroll 520ms cubic-bezier(.12,.92,.12,1) both;
-}
+body.scrollOpen .scrollPaper{ animation:unroll 520ms cubic-bezier(.12,.92,.12,1) both; }
 @keyframes unroll{
   0%{ filter:blur(1px) contrast(1.02) saturate(.9); transform:scaleY(.70); }
   55%{ transform:scaleY(1.02); }
@@ -696,20 +621,11 @@ body.scrollOpen .scrollPaper{
 }
 
 /* ===== ADMIN OVERLAY ===== */
-#adminOverlay{
-  position:fixed; inset:0;
-  z-index:85;
-  display:none;
-}
+#adminOverlay{ position:fixed; inset:0; z-index:85; display:none; }
 body.adminOpen #adminOverlay{ display:block; }
-#adminOverlay .dim{
-  position:absolute; inset:0;
-  background:rgba(0,0,0,0.62);
-}
+#adminOverlay .dim{ position:absolute; inset:0; background:rgba(0,0,0,0.62); }
 .adminPanel{
-  position:absolute;
-  left:50%;
-  top:50%;
+  position:absolute; left:50%; top:50%;
   transform:translate(-50%,-50%) scale(.94);
   width:min(920px, 94vw);
   height:min(560px, 82vh);
@@ -717,11 +633,7 @@ body.adminOpen #adminOverlay{ display:block; }
   transition:opacity 220ms ease, transform 320ms cubic-bezier(.12,.92,.12,1);
   pointer-events:none;
 }
-body.adminOpen .adminPanel{
-  opacity:1;
-  transform:translate(-50%,-50%) scale(1);
-  pointer-events:auto;
-}
+body.adminOpen .adminPanel{ opacity:1; transform:translate(-50%,-50%) scale(1); pointer-events:auto; }
 .adminStone{
   position:absolute; inset:0;
   border-radius:18px;
@@ -804,13 +716,10 @@ body.adminOpen .adminPanel{
   grid-template-columns: 1fr;
   gap:14px;
 }
-#adminOverlay.unlocked .adminBody{
-  grid-template-columns: 1.05fr 0.95fr;
-}
+#adminOverlay.unlocked .adminBody{ grid-template-columns: 1.05fr 0.95fr; }
 @media (max-width: 860px){
   #adminOverlay.unlocked .adminBody{ grid-template-columns:1fr; }
 }
-
 .adminCard{
   border-radius:16px;
   border:1px solid rgba(255,170,90,0.14);
@@ -859,8 +768,7 @@ body.adminOpen .adminPanel{
   width:100%;
   border-radius:12px;
   border:1px solid rgba(255,170,90,0.18);
-  background:
-    radial-gradient(circle at 20% 20%, rgba(255,140,70,0.10), rgba(0,0,0,0.68));
+  background: radial-gradient(circle at 20% 20%, rgba(255,140,70,0.10), rgba(0,0,0,0.68));
   padding:10px 12px;
   outline:none;
   color:rgba(255,240,220,0.92);
@@ -869,6 +777,7 @@ body.adminOpen .adminPanel{
 }
 .adminInput::placeholder{ color:rgba(255,255,255,0.35); }
 .adminInput.readonly{ opacity:0.85; filter:saturate(0.95); }
+
 .adminActions{ display:flex; gap:10px; align-items:center; margin-top:12px; position:relative; z-index:1; }
 .adminBtn{
   border:none;
@@ -881,8 +790,7 @@ body.adminOpen .adminPanel{
   text-transform:uppercase;
   font-size:11px;
   color:rgba(255,235,210,0.88);
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255,140,70,0.22), rgba(0,0,0,0.75));
+  background: radial-gradient(circle at 30% 30%, rgba(255,140,70,0.22), rgba(0,0,0,0.75));
   border:1px solid rgba(255,170,90,0.22);
   box-shadow: 0 16px 60px rgba(0,0,0,0.65), inset 0 0 14px rgba(255,140,70,0.08);
 }
@@ -901,7 +809,6 @@ body.adminOpen .adminPanel{
   position:relative;
   z-index:1;
 }
-
 #dashCard{ display:none; }
 #adminOverlay.unlocked #dashCard{ display:block; }
 
@@ -912,15 +819,13 @@ body.adminOpen .adminPanel{
   position:relative;
   z-index:1;
 }
-@media (max-width: 860px){
-  .metrics{ grid-template-columns:1fr; }
-}
+@media (max-width: 860px){ .metrics{ grid-template-columns:1fr; } }
+
 .metric{
   border-radius:14px;
   padding:12px 12px 10px;
   border:1px solid rgba(255,170,90,0.14);
-  background:
-    radial-gradient(circle at 20% 20%, rgba(255,140,70,0.12), rgba(0,0,0,0.62));
+  background: radial-gradient(circle at 20% 20%, rgba(255,140,70,0.12), rgba(0,0,0,0.62));
   box-shadow: inset 0 0 18px rgba(255,140,70,0.05);
 }
 .metric .k{
@@ -953,27 +858,24 @@ body.adminOpen .adminPanel{
   z-index:1;
 }
 
-/* ===== SOCIAL MEDIA (livre/clean/moderno) ===== */
-#socialOverlay{
-  position:fixed; inset:0;
-  z-index:84;
-  display:none;
-}
+/* ===== SOCIAL MEDIA (PRETO / LIVRE) ===== */
+#socialOverlay{ position:fixed; inset:0; z-index:84; display:none; }
 body.socialOpen #socialOverlay{ display:block; }
 #socialOverlay .dim{
   position:absolute; inset:0;
-  background: rgba(0,0,0,0.86);
+  background: rgba(0,0,0,0.90);
   backdrop-filter: blur(10px);
 }
 .smBg{
   position:absolute; inset:0;
-  opacity:0.22;
+  opacity:0.24;
   background:
     radial-gradient(1200px 600px at 50% 10%, rgba(255,255,255,0.10), transparent 60%),
     linear-gradient(180deg, rgba(255,255,255,0.06), transparent 45%),
     repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 8px);
   pointer-events:none;
 }
+
 .smWrap{
   position:absolute;
   left:50%; top:50%;
@@ -985,13 +887,11 @@ body.socialOpen #socialOverlay{ display:block; }
   padding:18px;
 }
 .smCard{
-  width:min(440px, 94vw);
-  border-radius:22px;
-  background: rgba(14,14,16,0.93);
-  border:1px solid rgba(255,255,255,0.08);
-  box-shadow:
-    0 40px 160px rgba(0,0,0,0.88),
-    0 0 0 1px rgba(0,0,0,0.25) inset;
+  width:min(520px, 94vw);
+  border-radius:24px;
+  background: rgba(14,14,16,0.94);
+  border:1px solid rgba(255,255,255,0.09);
+  box-shadow: 0 40px 180px rgba(0,0,0,0.90), 0 0 0 1px rgba(0,0,0,0.25) inset;
   overflow:hidden;
   position:relative;
 }
@@ -1003,6 +903,7 @@ body.socialOpen #socialOverlay{ display:block; }
     radial-gradient(600px 380px at 50% 120%, rgba(255,255,255,0.06), transparent 55%);
   pointer-events:none;
 }
+
 .smTopbar{
   display:flex;
   align-items:center;
@@ -1012,52 +913,51 @@ body.socialOpen #socialOverlay{ display:block; }
   z-index:1;
 }
 .smTitle{
-  font: 700 12px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  font: 800 12px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: rgba(255,255,255,0.55);
 }
 .smClose{
   border:none;
-  background: rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.82);
-  font: 700 12px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  padding:8px 10px;
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.86);
+  font: 800 12px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  padding:8px 12px;
   border-radius:12px;
   cursor:pointer;
-  border:1px solid rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.10);
 }
-.smClose:hover{ filter:brightness(1.06); }
+.smClose:hover{ filter:brightness(1.07); }
 
-.smBody{
-  padding:10px 16px 18px;
-  position:relative;
-  z-index:1;
-}
-.smAvatarRow{
+.smBody{ padding:10px 18px 18px; position:relative; z-index:1; }
+
+/* avatar + nome */
+.smHero{
   display:flex;
   flex-direction:column;
   align-items:center;
   text-align:center;
-  gap:8px;
-  padding:8px 0 6px;
+  gap:10px;
+  padding:6px 0 8px;
 }
 .smAvatar{
-  width:92px; height:92px;
+  width:98px; height:98px;
   border-radius:999px;
   overflow:hidden;
   border:2px solid rgba(255,255,255,0.12);
-  box-shadow: 0 18px 70px rgba(0,0,0,0.65);
+  box-shadow: 0 22px 90px rgba(0,0,0,0.70);
   background: rgba(255,255,255,0.06);
 }
 .smAvatar img{ width:100%; height:100%; object-fit:cover; }
+
 .smName{
-  font: 800 30px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  color: rgba(255,255,255,0.92);
-  letter-spacing:0.2px;
+  font: 900 34px/1.05 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  color: rgba(255,255,255,0.93);
+  letter-spacing:0.4px;
 }
 .smBio{
-  font: 600 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  font: 650 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
   color: rgba(255,255,255,0.62);
 }
 .smLoc{
@@ -1067,140 +967,158 @@ body.socialOpen #socialOverlay{ display:block; }
   padding:8px 12px;
   border-radius:999px;
   background: rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.10);
   color: rgba(255,255,255,0.62);
-  font: 700 12px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  font: 800 12px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
 }
 .smLoc svg{ width:14px;height:14px; opacity:.85; }
 
-.smMini{
-  margin:14px auto 12px;
-  width:min(330px, 100%);
-  border-radius:16px;
-  padding:10px 12px;
-  background: rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.08);
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
-.smMiniAva{
-  width:42px;height:42px;border-radius:12px;
-  overflow:hidden;
-  background: rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.10);
-}
-.smMiniAva img{ width:100%;height:100%;object-fit:cover; }
-.smMiniText{ flex:1; min-width:0; }
-.smMiniUser{
-  font: 800 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  color: rgba(255,255,255,0.86);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.smMiniSub{
-  margin-top:2px;
-  font: 600 12px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  color: rgba(255,255,255,0.55);
-}
-
-/* icones */
+/* socials */
 .smIcons{
   display:flex;
   justify-content:center;
   gap:12px;
-  margin:10px 0 6px;
+  margin:14px 0 8px;
   flex-wrap:wrap;
 }
 .smIconBtn{
-  width:44px;height:44px;
-  border-radius:14px;
+  width:46px;height:46px;
+  border-radius:16px;
   display:grid;
   place-items:center;
   background: rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.10);
   cursor:pointer;
   transition: transform .12s ease, filter .12s ease;
 }
-.smIconBtn:hover{ transform: translateY(-1px); filter: brightness(1.08); }
+.smIconBtn:hover{ transform: translateY(-1px); filter: brightness(1.10); }
 .smIconBtn svg{ width:22px;height:22px; opacity:0.9; }
 
-/* player */
-.smPlayer{
-  margin:12px auto 0;
-  width:min(360px, 100%);
-  border-radius:16px;
-  padding:12px 12px;
+/* discord status */
+.smSection{
+  margin-top:14px;
+  border-radius:18px;
+  padding:14px 14px 12px;
   background: rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.10);
+}
+.smSectionHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.smSectionTitle{
+  font: 900 12px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color: rgba(255,255,255,0.55);
+}
+.smPill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.25);
+  color: rgba(255,255,255,0.74);
+  font: 800 12px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+.dotStatus{
+  width:10px;height:10px;border-radius:50%;
+  background: rgba(160,160,160,0.9);
+  box-shadow: 0 0 16px rgba(255,255,255,0.10);
+}
+.dotStatus.on{
+  background: rgba(70, 255, 140, 0.95);
+  box-shadow: 0 0 18px rgba(70, 255, 140, 0.20);
+}
+.smSectionBody{
+  margin-top:12px;
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:10px;
+}
+.smRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  border-radius:14px;
+  background: rgba(0,0,0,0.22);
   border:1px solid rgba(255,255,255,0.08);
 }
-.smTrackRow{
+.smRowLeft{
   display:flex;
   align-items:center;
   gap:10px;
+  min-width:0;
 }
-.smCover{
-  width:48px;height:48px;border-radius:12px;
-  overflow:hidden;
-  background: rgba(255,255,255,0.10);
+.smDiscIcon{
+  width:36px;height:36px;
+  border-radius:14px;
+  background: rgba(255,255,255,0.06);
   border:1px solid rgba(255,255,255,0.10);
+  display:grid;
+  place-items:center;
 }
-.smCover img{ width:100%;height:100%;object-fit:cover; }
-.smTrack{
-  flex:1; min-width:0;
-}
-.smTrackTitle{
-  font: 800 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+.smDiscIcon svg{ width:20px;height:20px; opacity:.9; }
+.smRowText{ min-width:0; }
+.smRowName{
+  font: 900 14px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
   color: rgba(255,255,255,0.86);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-.smTrackSub{
+.smRowSub{
   margin-top:2px;
-  font: 600 12px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  color: rgba(255,255,255,0.55);
+  font: 650 12px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  color: rgba(255,255,255,0.56);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-.smPlayBtn{
-  width:44px;height:44px;border-radius:14px;
-  display:grid; place-items:center;
-  background: rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.10);
-  cursor:pointer;
+
+/* toggle local */
+.smToggle{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  user-select:none;
 }
-.smPlayBtn:hover{ filter:brightness(1.08); }
-.smPlayBtn svg{ width:22px;height:22px; opacity:0.95; }
-.smProg{
-  margin-top:10px;
-  height:10px;
+.smSwitch{
+  width:48px;height:28px;
   border-radius:999px;
   background: rgba(255,255,255,0.10);
-  border:1px solid rgba(255,255,255,0.08);
-  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.10);
+  position:relative;
+  cursor:pointer;
+  transition: filter .12s ease;
 }
-.smProg > div{
-  height:100%;
-  width:0%;
-  background: rgba(255,255,255,0.62);
+.smSwitch:hover{ filter:brightness(1.06); }
+.smKnob{
+  width:22px;height:22px;
   border-radius:999px;
+  background: rgba(255,255,255,0.86);
+  position:absolute;
+  top:50%;
+  left:3px;
+  transform: translateY(-50%);
+  transition:left .18s ease, background .18s ease;
 }
-.smTimeRow{
-  margin-top:8px;
-  display:flex;
-  justify-content:space-between;
-  font: 700 11px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  color: rgba(255,255,255,0.48);
+.smSwitch.on{
+  background: rgba(70, 255, 140, 0.14);
+  border-color: rgba(70, 255, 140, 0.22);
 }
+.smSwitch.on .smKnob{ left:23px; background: rgba(70, 255, 140, 0.92); }
 
-/* contador */
 .smViews{
-  margin-top:12px;
+  margin-top:14px;
   display:flex;
   align-items:center;
   gap:8px;
   justify-content:center;
   color: rgba(255,255,255,0.50);
-  font: 700 12px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  font: 800 12px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
 }
 .smViews svg{ width:16px;height:16px; opacity:.85; }
 
@@ -1286,7 +1204,7 @@ body.socialOpen #socialOverlay{ display:block; }
   </button>
 </div>
 
-<!-- TOP CENTER (Pergaminho + Admin) -->
+<!-- TOP CENTER -->
 <div id="topCenter">
   <button class="topBtn" id="scrollBtn" aria-label="Abrir pergaminho (lore)">
     <svg viewBox="0 0 24 24" fill="none">
@@ -1306,7 +1224,7 @@ body.socialOpen #socialOverlay{ display:block; }
   </button>
 </div>
 
-<!-- TOP RIGHT MENU -->
+<!-- MENU TOP RIGHT -->
 <div id="rightMenu" aria-label="Menu de opções">
   <button class="menuBtn" id="menuBtn" aria-label="Abrir menu">
     <svg viewBox="0 0 24 24" fill="none">
@@ -1323,7 +1241,7 @@ body.socialOpen #socialOverlay{ display:block; }
       <span class="dot"></span>
       <div>
         Social Media
-        <small>perfil / links</small>
+        <small>perfil / discord</small>
       </div>
     </button>
 
@@ -1471,11 +1389,12 @@ body.socialOpen #socialOverlay{ display:block; }
       </div>
 
       <div class="smBody">
-        <div class="smAvatarRow">
+
+        <div class="smHero">
           <div class="smAvatar">
-            <img src="https://files.catbox.moe/5yp48z.png" alt="avatar">
+            <img src="https://files.catbox.moe/5lkce6.gif" alt="avatar Allz">
           </div>
-          <div class="smName">LIZ</div>
+          <div class="smName">Allz</div>
           <div class="smBio">awake and unafraid</div>
 
           <div class="smLoc">
@@ -1484,16 +1403,6 @@ body.socialOpen #socialOverlay{ display:block; }
               <path d="M12 10.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" fill="rgba(255,255,255,0.75)"/>
             </svg>
             purgatório
-          </div>
-        </div>
-
-        <div class="smMini">
-          <div class="smMiniAva">
-            <img src="https://files.catbox.moe/5yp48z.png" alt="">
-          </div>
-          <div class="smMiniText">
-            <div class="smMiniUser">akairinhas</div>
-            <div class="smMiniSub">last seen unknown</div>
           </div>
         </div>
 
@@ -1532,25 +1441,55 @@ body.socialOpen #socialOverlay{ display:block; }
           </button>
         </div>
 
-        <div class="smPlayer">
-          <div class="smTrackRow">
-            <div class="smCover">
-              <img src="https://files.catbox.moe/5yp48z.png" alt="">
+        <div class="smSection">
+          <div class="smSectionHead">
+            <div class="smSectionTitle">DISCORD STATUS</div>
+            <div class="smPill">
+              <span class="dotStatus" id="dDot"></span>
+              <span id="dState">Offline</span>
             </div>
-            <div class="smTrack">
-              <div class="smTrackTitle">cemetery drive</div>
-              <div class="smTrackSub">echoes in the void</div>
-            </div>
-            <button class="smPlayBtn" id="smPlay" aria-label="Play/Pause">
-              <svg id="smPlayIcon" viewBox="0 0 24 24" fill="none">
-                <path d="M9 7l10 5-10 5V7Z" fill="rgba(255,255,255,0.9)"/>
-              </svg>
-            </button>
           </div>
-          <div class="smProg"><div id="smProgFill"></div></div>
-          <div class="smTimeRow">
-            <span id="smT1">0:00</span>
-            <span id="smT2">0:00</span>
+
+          <div class="smSectionBody">
+            <div class="smRow">
+              <div class="smRowLeft">
+                <div class="smDiscIcon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M7.5 7.5c2-1 7-1 9 0" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M7 8c-1.2 2.2-1.7 4.4-1.4 6.8 2.3 1.7 4.6 2.4 6.4 2.4s4.1-.7 6.4-2.4c.3-2.4-.2-4.6-1.4-6.8" stroke="rgba(255,255,255,0.75)" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M9.5 13.2h.01" stroke="rgba(255,255,255,0.95)" stroke-width="3.2" stroke-linecap="round"/>
+                    <path d="M14.5 13.2h.01" stroke="rgba(255,255,255,0.95)" stroke-width="3.2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="smRowText">
+                  <div class="smRowName" id="dUser">Allz</div>
+                  <div class="smRowSub" id="dSub">status local (sem API por enquanto)</div>
+                </div>
+              </div>
+
+              <div class="smToggle" title="Toggle local só pra testar layout">
+                <div class="smSwitch" id="dSwitch">
+                  <div class="smKnob"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="smRow" style="opacity:.92">
+              <div class="smRowLeft">
+                <div class="smDiscIcon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3v10" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M8.6 10.2 12 13.6l3.4-3.4" stroke="rgba(255,255,255,0.75)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6 17h12" stroke="rgba(255,255,255,0.6)" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="smRowText">
+                  <div class="smRowName">API slot</div>
+                  <div class="smRowSub">depois a gente liga em “Discord Presence”</div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -1579,9 +1518,12 @@ const KEYS = {
   scroll: "sf2_scroll_open",
   adminSess: "sf2_admin_sessions",
   socialOpen: "sf2_social_open",
-  fs: "sf2_fullscreen"
+  fs: "sf2_fullscreen",
+  discordOn: "sf2_discord_on"
 };
 function getNum(k){ return Number(localStorage.getItem(k) || "0"); }
+function getBool(k){ return (localStorage.getItem(k) || "0") === "1"; }
+function setBool(k,v){ localStorage.setItem(k, v ? "1":"0"); }
 function inc(k){ const v=getNum(k)+1; localStorage.setItem(k,String(v)); return v; }
 function setTxt(id, v){ const el=document.getElementById(id); if(el) el.textContent=String(v); }
 
@@ -1706,10 +1648,7 @@ async function toggleFS(){
     }
   }catch(e){}
 }
-fsBtn.addEventListener("click", (e)=>{
-  e.stopPropagation();
-  toggleFS();
-});
+fsBtn.addEventListener("click", (e)=>{ e.stopPropagation(); toggleFS(); });
 document.addEventListener("fullscreenchange", ()=>{
   if(!document.fullscreenElement) document.body.classList.remove("fsOn");
 });
@@ -1717,13 +1656,8 @@ document.addEventListener("fullscreenchange", ()=>{
 /* ===== MENU TOP-RIGHT ===== */
 const rightMenu = document.getElementById("rightMenu");
 const menuBtn = document.getElementById("menuBtn");
-menuBtn.addEventListener("click",(e)=>{
-  e.stopPropagation();
-  rightMenu.classList.toggle("open");
-});
-document.addEventListener("click",(e)=>{
-  if(!rightMenu.contains(e.target)) rightMenu.classList.remove("open");
-});
+menuBtn.addEventListener("click",(e)=>{ e.stopPropagation(); rightMenu.classList.toggle("open"); });
+document.addEventListener("click",(e)=>{ if(!rightMenu.contains(e.target)) rightMenu.classList.remove("open"); });
 
 /* ===== PERGAMINHO ===== */
 const scrollBtn = document.getElementById("scrollBtn");
@@ -1755,29 +1689,19 @@ function openScroll(){
 
   inc(KEYS.scroll);
 
-  if(!typedOnce){
-    startTyping();
-  }else{
-    cursor.style.display = "none";
-  }
+  if(!typedOnce){ startTyping(); }
+  else{ cursor.style.display = "none"; }
 }
 function closeScroll(){
   document.body.classList.remove("scrollOpen");
   scrollOverlay.setAttribute("aria-hidden","true");
 }
-
-scrollBtn.addEventListener("click",(e)=>{
-  e.stopPropagation();
-  openScroll();
-});
+scrollBtn.addEventListener("click",(e)=>{ e.stopPropagation(); openScroll(); });
 scrollClose.addEventListener("click", closeScroll);
-scrollOverlay.addEventListener("click",(e)=>{
-  if(e.target.classList.contains("dim")) closeScroll();
-});
+scrollOverlay.addEventListener("click",(e)=>{ if(e.target.classList.contains("dim")) closeScroll(); });
 
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function scrollToBottom(){ scrollLog.scrollTop = scrollLog.scrollHeight; }
-
 function writeOut(html){
   const line = document.createElement("div");
   line.className = "outputLine";
@@ -1785,17 +1709,13 @@ function writeOut(html){
   out.appendChild(line);
   scrollToBottom();
 }
-
 function finishTypingNow(){
   typing = false;
   cursor.style.display = "none";
   typeLine.innerHTML = loreLines.map(l => `<div class="typeLine">${l}</div>`).join("");
   const hasHint = out.textContent.includes("Digite ajuda");
-  if(!hasHint){
-    writeOut(`<span class="sys">SISTEMA:</span> Digite <b>ajuda</b> para ver comandos.`);
-  }
+  if(!hasHint){ writeOut(`<span class="sys">SISTEMA:</span> Digite <b>ajuda</b> para ver comandos.`); }
 }
-
 async function startTyping(){
   if(typing) return;
   typing = true;
@@ -1837,7 +1757,6 @@ async function startTyping(){
     scrollToBottom();
   }
 }
-
 cmdInput.addEventListener("keydown", (e)=>{
   if(e.key !== "Enter") return;
   const raw = cmdInput.value.trim();
@@ -1870,16 +1789,10 @@ cmdInput.addEventListener("keydown", (e)=>{
     writeOut(`<span class="sys">SISTEMA:</span> Você já ouviu as vozes... agora escolha um caminho.`);
     return;
   }
-
   writeOut(`<span class="sys">SISTEMA:</span> Comando desconhecido. Digite <b>ajuda</b>.`);
 });
-
 function escapeHtml(s){
-  return s.replaceAll("&","&amp;")
-          .replaceAll("<","&lt;")
-          .replaceAll(">","&gt;")
-          .replaceAll('"',"&quot;")
-          .replaceAll("'","&#039;");
+  return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
 
 /* ===== ADMIN ===== */
@@ -1927,12 +1840,7 @@ function tryAdminLogin(){
   adminErr.style.display = "block";
 }
 adminEnter.addEventListener("click", tryAdminLogin);
-adminPass.addEventListener("keydown",(e)=>{
-  if(e.key==="Enter"){
-    e.preventDefault();
-    tryAdminLogin();
-  }
-});
+adminPass.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ e.preventDefault(); tryAdminLogin(); } });
 
 /* ===== SOCIAL ===== */
 const socialOverlay = document.getElementById("socialOverlay");
@@ -1960,66 +1868,29 @@ openSocial.addEventListener("click",(e)=>{ e.stopPropagation(); openSocialPanel(
 smClose.addEventListener("click", closeSocialPanel);
 socialOverlay.addEventListener("click",(e)=>{ if(e.target.classList.contains("dim")) closeSocialPanel(); });
 
-openArchive.addEventListener("click", ()=>{
-  rightMenu.classList.remove("open");
-  alert("Archive ainda é placeholder. Na V2.1 a gente define o layout.");
-});
-openPlaylists.addEventListener("click", ()=>{
-  rightMenu.classList.remove("open");
-  alert("Playlists ainda é placeholder. Na V2.1 a gente define o layout.");
-});
+openArchive.addEventListener("click", ()=>{ rightMenu.classList.remove("open"); alert("Archive ainda é placeholder. Na V2.1 a gente define o layout."); });
+openPlaylists.addEventListener("click", ()=>{ rightMenu.classList.remove("open"); alert("Playlists ainda é placeholder. Na V2.1 a gente define o layout."); });
 
-/* links placeholder */
-document.querySelectorAll(".smIconBtn").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    const link = btn.getAttribute("data-link") || "#";
-    if(link === "#") return;
-    window.open(link, "_blank", "noopener,noreferrer");
-  });
-});
+/* ===== Discord status (local toggle) ===== */
+const dSwitch = document.getElementById("dSwitch");
+const dDot = document.getElementById("dDot");
+const dState = document.getElementById("dState");
 
-/* player fake (só UI) */
-let smPlaying = false;
-let smProg = 0;
-const smPlay = document.getElementById("smPlay");
-const smPlayIcon = document.getElementById("smPlayIcon");
-const smProgFill = document.getElementById("smProgFill");
-const smT1 = document.getElementById("smT1");
-const smT2 = document.getElementById("smT2");
-let smTimer = null;
-
-function fmt(sec){
-  sec = Math.max(0, Math.floor(sec));
-  const m = Math.floor(sec/60);
-  const s = String(sec%60).padStart(2,"0");
-  return `${m}:${s}`;
+function renderDiscord(){
+  const on = getBool(KEYS.discordOn);
+  dSwitch.classList.toggle("on", on);
+  dDot.classList.toggle("on", on);
+  dState.textContent = on ? "Online" : "Offline";
 }
-function setPlayerUI(){
-  const total = 188; // 3:08
-  const cur = Math.floor(total * smProg);
-  smProgFill.style.width = `${Math.floor(smProg*100)}%`;
-  smT1.textContent = fmt(cur);
-  smT2.textContent = fmt(total);
-  smPlayIcon.innerHTML = smPlaying
-    ? `<path d="M8 7h3v10H8V7Zm5 0h3v10h-3V7Z" fill="rgba(255,255,255,0.9)"/>`
-    : `<path d="M9 7l10 5-10 5V7Z" fill="rgba(255,255,255,0.9)"/>`;
-}
-setPlayerUI();
+renderDiscord();
 
-smPlay.addEventListener("click", ()=>{
-  smPlaying = !smPlaying;
-  if(smTimer) clearInterval(smTimer);
-  if(smPlaying){
-    smTimer = setInterval(()=>{
-      smProg += 0.006;
-      if(smProg >= 1){ smProg = 0; smPlaying = false; clearInterval(smTimer); }
-      setPlayerUI();
-    }, 250);
-  }
-  setPlayerUI();
+dSwitch.addEventListener("click", ()=>{
+  const on = !getBool(KEYS.discordOn);
+  setBool(KEYS.discordOn, on);
+  renderDiscord();
 });
 
-/* ===== ESC fecha overlays (fechar é ok) ===== */
+/* ===== ESC fecha overlays ===== */
 document.addEventListener("keydown",(e)=>{
   if(e.key !== "Escape") return;
   if(document.body.classList.contains("scrollOpen")) closeScroll();
@@ -2027,7 +1898,7 @@ document.addEventListener("keydown",(e)=>{
   if(document.body.classList.contains("socialOpen")) closeSocialPanel();
 });
 
-/* ===== views inicial do social ===== */
+/* views inicial do social */
 smViewsCount.textContent = String(getNum(KEYS.socialOpen));
 </script>
 
