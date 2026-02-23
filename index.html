@@ -1,1541 +1,29 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Shadow Fight 2 — Entry</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cormorant+Garamond:wght@500;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;background:#000}
-
-:root{
-  --ember: rgba(255,140,70,1);
-  --goldA: #fff2de;
-  --goldB: #d9a56a;
-  --goldC: #a8642c;
-
-  --ui-bg: rgba(14,14,16,0.94);
-  --ui-stroke: rgba(255,255,255,0.10);
-  --ui-soft: rgba(255,255,255,0.06);
-}
-
-/* ===== VIDEO ===== */
-#mainVideo{
-  position:fixed; inset:0;
-  width:100%; height:100%;
-  object-fit:cover;
-  z-index:0;
-  opacity:0;
-  transition:opacity 900ms ease, filter 900ms ease;
-  filter:contrast(1.05) saturate(0.95);
-}
-body.entered #mainVideo{
-  opacity:1;
-  filter:contrast(1.06) saturate(0.92) blur(3px) brightness(0.82);
-}
-body.scrollOpen #mainVideo{ filter:contrast(1.06) saturate(0.92) blur(6px) brightness(0.62); }
-body.adminOpen #mainVideo,
-body.socialOpen #mainVideo{ filter:contrast(1.06) saturate(0.92) blur(7px) brightness(0.56); }
-
-/* ===== ENTRY ===== */
-#entry{ position:fixed; inset:0; z-index:10; cursor:pointer; background:#000; }
-.bgFill{
-  position:absolute; inset:0;
-  background:url("https://files.catbox.moe/5yp48z.png") center/cover no-repeat;
-  filter:blur(28px) brightness(0.22) contrast(1.2);
-  transform:scale(1.2);
-  z-index:1;
-}
-#ashCanvas{ position:absolute; inset:0; z-index:2; pointer-events:none; }
-.stage{ position:absolute; inset:0; display:grid; place-items:center; z-index:5; }
-.frameWrap{
-  width:min(1000px,88vw);
-  aspect-ratio:16/9;
-  position:relative;
-  border-radius:16px;
-  overflow:hidden;
-  box-shadow: 0 0 0 1px rgba(255,170,90,0.1), 0 40px 140px rgba(0,0,0,0.95);
-  transition:transform 450ms ease;
-}
-#entry:hover .frameWrap{ transform:scale(1.01); }
-.frame{
-  position:absolute; inset:0;
-  width:100%; height:100%;
-  object-fit:cover;
-  filter:contrast(1.12) brightness(0.82) saturate(0.9);
-}
-.softOverlay{
-  position:absolute; inset:0;
-  z-index:2;
-  background:
-    radial-gradient(circle at center, rgba(0,0,0,0.18), rgba(0,0,0,0.72)),
-    linear-gradient(to bottom, rgba(0,0,0,0.28), transparent 40%, rgba(0,0,0,0.55));
-  backdrop-filter: blur(2px);
-}
-#strike{ opacity:0; z-index:3; mix-blend-mode:screen; transition:opacity 200ms ease; }
-body.strikeOn #strike{opacity:0.95}
-
-/* ===== ENTER UI ===== */
-.introUI{
-  position:absolute; inset:0;
-  display:grid; place-items:center;
-  text-align:center;
-  z-index:4;
-  pointer-events:none;
-}
-.title{
-  font-family: "Cinzel", serif;
-  font-weight:800;
-  font-size: clamp(26px, 3.2vw, 44px);
-  letter-spacing:7px;
-  text-transform:uppercase;
-
-  background: linear-gradient(
-    to bottom, var(--goldA) 0%,
-    #f0cfa2 18%,
-    var(--goldB) 45%,
-    var(--goldC) 68%,
-    #f6d5a8 100%
-  );
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-
-  text-shadow:
-    0 2px 0 #000,
-    0 0 10px rgba(255,140,70,0.55),
-    0 0 34px rgba(255,100,0,0.35);
-
-  position:relative;
-  animation:pulse 2.6s ease-in-out infinite;
-}
-.title::after{
-  content:"";
-  position:absolute;
-  inset:-14px -42px;
-  background: radial-gradient(circle at center, rgba(255,120,0,0.14), rgba(0,0,0,0.75));
-  z-index:-2;
-  filter:blur(18px);
-  border-radius:60px;
-  opacity:0.85;
-}
-.title::before{
-  content:"";
-  position:absolute;
-  inset:-8px -58px;
-  z-index:-1;
-  background: linear-gradient(120deg,
-    transparent 0%,
-    rgba(255,255,255,0.10) 35%,
-    rgba(255,255,255,0.22) 50%,
-    rgba(255,255,255,0.10) 65%,
-    transparent 100%);
-  transform:translateX(-70%);
-  filter:blur(8px);
-  opacity:0.55;
-  animation:shine 2.8s ease-in-out infinite;
-}
-@keyframes shine{
-  0%,55%{ transform:translateX(-70%); opacity:0.0; }
-  65%{ opacity:0.55; }
-  100%{ transform:translateX(70%); opacity:0.0; }
-}
-.sub{
-  margin-top:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  font-size:10px;
-  letter-spacing:4px;
-  color:rgba(255,255,255,0.42);
-  text-transform:uppercase;
-  animation:blink 1.2s steps(2,end) infinite;
-}
-.kbdEnter{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:6px 10px;
-  border-radius:10px;
-  border:1px solid rgba(255,170,90,0.22);
-  background: radial-gradient(circle at 30% 30%, rgba(255,140,70,0.10), rgba(0,0,0,0.72));
-  box-shadow: inset 0 0 14px rgba(255,140,70,0.08), 0 10px 40px rgba(0,0,0,0.55);
-  color:rgba(255,220,190,0.80);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:11px;
-  letter-spacing:1px;
-}
-.kbdEnter svg{ width:14px;height:14px; margin-left:7px; opacity:0.9; }
-
-@keyframes pulse{ 0%,100%{transform:translateY(0);opacity:.88} 50%{transform:translateY(-3px);opacity:1} }
-@keyframes blink{ 0%,49%{opacity:.22} 50%,100%{opacity:.62} }
-
-body.strikeOn .introUI{ opacity:0; transition:opacity 300ms ease; }
-body.entered #entry{ opacity:0; pointer-events:none; transition:opacity 900ms ease; }
-
-/* ===== VOLUME (top-left) ===== */
-#grimoire{ position:fixed; left:14px; top:14px; z-index:72; user-select:none; }
-.grimoireBtn{
-  width:44px; height:44px;
-  border-radius:12px;
-  border:1px solid rgba(255,170,90,0.18);
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255,140,70,0.16), rgba(0,0,0,0.78)),
-    linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.55));
-  box-shadow:
-    0 14px 44px rgba(0,0,0,0.75),
-    0 0 22px rgba(255,140,70,0.14),
-    inset 0 0 14px rgba(255,140,70,0.10);
-  display:grid;
-  place-items:center;
-  cursor:pointer;
-  transition:transform .2s ease;
-}
-.grimoireBtn:hover{ transform:scale(1.05); }
-.grimoireIcon{ width:21px; height:21px; }
-.grimoireIcon svg{ width:100%; height:100%; display:block; }
-.panel{
-  position:absolute;
-  left:0;
-  top:54px;
-  width:200px;
-  padding:10px;
-  border-radius:12px;
-  border:1px solid rgba(255,170,90,0.18);
-  background:
-    radial-gradient(circle at 20% 20%, rgba(255,140,70,0.10), rgba(0,0,0,0.86)),
-    linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.55));
-  box-shadow:
-    0 26px 110px rgba(0,0,0,0.86),
-    inset 0 0 22px rgba(255,140,70,0.07);
-  transform-origin: 0% 0%;
-  transform: scale(0.92) translateY(8px);
-  opacity:0;
-  pointer-events:none;
-  transition:opacity 180ms ease, transform 220ms ease;
-}
-#grimoire.open .panel{ opacity:1; transform: scale(1) translateY(0); pointer-events:auto; }
-
-.row{ display:flex; align-items:center; gap:10px; }
-.volValue{
-  min-width:44px;
-  text-align:right;
-  font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:12px;
-  color:rgba(255,255,255,0.55);
-}
-#vol{
-  -webkit-appearance:none;
-  appearance:none;
-  width:100%;
-  height:10px;
-  border-radius:99px;
-  outline:none;
-  background: linear-gradient(to right, rgba(255,140,70,0.9) var(--p,8%), rgba(255,255,255,0.10) var(--p,8%));
-  border:1px solid rgba(255,170,90,0.16);
-  box-shadow: inset 0 0 18px rgba(0,0,0,0.65);
-}
-#vol::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  appearance:none;
-  width:16px; height:16px;
-  border-radius:50%;
-  background: radial-gradient(circle at 30% 30%, #fff2de, #d9a56a 55%, #8a4a1f);
-  border:1px solid rgba(0,0,0,0.55);
-  box-shadow: 0 0 16px rgba(255,140,70,0.30);
-  cursor:pointer;
-}
-#vol::-moz-range-thumb{
-  width:16px; height:16px;
-  border-radius:50%;
-  background: radial-gradient(circle at 30% 30%, #fff2de, #d9a56a 55%, #8a4a1f);
-  border:1px solid rgba(0,0,0,0.55);
-  box-shadow: 0 0 16px rgba(255,140,70,0.30);
-  cursor:pointer;
-}
-
-/* ===== FULLSCREEN ===== */
-#fsWrap{
-  position:fixed;
-  left:14px;
-  top:64px;
-  z-index:60;
-  user-select:none;
-  opacity:0;
-  pointer-events:none;
-  transition: top 220ms ease, opacity 200ms ease;
-}
-body.entered #fsWrap{ opacity:1; pointer-events:auto; }
-body.volOpen #fsWrap{ top:124px; }
-
-.fsBtn{
-  width:44px;height:44px;
-  border-radius:12px;
-  border:1px solid rgba(255,170,90,0.18);
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255,140,70,0.14), rgba(0,0,0,0.82)),
-    linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.55));
-  box-shadow:
-    0 14px 44px rgba(0,0,0,0.78),
-    0 0 22px rgba(255,140,70,0.12),
-    inset 0 0 14px rgba(255,140,70,0.08);
-  cursor:pointer;
-  display:grid;
-  place-items:center;
-  transition:transform .2s ease;
-}
-.fsBtn:hover{ transform:scale(1.05); }
-.fsBtn svg{ width:22px;height:22px; opacity:.92; }
-.fsOnIcon{ display:none; }
-body.fsOn .fsOffIcon{ display:none; }
-body.fsOn .fsOnIcon{ display:block; }
-
-/* ===== TOP CENTER BUTTONS ===== */
-#topCenter{
-  position:fixed;
-  left:50%;
-  top:14px;
-  transform:translateX(-50%);
-  z-index:60;
-  display:flex;
-  gap:10px;
-  align-items:center;
-  justify-content:center;
-  pointer-events:none;
-}
-.topBtn{
-  width:44px;height:44px;
-  border-radius:12px;
-  border:1px solid rgba(255,170,90,0.18);
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255,140,70,0.12), rgba(0,0,0,0.80)),
-    linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.55));
-  box-shadow: 0 14px 44px rgba(0,0,0,0.75), 0 0 22px rgba(255,140,70,0.12);
-  cursor:pointer;
-  display:grid;
-  place-items:center;
-  transition:transform .2s ease, opacity .2s ease;
-  opacity:0;
-  pointer-events:none;
-}
-body.entered .topBtn{ opacity:1; pointer-events:auto; }
-.topBtn:hover{ transform:scale(1.05); }
-.topBtn svg{ width:22px;height:22px; opacity:.9; }
-
-/* ===== MENU TOP-RIGHT ===== */
-#rightMenu{ position:fixed; right:14px; top:14px; z-index:60; user-select:none; }
-.menuBtn{
-  width:44px;height:44px;
-  border-radius:12px;
-  border:1px solid rgba(255,170,90,0.18);
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255,140,70,0.15), rgba(0,0,0,0.82)),
-    linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.58));
-  box-shadow:
-    0 14px 44px rgba(0,0,0,0.78),
-    0 0 22px rgba(255,140,70,0.12),
-    inset 0 0 14px rgba(255,140,70,0.08);
-  cursor:pointer;
-  display:grid;
-  place-items:center;
-  transition:transform .2s ease;
-  opacity:0;
-  pointer-events:none;
-  position:relative;
-}
-body.entered .menuBtn{ opacity:1; pointer-events:auto; }
-.menuBtn:hover{ transform:scale(1.05); }
-.menuBtn svg{ width:22px;height:22px; opacity:.92; }
-
-.menuPanel{
-  position:absolute;
-  right:0;
-  top:54px;
-  width:240px;
-  padding:10px;
-  border-radius:14px;
-  border:1px solid rgba(255,170,90,0.18);
-  background:
-    radial-gradient(circle at 15% 10%, rgba(255,140,70,0.10), rgba(0,0,0,0.88)),
-    linear-gradient(to bottom, rgba(255,255,255,0.04), rgba(0,0,0,0.60));
-  box-shadow:
-    0 26px 120px rgba(0,0,0,0.90),
-    inset 0 0 22px rgba(255,140,70,0.07);
-  transform-origin: 100% 0%;
-  transform: scale(0.92) translateY(10px);
-  opacity:0;
-  pointer-events:none;
-  transition:opacity 180ms ease, transform 220ms ease;
-}
-#rightMenu.open .menuPanel{ opacity:1; transform:scale(1) translateY(0); pointer-events:auto; }
-
-.menuTitle{
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  font-size:11px;
-  color:rgba(255,220,190,0.80);
-  opacity:.9;
-  margin:2px 2px 8px;
-}
-.menuItem{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  width:100%;
-  padding:10px 10px;
-  border-radius:12px;
-  border:1px solid rgba(255,170,90,0.14);
-  background: radial-gradient(circle at 20% 30%, rgba(255,140,70,0.10), rgba(0,0,0,0.72));
-  color:rgba(255,235,210,0.86);
-  cursor:pointer;
-  font-family:"Cormorant Garamond", serif;
-  font-size:16px;
-  letter-spacing:0.4px;
-  transition:transform .15s ease, border-color .15s ease, filter .15s ease;
-}
-.menuItem:hover{
-  transform:translateY(-1px);
-  border-color: rgba(255,170,90,0.26);
-  filter:brightness(1.06);
-}
-.menuItem small{
-  display:block;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:11px;
-  letter-spacing:1px;
-  color:rgba(255,255,255,0.45);
-  margin-top:2px;
-}
-.menuItem .dot{
-  width:10px;height:10px;border-radius:50%;
-  background: radial-gradient(circle at 30% 30%, rgba(255,240,220,0.9), rgba(255,140,70,0.8) 55%, rgba(120,40,10,0.85));
-  box-shadow: 0 0 18px rgba(255,140,70,0.25);
-  flex:0 0 auto;
-}
-
-/* ===== PERGAMINHO OVERLAY ===== */
-#scrollOverlay{ position:fixed; inset:0; z-index:80; display:none; }
-body.scrollOpen #scrollOverlay{ display:block; }
-#scrollOverlay .dim{ position:absolute; inset:0; background:rgba(0,0,0,0.55); }
-.scroll{
-  position:absolute;
-  left:50%; top:50%;
-  transform:translate(-50%,-50%) scale(.92);
-  width:min(860px, 92vw);
-  height:min(560px, 80vh);
-  opacity:0;
-  transition:opacity 220ms ease, transform 320ms cubic-bezier(.12,.92,.12,1);
-  pointer-events:none;
-}
-body.scrollOpen .scroll{
-  opacity:1; transform:translate(-50%,-50%) scale(1);
-  pointer-events:auto;
-}
-
-/* ===== PERGAMINHO ===== */
-.scrollPaper{
-  position:absolute; inset:0;
-  border-radius:18px;
-  background:
-    radial-gradient(circle at 10% 10%, rgba(90,35,10,0.40), transparent 42%),
-    radial-gradient(circle at 92% 14%, rgba(80,28,8,0.38), transparent 46%),
-    radial-gradient(circle at 18% 92%, rgba(80,28,8,0.34), transparent 48%),
-    radial-gradient(circle at 90% 90%, rgba(80,28,8,0.36), transparent 50%),
-    radial-gradient(circle at 28% 38%, rgba(0,0,0,0.08), transparent 38%),
-    radial-gradient(circle at 70% 62%, rgba(0,0,0,0.07), transparent 42%),
-    radial-gradient(circle at 55% 28%, rgba(0,0,0,0.06), transparent 44%),
-    repeating-linear-gradient(12deg,
-      rgba(0,0,0,0.03) 0px,
-      rgba(0,0,0,0.03) 2px,
-      rgba(255,255,255,0.02) 3px,
-      rgba(255,255,255,0.02) 5px),
-    linear-gradient(0deg, #cdb081, #eedcb6 22%, #e6cc9f 58%, #c7a572);
-  box-shadow:
-    0 40px 160px rgba(0,0,0,0.85),
-    inset 0 0 0 1px rgba(0,0,0,0.18),
-    inset 0 0 90px rgba(95,45,10,0.22);
-  filter:contrast(1.06) saturate(0.92);
-  overflow:hidden;
-}
-.scrollPaper::after{
-  content:"";
-  position:absolute; inset:0;
-  background:
-    radial-gradient(circle at center, rgba(255,255,255,0.08), transparent 55%),
-    radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.20) 100%);
-  pointer-events:none;
-  mix-blend-mode:multiply;
-  opacity:.95;
-}
-.scrollMask{
-  position:absolute; inset:0;
-  clip-path: polygon(
-    2% 5%, 6% 2%, 12% 4%, 20% 2%, 28% 4%, 36% 2%, 44% 4%, 52% 2%, 60% 4%, 68% 2%, 76% 4%, 84% 2%, 92% 4%, 98% 8%,
-    97% 18%, 99% 26%, 97% 34%, 99% 42%, 97% 50%, 99% 58%, 97% 66%, 99% 74%, 97% 82%, 98% 92%,
-    92% 96%, 86% 98%, 78% 96%, 70% 98%, 62% 96%, 54% 98%, 46% 96%, 38% 98%, 30% 96%, 22% 98%, 14% 96%, 8% 98%, 3% 94%,
-    2% 86%, 1% 78%, 3% 70%, 1% 62%, 3% 54%, 1% 46%, 3% 38%, 1% 30%, 3% 22%, 1% 14%
-  );
-}
-
-.scrollInner{
-  position:absolute; inset:0;
-  padding:26px 30px 18px;
-  font-family: "Cormorant Garamond", serif;
-  color:rgba(35,18,8,0.90);
-  text-shadow: 0 1px 0 rgba(255,255,255,0.18);
-}
-.scrollTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:10px;
-  padding-right:6px;
-}
-.scrollTitle{
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:3px;
-  text-transform:uppercase;
-  font-size:13px;
-  color:rgba(40,22,8,0.92);
-  text-shadow:0 1px 0 rgba(255,255,255,0.25);
-}
-.scrollClose{
-  border:none;
-  background:transparent;
-  padding:6px 10px;
-  cursor:pointer;
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  font-size:12px;
-  color:rgba(45,24,10,0.55);
-  text-shadow: 0 1px 0 rgba(255,255,255,0.25);
-  outline: 2px solid rgba(45,24,10,0.28);
-  outline-offset: -2px;
-  border-radius:10px;
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.08) inset, 0 1px 0 rgba(255,255,255,0.18);
-  opacity:0.9;
-  transform:rotate(-1.5deg);
-}
-.scrollClose:hover{ opacity:1; outline-color: rgba(45,24,10,0.38); color:rgba(45,24,10,0.62); }
-
-.scrollBody{
-  height:calc(100% - 44px);
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  overflow:hidden;
-}
-.scrollLog{
-  flex:1;
-  overflow:auto;
-  padding-right:10px;
-  line-height:1.62;
-  font-size:17px;
-  letter-spacing:0.25px;
-  color:rgba(30,16,7,0.92);
-  filter: contrast(1.03);
-  font-family:"IM Fell English", serif;
-}
-.scrollLog .who{
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:1.4px;
-  text-transform:uppercase;
-  color:rgba(40,18,8,0.92);
-  margin-right:8px;
-  font-size:0.72em;
-  padding:2px 6px;
-  border-radius:999px;
-  display:inline-block;
-  transform: translateY(-1px);
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18), rgba(0,0,0,0.06)),
-    linear-gradient(to bottom, rgba(180,120,60,0.12), rgba(0,0,0,0.05));
-  border:1px solid rgba(0,0,0,0.14);
-  box-shadow: inset 0 0 12px rgba(255,140,70,0.06);
-}
-.scrollLog .mestre{ color:rgba(70,34,12,0.90); }
-.scrollLog .shadow{ color:rgba(18,18,18,0.94); }
-.scrollLog .titan{ color:rgba(80,28,10,0.92); }
-
-.scrollInputBar{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 12px;
-  border-radius:12px;
-  background:rgba(0,0,0,0.07);
-  border:1px solid rgba(0,0,0,0.14);
-}
-.prompt{
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-weight:900;
-  color:rgba(20,10,0,0.85);
-  letter-spacing:1px;
-}
-#cmdInput{
-  flex:1;
-  border:none;
-  outline:none;
-  background:transparent;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:13px;
-  color:rgba(20,10,0,0.92);
-}
-#cmdInput::placeholder{ color:rgba(20,10,0,0.45); }
-
-.typeLine{ margin:0 0 10px 0; white-space:pre-wrap; }
-.cursor{
-  display:inline-block;
-  width:10px;
-  height:16px;
-  transform:translateY(3px);
-  background:rgba(20,10,0,0.62);
-  margin-left:4px;
-  animation:cur 0.8s steps(1,end) infinite;
-}
-@keyframes cur{ 0%,49%{opacity:0} 50%,100%{opacity:1} }
-
-.outputLine{
-  margin:0 0 10px 0;
-  color:rgba(20,10,0,0.92);
-  font-size:15px;
-  font-family:"Cormorant Garamond", serif;
-}
-.outputLine .sys{
-  font-family:"IM Fell English", serif;
-  font-style:italic;
-  letter-spacing:0.6px;
-  color:rgba(60,28,8,0.74);
-}
-body.scrollOpen .scrollPaper{ animation:unroll 520ms cubic-bezier(.12,.92,.12,1) both; }
-@keyframes unroll{
-  0%{ filter:blur(1px) contrast(1.02) saturate(.9); transform:scaleY(.70); }
-  55%{ transform:scaleY(1.02); }
-  100%{ filter:blur(0) contrast(1.06) saturate(.92); transform:scaleY(1); }
-}
-
-/* ===== ADMIN OVERLAY ===== */
-#adminOverlay{ position:fixed; inset:0; z-index:85; display:none; }
-body.adminOpen #adminOverlay{ display:block; }
-#adminOverlay .dim{ position:absolute; inset:0; background:rgba(0,0,0,0.62); }
-.adminPanel{
-  position:absolute; left:50%; top:50%;
-  transform:translate(-50%,-50%) scale(.94);
-  width:min(920px, 94vw);
-  height:min(560px, 82vh);
-  opacity:0;
-  transition:opacity 220ms ease, transform 320ms cubic-bezier(.12,.92,.12,1);
-  pointer-events:none;
-}
-body.adminOpen .adminPanel{ opacity:1; transform:translate(-50%,-50%) scale(1); pointer-events:auto; }
-.adminStone{
-  position:absolute; inset:0;
-  border-radius:18px;
-  background:
-    radial-gradient(circle at 20% 15%, rgba(255,140,70,0.10), rgba(0,0,0,0.40) 38%, rgba(0,0,0,0.78) 100%),
-    radial-gradient(circle at 85% 20%, rgba(255,255,255,0.06), transparent 45%),
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0 2px, rgba(0,0,0,0.00) 2px 7px),
-    linear-gradient(180deg, rgba(30,18,10,0.65), rgba(0,0,0,0.84));
-  border:1px solid rgba(255,170,90,0.16);
-  box-shadow:
-    0 50px 180px rgba(0,0,0,0.92),
-    inset 0 0 0 1px rgba(0,0,0,0.35),
-    inset 0 0 100px rgba(255,140,70,0.05);
-  overflow:hidden;
-}
-.adminStone::before{
-  content:"";
-  position:absolute; inset:-40px;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(255,140,70,0.10), transparent 55%),
-    conic-gradient(from 0deg,
-      rgba(255,140,70,0.10),
-      transparent 15%,
-      rgba(255,255,255,0.06) 25%,
-      transparent 35%,
-      rgba(255,140,70,0.08) 55%,
-      transparent 70%,
-      rgba(255,140,70,0.08) 90%,
-      transparent);
-  filter:blur(18px);
-  opacity:.55;
-  animation:spinRune 8.5s linear infinite;
-}
-@keyframes spinRune{ to{ transform:rotate(360deg); } }
-
-.adminInner{
-  position:absolute; inset:0;
-  padding:22px 22px 18px;
-  color:rgba(255,235,210,0.88);
-  font-family:"Cormorant Garamond", serif;
-}
-.adminTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:14px;
-}
-.adminTitle{
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:3px;
-  text-transform:uppercase;
-  font-size:12px;
-  color:rgba(255,220,190,0.86);
-  text-shadow: 0 1px 0 rgba(0,0,0,0.55);
-}
-.adminClose{
-  border:none;
-  background:transparent;
-  padding:6px 10px;
-  cursor:pointer;
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  font-size:12px;
-  color:rgba(255,220,190,0.70);
-  outline: 2px solid rgba(255,170,90,0.20);
-  outline-offset: -2px;
-  border-radius:10px;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
-  opacity:0.95;
-}
-.adminClose:hover{ opacity:1; outline-color: rgba(255,170,90,0.32); }
-
-.adminBody{
-  height:calc(100% - 52px);
-  display:grid;
-  grid-template-columns: 1fr;
-  gap:14px;
-}
-#adminOverlay.unlocked .adminBody{ grid-template-columns: 1.05fr 0.95fr; }
-@media (max-width: 860px){
-  #adminOverlay.unlocked .adminBody{ grid-template-columns:1fr; }
-}
-.adminCard{
-  border-radius:16px;
-  border:1px solid rgba(255,170,90,0.14);
-  background:
-    radial-gradient(circle at 20% 10%, rgba(255,140,70,0.10), rgba(0,0,0,0.62)),
-    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.55));
-  box-shadow: inset 0 0 18px rgba(255,140,70,0.05);
-  padding:14px 14px 12px;
-  position:relative;
-  overflow:hidden;
-}
-.adminCard::after{
-  content:"";
-  position:absolute; inset:0;
-  background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.06), transparent 40%);
-  pointer-events:none;
-  opacity:.8;
-}
-.adminCard h3{
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  font-size:11px;
-  color:rgba(255,220,190,0.82);
-  margin-bottom:10px;
-  position:relative;
-  z-index:1;
-}
-.adminCard p{
-  position:relative;
-  z-index:1;
-  color:rgba(255,235,210,0.78);
-  line-height:1.5;
-  font-size:16px;
-}
-
-.formRow{ display:flex; flex-direction:column; gap:8px; margin:10px 0; position:relative; z-index:1; }
-.formRow label{
-  font-family:"IM Fell English", serif;
-  font-style:italic;
-  letter-spacing:0.6px;
-  color:rgba(255,235,210,0.72);
-}
-.adminInput{
-  width:100%;
-  border-radius:12px;
-  border:1px solid rgba(255,170,90,0.18);
-  background: radial-gradient(circle at 20% 20%, rgba(255,140,70,0.10), rgba(0,0,0,0.68));
-  padding:10px 12px;
-  outline:none;
-  color:rgba(255,240,220,0.92);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:13px;
-}
-.adminInput::placeholder{ color:rgba(255,255,255,0.35); }
-.adminInput.readonly{ opacity:0.85; filter:saturate(0.95); }
-
-.adminActions{ display:flex; gap:10px; align-items:center; margin-top:12px; position:relative; z-index:1; }
-.adminBtn{
-  border:none;
-  cursor:pointer;
-  padding:10px 12px;
-  border-radius:12px;
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  font-size:11px;
-  color:rgba(255,235,210,0.88);
-  background: radial-gradient(circle at 30% 30%, rgba(255,140,70,0.22), rgba(0,0,0,0.75));
-  border:1px solid rgba(255,170,90,0.22);
-  box-shadow: 0 16px 60px rgba(0,0,0,0.65), inset 0 0 14px rgba(255,140,70,0.08);
-}
-.adminBtn:hover{ filter:brightness(1.06); }
-
-.badgeErr{
-  margin-top:10px;
-  padding:8px 10px;
-  border-radius:12px;
-  border:1px solid rgba(255,120,80,0.22);
-  background: rgba(120,20,10,0.20);
-  color:rgba(255,220,210,0.88);
-  font-family:"IM Fell English", serif;
-  font-style:italic;
-  display:none;
-  position:relative;
-  z-index:1;
-}
-#dashCard{ display:none; }
-#adminOverlay.unlocked #dashCard{ display:block; }
-
-.metrics{
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0,1fr));
-  gap:10px;
-  position:relative;
-  z-index:1;
-}
-@media (max-width: 860px){ .metrics{ grid-template-columns:1fr; } }
-
-.metric{
-  border-radius:14px;
-  padding:12px 12px 10px;
-  border:1px solid rgba(255,170,90,0.14);
-  background: radial-gradient(circle at 20% 20%, rgba(255,140,70,0.12), rgba(0,0,0,0.62));
-  box-shadow: inset 0 0 18px rgba(255,140,70,0.05);
-}
-.metric .k{
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  font-size:10px;
-  color:rgba(255,220,190,0.75);
-}
-.metric .v{
-  margin-top:6px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:22px;
-  color:rgba(255,240,220,0.92);
-  text-shadow: 0 1px 0 rgba(0,0,0,0.55);
-}
-.metric .s{
-  margin-top:4px;
-  font-family:"IM Fell English", serif;
-  font-style:italic;
-  color:rgba(255,235,210,0.55);
-  font-size:13px;
-}
-.adminDivider{
-  height:1px;
-  background:linear-gradient(to right, transparent, rgba(255,170,90,0.22), transparent);
-  margin:12px 0;
-  position:relative;
-  z-index:1;
-}
-
-/* ===== SOCIAL MEDIA (PRETO / LIVRE) ===== */
-#socialOverlay{ position:fixed; inset:0; z-index:84; display:none; }
-body.socialOpen #socialOverlay{ display:block; }
-#socialOverlay .dim{
-  position:absolute; inset:0;
-  background: rgba(0,0,0,0.90);
-  backdrop-filter: blur(10px);
-}
-.smBg{
-  position:absolute; inset:0;
-  opacity:0.24;
-  background:
-    radial-gradient(1200px 600px at 50% 10%, rgba(255,255,255,0.10), transparent 60%),
-    linear-gradient(180deg, rgba(255,255,255,0.06), transparent 45%),
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 8px);
-  pointer-events:none;
-}
-.smWrap{
-  position:absolute;
-  left:50%; top:50%;
-  transform:translate(-50%,-50%);
-  width:min(940px, 94vw);
-  height:min(680px, 88vh);
-  display:grid;
-  place-items:center;
-  padding:18px;
-}
-.smCard{
-  width:min(520px, 94vw);
-  border-radius:24px;
-  background: var(--ui-bg);
-  border:1px solid var(--ui-stroke);
-  box-shadow: 0 40px 180px rgba(0,0,0,0.90), 0 0 0 1px rgba(0,0,0,0.25) inset;
-  overflow:hidden;
-  position:relative;
-}
-.smCard::before{
-  content:"";
-  position:absolute; inset:-2px;
-  background:
-    radial-gradient(360px 220px at 50% 0%, rgba(255,255,255,0.10), transparent 60%),
-    radial-gradient(600px 380px at 50% 120%, rgba(255,255,255,0.06), transparent 55%);
-  pointer-events:none;
-}
-
-.smTopbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:14px 14px 10px;
-  position:relative;
-  z-index:1;
-}
-.smTitle{
-  font: 800 12px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.55);
-}
-.smClose{
-  border:none;
-  background: rgba(255,255,255,0.07);
-  color: rgba(255,255,255,0.86);
-  font: 800 12px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  padding:8px 12px;
-  border-radius:12px;
-  cursor:pointer;
-  border:1px solid rgba(255,255,255,0.10);
-}
-.smClose:hover{ filter:brightness(1.07); }
-
-.smBody{ padding:10px 18px 18px; position:relative; z-index:1; }
-
-/* avatar + nome */
-.smHero{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-align:center;
-  gap:10px;
-  padding:6px 0 8px;
-}
-.smAvatar{
-  width:98px; height:98px;
-  border-radius:999px;
-  overflow:hidden;
-  border:2px solid rgba(255,255,255,0.12);
-  box-shadow: 0 22px 90px rgba(0,0,0,0.70);
-  background: rgba(255,255,255,0.06);
-}
-.smAvatar img{ width:100%; height:100%; object-fit:cover; }
-
-.smName{
-  font: 900 34px/1.05 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  color: rgba(255,255,255,0.93);
-  letter-spacing:0.4px;
-}
-.smBio{
-  font: 650 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  color: rgba(255,255,255,0.62);
-}
-.smLoc{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 12px;
-  border-radius:999px;
-  background: rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.10);
-  color: rgba(255,255,255,0.62);
-  font: 800 12px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-}
-.smLoc svg{ width:14px;height:14px; opacity:.85; }
-
-/* socials */
-.smIcons{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  margin:14px 0 8px;
-  flex-wrap:wrap;
-}
-.smIconBtn{
-  width:46px;height:46px;
-  border-radius:16px;
-  display:grid;
-  place-items:center;
-  background: rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.10);
-  cursor:pointer;
-  transition: transform .12s ease, filter .12s ease;
-}
-.smIconBtn:hover{ transform: translateY(-1px); filter: brightness(1.10); }
-.smIconBtn svg{ width:22px;height:22px; opacity:0.9; }
-
-/* discord status */
-.smSection{
-  margin-top:14px;
-  border-radius:18px;
-  padding:14px 14px 12px;
-  background: rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.10);
-}
-.smSectionHead{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-}
-.smSectionTitle{
-  font: 900 12px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color: rgba(255,255,255,0.55);
-}
-.smPill{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 10px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,0.10);
-  background: rgba(0,0,0,0.25);
-  color: rgba(255,255,255,0.74);
-  font: 800 12px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-}
-.dotStatus{
-  width:10px;height:10px;border-radius:50%;
-  background: rgba(160,160,160,0.9);
-  box-shadow: 0 0 16px rgba(255,255,255,0.10);
-}
-.dotStatus.online{ background: rgba(70, 255, 140, 0.95); box-shadow: 0 0 18px rgba(70, 255, 140, 0.20); }
-.dotStatus.idle{ background: rgba(255, 200, 70, 0.95); box-shadow: 0 0 18px rgba(255, 200, 70, 0.18); }
-.dotStatus.dnd{ background: rgba(255, 80, 90, 0.95); box-shadow: 0 0 18px rgba(255, 80, 90, 0.18); }
-.dotStatus.offline{ background: rgba(160,160,160,0.9); box-shadow: 0 0 16px rgba(255,255,255,0.10); }
-
-.smSectionBody{
-  margin-top:12px;
-  display:grid;
-  grid-template-columns: 1fr;
-  gap:10px;
-}
-.smRow{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:10px 12px;
-  border-radius:14px;
-  background: rgba(0,0,0,0.22);
-  border:1px solid rgba(255,255,255,0.08);
-}
-.smRowLeft{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  min-width:0;
-}
-.smDiscIcon{
-  width:36px;height:36px;
-  border-radius:14px;
-  background: rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.10);
-  display:grid;
-  place-items:center;
-}
-.smDiscIcon svg{ width:20px;height:20px; opacity:.9; }
-.smRowText{ min-width:0; }
-.smRowName{
-  font: 900 14px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  color: rgba(255,255,255,0.86);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.smRowSub{
-  margin-top:2px;
-  font: 650 12px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  color: rgba(255,255,255,0.56);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.smallHint{
-  margin-top:10px;
-  text-align:center;
-  color: rgba(255,255,255,0.40);
-  font: 700 11px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  letter-spacing:1px;
-  text-transform:uppercase;
-}
-
-.smViews{
-  margin-top:14px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  justify-content:center;
-  color: rgba(255,255,255,0.50);
-  font: 800 12px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-}
-.smViews svg{ width:16px;height:16px; opacity:.85; }
-
-@media (prefers-reduced-motion: reduce){
-  .title, .sub{ animation:none; }
-  .title::before{ display:none; }
-}
-</style>
-</head>
-
-<body>
-
-<video id="mainVideo"
-  src="https://files.catbox.moe/klaol5.webm"
-  playsinline preload="auto" loop></video>
-
-<audio id="bgAudio" src="https://files.catbox.moe/99fu05.m4a" preload="auto"></audio>
-
-<section id="entry" tabindex="0" aria-label="Entrada Shadow Fight 2">
-  <div class="bgFill"></div>
-  <canvas id="ashCanvas"></canvas>
-
-  <div class="stage">
-    <div class="frameWrap">
-      <img class="frame" src="https://files.catbox.moe/5yp48z.png" alt="Shadow Fight 2 Entry">
-      <div class="softOverlay"></div>
-      <img id="strike" class="frame" src="https://files.catbox.moe/er48bx.gif" alt="Golpe">
-
-      <div class="introUI">
-        <div>
-          <div class="title">ENTER</div>
-          <div class="sub">
-            pressione <span class="kbdEnter">ENTER
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M8 7v5h10" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-                <path d="M14 9l4 3-4 3" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M8 12H6" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
-            </span>
-            / clique
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- VOLUME -->
-<div id="grimoire" aria-label="Controle de volume">
-  <button class="grimoireBtn" id="grimBtn" aria-label="Abrir controle de volume">
-    <span class="grimoireIcon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M4 10v4h4l5 4V6L8 10H4Z" fill="rgba(255,220,190,0.85)"/>
-        <path d="M16 9c1 .8 1.5 1.8 1.5 3s-.5 2.2-1.5 3" stroke="rgba(255,140,70,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-        <path d="M18.5 7.5c1.6 1.5 2.5 3 2.5 4.5s-.9 3-2.5 4.5" stroke="rgba(255,140,70,0.55)" stroke-width="1.4" stroke-linecap="round"/>
-      </svg>
-    </span>
-  </button>
-
-  <div class="panel">
-    <div class="row">
-      <input id="vol" type="range" min="0" max="100" value="8" />
-      <div class="volValue" id="volValue">8%</div>
-    </div>
-  </div>
-</div>
-
-<!-- FULLSCREEN -->
-<div id="fsWrap" aria-label="Fullscreen">
-  <button class="fsBtn" id="fsBtn" aria-label="Ativar/Desativar fullscreen">
-    <svg class="fsOffIcon" viewBox="0 0 24 24" fill="none">
-      <path d="M8 3H5a2 2 0 0 0-2 2v3" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M16 3h3a2 2 0 0 1 2 2v3" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M3 16v3a2 2 0 0 0 2 2h3" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M21 16v3a2 2 0 0 1-2 2h-3" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-    </svg>
-    <svg class="fsOnIcon" viewBox="0 0 24 24" fill="none">
-      <path d="M9 5H5v4" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M15 5h4v4" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M5 15v4h4" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M19 15v4h-4" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-    </svg>
-  </button>
-</div>
-
-<!-- TOP CENTER -->
-<div id="topCenter">
-  <button class="topBtn" id="scrollBtn" aria-label="Abrir pergaminho (lore)">
-    <svg viewBox="0 0 24 24" fill="none">
-      <path d="M7 5h10v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V5Z" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" />
-      <path d="M7 8h10" stroke="rgba(255,140,70,0.7)" stroke-width="1.4" stroke-linecap="round"/>
-      <path d="M7 11h8" stroke="rgba(255,140,70,0.55)" stroke-width="1.4" stroke-linecap="round"/>
-      <path d="M7 14h9" stroke="rgba(255,140,70,0.45)" stroke-width="1.4" stroke-linecap="round"/>
-    </svg>
-  </button>
-
-  <button class="topBtn" id="adminBtn" aria-label="Abrir selo (admin)">
-    <svg viewBox="0 0 24 24" fill="none">
-      <path d="M12 2l2.4 4.6 5.1.7-3.7 3.6.9 5.1L12 13.9 7.3 16l.9-5.1L4.5 7.3l5.1-.7L12 2Z"
-        stroke="rgba(255,220,190,0.90)" stroke-width="1.5" stroke-linejoin="round"/>
-      <path d="M9.2 12.2h5.6" stroke="rgba(255,140,70,0.65)" stroke-width="1.4" stroke-linecap="round"/>
-    </svg>
-  </button>
-</div>
-
-<!-- MENU TOP RIGHT -->
-<div id="rightMenu" aria-label="Menu de opções">
-  <button class="menuBtn" id="menuBtn" aria-label="Abrir menu">
-    <svg viewBox="0 0 24 24" fill="none">
-      <path d="M6 7h12" stroke="rgba(255,220,190,0.9)" stroke-width="1.8" stroke-linecap="round"/>
-      <path d="M6 12h12" stroke="rgba(255,220,190,0.75)" stroke-width="1.8" stroke-linecap="round"/>
-      <path d="M6 17h12" stroke="rgba(255,140,70,0.65)" stroke-width="1.8" stroke-linecap="round"/>
-    </svg>
-  </button>
-
-  <div class="menuPanel" id="menuPanel">
-    <div class="menuTitle">MENU</div>
-
-    <button class="menuItem" id="openSocial" type="button">
-      <span class="dot"></span>
-      <div>
-        Social Media
-        <small>perfil / discord</small>
-      </div>
-    </button>
-
-    <div style="height:10px"></div>
-
-    <button class="menuItem" id="openArchive" type="button">
-      <span class="dot"></span>
-      <div>
-        Archive
-        <small>(placeholder)</small>
-      </div>
-    </button>
-
-    <div style="height:10px"></div>
-
-    <button class="menuItem" id="openPlaylists" type="button">
-      <span class="dot"></span>
-      <div>
-        Playlists
-        <small>(placeholder)</small>
-      </div>
-    </button>
-  </div>
-</div>
-
-<!-- PERGAMINHO -->
-<div id="scrollOverlay" aria-hidden="true">
-  <div class="dim"></div>
-
-  <div class="scroll" role="dialog" aria-label="Pergaminho">
-    <div class="scrollMask">
-      <div class="scrollPaper">
-        <div class="scrollInner">
-          <div class="scrollTop">
-            <div class="scrollTitle">Pergaminho — Vozes nas Sombras</div>
-            <button class="scrollClose" id="scrollClose">FECHAR</button>
-          </div>
-
-          <div class="scrollBody">
-            <div class="scrollLog" id="scrollLog">
-              <div class="typeLine" id="typeLine"></div><span class="cursor" id="cursor"></span>
-              <div id="out"></div>
-            </div>
-
-            <div class="scrollInputBar">
-              <div class="prompt">&gt;</div>
-              <input id="cmdInput" autocomplete="off" spellcheck="false"
-                     placeholder="digite um comando (ex: hub, arquivo, lore, ajuda) e ENTER">
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ADMIN -->
-<div id="adminOverlay" aria-hidden="true">
-  <div class="dim"></div>
-  <div class="adminPanel" role="dialog" aria-label="Selo — Acesso Confidencial">
-    <div class="adminStone"></div>
-    <div class="adminInner">
-      <div class="adminTop">
-        <div class="adminTitle">SELO — ACESSO CONFIDENCIAL</div>
-        <button class="adminClose" id="adminClose">FECHAR</button>
-      </div>
-
-      <div class="adminBody">
-        <div class="adminCard" id="loginCard">
-          <h3>PORTÃO DO SELO</h3>
-          <p>Apenas aqueles marcados pelas sombras podem ler os registros.</p>
-
-          <div class="formRow">
-            <label>Usuário</label>
-            <input class="adminInput readonly" id="adminUser" value="Sombra" readonly />
-          </div>
-
-          <div class="formRow">
-            <label>Senha</label>
-            <input class="adminInput" id="adminPass" type="password" placeholder="insira o selo de acesso" />
-          </div>
-
-          <div class="adminActions">
-            <button class="adminBtn" id="adminEnter">ENTRAR</button>
-          </div>
-
-          <div class="badgeErr" id="adminErr">Acesso negado. As sombras não reconhecem você.</div>
-        </div>
-
-        <div class="adminCard" id="dashCard">
-          <h3>REGISTROS DO PORTAL</h3>
-
-          <div class="metrics">
-            <div class="metric">
-              <div class="k">Visitas</div>
-              <div class="v" id="mVisits">0</div>
-              <div class="s">quantas vezes abriram o site</div>
-            </div>
-            <div class="metric">
-              <div class="k">Enter acionado</div>
-              <div class="v" id="mEnter">0</div>
-              <div class="s">quantas vezes “entraram”</div>
-            </div>
-            <div class="metric">
-              <div class="k">Pergaminho aberto</div>
-              <div class="v" id="mScroll">0</div>
-              <div class="s">quantas vezes ouviram as vozes</div>
-            </div>
-            <div class="metric">
-              <div class="k">Social aberto</div>
-              <div class="v" id="mSocial">0</div>
-              <div class="s">quantas vezes abriram seu perfil</div>
-            </div>
-            <div class="metric">
-              <div class="k">Sessões admin</div>
-              <div class="v" id="mAdmin">0</div>
-              <div class="s">quantas vezes logaram no selo</div>
-            </div>
-            <div class="metric">
-              <div class="k">Fullscreen</div>
-              <div class="v" id="mFS">0</div>
-              <div class="s">quantas vezes ativaram</div>
-            </div>
-          </div>
-
-          <div class="adminDivider"></div>
-          <p style="opacity:.8">Obs: esses números são <b>locais</b> (contam neste navegador). Depois a gente liga em algo real se você quiser.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SOCIAL MEDIA -->
-<div id="socialOverlay" aria-hidden="true">
-  <div class="dim"></div>
-  <div class="smBg"></div>
-
-  <div class="smWrap">
-    <div class="smCard" role="dialog" aria-label="Social Media">
-      <div class="smTopbar">
-        <div class="smTitle">SOCIAL MEDIA</div>
-        <button class="smClose" id="smClose">FECHAR</button>
-      </div>
-
-      <div class="smBody">
-
-        <div class="smHero">
-          <div class="smAvatar">
-            <img src="https://files.catbox.moe/5lkce6.gif" alt="avatar Allz">
-          </div>
-          <div class="smName">Allz</div>
-          <div class="smBio">awake and unafraid</div>
-
-          <div class="smLoc">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 21s7-5 7-11a7 7 0 1 0-14 0c0 6 7 11 7 11Z" stroke="rgba(255,255,255,0.75)" stroke-width="1.6"/>
-              <path d="M12 10.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" fill="rgba(255,255,255,0.75)"/>
-            </svg>
-            purgatório
-          </div>
-        </div>
-
-        <div class="smIcons">
-          <button class="smIconBtn" title="TikTok (placeholder)" data-link="#">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M14 3v11.5a3.5 3.5 0 1 1-3-3.45" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M14 5c1.2 2.2 3 3.4 5 3.7" stroke="rgba(255,255,255,0.65)" stroke-width="1.6" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <button class="smIconBtn" title="Spotify (placeholder)" data-link="#">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M7 10.5c4-1 8-.6 10 1" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M7.8 13.4c3-.7 6-.3 8 1" stroke="rgba(255,255,255,0.75)" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M8.6 16.1c2-.4 4-.2 5.4.7" stroke="rgba(255,255,255,0.65)" stroke-width="1.6" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <button class="smIconBtn" title="Instagram (placeholder)" data-link="#">
-            <svg viewBox="0 0 24 24" fill="none">
-              <rect x="6" y="6" width="12" height="12" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"/>
-              <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="rgba(255,255,255,0.75)" stroke-width="1.6"/>
-              <path d="M16.6 7.6h.01" stroke="rgba(255,255,255,0.9)" stroke-width="3" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <button class="smIconBtn" title="Steam (placeholder)" data-link="#">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M7.5 15.2l3 1.4a3 3 0 1 0 1.2-2.5l-2.8-1.2" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M15.8 11.8a2.7 2.7 0 1 0 0-5.4 2.7 2.7 0 0 0 0 5.4Z" stroke="rgba(255,255,255,0.65)" stroke-width="1.6"/>
-            </svg>
-          </button>
-          <button class="smIconBtn" title="X (placeholder)" data-link="#">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M7 7l10 10" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M17 7L7 17" stroke="rgba(255,255,255,0.65)" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </button>
-        </div>
-
-        <div class="smSection">
-          <div class="smSectionHead">
-            <div class="smSectionTitle">DISCORD STATUS</div>
-            <div class="smPill">
-              <span class="dotStatus offline" id="dDot"></span>
-              <span id="dState">Carregando...</span>
-            </div>
-          </div>
-
-          <div class="smSectionBody">
-            <div class="smRow">
-              <div class="smRowLeft">
-                <div class="smDiscIcon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M7.5 7.5c2-1 7-1 9 0" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-                    <path d="M7 8c-1.2 2.2-1.7 4.4-1.4 6.8 2.3 1.7 4.6 2.4 6.4 2.4s4.1-.7 6.4-2.4c.3-2.4-.2-4.6-1.4-6.8" stroke="rgba(255,255,255,0.75)" stroke-width="1.6" stroke-linecap="round"/>
-                    <path d="M9.5 13.2h.01" stroke="rgba(255,255,255,0.95)" stroke-width="3.2" stroke-linecap="round"/>
-                    <path d="M14.5 13.2h.01" stroke="rgba(255,255,255,0.95)" stroke-width="3.2" stroke-linecap="round"/>
-                  </svg>
-                </div>
-                <div class="smRowText">
-                  <div class="smRowName" id="dUser">—</div>
-                  <div class="smRowSub" id="dSub">aguardando presença…</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="smRow" id="dActivityRow" style="display:none">
-              <div class="smRowLeft">
-                <div class="smDiscIcon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M12 3v10" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-                    <path d="M8.6 10.2 12 13.6l3.4-3.4" stroke="rgba(255,255,255,0.75)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M6 17h12" stroke="rgba(255,255,255,0.6)" stroke-width="1.6" stroke-linecap="round"/>
-                  </svg>
-                </div>
-                <div class="smRowText">
-                  <div class="smRowName" id="dActivityTitle">—</div>
-                  <div class="smRowSub" id="dActivitySub">—</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="smRow" id="dSpotifyRow" style="display:none">
-              <div class="smRowLeft">
-                <div class="smDiscIcon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M7 10.5c4-1 8-.6 10 1" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-                    <path d="M7.8 13.4c3-.7 6-.3 8 1" stroke="rgba(255,255,255,0.75)" stroke-width="1.6" stroke-linecap="round"/>
-                    <path d="M8.6 16.1c2-.4 4-.2 5.4.7" stroke="rgba(255,255,255,0.65)" stroke-width="1.6" stroke-linecap="round"/>
-                  </svg>
-                </div>
-                <div class="smRowText">
-                  <div class="smRowName" id="dSpotifyTitle">—</div>
-                  <div class="smRowSub" id="dSpotifySub">—</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="smallHint" id="dUpdated">—</div>
-          </div>
-        </div>
-
-        <div class="smViews">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z" stroke="rgba(255,255,255,0.7)" stroke-width="1.6"/>
-            <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" fill="rgba(255,255,255,0.7)"/>
-          </svg>
-          <span><span id="smViewsCount">0</span> views</span>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
 const entry = document.getElementById("entry");
 const mainVideo = document.getElementById("mainVideo");
 const bgAudio = document.getElementById("bgAudio");
 
-/* ===== CONTADORES (local) ===== */
-const KEYS = {
-  visits: "sf2_visits",
-  enter: "sf2_enter",
-  scroll: "sf2_scroll_open",
-  adminSess: "sf2_admin_sessions",
-  socialOpen: "sf2_social_open",
-  fs: "sf2_fullscreen",
-};
-function getNum(k){ return Number(localStorage.getItem(k) || "0"); }
-function inc(k){ const v=getNum(k)+1; localStorage.setItem(k,String(v)); return v; }
-function setTxt(id, v){ const el=document.getElementById(id); if(el) el.textContent=String(v); }
-
-inc(KEYS.visits);
-
 /* ===== VOLUME PADRÃO 8% ===== */
 let currentVol = 0.08;
 bgAudio.volume = currentVol;
-let enteredAndAudioStarted = false;
 
-/* ===== SILENCIAR ÁUDIO EM OVERLAYS ===== */
-let audioResumeWanted = false;
-function pauseBgForOverlay(){
-  if(!enteredAndAudioStarted) return;
-  audioResumeWanted = !bgAudio.paused;
-  try{ bgAudio.pause(); }catch(e){}
+/* ===== CONTADORES (LOCAL) ===== */
+const LS = {
+  visits: "sf2_visits",
+  enter: "sf2_enter",
+  scroll: "sf2_scroll_open",
+  admin: "sf2_admin_sessions",
+};
+
+function bump(key){
+  const v = Number(localStorage.getItem(key) || "0") + 1;
+  localStorage.setItem(key, String(v));
+  return v;
 }
-async function resumeBgAfterOverlay(){
-  if(!enteredAndAudioStarted) return;
-  if(!audioResumeWanted) return;
-  try{
-    bgAudio.volume = currentVol;
-    await bgAudio.play();
-  }catch(e){}
+function getCount(key){
+  return Number(localStorage.getItem(key) || "0");
 }
+bump(LS.visits);
 
 /* ===== CINZAS ===== */
 const canvas = document.getElementById("ashCanvas");
@@ -1586,22 +74,22 @@ async function start(){
   if(started) return;
   started=true;
 
+  bump(LS.enter);
+
   document.body.classList.add("strikeOn");
 
   try{
     bgAudio.currentTime = 0;
     bgAudio.volume = currentVol;
     await bgAudio.play();
-    enteredAndAudioStarted = true;
   }catch(e){}
 
   setTimeout(async ()=>{
     try{
-      mainVideo.muted = true;
+      mainVideo.muted = true; // vídeo sempre mudo (não atrapalha overlays)
       await mainVideo.play();
     }catch(e){}
     document.body.classList.add("entered");
-    inc(KEYS.enter);
   }, 1050);
 }
 entry.addEventListener("pointerdown", start);
@@ -1624,13 +112,9 @@ setSliderVisual(8);
 grimBtn.addEventListener("click",(e)=>{
   e.stopPropagation();
   grimoire.classList.toggle("open");
-  document.body.classList.toggle("volOpen", grimoire.classList.contains("open"));
 });
 document.addEventListener("click",(e)=>{
-  if(!grimoire.contains(e.target)){
-    grimoire.classList.remove("open");
-    document.body.classList.remove("volOpen");
-  }
+  if(!grimoire.contains(e.target)) grimoire.classList.remove("open");
 });
 vol.addEventListener("input", ()=>{
   const v = Number(vol.value);
@@ -1641,28 +125,19 @@ vol.addEventListener("input", ()=>{
 
 /* ===== FULLSCREEN ===== */
 const fsBtn = document.getElementById("fsBtn");
-async function toggleFS(){
+async function toggleFullscreen(){
   try{
     if(!document.fullscreenElement){
       await document.documentElement.requestFullscreen();
-      document.body.classList.add("fsOn");
-      inc(KEYS.fs);
     }else{
       await document.exitFullscreen();
-      document.body.classList.remove("fsOn");
     }
   }catch(e){}
 }
-fsBtn.addEventListener("click", (e)=>{ e.stopPropagation(); toggleFS(); });
-document.addEventListener("fullscreenchange", ()=>{
-  if(!document.fullscreenElement) document.body.classList.remove("fsOn");
+fsBtn.addEventListener("click", (e)=>{
+  e.stopPropagation();
+  toggleFullscreen();
 });
-
-/* ===== MENU TOP-RIGHT ===== */
-const rightMenu = document.getElementById("rightMenu");
-const menuBtn = document.getElementById("menuBtn");
-menuBtn.addEventListener("click",(e)=>{ e.stopPropagation(); rightMenu.classList.toggle("open"); });
-document.addEventListener("click",(e)=>{ if(!rightMenu.contains(e.target)) rightMenu.classList.remove("open"); });
 
 /* ===== PERGAMINHO ===== */
 const scrollBtn = document.getElementById("scrollBtn");
@@ -1678,38 +153,47 @@ let typing = false;
 let typedOnce = false;
 
 const loreLines = [
-  `<span class="who mestre">MESTRE</span> A arena está silenciosa... mas as sombras nunca dormem.`,
-  `<span class="who shadow">SHADOW</span> Eu sinto o vazio se abrindo. Algo me chama do outro lado.`,
-  `<span class="who titan">TITAN</span> Você acha que pode escapar? Eu já marquei seu destino.`,
-  `<span class="who mestre">MESTRE</span> Não responda ao medo. Use-o. Transforme-o em lâmina.`,
-  `<span class="who shadow">SHADOW</span> Então... eu entro. E se eu cair, que as sombras me devorem.`,
-  `<span class="who titan">TITAN</span> Venha. Eu quero ouvir seu silêncio gritar.`
+  `<span class="who mestre">MESTRE:</span> A arena está silenciosa... mas as sombras nunca dormem.`,
+  `<span class="who shadow">SHADOW:</span> Eu sinto o vazio se abrindo. Algo me chama do outro lado.`,
+  `<span class="who titan">TITAN:</span> Você acha que pode escapar? Eu já marquei seu destino.`,
+  `<span class="who mestre">MESTRE:</span> Não responda ao medo. Use-o. Transforme-o em lâmina.`,
+  `<span class="who shadow">SHADOW:</span> Então... eu entro. E se eu cair, que as sombras me devorem.`,
+  `<span class="who titan">TITAN:</span> Venha. Eu quero ouvir seu silêncio gritar.`
 ];
 
 function openScroll(){
   if(!document.body.classList.contains("entered")) return;
-  pauseBgForOverlay();
-
+  bump(LS.scroll);
   document.body.classList.add("scrollOpen");
   scrollOverlay.setAttribute("aria-hidden","false");
   setTimeout(()=>cmdInput.focus(), 80);
 
-  inc(KEYS.scroll);
-
-  if(!typedOnce){ startTyping(); }
-  else{ cursor.style.display = "none"; }
+  if(!typedOnce){
+    startTyping();
+  }else{
+    cursor.style.display = "none";
+  }
 }
 function closeScroll(){
   document.body.classList.remove("scrollOpen");
   scrollOverlay.setAttribute("aria-hidden","true");
-  resumeBgAfterOverlay();
 }
-scrollBtn.addEventListener("click",(e)=>{ e.stopPropagation(); openScroll(); });
-scrollClose.addEventListener("click", closeScroll);
-scrollOverlay.addEventListener("click",(e)=>{ if(e.target.classList.contains("dim")) closeScroll(); });
 
+scrollBtn.addEventListener("click",(e)=>{
+  e.stopPropagation();
+  openScroll();
+});
+scrollClose.addEventListener("click", closeScroll);
+scrollOverlay.addEventListener("click",(e)=>{
+  if(e.target.classList.contains("dim")) closeScroll();
+});
+
+/* (SEM atalhos extras) — removi T / ESC */
+
+/* Typing helpers */
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function scrollToBottom(){ scrollLog.scrollTop = scrollLog.scrollHeight; }
+
 function writeOut(html){
   const line = document.createElement("div");
   line.className = "outputLine";
@@ -1717,13 +201,17 @@ function writeOut(html){
   out.appendChild(line);
   scrollToBottom();
 }
+
 function finishTypingNow(){
   typing = false;
   cursor.style.display = "none";
   typeLine.innerHTML = loreLines.map(l => `<div class="typeLine">${l}</div>`).join("");
   const hasHint = out.textContent.includes("Digite ajuda");
-  if(!hasHint){ writeOut(`<span class="sys">SISTEMA:</span> Digite <b>ajuda</b> para ver comandos.`); }
+  if(!hasHint){
+    writeOut(`<span class="sys">SISTEMA:</span> Digite <b>ajuda</b> para ver comandos.`);
+  }
 }
+
 async function startTyping(){
   if(typing) return;
   typing = true;
@@ -1765,6 +253,7 @@ async function startTyping(){
     scrollToBottom();
   }
 }
+
 cmdInput.addEventListener("keydown", (e)=>{
   if(e.key !== "Enter") return;
   const raw = cmdInput.value.trim();
@@ -1797,225 +286,202 @@ cmdInput.addEventListener("keydown", (e)=>{
     writeOut(`<span class="sys">SISTEMA:</span> Você já ouviu as vozes... agora escolha um caminho.`);
     return;
   }
+
   writeOut(`<span class="sys">SISTEMA:</span> Comando desconhecido. Digite <b>ajuda</b>.`);
 });
+
 function escapeHtml(s){
-  return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  return s.replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#039;");
 }
 
 /* ===== ADMIN ===== */
-const adminOverlay = document.getElementById("adminOverlay");
 const adminBtn = document.getElementById("adminBtn");
+const adminOverlay = document.getElementById("adminOverlay");
 const adminClose = document.getElementById("adminClose");
+const adminUser = document.getElementById("adminUser");
 const adminPass = document.getElementById("adminPass");
 const adminEnter = document.getElementById("adminEnter");
-const adminErr = document.getElementById("adminErr");
+const adminMsg = document.getElementById("adminMsg");
+const adminPanel = document.getElementById("adminPanel");
+
+const stVisits = document.getElementById("stVisits");
+const stEnter = document.getElementById("stEnter");
+const stScroll = document.getElementById("stScroll");
+const stAdmin = document.getElementById("stAdmin");
+
+const ADMIN_PASS = "Projeto26";
 
 function openAdmin(){
   if(!document.body.classList.contains("entered")) return;
-  pauseBgForOverlay();
-
   document.body.classList.add("adminOpen");
   adminOverlay.setAttribute("aria-hidden","false");
-  adminOverlay.classList.remove("unlocked");
+  adminMsg.textContent = "";
+  adminMsg.className = "adMsg";
   adminPass.value = "";
-  adminErr.style.display = "none";
+  adminPanel.style.display = "none";
   setTimeout(()=>adminPass.focus(), 80);
 }
 function closeAdmin(){
   document.body.classList.remove("adminOpen");
   adminOverlay.setAttribute("aria-hidden","true");
-  resumeBgAfterOverlay();
 }
-adminBtn.addEventListener("click",(e)=>{ e.stopPropagation(); openAdmin(); });
-adminClose.addEventListener("click", closeAdmin);
-adminOverlay.addEventListener("click",(e)=>{ if(e.target.classList.contains("dim")) closeAdmin(); });
 
-function refreshMetrics(){
-  setTxt("mVisits", getNum(KEYS.visits));
-  setTxt("mEnter", getNum(KEYS.enter));
-  setTxt("mScroll", getNum(KEYS.scroll));
-  setTxt("mAdmin", getNum(KEYS.adminSess));
-  setTxt("mSocial", getNum(KEYS.socialOpen));
-  setTxt("mFS", getNum(KEYS.fs));
+adminBtn.addEventListener("click",(e)=>{
+  e.stopPropagation();
+  openAdmin();
+});
+adminClose.addEventListener("click", closeAdmin);
+adminOverlay.addEventListener("click",(e)=>{
+  if(e.target.classList.contains("dim")) closeAdmin();
+});
+
+function fillStats(){
+  stVisits.textContent = getCount(LS.visits);
+  stEnter.textContent = getCount(LS.enter);
+  stScroll.textContent = getCount(LS.scroll);
+  stAdmin.textContent = getCount(LS.admin);
 }
-function tryAdminLogin(){
+
+adminEnter.addEventListener("click", ()=>{
   const pass = adminPass.value.trim();
-  if(pass === "Projeto26"){
-    adminOverlay.classList.add("unlocked");
-    inc(KEYS.adminSess);
-    refreshMetrics();
-    adminErr.style.display = "none";
+  if(pass !== ADMIN_PASS){
+    adminMsg.textContent = "Acesso negado. As sombras não reconhecem você.";
+    adminMsg.className = "adMsg bad";
     return;
   }
-  adminErr.style.display = "block";
-}
-adminEnter.addEventListener("click", tryAdminLogin);
-adminPass.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ e.preventDefault(); tryAdminLogin(); } });
+  bump(LS.admin);
+  fillStats();
+  adminPanel.style.display = "block";
+  adminMsg.textContent = "Acesso concedido.";
+  adminMsg.className = "adMsg good";
+});
 
-/* ===== SOCIAL ===== */
-const socialOverlay = document.getElementById("socialOverlay");
-const smClose = document.getElementById("smClose");
+/* ===== MENU ===== */
+const menu = document.getElementById("menu");
+const menuBtn = document.getElementById("menuBtn");
 const openSocial = document.getElementById("openSocial");
-const openArchive = document.getElementById("openArchive");
+const openArchives = document.getElementById("openArchives");
 const openPlaylists = document.getElementById("openPlaylists");
-const smViewsCount = document.getElementById("smViewsCount");
 
-function openSocialPanel(){
+menuBtn.addEventListener("click",(e)=>{
+  e.stopPropagation();
+  menu.classList.toggle("open");
+});
+document.addEventListener("click",(e)=>{
+  if(!menu.contains(e.target)) menu.classList.remove("open");
+});
+
+/* ===== SOCIAL MEDIA ===== */
+const socialOverlay = document.getElementById("socialOverlay");
+const socialClose = document.getElementById("socialClose");
+
+function openSocialOverlay(){
   if(!document.body.classList.contains("entered")) return;
-  pauseBgForOverlay();
-
   document.body.classList.add("socialOpen");
   socialOverlay.setAttribute("aria-hidden","false");
-  rightMenu.classList.remove("open");
-
-  const views = inc(KEYS.socialOpen);
-  smViewsCount.textContent = String(views);
-  refreshMetrics();
-
-  startLanyardLoop();
+  fetchLanyard();
 }
-function closeSocialPanel(){
+function closeSocialOverlay(){
   document.body.classList.remove("socialOpen");
   socialOverlay.setAttribute("aria-hidden","true");
-  stopLanyardLoop();
-  resumeBgAfterOverlay();
 }
-openSocial.addEventListener("click",(e)=>{ e.stopPropagation(); openSocialPanel(); });
-smClose.addEventListener("click", closeSocialPanel);
-socialOverlay.addEventListener("click",(e)=>{ if(e.target.classList.contains("dim")) closeSocialPanel(); });
 
-openArchive.addEventListener("click", ()=>{ rightMenu.classList.remove("open"); alert("Archive ainda é placeholder. Na V2.1 a gente define o layout."); });
-openPlaylists.addEventListener("click", ()=>{ rightMenu.classList.remove("open"); alert("Playlists ainda é placeholder. Na V2.1 a gente define o layout."); });
+openSocial.addEventListener("click", ()=>{
+  menu.classList.remove("open");
+  openSocialOverlay();
+});
+openArchives.addEventListener("click", ()=>{
+  menu.classList.remove("open");
+  alert("(placeholder) Archives — entra na V2.1");
+});
+openPlaylists.addEventListener("click", ()=>{
+  menu.classList.remove("open");
+  alert("(placeholder) Playlists — entra na V2.1");
+});
+socialClose.addEventListener("click", closeSocialOverlay);
+socialOverlay.addEventListener("click",(e)=>{
+  if(e.target.classList.contains("dim")) closeSocialOverlay();
+});
 
-/* ===== LANYARD DISCORD PRESENCE ===== */
-const LANYARD_USER_ID = "513830615225860096";
-const dDot = document.getElementById("dDot");
-const dState = document.getElementById("dState");
-const dUser = document.getElementById("dUser");
-const dSub = document.getElementById("dSub");
-const dUpdated = document.getElementById("dUpdated");
+/* Discord status (Lanyard) */
+const dPill = document.getElementById("dPill");
+const dStatusTxt = document.getElementById("dStatusTxt");
+const dUserLine = document.getElementById("dUserLine");
+const dSubLine = document.getElementById("dSubLine");
+const dTime = document.getElementById("dTime");
 
-const dActivityRow = document.getElementById("dActivityRow");
-const dActivityTitle = document.getElementById("dActivityTitle");
-const dActivitySub = document.getElementById("dActivitySub");
+const dAvatar = document.getElementById("dAvatar");
+const dAvatarFallback = document.getElementById("dAvatarFallback");
 
-const dSpotifyRow = document.getElementById("dSpotifyRow");
-const dSpotifyTitle = document.getElementById("dSpotifyTitle");
-const dSpotifySub = document.getElementById("dSpotifySub");
+const LANYARD_ID = "513830615225860096";
+const FORCED_USERNAME = "allzz.exe";
 
-let lanyardTimer = null;
-let lanyardAbort = null;
-
-function setDotStatus(status){
-  dDot.className = "dotStatus " + (status || "offline");
-}
 function niceStatus(s){
   if(s === "online") return "Online";
-  if(s === "idle") return "Idle";
-  if(s === "dnd") return "Do Not Disturb";
+  if(s === "idle") return "Ausente";
+  if(s === "dnd") return "Não perturbe";
   return "Offline";
 }
-function formatTime(ts){
-  const d = new Date(ts);
-  return d.toLocaleString("pt-BR", { hour:"2-digit", minute:"2-digit" });
-}
-function pickPrimaryActivity(activities){
-  if(!Array.isArray(activities)) return null;
-  // Tenta pegar "Playing" ou qualquer activity relevante que não seja custom status
-  const filtered = activities.filter(a => a && a.type !== 4 && a.name);
-  return filtered[0] || null;
+
+function nowHHMM(){
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,"0");
+  const mm = String(now.getMinutes()).padStart(2,"0");
+  return `${hh}:${mm}`;
 }
 
 async function fetchLanyard(){
-  if(lanyardAbort) lanyardAbort.abort();
-  lanyardAbort = new AbortController();
-
-  dState.textContent = "Carregando...";
   try{
-    const res = await fetch(`https://api.lanyard.rest/v1/users/${LANYARD_USER_ID}`, {
-      signal: lanyardAbort.signal,
-      cache: "no-store"
-    });
-    if(!res.ok) throw new Error("HTTP " + res.status);
-    const json = await res.json();
-    const data = json?.data;
-    if(!data) throw new Error("Sem data");
+    const r = await fetch(`https://api.lanyard.rest/v1/users/${LANYARD_ID}`, { cache: "no-store" });
+    const j = await r.json();
+    const data = j && j.data ? j.data : null;
+    if(!data) return;
 
     const status = data.discord_status || "offline";
-    setDotStatus(status);
-    dState.textContent = niceStatus(status);
+    const label = niceStatus(status);
+
+    dPill.setAttribute("data-status", status);
+    dStatusTxt.textContent = label;
 
     const du = data.discord_user || {};
-    const display = du.global_name || du.display_name || du.username || "—";
-    const tag = du.discriminator && du.discriminator !== "0" ? `#${du.discriminator}` : "";
-    dUser.textContent = `${display}${tag ? " " + tag : ""}`;
+    const display = du.global_name || du.display_name || du.username || "Allz";
+    dUserLine.textContent = `${display} · ${FORCED_USERNAME}`;
 
-    // “linha de baixo” vira: device flags / last update
-    const activeFlags = [];
-    if(data.active_on_discord_mobile) activeFlags.push("mobile");
-    if(data.active_on_discord_desktop) activeFlags.push("desktop");
-    if(data.active_on_discord_web) activeFlags.push("web");
-    dSub.textContent = activeFlags.length ? `ativo: ${activeFlags.join(" • ")}` : `sem atividade de dispositivo`;
+    // subline (local / placeholders)
+    // se o lanyard tiver activity, você pode mudar depois (V2.1)
+    dSubLine.textContent = (status === "offline")
+      ? "offline"
+      : "ativo (Lanyard)";
 
-    // Activity
-    const act = pickPrimaryActivity(data.activities || []);
-    if(act){
-      dActivityRow.style.display = "flex";
-      dActivityTitle.textContent = act.name || "Atividade";
-      const details = [act.details, act.state].filter(Boolean).join(" — ");
-      dActivitySub.textContent = details || "em atividade";
+    // Avatar real do Discord
+    if(du.id){
+      const fallbackIndex = (Number(du.discriminator || "0") % 5);
+      const defaultAvatar = `https://cdn.discordapp.com/embed/avatars/${fallbackIndex}.png`;
+
+      let avatarUrl = defaultAvatar;
+      if(du.avatar){
+        const isGif = String(du.avatar).startsWith("a_");
+        avatarUrl = `https://cdn.discordapp.com/avatars/${du.id}/${du.avatar}.${isGif ? "gif" : "png"}?size=128`;
+      }
+
+      dAvatar.src = avatarUrl;
+      dAvatar.style.display = "block";
+      dAvatarFallback.style.display = "none";
     }else{
-      dActivityRow.style.display = "none";
+      dAvatar.style.display = "none";
+      dAvatarFallback.style.display = "block";
     }
 
-    // Spotify
-    if(data.listening_to_spotify && data.spotify){
-      dSpotifyRow.style.display = "flex";
-      dSpotifyTitle.textContent = data.spotify.song || "Spotify";
-      const artist = data.spotify.artist ? `por ${data.spotify.artist}` : "";
-      dSpotifySub.textContent = ["ouvindo agora", artist].filter(Boolean).join(" • ");
-    }else{
-      dSpotifyRow.style.display = "none";
-    }
-
-    dUpdated.textContent = `atualizado às ${formatTime(Date.now())}`;
-  }catch(e){
-    // Se abortou porque fechou, só sai.
-    if(String(e?.name).toLowerCase().includes("abort")) return;
-
-    setDotStatus("offline");
-    dState.textContent = "Offline";
-    dUser.textContent = "—";
-    dSub.textContent = "falha ao carregar presença";
-    dActivityRow.style.display = "none";
-    dSpotifyRow.style.display = "none";
-    dUpdated.textContent = "verifique conexão / CORS";
-  }
+    dTime.textContent = `ATUALIZADO ÀS ${nowHHMM()}`;
+  }catch(e){}
 }
 
-function startLanyardLoop(){
-  // roda uma vez imediatamente e repete
-  fetchLanyard();
-  stopLanyardLoop();
-  lanyardTimer = setInterval(fetchLanyard, 15000);
-}
-function stopLanyardLoop(){
-  if(lanyardTimer){ clearInterval(lanyardTimer); lanyardTimer = null; }
-  if(lanyardAbort){ try{ lanyardAbort.abort(); }catch(e){} lanyardAbort = null; }
-}
-
-/* ===== ESC fecha overlays ===== */
-document.addEventListener("keydown",(e)=>{
-  if(e.key !== "Escape") return;
-  if(document.body.classList.contains("scrollOpen")) closeScroll();
-  if(document.body.classList.contains("adminOpen")) closeAdmin();
-  if(document.body.classList.contains("socialOpen")) closeSocialPanel();
-});
-
-/* views inicial do social */
-smViewsCount.textContent = String(getNum(KEYS.socialOpen));
+// loop leve (só pra social)
+setInterval(()=>{
+  if(document.body.classList.contains("socialOpen")) fetchLanyard();
+}, 15000);
 </script>
-
-</body>
-</html>
