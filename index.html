@@ -35,9 +35,14 @@ body.entered #mainVideo{
 body.scrollOpen #mainVideo{
   filter:contrast(1.06) saturate(0.92) blur(6px) brightness(0.62);
 }
-/* Social media aberto também escurece mais */
 body.socialOpen #mainVideo{
   filter:contrast(1.06) saturate(0.92) blur(7px) brightness(0.52);
+}
+body.playlistsOpen #mainVideo{
+  filter:contrast(1.06) saturate(0.92) blur(8px) brightness(0.45);
+}
+body.adminOpen #mainVideo{
+  filter:contrast(1.06) saturate(0.92) blur(8px) brightness(0.40);
 }
 
 /* ===== ENTRY ===== */
@@ -306,10 +311,7 @@ body.entered #entry{
   user-select:none;
   transition: transform 220ms ease;
 }
-/* Quando o volume abrir, empurra o fullscreen pra baixo pra não ficar atrás */
-#grimoire.open ~ #fsWrap{
-  transform: translateY(70px);
-}
+#grimoire.open ~ #fsWrap{ transform: translateY(70px); }
 
 .fsBtn{
   width:44px;height:44px;
@@ -356,32 +358,6 @@ body.entered #scrollBtn{ opacity:1; pointer-events:auto; }
 #scrollBtn:hover{ transform:translateX(-50%) scale(1.05); }
 #scrollBtn svg{ width:22px;height:22px; opacity:.9; }
 
-/* ===== BOTÃO ADMIN (ao lado do pergaminho) — V2.1 ===== */
-#adminBtn{
-  position:fixed;
-  left:calc(50% + 56px);
-  top:14px;
-  z-index:60;
-  width:44px;height:44px;
-  border-radius:12px;
-  border:1px solid rgba(255,170,90,0.18);
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255,140,70,0.12), rgba(0,0,0,0.80)),
-    linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.55));
-  box-shadow:
-    0 14px 44px rgba(0,0,0,0.75),
-    0 0 22px rgba(255,140,70,0.10);
-  cursor:pointer;
-  display:grid;
-  place-items:center;
-  transition:transform .2s ease, opacity .2s ease;
-  opacity:0;
-  pointer-events:none;
-}
-body.entered #adminBtn{ opacity:1; pointer-events:auto; }
-#adminBtn:hover{ transform:scale(1.05); }
-#adminBtn svg{ width:22px;height:22px; opacity:.9; }
-
 /* ===== MENU (top-right) ===== */
 #menuWrap{
   position:fixed;
@@ -415,7 +391,7 @@ body.entered .menuBtn{ opacity:1; pointer-events:auto; }
   position:absolute;
   right:0;
   top:54px;
-  width:220px;
+  width:240px;
   padding:10px;
   border-radius:14px;
   border:1px solid rgba(255,170,90,0.16);
@@ -461,6 +437,32 @@ body.entered .menuBtn{ opacity:1; pointer-events:auto; }
   opacity:.55;
 }
 
+/* ===== BOTÃO ADMIN (ao lado do pergaminho) ===== */
+#adminBtn{
+  position:fixed;
+  left:calc(50% + 58px);
+  top:14px;
+  z-index:60;
+  width:44px;height:44px;
+  border-radius:12px;
+  border:1px solid rgba(255,170,90,0.18);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,140,70,0.12), rgba(0,0,0,0.80)),
+    linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.55));
+  box-shadow:
+    0 14px 44px rgba(0,0,0,0.75),
+    0 0 22px rgba(255,140,70,0.12);
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  transition:transform .2s ease, opacity .2s ease;
+  opacity:0;
+  pointer-events:none;
+}
+body.entered #adminBtn{ opacity:1; pointer-events:auto; }
+#adminBtn:hover{ transform:scale(1.05); }
+#adminBtn svg{ width:22px;height:22px; opacity:.9; }
+
 /* ===== OVERLAY DO PERGAMINHO ===== */
 #scrollOverlay{
   position:fixed; inset:0;
@@ -482,7 +484,7 @@ body.scrollOpen #scrollOverlay{ display:block; }
 body.socialOpen #socialOverlay{ display:block; }
 #socialOverlay .dim{
   position:absolute; inset:0;
-  background:rgba(0,0,0,0.80); /* mais escuro */
+  background:rgba(0,0,0,0.80);
   backdrop-filter: blur(2px);
   animation:dimIn 240ms ease both;
 }
@@ -714,7 +716,217 @@ body.socialOpen #socialOverlay{ display:block; }
   letter-spacing:1px;
   font-size:11px;
 }
+</style>
+</head>
+<body>
 
+<video id="mainVideo"
+  src="https://files.catbox.moe/klaol5.webm"
+  playsinline preload="auto" loop></video>
+
+<audio id="bgAudio" src="https://files.catbox.moe/99fu05.m4a" preload="auto"></audio>
+
+<section id="entry" tabindex="0" aria-label="Entrada Shadow Fight 2">
+  <div class="bgFill"></div>
+  <canvas id="ashCanvas"></canvas>
+
+  <div class="stage">
+    <div class="frameWrap">
+      <img class="frame" src="https://files.catbox.moe/5yp48z.png" alt="Shadow Fight 2 Entry">
+      <div class="softOverlay"></div>
+      <img id="strike" class="frame" src="https://files.catbox.moe/er48bx.gif" alt="Golpe">
+
+      <div class="introUI">
+        <div>
+          <div class="title">ENTER</div>
+          <div class="sub">
+            pressione <span class="kbdEnter">ENTER
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M8 7v5h10" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M14 9l4 3-4 3" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8 12H6" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </span>
+            / clique
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== VOLUME ===== -->
+<div id="grimoire" aria-label="Controle de volume">
+  <button class="grimoireBtn" id="grimBtn" aria-label="Abrir controle de volume">
+    <span class="grimoireIcon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M4 10v4h4l5 4V6L8 10H4Z" fill="rgba(255,220,190,0.85)"/>
+        <path d="M16 9c1 .8 1.5 1.8 1.5 3s-.5 2.2-1.5 3" stroke="rgba(255,140,70,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M18.5 7.5c1.6 1.5 2.5 3 2.5 4.5s-.9 3-2.5 4.5" stroke="rgba(255,140,70,0.55)" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </span>
+  </button>
+
+  <div class="panel">
+    <div class="row">
+      <input id="vol" type="range" min="0" max="100" value="8" />
+      <div class="volValue" id="volValue">8%</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FULLSCREEN ===== -->
+<div id="fsWrap" aria-label="Tela cheia">
+  <button class="fsBtn" id="fsBtn" aria-label="Ativar/desativar tela cheia">
+    <svg viewBox="0 0 24 24" fill="none">
+      <path d="M9 4H6a2 2 0 0 0-2 2v3" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M15 4h3a2 2 0 0 1 2 2v3" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M9 20H6a2 2 0 0 1-2-2v-3" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M15 20h3a2 2 0 0 0 2-2v-3" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>
+
+<!-- ===== BOTÃO DO PERGAMINHO ===== -->
+<button id="scrollBtn" aria-label="Abrir pergaminho (lore)">
+  <svg viewBox="0 0 24 24" fill="none">
+    <path d="M7 5h10v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V5Z" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" />
+    <path d="M7 8h10" stroke="rgba(255,140,70,0.7)" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M7 11h8" stroke="rgba(255,140,70,0.55)" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M7 14h9" stroke="rgba(255,140,70,0.45)" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+</button>
+
+<!-- ===== BOTÃO ADMIN ===== -->
+<button id="adminBtn" aria-label="Abrir Admin">
+  <svg viewBox="0 0 24 24" fill="none">
+    <path d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7l7-4Z" stroke="rgba(255,220,190,0.9)" stroke-width="1.6"/>
+    <path d="M9.5 12l1.7 1.7L14.7 10" stroke="rgba(255,140,70,0.75)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
+
+<!-- ===== MENU ===== -->
+<div id="menuWrap" aria-label="Menu">
+  <button class="menuBtn" id="menuBtn" aria-label="Abrir menu">
+    <svg viewBox="0 0 24 24" fill="none">
+      <path d="M5 7h14" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M5 12h14" stroke="rgba(255,140,70,0.65)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M5 17h14" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+  </button>
+
+  <div class="menuDrop" id="menuDrop">
+    <button class="menuItem" id="openSocial">
+      Social Media <span class="tag">V2.0</span>
+    </button>
+    <button class="menuItem" id="openArchives">
+      Archives <span class="tag">placeholder</span>
+    </button>
+    <button class="menuItem" id="openPlaylists">
+      Playlists <span class="tag">V2.1</span>
+    </button>
+  </div>
+</div>
+
+<!-- ===== SOCIAL MEDIA OVERLAY ===== -->
+<div id="socialOverlay" aria-hidden="true">
+  <div class="dim"></div>
+
+  <div class="smCard" role="dialog" aria-label="Social Media">
+    <div class="smHead">
+      <div class="smTitle">SOCIAL MEDIA</div>
+      <button class="smClose" id="socialClose">FECHAR</button>
+    </div>
+
+    <div class="smBody">
+      <div class="smProfile">
+        <div class="smAvatar">
+          <img id="smAvatar" src="https://files.catbox.moe/5lkce6.gif" alt="Avatar Allz">
+        </div>
+
+        <div class="smName" id="smName">Allz</div>
+        <div class="smBio" id="smBio">awake and unafraid</div>
+
+        <div class="smLoc" id="smLoc">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12Z" stroke="rgba(255,255,255,0.75)" stroke-width="1.6"/>
+            <path d="M12 12a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8Z" fill="rgba(255,255,255,0.65)"/>
+          </svg>
+          purgatório
+        </div>
+
+        <div class="smIcons" aria-label="Links">
+          <a class="smIconBtn" href="https://tiktok.com/@allzdeadd" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M14 4v10.2a3.2 3.2 0 1 1-2.2-3.05V8.2c-.3 0-.6-.02-.9-.07V5.1A7.6 7.6 0 0 0 14 4Z" fill="rgba(255,255,255,0.85)"/>
+            </svg>
+          </a>
+
+          <a class="smIconBtn" href="https://open.spotify.com/user/allzdeadd" target="_blank" rel="noopener" aria-label="Spotify">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.6 14.4a.9.9 0 0 1-1.24.3c-2.8-1.7-6.3-2.1-10.3-1.2a.9.9 0 0 1-.4-1.75c4.4-1 8.3-.5 11.5 1.4.42.25.56.8.3 1.25Zm1.3-3a1 1 0 0 1-1.37.33c-3.2-2-8-2.6-11.6-1.4a1 1 0 0 1-.6-1.9c4.1-1.3 9.3-.7 13 1.6.47.3.62.92.33 1.37Zm.1-3.2c-3.8-2.3-10-2.5-13.6-1.4a1.1 1.1 0 0 1-.65-2.1c4.2-1.3 11.1-1 15.5 1.7a1.1 1.1 0 1 1-1.1 1.8Z" fill="rgba(255,255,255,0.85)"/>
+            </svg>
+          </a>
+
+          <a class="smIconBtn" href="https://instagram.com/allzdeadd" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"/>
+              <path d="M12 16.2A4.2 4.2 0 1 0 12 7.8a4.2 4.2 0 0 0 0 8.4Z" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"/>
+              <path d="M17.6 6.4h.01" stroke="rgba(255,255,255,0.85)" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </a>
+
+          <a class="smIconBtn" href="https://x.com/allzdeadd" target="_blank" rel="noopener" aria-label="X">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 19L19 5" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M7 5h5l5 14h-5L7 5Z" fill="rgba(255,255,255,0.75)"/>
+            </svg>
+          </a>
+
+          <a class="smIconBtn" href="https://allzdeadd" target="_blank" rel="noopener" aria-label="Link">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M10 13a4 4 0 0 1 0-6l1-1a4 4 0 0 1 6 6l-1 1" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M14 11a4 4 0 0 1 0 6l-1 1a4 4 0 0 1-6-6l1-1" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="smSection">
+        <div class="smSectionTitle">
+          <span>DISCORD STATUS</span>
+
+          <span class="smStatusPill" id="smStatusPill" data-status="idle">
+            <span class="smDot"></span>
+            <span id="smStatusText">Ausente</span>
+          </span>
+        </div>
+
+        <div class="smRow">
+          <div class="smDiscIcon" aria-label="Avatar Discord">
+            <img id="dAvatar" alt="Avatar Discord">
+            <svg id="dFallback" viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;opacity:.85">
+              <path d="M8.5 7.5c1.2-.9 2.5-1.3 3.5-1.3s2.3.4 3.5 1.3" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M7 17c1.5-1.2 3.2-1.7 5-1.7s3.5.5 5 1.7" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M6 9.5c-1.2 2.9-1 5.8.6 8.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M18 9.5c1.2 2.9 1 5.8-.6 8.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <div class="smDiscText">
+            <div class="smDiscName" id="smDiscordName">Allz</div>
+            <div class="smDiscSub" id="smDiscordSub">@allzz.exe</div>
+          </div>
+        </div>
+
+        <div class="smFoot" id="smUpdatedAt">atualizando...</div>
+      </div>
+
+      <div class="smFoot"><span id="smViews">0</span> views</div>
+    </div>
+  </div>
+</div>
+<style>
 /* ===== RESTO DO CSS DO PERGAMINHO (igual ao seu) ===== */
 .scroll{
   position:absolute;
@@ -784,7 +996,6 @@ body.scrollOpen .scroll{
 .scrollInner{
   position:absolute; inset:0;
   padding:26px 30px 18px;
-
   font-family: "Cormorant Garamond", serif;
   color:rgba(35,18,8,0.90);
   text-shadow: 0 1px 0 rgba(255,255,255,0.18);
@@ -865,7 +1076,6 @@ body.scrollOpen .scroll{
   margin-right:6px;
   font-size: 0.90em;
 }
-
 .scrollLog .mestre{ color:rgba(70,34,12,0.86); }
 .scrollLog .shadow{ color:rgba(20,20,20,0.92); }
 .scrollLog .titan{ color:rgba(55,25,10,0.86); }
@@ -894,9 +1104,7 @@ body.scrollOpen .scroll{
   font-size:13px;
   color:rgba(20,10,0,0.92);
 }
-#cmdInput::placeholder{
-  color:rgba(20,10,0,0.45);
-}
+#cmdInput::placeholder{ color:rgba(20,10,0,0.45); }
 
 .typeLine{ margin:0 0 10px 0; white-space:pre-wrap; }
 .cursor{
@@ -931,23 +1139,15 @@ body.scrollOpen .scrollPaper{
   100%{ filter:blur(0) contrast(1.06) saturate(.92); transform:scaleY(1); }
 }
 
-@media (prefers-reduced-motion: reduce){
-  .title, .sub{ animation:none; }
-  .title::before{ display:none; }
-}
-
-/* =========================================================
-   PLAYLISTS OVERLAY — V2.1 (novo)
-========================================================= */
+/* ===========================
+   PLAYLISTS OVERLAY (V2.1)
+   =========================== */
 #playlistsOverlay{
   position:fixed; inset:0;
   z-index:95;
   display:none;
 }
 body.playlistsOpen #playlistsOverlay{ display:block; }
-body.playlistsOpen #mainVideo{
-  filter:contrast(1.06) saturate(0.92) blur(8px) brightness(0.45);
-}
 #playlistsOverlay .dim{
   position:absolute; inset:0;
   background:rgba(0,0,0,0.86);
@@ -955,38 +1155,49 @@ body.playlistsOpen #mainVideo{
   animation:dimIn 240ms ease both;
 }
 
-.plCard{
+.plShell{
   position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%) scale(.94);
-  width:min(1100px, 94vw);
-  height:min(680px, 90vh);
+  left:50%; top:50%;
+  transform:translate(-50%,-50%) scale(.96);
+  width:min(980px, 94vw);
+  height:min(620px, 84vh);
   border-radius:22px;
-  background: rgba(16,16,18,0.92);
   border:1px solid rgba(255,255,255,0.10);
-  box-shadow: 0 55px 220px rgba(0,0,0,0.92);
+  background: rgba(12,12,14,0.80);
+  box-shadow: 0 44px 180px rgba(0,0,0,0.88);
   backdrop-filter: blur(18px);
   overflow:hidden;
   opacity:0;
   animation:plIn 320ms cubic-bezier(.12,.92,.12,1) both;
 }
 @keyframes plIn{
-  from{ opacity:0; transform:translate(-50%,-50%) scale(.92); filter:blur(10px); }
-  to{ opacity:1; transform:translate(-50%,-50%) scale(1); filter:blur(0); }
+  from{opacity:0; transform:translate(-50%,-50%) scale(.92); filter:blur(10px);}
+  to{opacity:1; transform:translate(-50%,-50%) scale(1); filter:blur(0);}
 }
-.plHead{
+
+.plTop{
   display:flex;
   align-items:center;
   justify-content:space-between;
   padding:18px 18px 12px;
-  border-bottom:1px solid rgba(255,255,255,0.06);
+  border-bottom:1px solid rgba(255,255,255,0.08);
 }
 .plTitle{
-  color:rgba(255,255,255,0.70);
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.plTitle b{
+  color:rgba(255,255,255,0.92);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size:18px;
+  letter-spacing:.3px;
+}
+.plTitle span{
+  color:rgba(255,255,255,0.55);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  letter-spacing:2px;
   font-size:12px;
+  letter-spacing:1px;
   text-transform:uppercase;
 }
 .plClose{
@@ -1002,14 +1213,29 @@ body.playlistsOpen #mainVideo{
 .plClose:hover{ background: rgba(255,255,255,0.09); }
 
 .plBody{
-  height:calc(100% - 58px);
+  height:calc(100% - 62px);
   display:grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 320px 1fr;
+  gap:14px;
+  padding:14px;
+}
+.plLeft{
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  box-shadow: inset 0 0 22px rgba(0,0,0,0.45);
+  padding:12px;
+  overflow:auto;
+}
+.plHint{
+  margin-bottom:10px;
+  color:rgba(255,255,255,0.55);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size:12px;
+  letter-spacing:1px;
+  text-transform:uppercase;
 }
 .plList{
-  padding:14px;
-  border-right:1px solid rgba(255,255,255,0.06);
-  overflow:auto;
   display:flex;
   flex-direction:column;
   gap:10px;
@@ -1021,107 +1247,103 @@ body.playlistsOpen #mainVideo{
   text-align:left;
   padding:12px 12px;
   border-radius:16px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.08);
-  color:rgba(255,255,255,0.86);
+  border:1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.25);
+  color:rgba(255,255,255,0.88);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   font-weight:800;
-  letter-spacing:0.2px;
-  transition: transform .16s ease, background .16s ease, filter .16s ease;
+  letter-spacing:.2px;
+  transition: transform .16s ease, background .16s ease, border-color .16s ease;
 }
 .plItem small{
   display:block;
   margin-top:4px;
-  font-weight:700;
-  opacity:.65;
+  font-weight:600;
+  color:rgba(255,255,255,0.55);
+  font-size:12px;
 }
-.plItem:hover{ transform: translateY(-1px); background:rgba(255,255,255,0.08); filter:brightness(1.03); }
-.plItem.active{ background:rgba(255,255,255,0.12); border-color:rgba(255,255,255,0.12); }
+.plItem:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.06); }
+.plItem.active{
+  border-color: rgba(255,255,255,0.22);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,140,70,0.18), rgba(0,0,0,0.28));
+}
 
-.plPlayer{
-  padding:18px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.plFrameWrap{
-  width:100%;
-  height:100%;
+.plRight{
   border-radius:18px;
-  overflow:hidden;
   border:1px solid rgba(255,255,255,0.10);
   background: rgba(0,0,0,0.25);
-  box-shadow: inset 0 0 22px rgba(0,0,0,0.35);
+  overflow:hidden;
+  position:relative;
 }
-.plFrameWrap iframe{
+.plFrame{
+  position:absolute;
+  inset:0;
   width:100%;
   height:100%;
   border:none;
 }
 
+/* responsivo playlists */
 @media (max-width: 860px){
   .plBody{ grid-template-columns: 1fr; }
-  .plList{
-    flex-direction:row;
-    overflow:auto;
-    border-right:none;
-    border-bottom:1px solid rgba(255,255,255,0.06);
-  }
-  .plItem{ min-width: 220px; }
-  .plPlayer{ height: calc(100% - 120px); }
+  .plLeft{ max-height: 200px; }
 }
 
-/* =========================================================
-   ADMIN OVERLAY — V2.1 (novo)
-========================================================= */
+/* ===========================
+   ADMIN OVERLAY (V2.1)
+   =========================== */
 #adminOverlay{
   position:fixed; inset:0;
   z-index:98;
   display:none;
 }
 body.adminOpen #adminOverlay{ display:block; }
-body.adminOpen #mainVideo{
-  filter:contrast(1.06) saturate(0.92) blur(10px) brightness(0.38);
-}
 #adminOverlay .dim{
   position:absolute; inset:0;
-  background:rgba(0,0,0,0.90);
-  backdrop-filter: blur(2px);
+  background:rgba(0,0,0,0.88);
+  backdrop-filter: blur(3px);
   animation:dimIn 240ms ease both;
 }
 
-.adCard{
+.adShell{
   position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%) scale(.94);
-  width:min(740px, 94vw);
+  left:50%; top:50%;
+  transform:translate(-50%,-50%) scale(.96);
+  width:min(840px, 94vw);
+  height:min(560px, 84vh);
   border-radius:22px;
-  background: rgba(15,15,17,0.95);
   border:1px solid rgba(255,255,255,0.10);
-  box-shadow: 0 60px 240px rgba(0,0,0,0.94);
+  background: rgba(12,12,14,0.82);
+  box-shadow: 0 44px 180px rgba(0,0,0,0.90);
   backdrop-filter: blur(18px);
   overflow:hidden;
   opacity:0;
-  animation:adIn 320ms cubic-bezier(.12,.92,.12,1) both;
-}
-@keyframes adIn{
-  from{ opacity:0; transform:translate(-50%,-50%) scale(.92); filter:blur(10px); }
-  to{ opacity:1; transform:translate(-50%,-50%) scale(1); filter:blur(0); }
+  animation:plIn 320ms cubic-bezier(.12,.92,.12,1) both;
 }
 
-.adHead{
+.adTop{
   display:flex;
   align-items:center;
   justify-content:space-between;
   padding:18px 18px 12px;
-  border-bottom:1px solid rgba(255,255,255,0.06);
+  border-bottom:1px solid rgba(255,255,255,0.08);
 }
 .adTitle{
-  color:rgba(255,255,255,0.70);
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.adTitle b{
+  color:rgba(255,255,255,0.92);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size:18px;
+}
+.adTitle span{
+  color:rgba(255,255,255,0.55);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  letter-spacing:2px;
   font-size:12px;
+  letter-spacing:1px;
   text-transform:uppercase;
 }
 .adClose{
@@ -1137,199 +1359,124 @@ body.adminOpen #mainVideo{
 .adClose:hover{ background: rgba(255,255,255,0.09); }
 
 .adBody{
-  padding:16px 18px 18px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+  height:calc(100% - 62px);
+  padding:16px;
+  overflow:auto;
 }
 
-.adField{
+.adPanel{
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  box-shadow: inset 0 0 22px rgba(0,0,0,0.45);
+  padding:16px;
+}
+
+.adLoginGrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:12px;
+  margin-top:12px;
+}
+.adLabel{
+  color:rgba(255,255,255,0.65);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size:12px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.adInput{
   width:100%;
-  padding:12px 14px;
+  padding:12px 12px;
   border-radius:14px;
   border:1px solid rgba(255,255,255,0.10);
-  background:rgba(255,255,255,0.05);
-  color:rgba(255,255,255,0.90);
+  background: rgba(0,0,0,0.35);
+  color:rgba(255,255,255,0.88);
   outline:none;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight:700;
 }
-.adField::placeholder{ color:rgba(255,255,255,0.45); }
-
-.adBtnRow{
+.adInput:focus{
+  border-color: rgba(255,255,255,0.22);
+  box-shadow: 0 0 0 3px rgba(255,140,70,0.10);
+}
+.adActions{
   display:flex;
   gap:10px;
+  margin-top:14px;
   flex-wrap:wrap;
 }
 .adBtn{
   border:none;
   cursor:pointer;
-  padding:12px 14px;
+  padding:10px 12px;
   border-radius:14px;
-  font-weight:900;
+  border:1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.35);
+  color:rgba(255,255,255,0.84);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   letter-spacing:1px;
   text-transform:uppercase;
   font-size:12px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  transition: transform .15s ease, filter .15s ease, background .15s ease;
+  transition: transform .15s ease, background .15s ease;
 }
-.adBtn:active{ transform:scale(0.98); }
-.adBtnPrimary{
-  background:#fff;
-  color:#000;
+.adBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.06); }
+.adBtn.primary{
+  background: radial-gradient(circle at 30% 30%, rgba(255,140,70,0.20), rgba(0,0,0,0.35));
+  border-color: rgba(255,255,255,0.18);
 }
-.adBtnGhost{
-  background:rgba(255,255,255,0.06);
-  color:rgba(255,255,255,0.86);
-  border:1px solid rgba(255,255,255,0.10);
-}
-.adBtn:hover{ filter:brightness(1.04); transform: translateY(-1px); }
-
-.adHint{
-  color:rgba(255,255,255,0.55);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:11px;
-  letter-spacing:1px;
+.adMsg{
+  margin-top:12px;
+  color:rgba(255,255,255,0.68);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight:700;
 }
 
+.adDash{
+  display:none;
+}
 .adGrid{
   display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:10px;
-}
-@media (max-width: 620px){
-  .adGrid{ grid-template-columns: 1fr; }
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap:12px;
+  margin-top:12px;
 }
 .adMetric{
-  background:rgba(255,255,255,0.05);
+  border-radius:18px;
   border:1px solid rgba(255,255,255,0.10);
-  padding:12px 12px;
-  border-radius:16px;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.28);
+  padding:14px;
 }
 .adMetric .k{
-  color:rgba(255,255,255,0.60);
+  color:rgba(255,255,255,0.55);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:11px;
+  font-size:12px;
   letter-spacing:1px;
   text-transform:uppercase;
 }
 .adMetric .v{
-  margin-top:6px;
+  margin-top:8px;
+  font-size:30px;
+  color:rgba(255,255,255,0.92);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   font-weight:900;
-  font-size:22px;
-  color:rgba(255,255,255,0.92);
+}
+.adUpdated{
+  margin-top:10px;
+  color:rgba(255,255,255,0.45);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size:12px;
+}
+@media (max-width: 820px){
+  .adGrid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .adLoginGrid{ grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce){
+  .title, .sub{ animation:none; }
+  .title::before{ display:none; }
 }
 </style>
-</head>
-<body>
-  <video id="mainVideo"
-  src="https://files.catbox.moe/klaol5.webm"
-  playsinline preload="auto" loop></video>
-
-<audio id="bgAudio" src="https://files.catbox.moe/99fu05.m4a" preload="auto"></audio>
-
-<section id="entry" tabindex="0" aria-label="Entrada Shadow Fight 2">
-  <div class="bgFill"></div>
-  <canvas id="ashCanvas"></canvas>
-
-  <div class="stage">
-    <div class="frameWrap">
-      <img class="frame" src="https://files.catbox.moe/5yp48z.png" alt="Shadow Fight 2 Entry">
-      <div class="softOverlay"></div>
-      <img id="strike" class="frame" src="https://files.catbox.moe/er48bx.gif" alt="Golpe">
-
-      <div class="introUI">
-        <div>
-          <div class="title">ENTER</div>
-          <div class="sub">
-            pressione <span class="kbdEnter">ENTER
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M8 7v5h10" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-                <path d="M14 9l4 3-4 3" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M8 12H6" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
-            </span>
-            / clique
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== VOLUME ===== -->
-<div id="grimoire" aria-label="Controle de volume">
-  <button class="grimoireBtn" id="grimBtn" aria-label="Abrir controle de volume">
-    <span class="grimoireIcon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M4 10v4h4l5 4V6L8 10H4Z" fill="rgba(255,220,190,0.85)"/>
-        <path d="M16 9c1 .8 1.5 1.8 1.5 3s-.5 2.2-1.5 3" stroke="rgba(255,140,70,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-        <path d="M18.5 7.5c1.6 1.5 2.5 3 2.5 4.5s-.9 3-2.5 4.5" stroke="rgba(255,140,70,0.55)" stroke-width="1.4" stroke-linecap="round"/>
-      </svg>
-    </span>
-  </button>
-
-  <div class="panel">
-    <div class="row">
-      <input id="vol" type="range" min="0" max="100" value="8" />
-      <div class="volValue" id="volValue">8%</div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== FULLSCREEN (abaixo do volume) ===== -->
-<div id="fsWrap" aria-label="Tela cheia">
-  <button class="fsBtn" id="fsBtn" aria-label="Ativar/desativar tela cheia">
-    <svg viewBox="0 0 24 24" fill="none">
-      <path d="M9 4H6a2 2 0 0 0-2 2v3" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M15 4h3a2 2 0 0 1 2 2v3" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M9 20H6a2 2 0 0 1-2-2v-3" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M15 20h3a2 2 0 0 0 2-2v-3" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
-    </svg>
-  </button>
-</div>
-
-<!-- ===== BOTÃO DO PERGAMINHO (top-center) ===== -->
-<button id="scrollBtn" aria-label="Abrir pergaminho (lore)">
-  <svg viewBox="0 0 24 24" fill="none">
-    <path d="M7 5h10v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V5Z" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" />
-    <path d="M7 8h10" stroke="rgba(255,140,70,0.7)" stroke-width="1.4" stroke-linecap="round"/>
-    <path d="M7 11h8" stroke="rgba(255,140,70,0.55)" stroke-width="1.4" stroke-linecap="round"/>
-    <path d="M7 14h9" stroke="rgba(255,140,70,0.45)" stroke-width="1.4" stroke-linecap="round"/>
-  </svg>
-</button>
-
-<!-- ===== BOTÃO ADMIN (ao lado do pergaminho) — V2.1 ===== -->
-<button id="adminBtn" aria-label="Abrir admin">
-  <svg viewBox="0 0 24 24" fill="none">
-    <path d="M12 2l7 4v6c0 5-3 9-7 10C8 21 5 17 5 12V6l7-4Z" stroke="rgba(255,220,190,0.9)" stroke-width="1.6"/>
-    <path d="M9.5 12.2l1.7 1.7 3.6-4" stroke="rgba(255,140,70,0.7)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-</button>
-
-<!-- ===== MENU (top-right) ===== -->
-<div id="menuWrap" aria-label="Menu">
-  <button class="menuBtn" id="menuBtn" aria-label="Abrir menu">
-    <svg viewBox="0 0 24 24" fill="none">
-      <path d="M5 7h14" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M5 12h14" stroke="rgba(255,140,70,0.65)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M5 17h14" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-    </svg>
-  </button>
-
-  <div class="menuDrop" id="menuDrop">
-    <button class="menuItem" id="openSocial">
-      Social Media <span class="tag">V2.0</span>
-    </button>
-    <button class="menuItem" id="openArchives">
-      Archives <span class="tag">placeholder</span>
-    </button>
-    <button class="menuItem" id="openPlaylists">
-      Playlists <span class="tag">V2.1</span>
-    </button>
-  </div>
-</div>
 
 <!-- ===== OVERLAY DO PERGAMINHO ===== -->
 <div id="scrollOverlay" aria-hidden="true">
@@ -1363,173 +1510,90 @@ body.adminOpen #mainVideo{
   </div>
 </div>
 
-<!-- ===== SOCIAL MEDIA OVERLAY ===== -->
-<div id="socialOverlay" aria-hidden="true">
-  <div class="dim"></div>
-
-  <div class="smCard" role="dialog" aria-label="Social Media">
-    <div class="smHead">
-      <div class="smTitle">SOCIAL MEDIA</div>
-      <button class="smClose" id="socialClose">FECHAR</button>
-    </div>
-
-    <div class="smBody">
-      <div class="smProfile">
-        <div class="smAvatar">
-          <img id="smAvatar" src="https://files.catbox.moe/5lkce6.gif" alt="Avatar Allz">
-        </div>
-
-        <div class="smName" id="smName">Allz</div>
-        <div class="smBio" id="smBio">awake and unafraid</div>
-
-        <div class="smLoc" id="smLoc">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12Z" stroke="rgba(255,255,255,0.75)" stroke-width="1.6"/>
-            <path d="M12 12a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8Z" fill="rgba(255,255,255,0.65)"/>
-          </svg>
-          purgatório
-        </div>
-
-        <!-- ícones (todos terminando com allzdeadd) -->
-        <div class="smIcons" aria-label="Links">
-          <a class="smIconBtn" href="https://tiktok.com/@allzdeadd" target="_blank" rel="noopener" aria-label="TikTok">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M14 4v10.2a3.2 3.2 0 1 1-2.2-3.05V8.2c-.3 0-.6-.02-.9-.07V5.1A7.6 7.6 0 0 0 14 4Z" fill="rgba(255,255,255,0.85)"/>
-            </svg>
-          </a>
-
-          <a class="smIconBtn" href="https://open.spotify.com/user/allzdeadd" target="_blank" rel="noopener" aria-label="Spotify">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.6 14.4a.9.9 0 0 1-1.24.3c-2.8-1.7-6.3-2.1-10.3-1.2a.9.9 0 0 1-.4-1.75c4.4-1 8.3-.5 11.5 1.4.42.25.56.8.3 1.25Zm1.3-3a1 1 0 0 1-1.37.33c-3.2-2-8-2.6-11.6-1.4a1 1 0 0 1-.6-1.9c4.1-1.3 9.3-.7 13 1.6.47.3.62.92.33 1.37Zm.1-3.2c-3.8-2.3-10-2.5-13.6-1.4a1.1 1.1 0 0 1-.65-2.1c4.2-1.3 11.1-1 15.5 1.7a1.1 1.1 0 1 1-1.1 1.8Z" fill="rgba(255,255,255,0.85)"/>
-            </svg>
-          </a>
-
-          <a class="smIconBtn" href="https://instagram.com/allzdeadd" target="_blank" rel="noopener" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"/>
-              <path d="M12 16.2A4.2 4.2 0 1 0 12 7.8a4.2 4.2 0 0 0 0 8.4Z" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"/>
-              <path d="M17.6 6.4h.01" stroke="rgba(255,255,255,0.85)" stroke-width="3" stroke-linecap="round"/>
-            </svg>
-          </a>
-
-          <a class="smIconBtn" href="https://x.com/allzdeadd" target="_blank" rel="noopener" aria-label="X">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M5 19L19 5" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M7 5h5l5 14h-5L7 5Z" fill="rgba(255,255,255,0.75)"/>
-            </svg>
-          </a>
-
-          <a class="smIconBtn" href="https://allzdeadd" target="_blank" rel="noopener" aria-label="Link">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M10 13a4 4 0 0 1 0-6l1-1a4 4 0 0 1 6 6l-1 1" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M14 11a4 4 0 0 1 0 6l-1 1a4 4 0 0 1-6-6l1-1" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-            </svg>
-          </a>
-        </div>
-      </div>
-
-      <div class="smSection">
-        <div class="smSectionTitle">
-          <span>DISCORD STATUS</span>
-
-          <span class="smStatusPill" id="smStatusPill" data-status="idle">
-            <span class="smDot"></span>
-            <span id="smStatusText">Ausente</span>
-          </span>
-        </div>
-
-        <div class="smRow">
-          <div class="smDiscIcon" aria-label="Avatar Discord">
-            <img id="dAvatar" alt="Avatar Discord">
-            <svg id="dFallback" viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;opacity:.85">
-              <path d="M8.5 7.5c1.2-.9 2.5-1.3 3.5-1.3s2.3.4 3.5 1.3" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M7 17c1.5-1.2 3.2-1.7 5-1.7s3.5.5 5 1.7" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M6 9.5c-1.2 2.9-1 5.8.6 8.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round"/>
-              <path d="M18 9.5c1.2 2.9 1 5.8-.6 8.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round"/>
-            </svg>
-          </div>
-
-          <div class="smDiscText">
-            <div class="smDiscName" id="smDiscordName">Allz</div>
-            <div class="smDiscSub" id="smDiscordSub">@allzz.exe</div>
-          </div>
-        </div>
-
-        <div class="smFoot" id="smUpdatedAt">atualizando...</div>
-      </div>
-
-      <div class="smFoot"><span id="smViews">0</span> views</div>
-    </div>
-  </div>
-</div>
-<!-- ================= PLAYLISTS OVERLAY — V2.1 ================= -->
+<!-- ===== PLAYLISTS OVERLAY (V2.1) ===== -->
 <div id="playlistsOverlay" aria-hidden="true">
   <div class="dim"></div>
 
-  <div class="plCard" role="dialog" aria-label="Playlists">
-    <div class="plHead">
-      <div class="plTitle">PLAYLISTS</div>
+  <div class="plShell" role="dialog" aria-label="Playlists">
+    <div class="plTop">
+      <div class="plTitle">
+        <b>Playlists</b>
+        <span>pessoal • spotify • v2.1</span>
+      </div>
       <button class="plClose" id="plClose">FECHAR</button>
     </div>
 
     <div class="plBody">
-      <div class="plList" id="plList" aria-label="Lista de playlists"></div>
+      <div class="plLeft">
+        <div class="plHint">selecione uma playlist</div>
+        <div class="plList" id="plList"></div>
+      </div>
 
-      <div class="plPlayer">
-        <div class="plFrameWrap">
-          <iframe
-            id="plFrame"
-            src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M"
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            loading="lazy"
-            title="Spotify Playlist Embed">
-          </iframe>
-        </div>
+      <div class="plRight">
+        <iframe class="plFrame" id="plFrame" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ================= ADMIN OVERLAY — V2.1 ================= -->
+<!-- ===== ADMIN OVERLAY (V2.1) ===== -->
 <div id="adminOverlay" aria-hidden="true">
   <div class="dim"></div>
 
-  <div class="adCard" role="dialog" aria-label="Admin">
-    <div class="adHead">
-      <div class="adTitle">CONFIDENTIAL ACCESS</div>
+  <div class="adShell" role="dialog" aria-label="Admin">
+    <div class="adTop">
+      <div class="adTitle">
+        <b>Admin</b>
+        <span>confidencial • métricas locais</span>
+      </div>
       <button class="adClose" id="adClose">FECHAR</button>
     </div>
 
     <div class="adBody">
-      <!-- LOGIN -->
-      <div id="adLogin">
-        <input class="adField" id="adUser" autocomplete="off" placeholder="Usuário">
-        <input class="adField" id="adPass" type="password" placeholder="Senha">
-        <div class="adBtnRow">
-          <button class="adBtn adBtnPrimary" id="adLoginBtn">ENTRAR</button>
-          <button class="adBtn adBtnGhost" id="adLoginHint">DICA</button>
+      <div class="adPanel">
+
+        <!-- LOGIN -->
+        <div id="adLogin">
+          <div class="adMsg" id="adMsg">Acesso restrito.</div>
+
+          <div class="adLoginGrid">
+            <div>
+              <div class="adLabel">Usuário</div>
+              <input class="adInput" id="adUser" autocomplete="off" spellcheck="false" placeholder="Sombra">
+            </div>
+            <div>
+              <div class="adLabel">Senha</div>
+              <input class="adInput" id="adPass" type="password" autocomplete="off" placeholder="Projeto26">
+            </div>
+          </div>
+
+          <div class="adActions">
+            <button class="adBtn primary" id="adLoginBtn">Entrar</button>
+            <button class="adBtn" id="adLoginHint">Dica</button>
+          </div>
         </div>
-        <div class="adHint" id="adMsg">Acesso restrito.</div>
-      </div>
 
-      <!-- DASHBOARD -->
-      <div id="adDash" style="display:none">
-        <div class="adHint">Dashboard local (localStorage). Nenhum servidor.</div>
+        <!-- DASH -->
+        <div class="adDash" id="adDash">
+          <div class="adMsg">Dashboard confidencial.</div>
 
-        <div class="adGrid" id="adGrid"></div>
+          <div class="adGrid" id="adGrid"></div>
+          <div class="adUpdated" id="adUpdated">Atualizando...</div>
 
-        <div class="adBtnRow">
-          <button class="adBtn adBtnGhost" id="adResetBtn">RESET MÉTRICAS</button>
-          <button class="adBtn adBtnPrimary" id="adLogoutBtn">SAIR</button>
+          <div class="adActions" style="margin-top:14px">
+            <button class="adBtn" id="adResetBtn">Reset métricas</button>
+            <button class="adBtn" id="adLogoutBtn">Sair</button>
+          </div>
         </div>
 
-        <div class="adHint" id="adUpdated">—</div>
       </div>
     </div>
   </div>
 </div>
-
 <script>
+/* =========================
+   BASE
+   ========================= */
 const entry = document.getElementById("entry");
 const mainVideo = document.getElementById("mainVideo");
 const bgAudio = document.getElementById("bgAudio");
@@ -1538,7 +1602,7 @@ const bgAudio = document.getElementById("bgAudio");
 let currentVol = 0.08;
 bgAudio.volume = currentVol;
 
-/* ===== CINZAS ===== */
+/* ===== CINZAS (canvas) ===== */
 const canvas = document.getElementById("ashCanvas");
 const ctx = canvas.getContext("2d");
 let W=0, H=0;
@@ -1587,9 +1651,6 @@ async function start(){
   if(started) return;
   started=true;
 
-  // métrica: entradas
-  incLocal("enter_count");
-
   document.body.classList.add("strikeOn");
 
   try{
@@ -1611,7 +1672,9 @@ entry.addEventListener("keydown", (e)=>{
   if(e.key==="Enter" || e.key===" "){ e.preventDefault(); start(); }
 });
 
-/* ===== CONTROLE DE VOLUME ===== */
+/* =========================
+   CONTROLE DE VOLUME
+   ========================= */
 const grimoire = document.getElementById("grimoire");
 const grimBtn = document.getElementById("grimBtn");
 const vol = document.getElementById("vol");
@@ -1637,7 +1700,9 @@ vol.addEventListener("input", ()=>{
   bgAudio.volume = currentVol;
 });
 
-/* ===== FULLSCREEN ===== */
+/* =========================
+   FULLSCREEN
+   ========================= */
 const fsBtn = document.getElementById("fsBtn");
 async function toggleFullscreen(){
   try{
@@ -1653,7 +1718,9 @@ fsBtn.addEventListener("click", (e)=>{
   toggleFullscreen();
 });
 
-/* ===== UTIL: pausar/retomar áudio quando abrir overlays ===== */
+/* =========================
+   UTIL: ÁUDIO pause/resume
+   ========================= */
 let audioWasPlaying = false;
 function pauseBgAudio(){
   try{
@@ -1670,7 +1737,39 @@ async function resumeBgAudio(){
   }catch(e){}
 }
 
-/* ===== MENU (top-right) ===== */
+/* =========================
+   OVERLAYS: helpers
+   ========================= */
+const overlayFlags = ["scrollOpen","socialOpen","playlistsOpen","adminOpen"];
+function closeAllOverlays(){
+  document.body.classList.remove(...overlayFlags);
+  scrollOverlay?.setAttribute("aria-hidden","true");
+  socialOverlay?.setAttribute("aria-hidden","true");
+  playlistsOverlay?.setAttribute("aria-hidden","true");
+  adminOverlay?.setAttribute("aria-hidden","true");
+}
+function openOverlay(flag){
+  if(!document.body.classList.contains("entered")) return;
+  closeAllOverlays();
+  pauseBgAudio();
+  document.body.classList.add(flag);
+  if(flag==="scrollOpen") scrollOverlay.setAttribute("aria-hidden","false");
+  if(flag==="socialOpen") socialOverlay.setAttribute("aria-hidden","false");
+  if(flag==="playlistsOpen") playlistsOverlay.setAttribute("aria-hidden","false");
+  if(flag==="adminOpen") adminOverlay.setAttribute("aria-hidden","false");
+}
+function closeOverlay(flag){
+  document.body.classList.remove(flag);
+  if(flag==="scrollOpen") scrollOverlay.setAttribute("aria-hidden","true");
+  if(flag==="socialOpen") socialOverlay.setAttribute("aria-hidden","true");
+  if(flag==="playlistsOpen") playlistsOverlay.setAttribute("aria-hidden","true");
+  if(flag==="adminOpen") adminOverlay.setAttribute("aria-hidden","true");
+  resumeBgAudio();
+}
+
+/* =========================
+   MENU (top-right)
+   ========================= */
 const menuWrap = document.getElementById("menuWrap");
 const menuBtn = document.getElementById("menuBtn");
 const openSocial = document.getElementById("openSocial");
@@ -1688,11 +1787,12 @@ document.addEventListener("click",(e)=>{
 
 openArchives.addEventListener("click", ()=>{
   menuWrap.classList.remove("open");
-  // placeholder (V2.1)
   alert("Archives (placeholder) — V2.1");
 });
-  <script>
-/* ===== SOCIAL OVERLAY ===== */
+
+/* =========================
+   SOCIAL OVERLAY
+   ========================= */
 const socialOverlay = document.getElementById("socialOverlay");
 const socialClose = document.getElementById("socialClose");
 const smViews = document.getElementById("smViews");
@@ -1705,7 +1805,7 @@ const smDiscordSub = document.getElementById("smDiscordSub");
 const dAvatar = document.getElementById("dAvatar");
 const dFallback = document.getElementById("dFallback");
 
-/* contador local de views (navegador) */
+/* contador local */
 function incLocal(key){
   const v = Number(localStorage.getItem(key) || "0") + 1;
   localStorage.setItem(key, String(v));
@@ -1715,9 +1815,26 @@ function getLocal(key){
   return Number(localStorage.getItem(key) || "0");
 }
 
-/* ===== LANYARD (Discord Presence) =====
-   Obs: endpoint: api.lanyard.rest/v1/users/513830615225860096
-*/
+function openSocialOverlay(){
+  if(!document.body.classList.contains("entered")) return;
+  menuWrap.classList.remove("open");
+  openOverlay("socialOpen");
+
+  const v = incLocal("sm_views");
+  smViews.textContent = String(v);
+
+  fetchLanyard();
+  setTimeout(()=>socialClose.focus(), 80);
+}
+function closeSocialOverlay(){ closeOverlay("socialOpen"); }
+
+openSocial.addEventListener("click", openSocialOverlay);
+socialClose.addEventListener("click", closeSocialOverlay);
+socialOverlay.addEventListener("click",(e)=>{
+  if(e.target.classList.contains("dim")) closeSocialOverlay();
+});
+
+/* ===== LANYARD ===== */
 const LANYARD_USER_ID = "513830615225860096";
 const LANYARD_URL = `https://api.lanyard.rest/v1/users/${LANYARD_USER_ID}`;
 
@@ -1745,7 +1862,6 @@ async function fetchLanyard(){
     const r = await fetch(LANYARD_URL, { cache:"no-store" });
     if(!r.ok) throw new Error("lanyard http");
     const j = await r.json();
-
     const data = j?.data;
     if(!data) throw new Error("lanyard data");
 
@@ -1758,7 +1874,6 @@ async function fetchLanyard(){
       data.discord_user?.username ||
       "Allz";
     smDiscordName.textContent = dn;
-
     smDiscordSub.textContent = "@allzz.exe";
 
     const uid = data.discord_user?.id || LANYARD_USER_ID;
@@ -1767,7 +1882,6 @@ async function fetchLanyard(){
       const isAnim = av.startsWith("a_");
       const ext = isAnim ? "gif" : "png";
       const url = `https://cdn.discordapp.com/avatars/${uid}/${av}.${ext}?size=256`;
-
       dAvatar.src = url;
       dAvatar.style.display = "block";
       dFallback.style.display = "none";
@@ -1775,53 +1889,210 @@ async function fetchLanyard(){
       dAvatar.style.display = "none";
       dFallback.style.display = "block";
     }
-
     setUpdatedNow();
   }catch(e){
-    // mantém local fallback
+    // mantém fallback
   }
 }
 
-/* ===== SOCIAL OPEN/CLOSE (atualizado: fecha outros overlays) ===== */
-function openSocialOverlay(){
+/* =========================
+   PLAYLISTS OVERLAY (V2.1)
+   ========================= */
+const playlistsOverlay = document.getElementById("playlistsOverlay");
+const plClose = document.getElementById("plClose");
+const plList = document.getElementById("plList");
+const plFrame = document.getElementById("plFrame");
+
+/* SUA LISTA DE PLAYLISTS (troque os links quando quiser) */
+const PLAYLISTS = [
+  {
+    name: "Shadow Vibes",
+    desc: "sombras • combate • foco",
+    embed: "https://open.spotify.com/embed/playlist/37i9dQZF1DX0XUsuxWHRQd?utm_source=generator"
+  },
+  {
+    name: "Midnight",
+    desc: "noite • chill • dark",
+    embed: "https://open.spotify.com/embed/playlist/37i9dQZF1DX4fpCWaHOned?utm_source=generator"
+  },
+  {
+    name: "Favorites",
+    desc: "minhas faixas",
+    embed: "https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator"
+  }
+];
+
+function renderPlaylistList(){
+  plList.innerHTML = "";
+  PLAYLISTS.forEach((p, idx)=>{
+    const btn = document.createElement("button");
+    btn.className = "plItem";
+    btn.type = "button";
+    btn.innerHTML = `${escapeHtml(p.name)}<small>${escapeHtml(p.desc)}</small>`;
+    btn.addEventListener("click", ()=>{
+      setActivePlaylist(idx);
+    });
+    plList.appendChild(btn);
+  });
+}
+function setActivePlaylist(i){
+  const items = [...plList.querySelectorAll(".plItem")];
+  items.forEach((el, idx)=> el.classList.toggle("active", idx===i));
+  const p = PLAYLISTS[i];
+  plFrame.src = p.embed;
+  localStorage.setItem("pl_last", String(i));
+}
+function openPlaylistsOverlay(){
   if(!document.body.classList.contains("entered")) return;
-
-  // fecha outros overlays
-  if(document.body.classList.contains("scrollOpen")) closeScroll();
-  if(document.body.classList.contains("playlistsOpen")) closePlaylistsOverlay();
-  if(document.body.classList.contains("adminOpen")) closeAdminOverlay();
-
-  pauseBgAudio();
-
-  document.body.classList.add("socialOpen");
-  socialOverlay.setAttribute("aria-hidden","false");
-
-  // views + métrica open
-  const v = incLocal("sm_views");
-  smViews.textContent = String(v);
-  incLocal("social_open");
-
-  fetchLanyard();
-
-  setTimeout(()=>socialClose.focus(), 80);
-}
-function closeSocialOverlay(){
-  document.body.classList.remove("socialOpen");
-  socialOverlay.setAttribute("aria-hidden","true");
-  resumeBgAudio();
-}
-
-openSocial.addEventListener("click", ()=>{
   menuWrap.classList.remove("open");
-  openSocialOverlay();
-});
-socialClose.addEventListener("click", closeSocialOverlay);
-socialOverlay.addEventListener("click",(e)=>{
-  if(e.target.classList.contains("dim")) closeSocialOverlay();
+  openOverlay("playlistsOpen");
+
+  renderPlaylistList();
+  const last = Number(localStorage.getItem("pl_last") || "0");
+  setActivePlaylist(Number.isFinite(last) ? Math.max(0, Math.min(last, PLAYLISTS.length-1)) : 0);
+
+  setTimeout(()=>plClose.focus(), 80);
+}
+function closePlaylistsOverlay(){
+  // para o embed parar de tocar quando fechar
+  plFrame.src = "about:blank";
+  closeOverlay("playlistsOpen");
+}
+
+openPlaylists.addEventListener("click", openPlaylistsOverlay);
+plClose.addEventListener("click", closePlaylistsOverlay);
+playlistsOverlay.addEventListener("click",(e)=>{
+  if(e.target.classList.contains("dim")) closePlaylistsOverlay();
 });
 
+/* =========================
+   ADMIN OVERLAY (V2.1)
+   ========================= */
+const adminBtn = document.getElementById("adminBtn");
+const adminOverlay = document.getElementById("adminOverlay");
+const adClose = document.getElementById("adClose");
 
-/* ===== PERGAMINHO ===== */
+const adLogin = document.getElementById("adLogin");
+const adDash = document.getElementById("adDash");
+const adMsg = document.getElementById("adMsg");
+
+const adUser = document.getElementById("adUser");
+const adPass = document.getElementById("adPass");
+const adLoginBtn = document.getElementById("adLoginBtn");
+const adLoginHint = document.getElementById("adLoginHint");
+
+const adGrid = document.getElementById("adGrid");
+const adUpdated = document.getElementById("adUpdated");
+const adResetBtn = document.getElementById("adResetBtn");
+const adLogoutBtn = document.getElementById("adLogoutBtn");
+
+const ADMIN_USER = "Sombra";
+const ADMIN_PASS = "Projeto26";
+const ADMIN_OK_KEY = "admin_ok";
+
+function nowHHMM(){
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+}
+
+function metricGet(key){ return Number(localStorage.getItem(key) || "0"); }
+function metricSet(key, v){ localStorage.setItem(key, String(v)); }
+function metricInc(key){
+  const v = metricGet(key)+1;
+  metricSet(key, v);
+  return v;
+}
+
+function buildAdminMetrics(){
+  const metrics = [
+    { key:"m_site_opens", label:"Site Opens" },
+    { key:"m_social_opens", label:"Social Opens" },
+    { key:"m_scroll_opens", label:"Scroll Opens" },
+    { key:"m_playlists_opens", label:"Playlists Opens" },
+    { key:"m_admin_logins", label:"Admin Logins" }
+  ];
+  adGrid.innerHTML = "";
+  metrics.forEach(m=>{
+    const card = document.createElement("div");
+    card.className = "adMetric";
+    card.innerHTML = `<div class="k">${escapeHtml(m.label)}</div><div class="v" id="${m.key}">${metricGet(m.key)}</div>`;
+    adGrid.appendChild(card);
+  });
+  adUpdated.textContent = `Atualizado às ${nowHHMM()}`;
+}
+
+function showAdminLogin(msg){
+  adLogin.style.display = "block";
+  adDash.style.display = "none";
+  if(msg) adMsg.textContent = msg;
+}
+function showAdminDash(){
+  adLogin.style.display = "none";
+  adDash.style.display = "block";
+  buildAdminMetrics();
+}
+
+function openAdminOverlay(){
+  if(!document.body.classList.contains("entered")) return;
+  openOverlay("adminOpen");
+  setTimeout(()=>adClose.focus(), 80);
+
+  // view/open metric
+  metricInc("m_admin_logins_view"); // opcional, não exibido
+  if(localStorage.getItem(ADMIN_OK_KEY)==="1"){
+    showAdminDash();
+  }else{
+    showAdminLogin("Acesso restrito.");
+    setTimeout(()=>adUser.focus(), 120);
+  }
+}
+function closeAdminOverlay(){ closeOverlay("adminOpen"); }
+
+adminBtn.addEventListener("click",(e)=>{
+  e.stopPropagation();
+  openAdminOverlay();
+});
+adClose.addEventListener("click", closeAdminOverlay);
+adminOverlay.addEventListener("click",(e)=>{
+  if(e.target.classList.contains("dim")) closeAdminOverlay();
+});
+
+adLoginHint.addEventListener("click", ()=>{
+  adMsg.textContent = "Usuário fixo: Sombra • Senha: Projeto26";
+});
+
+function tryLogin(){
+  const u = (adUser.value || "").trim();
+  const p = (adPass.value || "").trim();
+  if(u === ADMIN_USER && p === ADMIN_PASS){
+    localStorage.setItem(ADMIN_OK_KEY, "1");
+    metricInc("m_admin_logins");
+    showAdminDash();
+    adUser.value = "";
+    adPass.value = "";
+  }else{
+    adMsg.textContent = "Credenciais inválidas.";
+  }
+}
+adLoginBtn.addEventListener("click", tryLogin);
+adPass.addEventListener("keydown",(e)=>{
+  if(e.key==="Enter") tryLogin();
+});
+
+adResetBtn.addEventListener("click", ()=>{
+  const keys = ["m_site_opens","m_social_opens","m_scroll_opens","m_playlists_opens","m_admin_logins"];
+  keys.forEach(k=> localStorage.removeItem(k));
+  buildAdminMetrics();
+  adMsg.textContent = "Métricas resetadas.";
+});
+adLogoutBtn.addEventListener("click", ()=>{
+  localStorage.removeItem(ADMIN_OK_KEY);
+  showAdminLogin("Sessão encerrada.");
+});
+
+/* =========================
+   PERGAMINHO (lore)
+   ========================= */
 const scrollBtn = document.getElementById("scrollBtn");
 const scrollOverlay = document.getElementById("scrollOverlay");
 const scrollClose = document.getElementById("scrollClose");
@@ -1845,20 +2116,9 @@ const loreLines = [
 
 function openScroll(){
   if(!document.body.classList.contains("entered")) return;
-
-  // fecha outros overlays
-  if(document.body.classList.contains("socialOpen")) closeSocialOverlay();
-  if(document.body.classList.contains("playlistsOpen")) closePlaylistsOverlay();
-  if(document.body.classList.contains("adminOpen")) closeAdminOverlay();
-
-  pauseBgAudio();
-
-  document.body.classList.add("scrollOpen");
-  scrollOverlay.setAttribute("aria-hidden","false");
+  openOverlay("scrollOpen");
+  metricInc("m_scroll_opens");
   setTimeout(()=>cmdInput.focus(), 80);
-
-  // métrica
-  incLocal("scroll_open");
 
   if(!typedOnce){
     startTyping();
@@ -1867,9 +2127,7 @@ function openScroll(){
   }
 }
 function closeScroll(){
-  document.body.classList.remove("scrollOpen");
-  scrollOverlay.setAttribute("aria-hidden","true");
-  resumeBgAudio();
+  closeOverlay("scrollOpen");
 }
 
 scrollBtn.addEventListener("click",(e)=>{
@@ -1879,6 +2137,16 @@ scrollBtn.addEventListener("click",(e)=>{
 scrollClose.addEventListener("click", closeScroll);
 scrollOverlay.addEventListener("click",(e)=>{
   if(e.target.classList.contains("dim")) closeScroll();
+});
+
+/* ESC fecha qualquer overlay */
+document.addEventListener("keydown",(e)=>{
+  if(e.key !== "Escape") return;
+
+  if(document.body.classList.contains("adminOpen")) return closeAdminOverlay();
+  if(document.body.classList.contains("playlistsOpen")) return closePlaylistsOverlay();
+  if(document.body.classList.contains("socialOpen")) return closeSocialOverlay();
+  if(document.body.classList.contains("scrollOpen")) return closeScroll();
 });
 
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
@@ -1981,232 +2249,88 @@ cmdInput.addEventListener("keydown", (e)=>{
 });
 
 function escapeHtml(s){
-  return s.replaceAll("&","&amp;")
-          .replaceAll("<","&lt;")
-          .replaceAll(">","&gt;")
-          .replaceAll('"',"&quot;")
-          .replaceAll("'","&#039;");
+  return String(s)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 
-/* =========================================================
-   PLAYLISTS — V2.1
-========================================================= */
-const playlistsOverlay = document.getElementById("playlistsOverlay");
-const plClose = document.getElementById("plClose");
-const plList = document.getElementById("plList");
-const plFrame = document.getElementById("plFrame");
+/* =========================
+   MÉTRICAS INICIAIS
+   ========================= */
+metricInc("m_site_opens");
 
-const PLAYLISTS = [
-  {
-    name: "Main Energy",
-    desc: "boost • foco • ritmo",
-    src: "https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M"
-  },
-  {
-    name: "Dark Mode",
-    desc: "noite • sombra • peso",
-    src: "https://open.spotify.com/embed/playlist/37i9dQZF1DX0XUsuxWHRQd"
-  },
-  {
-    name: "Lo-Fi / Calm",
-    desc: "calmo • repetição • grind",
-    src: "https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExPn"
-  }
-];
+/* métricas dos outros overlays */
+const _openSocialOverlay = openSocialOverlay;
+openSocialOverlay = function(){
+  metricInc("m_social_opens");
+  _openSocialOverlay();
+};
 
-function buildPlaylistList(){
-  plList.innerHTML = "";
-  PLAYLISTS.forEach((p, idx)=>{
-    const b = document.createElement("button");
-    b.className = "plItem" + (idx === 0 ? " active" : "");
-    b.type = "button";
-    b.innerHTML = `${p.name}<small>${p.desc}</small>`;
-    b.addEventListener("click", ()=>{
-      document.querySelectorAll(".plItem").forEach(x=>x.classList.remove("active"));
-      b.classList.add("active");
-      plFrame.src = p.src;
-    });
-    plList.appendChild(b);
-  });
-  // playlist padrão
-  plFrame.src = PLAYLISTS[0].src;
-}
-buildPlaylistList();
-
-function openPlaylistsOverlay(){
-  if(!document.body.classList.contains("entered")) return;
-
-  // fecha outros overlays
-  if(document.body.classList.contains("scrollOpen")) closeScroll();
-  if(document.body.classList.contains("socialOpen")) closeSocialOverlay();
-  if(document.body.classList.contains("adminOpen")) closeAdminOverlay();
-
-  pauseBgAudio();
-
-  document.body.classList.add("playlistsOpen");
-  playlistsOverlay.setAttribute("aria-hidden","false");
-  incLocal("playlists_open");
-
-  setTimeout(()=>plClose.focus(), 80);
-}
-function closePlaylistsOverlay(){
-  document.body.classList.remove("playlistsOpen");
-  playlistsOverlay.setAttribute("aria-hidden","true");
-  resumeBgAudio();
-}
-
-openPlaylists.addEventListener("click", ()=>{
-  menuWrap.classList.remove("open");
-  openPlaylistsOverlay();
-});
-plClose.addEventListener("click", closePlaylistsOverlay);
-playlistsOverlay.addEventListener("click",(e)=>{
-  if(e.target.classList.contains("dim")) closePlaylistsOverlay();
-});
-
-/* =========================================================
-   ADMIN — V2.1 (modular)
-========================================================= */
-const adminBtn = document.getElementById("adminBtn");
-const adminOverlay = document.getElementById("adminOverlay");
-const adClose = document.getElementById("adClose");
-
-const adLogin = document.getElementById("adLogin");
-const adUser = document.getElementById("adUser");
-const adPass = document.getElementById("adPass");
-const adLoginBtn = document.getElementById("adLoginBtn");
-const adLoginHint = document.getElementById("adLoginHint");
-const adMsg = document.getElementById("adMsg");
-
-const adDash = document.getElementById("adDash");
-const adGrid = document.getElementById("adGrid");
-const adResetBtn = document.getElementById("adResetBtn");
-const adLogoutBtn = document.getElementById("adLogoutBtn");
-const adUpdated = document.getElementById("adUpdated");
-
-const ADMIN_USER = "Sombra";
-const ADMIN_PASS = "Projeto26";
-
-function openAdminOverlay(){
-  if(!document.body.classList.contains("entered")) return;
-
-  // fecha outros overlays
-  if(document.body.classList.contains("scrollOpen")) closeScroll();
-  if(document.body.classList.contains("socialOpen")) closeSocialOverlay();
-  if(document.body.classList.contains("playlistsOpen")) closePlaylistsOverlay();
-
-  pauseBgAudio();
-
-  document.body.classList.add("adminOpen");
-  adminOverlay.setAttribute("aria-hidden","false");
-  incLocal("admin_open");
-
-  // estado inicial
-  showAdminLogin();
-
-  setTimeout(()=>adUser.focus(), 80);
-}
-function closeAdminOverlay(){
-  document.body.classList.remove("adminOpen");
-  adminOverlay.setAttribute("aria-hidden","true");
-  resumeBgAudio();
-}
-
-function showAdminLogin(){
-  adDash.style.display = "none";
-  adLogin.style.display = "block";
-  adMsg.textContent = "Acesso restrito.";
-  adUser.value = "";
-  adPass.value = "";
-}
-function showAdminDash(){
-  adLogin.style.display = "none";
-  adDash.style.display = "block";
-  renderAdminMetrics();
-}
-
-function renderAdminMetrics(){
-  const keys = [
-    { k:"enter_count", label:"Entradas" },
-    { k:"scroll_open", label:"Pergaminho aberto" },
-    { k:"social_open", label:"Social aberto" },
-    { k:"sm_views", label:"Social views" },
-    { k:"playlists_open", label:"Playlists aberto" },
-    { k:"admin_open", label:"Admin aberto" }
-  ];
-
-  adGrid.innerHTML = "";
-  keys.forEach(item=>{
-    const card = document.createElement("div");
-    card.className = "adMetric";
-    card.innerHTML = `<div class="k">${item.label}</div><div class="v">${getLocal(item.k)}</div>`;
-    adGrid.appendChild(card);
-  });
-
-  const d = new Date();
-  const hh = String(d.getHours()).padStart(2,"0");
-  const mm = String(d.getMinutes()).padStart(2,"0");
-  adUpdated.textContent = `Atualizado às ${hh}:${mm}`;
-}
-
-function resetAdminMetrics(){
-  const toClear = ["enter_count","scroll_open","social_open","sm_views","playlists_open","admin_open"];
-  toClear.forEach(k=>localStorage.removeItem(k));
-  renderAdminMetrics();
-}
-
-adminBtn.addEventListener("click", (e)=>{
-  e.stopPropagation();
-  openAdminOverlay();
-});
-adClose.addEventListener("click", closeAdminOverlay);
-adminOverlay.addEventListener("click",(e)=>{
-  if(e.target.classList.contains("dim")) closeAdminOverlay();
-});
-
-adLoginHint.addEventListener("click", ()=>{
-  adMsg.textContent = "Dica: usuário é uma sombra. senha é um projeto.";
-});
-
-adLoginBtn.addEventListener("click", ()=>{
-  const u = (adUser.value || "").trim();
-  const p = (adPass.value || "").trim();
-
-  if(u === ADMIN_USER && p === ADMIN_PASS){
-    adMsg.textContent = "Acesso concedido.";
-    showAdminDash();
-    return;
-  }
-  adMsg.textContent = "Negado. Credenciais inválidas.";
-});
-
-adResetBtn.addEventListener("click", resetAdminMetrics);
-adLogoutBtn.addEventListener("click", ()=>{
-  showAdminLogin();
-  closeAdminOverlay();
-});
-
-/* ===== ESC fecha overlays (scroll/social/playlists/admin) ===== */
-document.addEventListener("keydown",(e)=>{
-  if(e.key !== "Escape") return;
-
-  if(document.body.classList.contains("adminOpen")){
-    closeAdminOverlay();
-    return;
-  }
-  if(document.body.classList.contains("playlistsOpen")){
-    closePlaylistsOverlay();
-    return;
-  }
-  if(document.body.classList.contains("scrollOpen")){
-    closeScroll();
-    return;
-  }
-  if(document.body.classList.contains("socialOpen")){
-    closeSocialOverlay();
-    return;
-  }
-});
+const _openPlaylistsOverlay = openPlaylistsOverlay;
+openPlaylistsOverlay = function(){
+  metricInc("m_playlists_opens");
+  _openPlaylistsOverlay();
+};
 </script>
+<script>
+/* =========================================
+   PATCH FINAL (métricas sem sobrescrever função)
+   =========================================
+   Se você NÃO removeu o trecho que eu pedi remover,
+   remove AGORA pra não duplicar comportamento.
+*/
+
+/* Ajuste: garantir que métricas de social/playlists incrementem
+   (caso seu código tenha sido editado no meio do caminho) */
+
+(function ensureMetricsHooks(){
+  // Se as funções existirem no escopo global, não mexe nelas.
+  // Aqui é só uma proteção: incrementa quando os botões forem clicados.
+  try{
+    const btnSocial = document.getElementById("openSocial");
+    const btnPlaylists = document.getElementById("openPlaylists");
+
+    if(btnSocial && !btnSocial.dataset.metricBound){
+      btnSocial.dataset.metricBound = "1";
+      btnSocial.addEventListener("click", ()=>{
+        try{ metricInc("m_social_opens"); }catch(e){}
+      }, { capture:true });
+    }
+
+    if(btnPlaylists && !btnPlaylists.dataset.metricBound){
+      btnPlaylists.dataset.metricBound = "1";
+      btnPlaylists.addEventListener("click", ()=>{
+        try{ metricInc("m_playlists_opens"); }catch(e){}
+      }, { capture:true });
+    }
+  }catch(e){}
+})();
+
+/* =========================================
+   FECHAR MENU QUANDO ABRIR QUALQUER OVERLAY
+   (segurança pra não ficar drop aberto)
+   ========================================= */
+document.addEventListener("keydown",(e)=>{
+  if(e.key === "Escape"){
+    try{ document.getElementById("menuWrap").classList.remove("open"); }catch(err){}
+  }
+});
+
+/* =========================================
+   GARANTIR: clique fora fecha menu (já tem),
+   mas aqui evita drop travado em mobile.
+   ========================================= */
+document.addEventListener("touchstart",(e)=>{
+  try{
+    const menuWrap = document.getElementById("menuWrap");
+    if(menuWrap && !menuWrap.contains(e.target)) menuWrap.classList.remove("open");
+  }catch(err){}
+}, { passive:true });
+
+</script>
+
 </body>
 </html>
