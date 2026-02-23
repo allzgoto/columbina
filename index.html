@@ -16,6 +16,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
   --goldA: #fff2de;
   --goldB: #d9a56a;
   --goldC: #a8642c;
+
+  --ui-bg: rgba(14,14,16,0.94);
+  --ui-stroke: rgba(255,255,255,0.10);
+  --ui-soft: rgba(255,255,255,0.06);
 }
 
 /* ===== VIDEO ===== */
@@ -875,7 +879,6 @@ body.socialOpen #socialOverlay{ display:block; }
     repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 8px);
   pointer-events:none;
 }
-
 .smWrap{
   position:absolute;
   left:50%; top:50%;
@@ -889,8 +892,8 @@ body.socialOpen #socialOverlay{ display:block; }
 .smCard{
   width:min(520px, 94vw);
   border-radius:24px;
-  background: rgba(14,14,16,0.94);
-  border:1px solid rgba(255,255,255,0.09);
+  background: var(--ui-bg);
+  border:1px solid var(--ui-stroke);
   box-shadow: 0 40px 180px rgba(0,0,0,0.90), 0 0 0 1px rgba(0,0,0,0.25) inset;
   overflow:hidden;
   position:relative;
@@ -1030,10 +1033,11 @@ body.socialOpen #socialOverlay{ display:block; }
   background: rgba(160,160,160,0.9);
   box-shadow: 0 0 16px rgba(255,255,255,0.10);
 }
-.dotStatus.on{
-  background: rgba(70, 255, 140, 0.95);
-  box-shadow: 0 0 18px rgba(70, 255, 140, 0.20);
-}
+.dotStatus.online{ background: rgba(70, 255, 140, 0.95); box-shadow: 0 0 18px rgba(70, 255, 140, 0.20); }
+.dotStatus.idle{ background: rgba(255, 200, 70, 0.95); box-shadow: 0 0 18px rgba(255, 200, 70, 0.18); }
+.dotStatus.dnd{ background: rgba(255, 80, 90, 0.95); box-shadow: 0 0 18px rgba(255, 80, 90, 0.18); }
+.dotStatus.offline{ background: rgba(160,160,160,0.9); box-shadow: 0 0 16px rgba(255,255,255,0.10); }
+
 .smSectionBody{
   margin-top:12px;
   display:grid;
@@ -1077,39 +1081,14 @@ body.socialOpen #socialOverlay{ display:block; }
   color: rgba(255,255,255,0.56);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-
-/* toggle local */
-.smToggle{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  user-select:none;
+.smallHint{
+  margin-top:10px;
+  text-align:center;
+  color: rgba(255,255,255,0.40);
+  font: 700 11px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  letter-spacing:1px;
+  text-transform:uppercase;
 }
-.smSwitch{
-  width:48px;height:28px;
-  border-radius:999px;
-  background: rgba(255,255,255,0.10);
-  border:1px solid rgba(255,255,255,0.10);
-  position:relative;
-  cursor:pointer;
-  transition: filter .12s ease;
-}
-.smSwitch:hover{ filter:brightness(1.06); }
-.smKnob{
-  width:22px;height:22px;
-  border-radius:999px;
-  background: rgba(255,255,255,0.86);
-  position:absolute;
-  top:50%;
-  left:3px;
-  transform: translateY(-50%);
-  transition:left .18s ease, background .18s ease;
-}
-.smSwitch.on{
-  background: rgba(70, 255, 140, 0.14);
-  border-color: rgba(70, 255, 140, 0.22);
-}
-.smSwitch.on .smKnob{ left:23px; background: rgba(70, 255, 140, 0.92); }
 
 .smViews{
   margin-top:14px;
@@ -1445,8 +1424,8 @@ body.socialOpen #socialOverlay{ display:block; }
           <div class="smSectionHead">
             <div class="smSectionTitle">DISCORD STATUS</div>
             <div class="smPill">
-              <span class="dotStatus" id="dDot"></span>
-              <span id="dState">Offline</span>
+              <span class="dotStatus offline" id="dDot"></span>
+              <span id="dState">Carregando...</span>
             </div>
           </div>
 
@@ -1462,19 +1441,13 @@ body.socialOpen #socialOverlay{ display:block; }
                   </svg>
                 </div>
                 <div class="smRowText">
-                  <div class="smRowName" id="dUser">Allz</div>
-                  <div class="smRowSub" id="dSub">status local (sem API por enquanto)</div>
-                </div>
-              </div>
-
-              <div class="smToggle" title="Toggle local só pra testar layout">
-                <div class="smSwitch" id="dSwitch">
-                  <div class="smKnob"></div>
+                  <div class="smRowName" id="dUser">—</div>
+                  <div class="smRowSub" id="dSub">aguardando presença…</div>
                 </div>
               </div>
             </div>
 
-            <div class="smRow" style="opacity:.92">
+            <div class="smRow" id="dActivityRow" style="display:none">
               <div class="smRowLeft">
                 <div class="smDiscIcon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none">
@@ -1484,12 +1457,29 @@ body.socialOpen #socialOverlay{ display:block; }
                   </svg>
                 </div>
                 <div class="smRowText">
-                  <div class="smRowName">API slot</div>
-                  <div class="smRowSub">depois a gente liga em “Discord Presence”</div>
+                  <div class="smRowName" id="dActivityTitle">—</div>
+                  <div class="smRowSub" id="dActivitySub">—</div>
                 </div>
               </div>
             </div>
 
+            <div class="smRow" id="dSpotifyRow" style="display:none">
+              <div class="smRowLeft">
+                <div class="smDiscIcon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M7 10.5c4-1 8-.6 10 1" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M7.8 13.4c3-.7 6-.3 8 1" stroke="rgba(255,255,255,0.75)" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M8.6 16.1c2-.4 4-.2 5.4.7" stroke="rgba(255,255,255,0.65)" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="smRowText">
+                  <div class="smRowName" id="dSpotifyTitle">—</div>
+                  <div class="smRowSub" id="dSpotifySub">—</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="smallHint" id="dUpdated">—</div>
           </div>
         </div>
 
@@ -1519,11 +1509,8 @@ const KEYS = {
   adminSess: "sf2_admin_sessions",
   socialOpen: "sf2_social_open",
   fs: "sf2_fullscreen",
-  discordOn: "sf2_discord_on"
 };
 function getNum(k){ return Number(localStorage.getItem(k) || "0"); }
-function getBool(k){ return (localStorage.getItem(k) || "0") === "1"; }
-function setBool(k,v){ localStorage.setItem(k, v ? "1":"0"); }
 function inc(k){ const v=getNum(k)+1; localStorage.setItem(k,String(v)); return v; }
 function setTxt(id, v){ const el=document.getElementById(id); if(el) el.textContent=String(v); }
 
@@ -1532,6 +1519,23 @@ inc(KEYS.visits);
 /* ===== VOLUME PADRÃO 8% ===== */
 let currentVol = 0.08;
 bgAudio.volume = currentVol;
+let enteredAndAudioStarted = false;
+
+/* ===== SILENCIAR ÁUDIO EM OVERLAYS ===== */
+let audioResumeWanted = false;
+function pauseBgForOverlay(){
+  if(!enteredAndAudioStarted) return;
+  audioResumeWanted = !bgAudio.paused;
+  try{ bgAudio.pause(); }catch(e){}
+}
+async function resumeBgAfterOverlay(){
+  if(!enteredAndAudioStarted) return;
+  if(!audioResumeWanted) return;
+  try{
+    bgAudio.volume = currentVol;
+    await bgAudio.play();
+  }catch(e){}
+}
 
 /* ===== CINZAS ===== */
 const canvas = document.getElementById("ashCanvas");
@@ -1588,6 +1592,7 @@ async function start(){
     bgAudio.currentTime = 0;
     bgAudio.volume = currentVol;
     await bgAudio.play();
+    enteredAndAudioStarted = true;
   }catch(e){}
 
   setTimeout(async ()=>{
@@ -1683,6 +1688,8 @@ const loreLines = [
 
 function openScroll(){
   if(!document.body.classList.contains("entered")) return;
+  pauseBgForOverlay();
+
   document.body.classList.add("scrollOpen");
   scrollOverlay.setAttribute("aria-hidden","false");
   setTimeout(()=>cmdInput.focus(), 80);
@@ -1695,6 +1702,7 @@ function openScroll(){
 function closeScroll(){
   document.body.classList.remove("scrollOpen");
   scrollOverlay.setAttribute("aria-hidden","true");
+  resumeBgAfterOverlay();
 }
 scrollBtn.addEventListener("click",(e)=>{ e.stopPropagation(); openScroll(); });
 scrollClose.addEventListener("click", closeScroll);
@@ -1805,6 +1813,8 @@ const adminErr = document.getElementById("adminErr");
 
 function openAdmin(){
   if(!document.body.classList.contains("entered")) return;
+  pauseBgForOverlay();
+
   document.body.classList.add("adminOpen");
   adminOverlay.setAttribute("aria-hidden","false");
   adminOverlay.classList.remove("unlocked");
@@ -1815,6 +1825,7 @@ function openAdmin(){
 function closeAdmin(){
   document.body.classList.remove("adminOpen");
   adminOverlay.setAttribute("aria-hidden","true");
+  resumeBgAfterOverlay();
 }
 adminBtn.addEventListener("click",(e)=>{ e.stopPropagation(); openAdmin(); });
 adminClose.addEventListener("click", closeAdmin);
@@ -1852,6 +1863,8 @@ const smViewsCount = document.getElementById("smViewsCount");
 
 function openSocialPanel(){
   if(!document.body.classList.contains("entered")) return;
+  pauseBgForOverlay();
+
   document.body.classList.add("socialOpen");
   socialOverlay.setAttribute("aria-hidden","false");
   rightMenu.classList.remove("open");
@@ -1859,10 +1872,14 @@ function openSocialPanel(){
   const views = inc(KEYS.socialOpen);
   smViewsCount.textContent = String(views);
   refreshMetrics();
+
+  startLanyardLoop();
 }
 function closeSocialPanel(){
   document.body.classList.remove("socialOpen");
   socialOverlay.setAttribute("aria-hidden","true");
+  stopLanyardLoop();
+  resumeBgAfterOverlay();
 }
 openSocial.addEventListener("click",(e)=>{ e.stopPropagation(); openSocialPanel(); });
 smClose.addEventListener("click", closeSocialPanel);
@@ -1871,24 +1888,122 @@ socialOverlay.addEventListener("click",(e)=>{ if(e.target.classList.contains("di
 openArchive.addEventListener("click", ()=>{ rightMenu.classList.remove("open"); alert("Archive ainda é placeholder. Na V2.1 a gente define o layout."); });
 openPlaylists.addEventListener("click", ()=>{ rightMenu.classList.remove("open"); alert("Playlists ainda é placeholder. Na V2.1 a gente define o layout."); });
 
-/* ===== Discord status (local toggle) ===== */
-const dSwitch = document.getElementById("dSwitch");
+/* ===== LANYARD DISCORD PRESENCE ===== */
+const LANYARD_USER_ID = "513830615225860096";
 const dDot = document.getElementById("dDot");
 const dState = document.getElementById("dState");
+const dUser = document.getElementById("dUser");
+const dSub = document.getElementById("dSub");
+const dUpdated = document.getElementById("dUpdated");
 
-function renderDiscord(){
-  const on = getBool(KEYS.discordOn);
-  dSwitch.classList.toggle("on", on);
-  dDot.classList.toggle("on", on);
-  dState.textContent = on ? "Online" : "Offline";
+const dActivityRow = document.getElementById("dActivityRow");
+const dActivityTitle = document.getElementById("dActivityTitle");
+const dActivitySub = document.getElementById("dActivitySub");
+
+const dSpotifyRow = document.getElementById("dSpotifyRow");
+const dSpotifyTitle = document.getElementById("dSpotifyTitle");
+const dSpotifySub = document.getElementById("dSpotifySub");
+
+let lanyardTimer = null;
+let lanyardAbort = null;
+
+function setDotStatus(status){
+  dDot.className = "dotStatus " + (status || "offline");
 }
-renderDiscord();
+function niceStatus(s){
+  if(s === "online") return "Online";
+  if(s === "idle") return "Idle";
+  if(s === "dnd") return "Do Not Disturb";
+  return "Offline";
+}
+function formatTime(ts){
+  const d = new Date(ts);
+  return d.toLocaleString("pt-BR", { hour:"2-digit", minute:"2-digit" });
+}
+function pickPrimaryActivity(activities){
+  if(!Array.isArray(activities)) return null;
+  // Tenta pegar "Playing" ou qualquer activity relevante que não seja custom status
+  const filtered = activities.filter(a => a && a.type !== 4 && a.name);
+  return filtered[0] || null;
+}
 
-dSwitch.addEventListener("click", ()=>{
-  const on = !getBool(KEYS.discordOn);
-  setBool(KEYS.discordOn, on);
-  renderDiscord();
-});
+async function fetchLanyard(){
+  if(lanyardAbort) lanyardAbort.abort();
+  lanyardAbort = new AbortController();
+
+  dState.textContent = "Carregando...";
+  try{
+    const res = await fetch(`https://api.lanyard.rest/v1/users/${LANYARD_USER_ID}`, {
+      signal: lanyardAbort.signal,
+      cache: "no-store"
+    });
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    const json = await res.json();
+    const data = json?.data;
+    if(!data) throw new Error("Sem data");
+
+    const status = data.discord_status || "offline";
+    setDotStatus(status);
+    dState.textContent = niceStatus(status);
+
+    const du = data.discord_user || {};
+    const display = du.global_name || du.display_name || du.username || "—";
+    const tag = du.discriminator && du.discriminator !== "0" ? `#${du.discriminator}` : "";
+    dUser.textContent = `${display}${tag ? " " + tag : ""}`;
+
+    // “linha de baixo” vira: device flags / last update
+    const activeFlags = [];
+    if(data.active_on_discord_mobile) activeFlags.push("mobile");
+    if(data.active_on_discord_desktop) activeFlags.push("desktop");
+    if(data.active_on_discord_web) activeFlags.push("web");
+    dSub.textContent = activeFlags.length ? `ativo: ${activeFlags.join(" • ")}` : `sem atividade de dispositivo`;
+
+    // Activity
+    const act = pickPrimaryActivity(data.activities || []);
+    if(act){
+      dActivityRow.style.display = "flex";
+      dActivityTitle.textContent = act.name || "Atividade";
+      const details = [act.details, act.state].filter(Boolean).join(" — ");
+      dActivitySub.textContent = details || "em atividade";
+    }else{
+      dActivityRow.style.display = "none";
+    }
+
+    // Spotify
+    if(data.listening_to_spotify && data.spotify){
+      dSpotifyRow.style.display = "flex";
+      dSpotifyTitle.textContent = data.spotify.song || "Spotify";
+      const artist = data.spotify.artist ? `por ${data.spotify.artist}` : "";
+      dSpotifySub.textContent = ["ouvindo agora", artist].filter(Boolean).join(" • ");
+    }else{
+      dSpotifyRow.style.display = "none";
+    }
+
+    dUpdated.textContent = `atualizado às ${formatTime(Date.now())}`;
+  }catch(e){
+    // Se abortou porque fechou, só sai.
+    if(String(e?.name).toLowerCase().includes("abort")) return;
+
+    setDotStatus("offline");
+    dState.textContent = "Offline";
+    dUser.textContent = "—";
+    dSub.textContent = "falha ao carregar presença";
+    dActivityRow.style.display = "none";
+    dSpotifyRow.style.display = "none";
+    dUpdated.textContent = "verifique conexão / CORS";
+  }
+}
+
+function startLanyardLoop(){
+  // roda uma vez imediatamente e repete
+  fetchLanyard();
+  stopLanyardLoop();
+  lanyardTimer = setInterval(fetchLanyard, 15000);
+}
+function stopLanyardLoop(){
+  if(lanyardTimer){ clearInterval(lanyardTimer); lanyardTimer = null; }
+  if(lanyardAbort){ try{ lanyardAbort.abort(); }catch(e){} lanyardAbort = null; }
+}
 
 /* ===== ESC fecha overlays ===== */
 document.addEventListener("keydown",(e)=>{
