@@ -32,10 +32,12 @@ body.entered #mainVideo{
   opacity:1;
   filter:contrast(1.06) saturate(0.92) blur(3px) brightness(0.82);
 }
-body.scrollOpen #mainVideo,
-body.adminOpen #mainVideo,
-body.socialOpen #mainVideo{
+body.scrollOpen #mainVideo{
   filter:contrast(1.06) saturate(0.92) blur(6px) brightness(0.62);
+}
+/* Social media aberto também escurece mais */
+body.socialOpen #mainVideo{
+  filter:contrast(1.06) saturate(0.92) blur(7px) brightness(0.52);
 }
 
 /* ===== ENTRY ===== */
@@ -296,19 +298,21 @@ body.entered #entry{
 }
 
 /* ===== FULLSCREEN (abaixo do volume) ===== */
-#screenCtrl{
+#fsWrap{
   position:fixed;
   left:14px;
   top:68px;
   z-index:60;
   user-select:none;
-  transition: transform 200ms ease;
+  transition: transform 220ms ease;
 }
-#grimoire.open + #screenCtrl{
-  transform: translateY(64px); /* desce quando abre o volume */
+/* Quando o volume abrir, empurra o fullscreen pra baixo pra não ficar atrás */
+#grimoire.open ~ #fsWrap{
+  transform: translateY(70px);
 }
-.screenBtn{
-  width:44px; height:44px;
+
+.fsBtn{
+  width:44px;height:44px;
   border-radius:12px;
   border:1px solid rgba(255,170,90,0.18);
   background:
@@ -320,15 +324,17 @@ body.entered #entry{
   cursor:pointer;
   display:grid;
   place-items:center;
-  transition:transform .2s ease;
+  transition:transform .2s ease, opacity .2s ease;
 }
-.screenBtn:hover{ transform:scale(1.05); }
-.screenBtn svg{ width:22px;height:22px; opacity:.9; }
+.fsBtn:hover{ transform:scale(1.05); }
+.fsBtn svg{ width:22px;height:22px; opacity:.9; }
 
-/* ===== TOP BTNS ===== */
-#scrollBtn, #adminBtn{
+/* ===== BOTÃO DO PERGAMINHO (top-center) ===== */
+#scrollBtn{
   position:fixed;
+  left:50%;
   top:14px;
+  transform:translateX(-50%);
   z-index:60;
   width:44px;height:44px;
   border-radius:12px;
@@ -346,22 +352,16 @@ body.entered #entry{
   opacity:0;
   pointer-events:none;
 }
-#scrollBtn{ left:50%; transform:translateX(-50%); }
-#adminBtn{ left:calc(50% + 56px); }
-
-body.entered #scrollBtn,
-body.entered #adminBtn{ opacity:1; pointer-events:auto; }
-
+body.entered #scrollBtn{ opacity:1; pointer-events:auto; }
 #scrollBtn:hover{ transform:translateX(-50%) scale(1.05); }
-#adminBtn:hover{ transform:scale(1.05); }
+#scrollBtn svg{ width:22px;height:22px; opacity:.9; }
 
-#scrollBtn svg, #adminBtn svg{ width:22px;height:22px; opacity:.9; }
-
-/* ===== MENU TOP-RIGHT ===== */
-#menu{
+/* ===== MENU (top-right) ===== */
+#menuWrap{
   position:fixed;
-  right:14px; top:14px;
-  z-index:65;
+  right:14px;
+  top:14px;
+  z-index:70;
   user-select:none;
 }
 .menuBtn{
@@ -389,13 +389,13 @@ body.entered .menuBtn{ opacity:1; pointer-events:auto; }
   position:absolute;
   right:0;
   top:54px;
-  min-width:190px;
+  width:220px;
   padding:10px;
   border-radius:14px;
   border:1px solid rgba(255,170,90,0.16);
   background:
-    radial-gradient(circle at 20% 20%, rgba(255,140,70,0.09), rgba(0,0,0,0.90)),
-    linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.62));
+    radial-gradient(circle at 20% 20%, rgba(255,140,70,0.08), rgba(0,0,0,0.92)),
+    linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(0,0,0,0.60));
   box-shadow:
     0 28px 120px rgba(0,0,0,0.90),
     inset 0 0 22px rgba(255,140,70,0.06);
@@ -404,7 +404,7 @@ body.entered .menuBtn{ opacity:1; pointer-events:auto; }
   pointer-events:none;
   transition: opacity 160ms ease, transform 200ms ease;
 }
-#menu.open .menuDrop{
+#menuWrap.open .menuDrop{
   opacity:1;
   transform: translateY(0px) scale(1);
   pointer-events:auto;
@@ -414,288 +414,99 @@ body.entered .menuBtn{ opacity:1; pointer-events:auto; }
   border:none;
   cursor:pointer;
   text-align:left;
-  padding:10px 10px;
+  padding:11px 10px;
   border-radius:12px;
   background:rgba(255,255,255,0.04);
-  color:rgba(255,255,255,0.78);
+  color:rgba(255,255,255,0.80);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   letter-spacing:1px;
   font-size:12px;
   text-transform:uppercase;
   display:flex;
   align-items:center;
+  justify-content:space-between;
   gap:10px;
-  transition: transform .16s ease, background .16s ease, opacity .16s ease;
+  transition: transform .16s ease, background .16s ease;
 }
 .menuItem:hover{ transform: translateX(-2px); background:rgba(255,255,255,0.07); }
-.menuItem:active{ transform: translateX(0px) scale(.99); }
-.menuItem svg{ width:16px;height:16px; opacity:.9; }
+.menuItem .tag{
+  font-size:10px;
+  letter-spacing:1px;
+  opacity:.55;
+}
 
-/* ===== OVERLAY BASE ===== */
-.overlay{
+/* ===== OVERLAY DO PERGAMINHO ===== */
+#scrollOverlay{
   position:fixed; inset:0;
   z-index:80;
   display:none;
 }
-.overlay .dim{
+body.scrollOpen #scrollOverlay{ display:block; }
+#scrollOverlay .dim{
   position:absolute; inset:0;
   background:rgba(0,0,0,0.55);
 }
 
-/* ===== PERGAMINHO ===== */
-#scrollOverlay{ z-index:80; display:none; }
-body.scrollOpen #scrollOverlay{ display:block; }
-.scroll{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%) scale(.92);
-  width:min(860px, 92vw);
-  height:min(560px, 80vh);
-  opacity:0;
-  transition:opacity 220ms ease, transform 320ms cubic-bezier(.12,.92,.12,1);
-  pointer-events:none;
+/* ===== SOCIAL OVERLAY ===== */
+#socialOverlay{
+  position:fixed; inset:0;
+  z-index:90;
+  display:none;
 }
-body.scrollOpen .scroll{
-  opacity:1;
-  transform:translate(-50%,-50%) scale(1);
-  pointer-events:auto;
-}
-.scrollPaper{
-  position:absolute; inset:0;
-  border-radius:18px;
-  background:
-    radial-gradient(circle at 10% 10%, rgba(90,35,10,0.40), transparent 42%),
-    radial-gradient(circle at 92% 14%, rgba(80,28,8,0.38), transparent 46%),
-    radial-gradient(circle at 18% 92%, rgba(80,28,8,0.34), transparent 48%),
-    radial-gradient(circle at 90% 90%, rgba(80,28,8,0.36), transparent 50%),
-    radial-gradient(circle at 28% 38%, rgba(0,0,0,0.08), transparent 38%),
-    radial-gradient(circle at 70% 62%, rgba(0,0,0,0.07), transparent 42%),
-    radial-gradient(circle at 55% 28%, rgba(0,0,0,0.06), transparent 44%),
-    repeating-linear-gradient(12deg,
-      rgba(0,0,0,0.03) 0px,
-      rgba(0,0,0,0.03) 2px,
-      rgba(255,255,255,0.02) 3px,
-      rgba(255,255,255,0.02) 5px),
-    linear-gradient(0deg, #cdb081, #eedcb6 22%, #e6cc9f 58%, #c7a572);
-
-  box-shadow:
-    0 40px 160px rgba(0,0,0,0.85),
-    inset 0 0 0 1px rgba(0,0,0,0.18),
-    inset 0 0 90px rgba(95,45,10,0.22);
-
-  filter:contrast(1.06) saturate(0.92);
-  overflow:hidden;
-}
-.scrollPaper::after{
-  content:"";
-  position:absolute; inset:0;
-  background:
-    radial-gradient(circle at center, rgba(255,255,255,0.08), transparent 55%),
-    radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.20) 100%);
-  pointer-events:none;
-  mix-blend-mode:multiply;
-  opacity:.95;
-}
-.scrollMask{
-  position:absolute; inset:0;
-  clip-path: polygon(
-    2% 5%, 6% 2%, 12% 4%, 20% 2%, 28% 4%, 36% 2%, 44% 4%, 52% 2%, 60% 4%, 68% 2%, 76% 4%, 84% 2%, 92% 4%, 98% 8%,
-    97% 18%, 99% 26%, 97% 34%, 99% 42%, 97% 50%, 99% 58%, 97% 66%, 99% 74%, 97% 82%, 98% 92%,
-    92% 96%, 86% 98%, 78% 96%, 70% 98%, 62% 96%, 54% 98%, 46% 96%, 38% 98%, 30% 96%, 22% 98%, 14% 96%, 8% 98%, 3% 94%,
-    2% 86%, 1% 78%, 3% 70%, 1% 62%, 3% 54%, 1% 46%, 3% 38%, 1% 30%, 3% 22%, 1% 14%
-  );
-}
-.scrollInner{
-  position:absolute; inset:0;
-  padding:26px 30px 18px;
-  font-family: "Cormorant Garamond", serif;
-  color:rgba(35,18,8,0.90);
-  text-shadow: 0 1px 0 rgba(255,255,255,0.18);
-}
-.scrollTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:10px;
-  padding-right:6px;
-}
-.scrollTitle{
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:3px;
-  text-transform:uppercase;
-  font-size:13px;
-  color:rgba(40,22,8,0.92);
-  text-shadow:0 1px 0 rgba(255,255,255,0.25);
-}
-.scrollClose{
-  border:none;
-  background:transparent;
-  padding:6px 10px;
-  cursor:pointer;
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  font-size:12px;
-  color:rgba(45,24,10,0.55);
-  text-shadow: 0 1px 0 rgba(255,255,255,0.25);
-  outline: 2px solid rgba(45,24,10,0.28);
-  outline-offset: -2px;
-  border-radius:10px;
-  box-shadow:
-    0 0 0 1px rgba(0,0,0,0.08) inset,
-    0 1px 0 rgba(255,255,255,0.18);
-  opacity:0.9;
-  transform:rotate(-1.5deg);
-}
-.scrollClose:hover{
-  opacity:1;
-  outline-color: rgba(45,24,10,0.38);
-  color:rgba(45,24,10,0.62);
-}
-.scrollBody{
-  height:calc(100% - 44px);
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  overflow:hidden;
-}
-.scrollLog{
-  flex:1;
-  overflow:auto;
-  padding-right:10px;
-  line-height:1.55;
-  font-size:16px;
-  letter-spacing:0.2px;
-  color:rgba(35,18,8,0.90);
-  filter: contrast(1.02);
-}
-.scrollLog .who{
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:0.8px;
-  text-transform:uppercase;
-  margin-right:8px;
-  font-size:0.78em;
-}
-.scrollLog .mestre{ color:rgba(70,34,12,0.86); }
-.scrollLog .shadow{ color:rgba(20,20,20,0.92); }
-.scrollLog .titan{ color:rgba(55,25,10,0.86); }
-
-.scrollInputBar{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 12px;
-  border-radius:12px;
-  background:rgba(0,0,0,0.07);
-  border:1px solid rgba(0,0,0,0.14);
-}
-.prompt{
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-weight:900;
-  color:rgba(20,10,0,0.85);
-  letter-spacing:1px;
-}
-#cmdInput{
-  flex:1;
-  border:none;
-  outline:none;
-  background:transparent;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:13px;
-  color:rgba(20,10,0,0.92);
-}
-#cmdInput::placeholder{ color:rgba(20,10,0,0.45); }
-
-.typeLine{ margin:0 0 10px 0; white-space:pre-wrap; }
-.cursor{
-  display:inline-block;
-  width:10px;
-  height:16px;
-  transform:translateY(3px);
-  background:rgba(20,10,0,0.62);
-  margin-left:4px;
-  animation:cur 0.8s steps(1,end) infinite;
-}
-@keyframes cur{ 0%,49%{opacity:0} 50%,100%{opacity:1} }
-
-.outputLine{
-  margin:0 0 10px 0;
-  color:rgba(20,10,0,0.92);
-  font-size:15px;
-}
-.outputLine .sys{
-  font-family:"IM Fell English", serif;
-  font-style:italic;
-  letter-spacing:0.6px;
-  color:rgba(60,28,8,0.74);
-}
-
-body.scrollOpen .scrollPaper{
-  animation:unroll 520ms cubic-bezier(.12,.92,.12,1) both;
-}
-@keyframes unroll{
-  0%{ filter:blur(1px) contrast(1.02) saturate(.9); transform:scaleY(.70); }
-  55%{ transform:scaleY(1.02); }
-  100%{ filter:blur(0) contrast(1.06) saturate(.92); transform:scaleY(1); }
-}
-
-/* ===== SOCIAL MEDIA (livre do tema) ===== */
-#socialOverlay{ z-index:85; }
 body.socialOpen #socialOverlay{ display:block; }
+#socialOverlay .dim{
+  position:absolute; inset:0;
+  background:rgba(0,0,0,0.80); /* mais escuro */
+  backdrop-filter: blur(2px);
+  animation:dimIn 240ms ease both;
+}
+@keyframes dimIn{ from{opacity:0} to{opacity:1} }
 
-.smWrap{
+.smCard{
   position:absolute;
   left:50%;
   top:50%;
-  transform:translate(-50%,-50%) scale(.96);
+  transform:translate(-50%,-50%) scale(.94);
   width:min(520px, 92vw);
   border-radius:22px;
-  background: rgba(18,18,20,0.84);
+  background: rgba(18,18,20,0.86);
   border:1px solid rgba(255,255,255,0.10);
-  box-shadow: 0 40px 180px rgba(0,0,0,0.78);
-  backdrop-filter: blur(14px);
-  opacity:0;
-  transition: opacity 220ms ease, transform 260ms ease;
-  pointer-events:none;
+  box-shadow: 0 40px 180px rgba(0,0,0,0.84);
+  backdrop-filter: blur(16px);
   overflow:hidden;
+  opacity:0;
+  animation:smIn 320ms cubic-bezier(.12,.92,.12,1) both;
 }
-body.socialOpen .smWrap{
-  opacity:1;
-  transform:translate(-50%,-50%) scale(1);
-  pointer-events:auto;
+@keyframes smIn{
+  from{ opacity:0; transform:translate(-50%,-50%) scale(.92); filter:blur(10px); }
+  to{ opacity:1; transform:translate(-50%,-50%) scale(1); filter:blur(0); }
 }
-.smWrap::after{
+.smCard::after{
   content:"";
   position:absolute;
-  inset:-40%;
+  inset:-70%;
   background: linear-gradient(120deg,
     transparent 0%,
-    rgba(255,255,255,0.10) 40%,
-    rgba(255,255,255,0.18) 50%,
-    rgba(255,255,255,0.10) 60%,
+    rgba(255,255,255,0.08) 40%,
+    rgba(255,255,255,0.16) 50%,
+    rgba(255,255,255,0.08) 60%,
     transparent 100%);
-  transform:translateX(-45%) rotate(8deg);
+  transform:translateX(-45%) rotate(12deg);
   opacity:0;
   pointer-events:none;
-}
-.smWrap:hover::after{
-  opacity:.9;
-  animation: smShine 1.15s ease-in-out;
+  animation:smShine 1.1s ease-in-out 120ms both;
 }
 @keyframes smShine{
-  0%{ transform:translateX(-45%) rotate(8deg); }
-  100%{ transform:translateX(45%) rotate(8deg); }
+  0%{ opacity:0; transform:translateX(-45%) rotate(12deg); }
+  25%{ opacity:.9; }
+  100%{ opacity:0; transform:translateX(45%) rotate(12deg); }
 }
+
 .smHead{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:18px 18px 8px;
+  padding:18px 18px 12px;
 }
 .smTitle{
   color:rgba(255,255,255,0.70);
@@ -717,7 +528,7 @@ body.socialOpen .smWrap{
 .smClose:hover{ background: rgba(255,255,255,0.09); }
 
 .smBody{
-  padding:8px 18px 18px;
+  padding:6px 18px 18px;
   display:flex;
   flex-direction:column;
   gap:14px;
@@ -728,13 +539,12 @@ body.socialOpen .smWrap{
   align-items:center;
   text-align:center;
   gap:10px;
-  padding:6px 6px 4px;
 }
 .smAvatar{
   width:86px;height:86px;
   border-radius:50%;
   border:1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 16px 60px rgba(0,0,0,0.65);
+  box-shadow: 0 16px 70px rgba(0,0,0,0.72);
   overflow:hidden;
   background: rgba(255,255,255,0.06);
 }
@@ -766,34 +576,50 @@ body.socialOpen .smWrap{
 }
 .smLoc svg{ width:14px;height:14px; opacity:.9; }
 
-.smIcons{ display:flex; justify-content:center; gap:10px; }
+.smIcons{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:6px;
+  flex-wrap:wrap;
+}
 .smIconBtn{
-  width:44px;height:44px;
-  border-radius:12px;
+  width:46px;height:46px;
+  border-radius:14px;
   background: rgba(255,255,255,0.06);
   border:1px solid rgba(255,255,255,0.10);
   cursor:pointer;
   display:grid;
   place-items:center;
   transition: transform .15s ease, filter .15s ease, background .15s ease;
+  position:relative;
+  overflow:hidden;
+  text-decoration:none;
 }
-.smIconBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.08); filter: brightness(1.05); }
+.smIconBtn::after{
+  content:"";
+  position:absolute; inset:-80%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18), transparent 55%);
+  opacity:0;
+  transition:opacity .18s ease;
+}
+.smIconBtn:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.08);
+  filter: brightness(1.06);
+}
+.smIconBtn:hover::after{ opacity:1; }
 .smIconBtn:active{ transform: translateY(0px) scale(0.98); }
-.smIconBtn svg{ width:20px;height:20px; opacity:.88; }
+.smIconBtn svg{ width:20px;height:20px; opacity:.9; }
 
-.smCard{
+.smSection{
   border-radius:18px;
   padding:14px;
   background: rgba(255,255,255,0.05);
   border:1px solid rgba(255,255,255,0.10);
   box-shadow: inset 0 0 22px rgba(0,0,0,0.35);
-  transition: transform .18s ease, box-shadow .18s ease;
 }
-.smCard:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 26px 90px rgba(0,0,0,0.55);
-}
-.smCardTitle{
+.smSectionTitle{
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -816,7 +642,7 @@ body.socialOpen .smWrap{
   font-size:12px;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
-.smDot{ width:10px;height:10px; border-radius:50%; background:#888; }
+.smDot{ width:10px;height:10px; border-radius:50%; background:#777; }
 .smStatusPill[data-status="online"] .smDot{ background:#3bd671; }
 .smStatusPill[data-status="idle"] .smDot{ background:#f2c94c; }
 .smStatusPill[data-status="dnd"] .smDot{ background:#ff5b5b; }
@@ -863,174 +689,222 @@ body.socialOpen .smWrap{
   font-size:11px;
 }
 
-/* ===== ADMIN ===== */
-#adminOverlay{ z-index:84; }
-body.adminOpen #adminOverlay{ display:block; }
-.adWrap{
+/* ===== RESTO DO CSS DO PERGAMINHO (igual ao seu) ===== */
+.scroll{
   position:absolute;
   left:50%;
   top:50%;
-  transform:translate(-50%,-50%) scale(.96);
-  width:min(980px, 94vw);
+  transform:translate(-50%,-50%) scale(.92);
+  width:min(860px, 92vw);
   height:min(560px, 80vh);
-  border-radius:24px;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(255,140,70,0.10), rgba(0,0,0,0.90)),
-    linear-gradient(to bottom, rgba(255,255,255,0.04), rgba(0,0,0,0.62));
-  border:1px solid rgba(255,170,90,0.16);
-  box-shadow: 0 40px 180px rgba(0,0,0,0.84);
-  backdrop-filter: blur(10px);
   opacity:0;
-  transition: opacity 220ms ease, transform 260ms ease;
+  transition:opacity 220ms ease, transform 320ms cubic-bezier(.12,.92,.12,1);
   pointer-events:none;
-  overflow:hidden;
 }
-body.adminOpen .adWrap{
+body.scrollOpen .scroll{
   opacity:1;
   transform:translate(-50%,-50%) scale(1);
   pointer-events:auto;
 }
-.adHead{
+
+/* ===== PERGAMINHO ===== */
+.scrollPaper{
+  position:absolute; inset:0;
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(90,35,10,0.40), transparent 42%),
+    radial-gradient(circle at 92% 14%, rgba(80,28,8,0.38), transparent 46%),
+    radial-gradient(circle at 18% 92%, rgba(80,28,8,0.34), transparent 48%),
+    radial-gradient(circle at 90% 90%, rgba(80,28,8,0.36), transparent 50%),
+    radial-gradient(circle at 28% 38%, rgba(0,0,0,0.08), transparent 38%),
+    radial-gradient(circle at 70% 62%, rgba(0,0,0,0.07), transparent 42%),
+    radial-gradient(circle at 55% 28%, rgba(0,0,0,0.06), transparent 44%),
+    repeating-linear-gradient(12deg,
+      rgba(0,0,0,0.03) 0px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(255,255,255,0.02) 3px,
+      rgba(255,255,255,0.02) 5px),
+    linear-gradient(0deg, #cdb081, #eedcb6 22%, #e6cc9f 58%, #c7a572);
+
+  box-shadow:
+    0 40px 160px rgba(0,0,0,0.85),
+    inset 0 0 0 1px rgba(0,0,0,0.18),
+    inset 0 0 90px rgba(95,45,10,0.22);
+
+  filter:contrast(1.06) saturate(0.92);
+  overflow:hidden;
+}
+.scrollPaper::after{
+  content:"";
+  position:absolute; inset:0;
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,0.08), transparent 55%),
+    radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.20) 100%);
+  pointer-events:none;
+  mix-blend-mode:multiply;
+  opacity:.95;
+}
+.scrollMask{
+  position:absolute; inset:0;
+  clip-path: polygon(
+    2% 5%, 6% 2%, 12% 4%, 20% 2%, 28% 4%, 36% 2%, 44% 4%, 52% 2%, 60% 4%, 68% 2%, 76% 4%, 84% 2%, 92% 4%, 98% 8%,
+    97% 18%, 99% 26%, 97% 34%, 99% 42%, 97% 50%, 99% 58%, 97% 66%, 99% 74%, 97% 82%, 98% 92%,
+    92% 96%, 86% 98%, 78% 96%, 70% 98%, 62% 96%, 54% 98%, 46% 96%, 38% 98%, 30% 96%, 22% 98%, 14% 96%, 8% 98%, 3% 94%,
+    2% 86%, 1% 78%, 3% 70%, 1% 62%, 3% 54%, 1% 46%, 3% 38%, 1% 30%, 3% 22%, 1% 14%
+  );
+}
+
+/* ===== FONTES DO PERGAMINHO ===== */
+.scrollInner{
+  position:absolute; inset:0;
+  padding:26px 30px 18px;
+
+  font-family: "Cormorant Garamond", serif;
+  color:rgba(35,18,8,0.90);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.18);
+}
+
+.scrollTop{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:18px 18px 8px;
+  gap:12px;
+  margin-bottom:10px;
+  padding-right:6px;
 }
-.adTitle{
-  color:rgba(255,220,190,0.70);
+.scrollTitle{
   font-family:"Cinzel", serif;
   font-weight:800;
   letter-spacing:3px;
-  font-size:13px;
   text-transform:uppercase;
+  font-size:13px;
+  color:rgba(40,22,8,0.92);
+  text-shadow:0 1px 0 rgba(255,255,255,0.25);
 }
-.adClose{
-  border:none;
-  cursor:pointer;
-  padding:8px 12px;
-  border-radius:999px;
-  background: rgba(255,140,70,0.08);
-  color:rgba(255,220,190,0.82);
-  border:1px solid rgba(255,170,90,0.18);
-  font-family:"Cinzel", serif;
-  letter-spacing:2px;
-  font-weight:800;
-}
-.adClose:hover{ background: rgba(255,140,70,0.12); }
 
-.adGrid{
-  padding:10px 18px 18px;
-  display:grid;
-  grid-template-columns: 1.2fr .8fr;
-  gap:14px;
-  height:calc(100% - 58px);
-}
-.adCard{
-  border-radius:18px;
-  padding:16px;
-  background: rgba(0,0,0,0.35);
-  border:1px solid rgba(255,170,90,0.14);
-  box-shadow: inset 0 0 22px rgba(0,0,0,0.45);
-  overflow:auto;
-}
-.adCard h3{
+.scrollClose{
+  border:none;
+  background:transparent;
+  padding:6px 10px;
+  cursor:pointer;
   font-family:"Cinzel", serif;
   font-weight:800;
   letter-spacing:2px;
   text-transform:uppercase;
   font-size:12px;
-  color:rgba(255,220,190,0.72);
-  margin-bottom:10px;
+  color:rgba(45,24,10,0.55);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+  outline: 2px solid rgba(45,24,10,0.28);
+  outline-offset: -2px;
+  border-radius:10px;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.08) inset,
+    0 1px 0 rgba(255,255,255,0.18);
+  opacity:0.9;
+  transform:rotate(-1.5deg);
 }
-.adMuted{
-  color:rgba(255,220,190,0.62);
-  font-family:"Cormorant Garamond", serif;
+.scrollClose:hover{
+  opacity:1;
+  outline-color: rgba(45,24,10,0.38);
+  color:rgba(45,24,10,0.62);
+}
+
+.scrollBody{
+  height:calc(100% - 44px);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  overflow:hidden;
+}
+
+.scrollLog{
+  flex:1;
+  overflow:auto;
+  padding-right:10px;
+  line-height:1.55;
   font-size:16px;
-  line-height:1.45;
+  letter-spacing:0.2px;
+  color:rgba(35,18,8,0.90);
+  filter: contrast(1.02);
 }
-.adLabel{
-  margin-top:12px;
+
+/* ===== NOMES MENORES ===== */
+.scrollLog .who{
   font-family:"IM Fell English", serif;
+  font-weight:400;
   font-style:italic;
-  letter-spacing:.8px;
-  color:rgba(255,220,190,0.70);
+  letter-spacing:0.6px;
+  text-transform:uppercase;
+  color:rgba(60,28,10,0.86);
+  margin-right:6px;
+  font-size: 0.90em;
 }
-.adField{
-  width:100%;
-  margin-top:6px;
-  padding:12px 12px;
-  border-radius:12px;
-  border:1px solid rgba(255,170,90,0.16);
-  background: rgba(0,0,0,0.35);
-  color:rgba(255,220,190,0.92);
-  outline:none;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-}
-.adField[readonly]{ opacity:0.85; }
-.adRow{
+
+.scrollLog .mestre{ color:rgba(70,34,12,0.86); }
+.scrollLog .shadow{ color:rgba(20,20,20,0.92); }
+.scrollLog .titan{ color:rgba(55,25,10,0.86); }
+
+.scrollInputBar{
   display:flex;
   align-items:center;
-  gap:12px;
-  margin-top:12px;
-}
-.adBtn{
-  padding:10px 14px;
+  gap:10px;
+  padding:10px 12px;
   border-radius:12px;
-  border:1px solid rgba(255,170,90,0.18);
-  background: rgba(255,140,70,0.10);
-  color:rgba(255,220,190,0.88);
-  cursor:pointer;
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:2px;
-  text-transform:uppercase;
+  background:rgba(0,0,0,0.07);
+  border:1px solid rgba(0,0,0,0.14);
 }
-.adBtn:hover{ background: rgba(255,140,70,0.14); }
-.adMsg{
+.prompt{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-weight:900;
+  color:rgba(20,10,0,0.85);
+  letter-spacing:1px;
+}
+#cmdInput{
   flex:1;
-  color:rgba(255,220,190,0.70);
-  font-family:"Cormorant Garamond", serif;
-  font-size:16px;
+  border:none;
+  outline:none;
+  background:transparent;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size:13px;
+  color:rgba(20,10,0,0.92);
 }
-.adMsg.bad{ color:rgba(255,120,120,0.85); }
-.adMsg.good{ color:rgba(140,255,180,0.85); }
+#cmdInput::placeholder{
+  color:rgba(20,10,0,0.45);
+}
 
-.adStats{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:12px;
+.typeLine{ margin:0 0 10px 0; white-space:pre-wrap; }
+.cursor{
+  display:inline-block;
+  width:10px;
+  height:16px;
+  transform:translateY(3px);
+  background:rgba(20,10,0,0.62);
+  margin-left:4px;
+  animation:cur 0.8s steps(1,end) infinite;
 }
-.stat{
-  border-radius:16px;
-  padding:14px;
-  background: rgba(0,0,0,0.28);
-  border:1px solid rgba(255,170,90,0.14);
-}
-.stat .k{
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  font-size:11px;
-  color:rgba(255,220,190,0.62);
-}
-.stat .v{
-  margin-top:6px;
-  font-family:"Cinzel", serif;
-  font-weight:800;
-  font-size:26px;
-  color:rgba(255,220,190,0.90);
-}
-.stat .s{
-  margin-top:2px;
-  font-family:"Cormorant Garamond", serif;
+@keyframes cur{ 0%,49%{opacity:0} 50%,100%{opacity:1} }
+
+.outputLine{
+  margin:0 0 10px 0;
+  color:rgba(20,10,0,0.92);
   font-size:15px;
-  color:rgba(255,220,190,0.60);
+}
+.outputLine .sys{
+  font-family:"IM Fell English", serif;
+  font-style:italic;
+  letter-spacing:0.6px;
+  color:rgba(60,28,8,0.74);
 }
 
-@media (max-width: 860px){
-  .adGrid{ grid-template-columns: 1fr; }
+body.scrollOpen .scrollPaper{
+  animation:unroll 520ms cubic-bezier(.12,.92,.12,1) both;
 }
+@keyframes unroll{
+  0%{ filter:blur(1px) contrast(1.02) saturate(.9); transform:scaleY(.70); }
+  55%{ transform:scaleY(1.02); }
+  100%{ filter:blur(0) contrast(1.06) saturate(.92); transform:scaleY(1); }
+}
+
 @media (prefers-reduced-motion: reduce){
   .title, .sub{ animation:none; }
   .title::before{ display:none; }
@@ -1074,7 +948,7 @@ body.adminOpen .adWrap{
   </div>
 </section>
 
-<!-- VOLUME -->
+<!-- ===== VOLUME ===== -->
 <div id="grimoire" aria-label="Controle de volume">
   <button class="grimoireBtn" id="grimBtn" aria-label="Abrir controle de volume">
     <span class="grimoireIcon" aria-hidden="true">
@@ -1094,19 +968,19 @@ body.adminOpen .adWrap{
   </div>
 </div>
 
-<!-- FULLSCREEN -->
-<div id="screenCtrl" aria-label="Tela cheia">
-  <button class="screenBtn" id="fsBtn" aria-label="Ativar/desativar tela cheia">
+<!-- ===== FULLSCREEN (abaixo do volume) ===== -->
+<div id="fsWrap" aria-label="Tela cheia">
+  <button class="fsBtn" id="fsBtn" aria-label="Ativar/desativar tela cheia">
     <svg viewBox="0 0 24 24" fill="none">
-      <path d="M8 4H4v4" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M16 4h4v4" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M8 20H4v-4" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M16 20h4v-4" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M9 4H6a2 2 0 0 0-2 2v3" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M15 4h3a2 2 0 0 1 2 2v3" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M9 20H6a2 2 0 0 1-2-2v-3" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M15 20h3a2 2 0 0 0 2-2v-3" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
     </svg>
   </button>
 </div>
 
-<!-- PERGAMINHO BTN -->
+<!-- ===== BOTÃO DO PERGAMINHO (top-center) ===== -->
 <button id="scrollBtn" aria-label="Abrir pergaminho (lore)">
   <svg viewBox="0 0 24 24" fill="none">
     <path d="M7 5h10v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V5Z" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" />
@@ -1116,54 +990,31 @@ body.adminOpen .adWrap{
   </svg>
 </button>
 
-<!-- ADMIN BTN -->
-<button id="adminBtn" aria-label="Abrir selo (admin)">
-  <svg viewBox="0 0 24 24" fill="none">
-    <path d="M12 3l7 4v6c0 5-3 8-7 8s-7-3-7-8V7l7-4Z" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" />
-    <path d="M9.5 12l1.6 1.6L14.8 10" stroke="rgba(255,140,70,0.75)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-</button>
-
-<!-- MENU TOP-RIGHT -->
-<div id="menu" aria-label="Menu">
+<!-- ===== MENU (top-right) ===== -->
+<div id="menuWrap" aria-label="Menu">
   <button class="menuBtn" id="menuBtn" aria-label="Abrir menu">
     <svg viewBox="0 0 24 24" fill="none">
-      <path d="M5 7h14" stroke="rgba(255,220,190,0.9)" stroke-width="1.8" stroke-linecap="round"/>
-      <path d="M5 12h14" stroke="rgba(255,140,70,0.75)" stroke-width="1.8" stroke-linecap="round"/>
-      <path d="M5 17h14" stroke="rgba(255,220,190,0.75)" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M5 7h14" stroke="rgba(255,220,190,0.9)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M5 12h14" stroke="rgba(255,140,70,0.65)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M5 17h14" stroke="rgba(255,220,190,0.85)" stroke-width="1.6" stroke-linecap="round"/>
     </svg>
   </button>
 
-  <div class="menuDrop" role="menu" aria-label="Opções">
-    <button class="menuItem" id="openSocial" role="menuitem">
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M12 12c2.2 0 4-1.8 4-4S14.2 4 12 4 8 5.8 8 8s1.8 4 4 4Z" stroke="rgba(255,220,190,0.9)" stroke-width="1.6"/>
-        <path d="M4 20c1.2-3.5 4.3-6 8-6s6.8 2.5 8 6" stroke="rgba(255,140,70,0.7)" stroke-width="1.6" stroke-linecap="round"/>
-      </svg>
-      Social Media
+  <div class="menuDrop" id="menuDrop">
+    <button class="menuItem" id="openSocial">
+      Social Media <span class="tag">V2.0</span>
     </button>
-
-    <button class="menuItem" id="openArchives" role="menuitem">
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M4 7h16v13H4V7Z" stroke="rgba(255,220,190,0.9)" stroke-width="1.6"/>
-        <path d="M4 7l2-3h12l2 3" stroke="rgba(255,140,70,0.7)" stroke-width="1.6" stroke-linecap="round"/>
-      </svg>
-      Archives
+    <button class="menuItem" id="openArchives">
+      Archives <span class="tag">placeholder</span>
     </button>
-
-    <button class="menuItem" id="openPlaylists" role="menuitem">
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M6 7h12" stroke="rgba(255,220,190,0.9)" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M6 12h12" stroke="rgba(255,140,70,0.7)" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M6 17h8" stroke="rgba(255,220,190,0.75)" stroke-width="1.8" stroke-linecap="round"/>
-      </svg>
-      Playlists
+    <button class="menuItem" id="openPlaylists">
+      Playlists <span class="tag">placeholder</span>
     </button>
   </div>
 </div>
 
-<!-- PERGAMINHO -->
-<div id="scrollOverlay" class="overlay" aria-hidden="true">
+<!-- ===== OVERLAY DO PERGAMINHO ===== -->
+<div id="scrollOverlay" aria-hidden="true">
   <div class="dim"></div>
 
   <div class="scroll" role="dialog" aria-label="Pergaminho">
@@ -1194,76 +1045,11 @@ body.adminOpen .adWrap{
   </div>
 </div>
 
-<!-- ADMIN -->
-<div id="adminOverlay" class="overlay" aria-hidden="true">
+<!-- ===== SOCIAL MEDIA OVERLAY ===== -->
+<div id="socialOverlay" aria-hidden="true">
   <div class="dim"></div>
 
-  <div class="adWrap" role="dialog" aria-label="Selo — Acesso confidencial">
-    <div class="adHead">
-      <div class="adTitle">Selo — Acesso confidencial</div>
-      <button class="adClose" id="adminClose">FECHAR</button>
-    </div>
-
-    <div class="adGrid">
-      <div class="adCard">
-        <h3>Portão do Selo</h3>
-        <div class="adMuted">Apenas aqueles marcados pelas sombras podem ler os registros.</div>
-
-        <div class="adLabel">Usuário</div>
-        <input class="adField" id="adminUser" value="Sombra" readonly>
-
-        <div class="adLabel">Senha</div>
-        <input class="adField" id="adminPass" type="password" placeholder="insira o selo de acesso">
-
-        <div class="adRow">
-          <button class="adBtn" id="adminEnter">Entrar</button>
-          <div class="adMsg" id="adminMsg"></div>
-        </div>
-
-        <div class="adMuted" style="margin-top:12px; opacity:.85">
-          Obs: estes números são locais (contam neste navegador).
-        </div>
-      </div>
-
-      <div class="adCard" id="adminPanel" style="display:none;">
-        <h3>Registros do Portal</h3>
-
-        <div class="adStats">
-          <div class="stat">
-            <div class="k">Visitas</div>
-            <div class="v" id="stVisits">0</div>
-            <div class="s">quantas vezes abriram o site</div>
-          </div>
-          <div class="stat">
-            <div class="k">Enter acionado</div>
-            <div class="v" id="stEnter">0</div>
-            <div class="s">quantas vezes “entraram”</div>
-          </div>
-          <div class="stat">
-            <div class="k">Pergaminho aberto</div>
-            <div class="v" id="stScroll">0</div>
-            <div class="s">quantas vezes ouviram as vozes</div>
-          </div>
-          <div class="stat">
-            <div class="k">Sessões admin</div>
-            <div class="v" id="stAdmin">0</div>
-            <div class="s">quantas vezes acessaram o painel</div>
-          </div>
-        </div>
-
-        <div class="adMuted" style="margin-top:14px;">
-          Liberado. Aqui vai virar teu dashboard “confidencial” na V2.1+.
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SOCIAL MEDIA -->
-<div id="socialOverlay" class="overlay" aria-hidden="true">
-  <div class="dim"></div>
-
-  <div class="smWrap" role="dialog" aria-label="Social Media">
+  <div class="smCard" role="dialog" aria-label="Social Media">
     <div class="smHead">
       <div class="smTitle">SOCIAL MEDIA</div>
       <button class="smClose" id="socialClose">FECHAR</button>
@@ -1272,49 +1058,89 @@ body.adminOpen .adWrap{
     <div class="smBody">
       <div class="smProfile">
         <div class="smAvatar">
-          <img src="https://files.catbox.moe/5lkce6.gif" alt="Allz avatar">
+          <img id="smAvatar" src="https://files.catbox.moe/5lkce6.gif" alt="Avatar Allz">
         </div>
 
-        <div class="smName">Allz</div>
-        <div class="smBio">awake and unafraid</div>
+        <div class="smName" id="smName">Allz</div>
+        <div class="smBio" id="smBio">awake and unafraid</div>
 
-        <div class="smLoc">
+        <div class="smLoc" id="smLoc">
           <svg viewBox="0 0 24 24" fill="none">
-            <path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11Z" stroke="rgba(255,255,255,0.75)" stroke-width="1.6"/>
-            <path d="M12 11.2a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" fill="rgba(255,255,255,0.75)"/>
+            <path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12Z" stroke="rgba(255,255,255,0.75)" stroke-width="1.6"/>
+            <path d="M12 12a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8Z" fill="rgba(255,255,255,0.65)"/>
           </svg>
           purgatório
         </div>
+
+        <!-- ícones (todos terminando com allzdeadd) -->
+        <div class="smIcons" aria-label="Links">
+          <a class="smIconBtn" href="https://tiktok.com/@allzdeadd" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M14 4v10.2a3.2 3.2 0 1 1-2.2-3.05V8.2c-.3 0-.6-.02-.9-.07V5.1A7.6 7.6 0 0 0 14 4Z" fill="rgba(255,255,255,0.85)"/>
+            </svg>
+          </a>
+
+          <a class="smIconBtn" href="https://open.spotify.com/user/allzdeadd" target="_blank" rel="noopener" aria-label="Spotify">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.6 14.4a.9.9 0 0 1-1.24.3c-2.8-1.7-6.3-2.1-10.3-1.2a.9.9 0 0 1-.4-1.75c4.4-1 8.3-.5 11.5 1.4.42.25.56.8.3 1.25Zm1.3-3a1 1 0 0 1-1.37.33c-3.2-2-8-2.6-11.6-1.4a1 1 0 0 1-.6-1.9c4.1-1.3 9.3-.7 13 1.6.47.3.62.92.33 1.37Zm.1-3.2c-3.8-2.3-10-2.5-13.6-1.4a1.1 1.1 0 0 1-.65-2.1c4.2-1.3 11.1-1 15.5 1.7a1.1 1.1 0 1 1-1.1 1.8Z" fill="rgba(255,255,255,0.85)"/>
+            </svg>
+          </a>
+
+          <a class="smIconBtn" href="https://instagram.com/allzdeadd" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"/>
+              <path d="M12 16.2A4.2 4.2 0 1 0 12 7.8a4.2 4.2 0 0 0 0 8.4Z" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"/>
+              <path d="M17.6 6.4h.01" stroke="rgba(255,255,255,0.85)" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </a>
+
+          <a class="smIconBtn" href="https://x.com/allzdeadd" target="_blank" rel="noopener" aria-label="X">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 19L19 5" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M7 5h5l5 14h-5L7 5Z" fill="rgba(255,255,255,0.75)"/>
+            </svg>
+          </a>
+
+          <a class="smIconBtn" href="https://allzdeadd" target="_blank" rel="noopener" aria-label="Link">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M10 13a4 4 0 0 1 0-6l1-1a4 4 0 0 1 6 6l-1 1" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M14 11a4 4 0 0 1 0 6l-1 1a4 4 0 0 1-6-6l1-1" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </a>
+        </div>
       </div>
 
-      <div class="smCard">
-        <div class="smCardTitle">
-          <span>Discord Status</span>
-          <span class="smStatusPill" id="dPill" data-status="offline">
+      <div class="smSection">
+        <div class="smSectionTitle">
+          <span>DISCORD STATUS</span>
+
+          <span class="smStatusPill" id="smStatusPill" data-status="idle">
             <span class="smDot"></span>
-            <span id="dStatusTxt">Offline</span>
+            <span id="smStatusText">Ausente</span>
           </span>
         </div>
 
         <div class="smRow">
-          <div class="smDiscIcon" aria-hidden="true">
-            <img id="dAvatar" alt="Discord avatar">
-            <svg id="dAvatarFallback" viewBox="0 0 24 24" fill="none">
-              <path d="M16.5 7.5c-1.1-.8-2.3-1.3-3.6-1.5l-.4.7c-1.3-.2-2.7-.2-4 0l-.4-.7c-1.3.2-2.5.7-3.6 1.5C2.3 10.7 2 13.8 2.1 16.9c1.5 1.1 3.2 1.9 5 2.4l.9-1.5c-.6-.2-1.2-.5-1.7-.9l.4-.3c3.2 1.5 6.7 1.5 9.9 0l.4.3c-.5.4-1.1.7-1.7.9l.9 1.5c1.8-.5 3.5-1.3 5-2.4.2-3.1-.1-6.2-2.6-9.4Z"
-                    stroke="rgba(255,255,255,0.55)" stroke-width="1.2" />
-              <path d="M9 14.2c.6 0 1-.6 1-1.2s-.4-1.2-1-1.2-1 .6-1 1.2.4 1.2 1 1.2Zm6 0c.6 0 1-.6 1-1.2s-.4-1.2-1-1.2-1 .6-1 1.2.4 1.2 1 1.2Z"
-                    fill="rgba(255,255,255,0.65)"/>
+          <div class="smDiscIcon" aria-label="Avatar Discord">
+            <img id="dAvatar" alt="Avatar Discord">
+            <svg id="dFallback" viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;opacity:.85">
+              <path d="M8.5 7.5c1.2-.9 2.5-1.3 3.5-1.3s2.3.4 3.5 1.3" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M7 17c1.5-1.2 3.2-1.7 5-1.7s3.5.5 5 1.7" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M6 9.5c-1.2 2.9-1 5.8.6 8.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M18 9.5c1.2 2.9 1 5.8-.6 8.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round"/>
             </svg>
           </div>
 
           <div class="smDiscText">
-            <div class="smDiscName" id="dUserLine">Allz · allzz.exe</div>
-            <div class="smDiscSub" id="dSubLine">status local (aguardando API)</div>
+            <div class="smDiscName" id="smDiscordName">Allz</div>
+            <div class="smDiscSub" id="smDiscordSub">@allzz.exe</div>
           </div>
         </div>
 
-        <div class="smFoot" id="dTime">ATUALIZADO ÀS --:--</div>
+        <div class="smFoot" id="smUpdatedAt">atualizando...</div>
       </div>
+
+      <div class="smFoot"><span id="smViews">0</span> views</div>
     </div>
   </div>
 </div>
@@ -1326,23 +1152,6 @@ const bgAudio = document.getElementById("bgAudio");
 /* ===== VOLUME PADRÃO 8% ===== */
 let currentVol = 0.08;
 bgAudio.volume = currentVol;
-
-/* ===== CONTADORES (LOCAL) ===== */
-const LS = {
-  visits: "sf2_visits",
-  enter: "sf2_enter",
-  scroll: "sf2_scroll_open",
-  admin: "sf2_admin_sessions",
-};
-function bump(key){
-  const v = Number(localStorage.getItem(key) || "0") + 1;
-  localStorage.setItem(key, String(v));
-  return v;
-}
-function getCount(key){
-  return Number(localStorage.getItem(key) || "0");
-}
-bump(LS.visits);
 
 /* ===== CINZAS ===== */
 const canvas = document.getElementById("ashCanvas");
@@ -1393,7 +1202,6 @@ async function start(){
   if(started) return;
   started=true;
 
-  bump(LS.enter);
   document.body.classList.add("strikeOn");
 
   try{
@@ -1457,6 +1265,186 @@ fsBtn.addEventListener("click", (e)=>{
   toggleFullscreen();
 });
 
+/* ===== UTIL: pausar/retomar áudio quando abrir overlays ===== */
+let audioWasPlaying = false;
+function pauseBgAudio(){
+  try{
+    audioWasPlaying = !bgAudio.paused && !bgAudio.ended && bgAudio.currentTime > 0;
+    bgAudio.pause();
+  }catch(e){}
+}
+async function resumeBgAudio(){
+  try{
+    if(audioWasPlaying){
+      bgAudio.volume = currentVol;
+      await bgAudio.play();
+    }
+  }catch(e){}
+}
+
+/* ===== MENU (top-right) ===== */
+const menuWrap = document.getElementById("menuWrap");
+const menuBtn = document.getElementById("menuBtn");
+const openSocial = document.getElementById("openSocial");
+const openArchives = document.getElementById("openArchives");
+const openPlaylists = document.getElementById("openPlaylists");
+
+menuBtn.addEventListener("click",(e)=>{
+  e.stopPropagation();
+  if(!document.body.classList.contains("entered")) return;
+  menuWrap.classList.toggle("open");
+});
+document.addEventListener("click",(e)=>{
+  if(!menuWrap.contains(e.target)) menuWrap.classList.remove("open");
+});
+
+openArchives.addEventListener("click", ()=>{
+  menuWrap.classList.remove("open");
+  // placeholder (V2.1)
+  alert("Archives (placeholder) — V2.1");
+});
+openPlaylists.addEventListener("click", ()=>{
+  menuWrap.classList.remove("open");
+  // placeholder (V2.1)
+  alert("Playlists (placeholder) — V2.1");
+});
+
+/* ===== SOCIAL OVERLAY ===== */
+const socialOverlay = document.getElementById("socialOverlay");
+const socialClose = document.getElementById("socialClose");
+const smViews = document.getElementById("smViews");
+const smStatusPill = document.getElementById("smStatusPill");
+const smStatusText = document.getElementById("smStatusText");
+const smUpdatedAt = document.getElementById("smUpdatedAt");
+
+const smDiscordName = document.getElementById("smDiscordName");
+const smDiscordSub = document.getElementById("smDiscordSub");
+const dAvatar = document.getElementById("dAvatar");
+const dFallback = document.getElementById("dFallback");
+
+/* contador local de views (navegador) */
+function incLocal(key){
+  const v = Number(localStorage.getItem(key) || "0") + 1;
+  localStorage.setItem(key, String(v));
+  return v;
+}
+function getLocal(key){
+  return Number(localStorage.getItem(key) || "0");
+}
+
+function openSocialOverlay(){
+  if(!document.body.classList.contains("entered")) return;
+
+  // fecha outros
+  document.body.classList.remove("scrollOpen");
+  scrollOverlay.setAttribute("aria-hidden","true");
+
+  // pausa áudio do fundo enquanto social estiver aberto
+  pauseBgAudio();
+
+  document.body.classList.add("socialOpen");
+  socialOverlay.setAttribute("aria-hidden","false");
+
+  // views
+  const v = incLocal("sm_views");
+  smViews.textContent = String(v);
+
+  // busca Lanyard (se falhar, fica no status local)
+  fetchLanyard();
+
+  setTimeout(()=>socialClose.focus(), 80);
+}
+function closeSocialOverlay(){
+  document.body.classList.remove("socialOpen");
+  socialOverlay.setAttribute("aria-hidden","true");
+  resumeBgAudio();
+}
+
+openSocial.addEventListener("click", ()=>{
+  menuWrap.classList.remove("open");
+  openSocialOverlay();
+});
+socialClose.addEventListener("click", closeSocialOverlay);
+socialOverlay.addEventListener("click",(e)=>{
+  if(e.target.classList.contains("dim")) closeSocialOverlay();
+});
+
+/* ===== LANYARD (Discord Presence) =====
+   Obs: você mandou o endpoint: api.lanyard.rest/v1/users/513830615225860096
+*/
+const LANYARD_USER_ID = "513830615225860096";
+const LANYARD_URL = `https://api.lanyard.rest/v1/users/${LANYARD_USER_ID}`;
+
+function mapStatusPT(s){
+  // Lanyard: "online" | "idle" | "dnd" | "offline"
+  if(s === "online") return "Online";
+  if(s === "idle") return "Ausente";
+  if(s === "dnd") return "Não perturbe";
+  return "Offline";
+}
+function statusToPill(s){
+  smStatusPill.dataset.status = s || "offline";
+  smStatusText.textContent = mapStatusPT(s || "offline");
+}
+
+function setUpdatedNow(){
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  smUpdatedAt.textContent = `atualizado às ${hh}:${mm}`;
+}
+
+async function fetchLanyard(){
+  // status local default
+  statusToPill("idle");
+  setUpdatedNow();
+
+  try{
+    const r = await fetch(LANYARD_URL, { cache:"no-store" });
+    if(!r.ok) throw new Error("lanyard http");
+    const j = await r.json();
+
+    const data = j?.data;
+    if(!data) throw new Error("lanyard data");
+
+    // status
+    const st = data.discord_status || "offline";
+    statusToPill(st);
+
+    // nomes
+    const dn =
+      data.discord_user?.global_name ||
+      data.discord_user?.display_name ||
+      data.discord_user?.username ||
+      "Allz";
+    smDiscordName.textContent = dn;
+
+    // username solicitado: allzz.exe (fixo)
+    smDiscordSub.textContent = "@allzz.exe";
+
+    // avatar do discord, se existir
+    const uid = data.discord_user?.id || LANYARD_USER_ID;
+    const av = data.discord_user?.avatar;
+    if(av){
+      // se avatar começa com "a_" geralmente é gif
+      const isAnim = av.startsWith("a_");
+      const ext = isAnim ? "gif" : "png";
+      const url = `https://cdn.discordapp.com/avatars/${uid}/${av}.${ext}?size=256`;
+
+      dAvatar.src = url;
+      dAvatar.style.display = "block";
+      dFallback.style.display = "none";
+    }else{
+      dAvatar.style.display = "none";
+      dFallback.style.display = "block";
+    }
+
+    setUpdatedNow();
+  }catch(e){
+    // mantém local fallback
+  }
+}
+
 /* ===== PERGAMINHO ===== */
 const scrollBtn = document.getElementById("scrollBtn");
 const scrollOverlay = document.getElementById("scrollOverlay");
@@ -1481,7 +1469,13 @@ const loreLines = [
 
 function openScroll(){
   if(!document.body.classList.contains("entered")) return;
-  bump(LS.scroll);
+
+  // fecha social se estiver aberto
+  if(document.body.classList.contains("socialOpen")) closeSocialOverlay();
+
+  // pausa áudio do fundo enquanto pergaminho estiver aberto
+  pauseBgAudio();
+
   document.body.classList.add("scrollOpen");
   scrollOverlay.setAttribute("aria-hidden","false");
   setTimeout(()=>cmdInput.focus(), 80);
@@ -1495,6 +1489,7 @@ function openScroll(){
 function closeScroll(){
   document.body.classList.remove("scrollOpen");
   scrollOverlay.setAttribute("aria-hidden","true");
+  resumeBgAudio();
 }
 
 scrollBtn.addEventListener("click",(e)=>{
@@ -1506,7 +1501,15 @@ scrollOverlay.addEventListener("click",(e)=>{
   if(e.target.classList.contains("dim")) closeScroll();
 });
 
-/* sem atalhos extras (T/ESC removidos) */
+/* Remove atalhos: só ESC fecha (quando estiver aberto) */
+document.addEventListener("keydown",(e)=>{
+  if(e.key === "Escape" && document.body.classList.contains("scrollOpen")){
+    closeScroll();
+  }
+  if(e.key === "Escape" && document.body.classList.contains("socialOpen")){
+    closeSocialOverlay();
+  }
+});
 
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function scrollToBottom(){ scrollLog.scrollTop = scrollLog.scrollHeight; }
@@ -1614,178 +1617,6 @@ function escapeHtml(s){
           .replaceAll('"',"&quot;")
           .replaceAll("'","&#039;");
 }
-
-/* ===== ADMIN ===== */
-const adminBtn = document.getElementById("adminBtn");
-const adminOverlay = document.getElementById("adminOverlay");
-const adminClose = document.getElementById("adminClose");
-const adminPass = document.getElementById("adminPass");
-const adminEnter = document.getElementById("adminEnter");
-const adminMsg = document.getElementById("adminMsg");
-const adminPanel = document.getElementById("adminPanel");
-
-const stVisits = document.getElementById("stVisits");
-const stEnter = document.getElementById("stEnter");
-const stScroll = document.getElementById("stScroll");
-const stAdmin = document.getElementById("stAdmin");
-
-const ADMIN_PASS = "Projeto26";
-
-function openAdmin(){
-  if(!document.body.classList.contains("entered")) return;
-  document.body.classList.add("adminOpen");
-  adminOverlay.setAttribute("aria-hidden","false");
-  adminMsg.textContent = "";
-  adminMsg.className = "adMsg";
-  adminPass.value = "";
-  adminPanel.style.display = "none";
-  setTimeout(()=>adminPass.focus(), 80);
-}
-function closeAdmin(){
-  document.body.classList.remove("adminOpen");
-  adminOverlay.setAttribute("aria-hidden","true");
-}
-adminBtn.addEventListener("click",(e)=>{
-  e.stopPropagation();
-  openAdmin();
-});
-adminClose.addEventListener("click", closeAdmin);
-adminOverlay.addEventListener("click",(e)=>{
-  if(e.target.classList.contains("dim")) closeAdmin();
-});
-
-function fillStats(){
-  stVisits.textContent = getCount(LS.visits);
-  stEnter.textContent = getCount(LS.enter);
-  stScroll.textContent = getCount(LS.scroll);
-  stAdmin.textContent = getCount(LS.admin);
-}
-adminEnter.addEventListener("click", ()=>{
-  const pass = adminPass.value.trim();
-  if(pass !== ADMIN_PASS){
-    adminMsg.textContent = "Acesso negado. As sombras não reconhecem você.";
-    adminMsg.className = "adMsg bad";
-    return;
-  }
-  bump(LS.admin);
-  fillStats();
-  adminPanel.style.display = "block";
-  adminMsg.textContent = "Acesso concedido.";
-  adminMsg.className = "adMsg good";
-});
-
-/* ===== MENU ===== */
-const menu = document.getElementById("menu");
-const menuBtn = document.getElementById("menuBtn");
-const openSocial = document.getElementById("openSocial");
-const openArchives = document.getElementById("openArchives");
-const openPlaylists = document.getElementById("openPlaylists");
-
-menuBtn.addEventListener("click",(e)=>{
-  e.stopPropagation();
-  menu.classList.toggle("open");
-});
-document.addEventListener("click",(e)=>{
-  if(!menu.contains(e.target)) menu.classList.remove("open");
-});
-
-/* ===== SOCIAL MEDIA ===== */
-const socialOverlay = document.getElementById("socialOverlay");
-const socialClose = document.getElementById("socialClose");
-
-function openSocialOverlay(){
-  if(!document.body.classList.contains("entered")) return;
-  document.body.classList.add("socialOpen");
-  socialOverlay.setAttribute("aria-hidden","false");
-  fetchLanyard();
-}
-function closeSocialOverlay(){
-  document.body.classList.remove("socialOpen");
-  socialOverlay.setAttribute("aria-hidden","true");
-}
-openSocial.addEventListener("click", ()=>{
-  menu.classList.remove("open");
-  openSocialOverlay();
-});
-openArchives.addEventListener("click", ()=>{
-  menu.classList.remove("open");
-  alert("(placeholder) Archives — entra na V2.1");
-});
-openPlaylists.addEventListener("click", ()=>{
-  menu.classList.remove("open");
-  alert("(placeholder) Playlists — entra na V2.1");
-});
-socialClose.addEventListener("click", closeSocialOverlay);
-socialOverlay.addEventListener("click",(e)=>{
-  if(e.target.classList.contains("dim")) closeSocialOverlay();
-});
-
-/* Discord (Lanyard) */
-const dPill = document.getElementById("dPill");
-const dStatusTxt = document.getElementById("dStatusTxt");
-const dUserLine = document.getElementById("dUserLine");
-const dSubLine = document.getElementById("dSubLine");
-const dTime = document.getElementById("dTime");
-const dAvatar = document.getElementById("dAvatar");
-const dAvatarFallback = document.getElementById("dAvatarFallback");
-
-const LANYARD_ID = "513830615225860096";
-const FORCED_USERNAME = "allzz.exe";
-
-function niceStatus(s){
-  if(s === "online") return "Online";
-  if(s === "idle") return "Ausente";
-  if(s === "dnd") return "Não perturbe";
-  return "Offline";
-}
-function nowHHMM(){
-  const now = new Date();
-  const hh = String(now.getHours()).padStart(2,"0");
-  const mm = String(now.getMinutes()).padStart(2,"0");
-  return `${hh}:${mm}`;
-}
-async function fetchLanyard(){
-  try{
-    const r = await fetch(`https://api.lanyard.rest/v1/users/${LANYARD_ID}`, { cache: "no-store" });
-    const j = await r.json();
-    const data = j && j.data ? j.data : null;
-    if(!data) return;
-
-    const status = data.discord_status || "offline";
-    dPill.setAttribute("data-status", status);
-    dStatusTxt.textContent = niceStatus(status);
-
-    const du = data.discord_user || {};
-    const display = du.global_name || du.display_name || du.username || "Allz";
-    dUserLine.textContent = `${display} · ${FORCED_USERNAME}`;
-
-    dSubLine.textContent = (status === "offline") ? "offline" : "ativo (Lanyard)";
-
-    if(du.id){
-      const fallbackIndex = (Number(du.discriminator || "0") % 5);
-      const defaultAvatar = `https://cdn.discordapp.com/embed/avatars/${fallbackIndex}.png`;
-
-      let avatarUrl = defaultAvatar;
-      if(du.avatar){
-        const isGif = String(du.avatar).startsWith("a_");
-        avatarUrl = `https://cdn.discordapp.com/avatars/${du.id}/${du.avatar}.${isGif ? "gif" : "png"}?size=128`;
-      }
-
-      dAvatar.src = avatarUrl;
-      dAvatar.style.display = "block";
-      dAvatarFallback.style.display = "none";
-    }else{
-      dAvatar.style.display = "none";
-      dAvatarFallback.style.display = "block";
-    }
-
-    dTime.textContent = `ATUALIZADO ÀS ${nowHHMM()}`;
-  }catch(e){}
-}
-setInterval(()=>{
-  if(document.body.classList.contains("socialOpen")) fetchLanyard();
-}, 15000);
 </script>
-
 </body>
 </html>
