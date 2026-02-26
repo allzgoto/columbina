@@ -44,9 +44,6 @@ body.playlistsOpen #mainVideo{
 body.adminOpen #mainVideo{
   filter:contrast(1.06) saturate(0.92) blur(7px) brightness(0.52);
 }
-body.editOpen #mainVideo{
-  filter:contrast(1.06) saturate(0.92) blur(7px) brightness(0.52);
-}
 
 /* ===== ENTRY ===== */
 #entry{
@@ -494,7 +491,7 @@ body.scrollOpen #scrollOverlay{ display:block; }
   background:rgba(0,0,0,0.55);
 }
 
-/* ===== SOCIAL OVERLAY ===== */
+/* ===== SOCIAL OVERLAY (mais moderno) ===== */
 #socialOverlay{
   position:fixed; inset:0;
   z-index:90;
@@ -503,213 +500,23 @@ body.scrollOpen #scrollOverlay{ display:block; }
 body.socialOpen #socialOverlay{ display:block; }
 #socialOverlay .dim{
   position:absolute; inset:0;
-  background:rgba(0,0,0,0.80);
-  backdrop-filter: blur(2px);
-  animation:dimIn 240ms ease both;
-}
-
-/* ===== EDIT/HUB OVERLAY (AUTO) ===== */
-#editOverlay{
-  position:fixed; inset:0;
-  z-index:92;
-  display:none;
-}
-body.editOpen #editOverlay{ display:block; }
-#editOverlay .dim{
-  position:absolute; inset:0;
-  background:rgba(0,0,0,0.84);
+  background:rgba(0,0,0,0.82);
   backdrop-filter: blur(3px);
   animation:dimIn 240ms ease both;
 }
-.hubShell{
-  position:absolute;
-  left:50%; top:50%;
-  transform:translate(-50%,-50%) scale(.96);
-  width:min(980px, 94vw);
-  height:min(620px, 84vh);
-  border-radius:22px;
-  border:1px solid rgba(255,255,255,0.10);
-  background: rgba(12,12,14,0.80);
-  box-shadow: 0 44px 180px rgba(0,0,0,0.88);
-  backdrop-filter: blur(18px);
-  overflow:hidden;
-  opacity:0;
-  animation:hubIn 320ms cubic-bezier(.12,.92,.12,1) both;
-}
-@keyframes hubIn{
-  from{opacity:0; transform:translate(-50%,-50%) scale(.92); filter:blur(10px);}
-  to{opacity:1; transform:translate(-50%,-50%) scale(1); filter:blur(0);}
-}
-.hubTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:18px 18px 12px;
-  border-bottom:1px solid rgba(255,255,255,0.08);
-}
-.hubTitle{
-  display:flex; flex-direction:column; gap:6px;
-}
-.hubTitle b{
-  color:rgba(255,255,255,0.92);
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-size:18px;
-}
-.hubTitle span{
-  color:rgba(255,255,255,0.55);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:12px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-}
-.hubClose{
-  border:none;
-  cursor:pointer;
-  padding:8px 12px;
-  border-radius:999px;
-  background: rgba(255,255,255,0.06);
-  color:rgba(255,255,255,0.78);
-  border:1px solid rgba(255,255,255,0.10);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-}
-.hubClose:hover{ background: rgba(255,255,255,0.09); }
 
-.hubBody{
-  height:calc(100% - 62px);
-  display:grid;
-  grid-template-columns: 1fr 340px;
-  gap:14px;
-  padding:14px;
-}
-.hubMain{
-  border-radius:18px;
-  border:1px solid rgba(255,255,255,0.10);
-  background: rgba(0,0,0,0.26);
-  overflow:hidden;
-  position:relative;
-}
-.hubMain::before{
-  content:"";
-  position:absolute; inset:0;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255,140,70,0.12), transparent 55%),
-    radial-gradient(circle at 70% 80%, rgba(255,255,255,0.06), transparent 60%);
-  pointer-events:none;
-}
-.hubMainInner{
-  position:absolute; inset:0;
-  padding:18px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  z-index:2;
-}
-.hubBig{
-  flex:1;
-  border-radius:16px;
-  border:1px solid rgba(255,255,255,0.10);
-  background: rgba(255,255,255,0.04);
-  overflow:hidden;
-  position:relative;
-}
-.hubBig .hint{
-  position:absolute; left:16px; bottom:16px;
-  color:rgba(255,255,255,0.68);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:12px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-}
-.hubBig video{
-  width:100%; height:100%;
-  object-fit:cover;
-  filter:contrast(1.02) saturate(0.92) brightness(0.92);
-  opacity:0.92;
-}
-.hubCards{
-  display:grid;
-  grid-template-columns: repeat(3, minmax(0,1fr));
-  gap:10px;
-}
-.hubCard{
-  border-radius:16px;
-  border:1px solid rgba(255,255,255,0.10);
-  background: rgba(255,255,255,0.04);
-  padding:12px;
-}
-.hubCard .k{
-  color:rgba(255,255,255,0.55);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:11px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-}
-.hubCard .v{
-  margin-top:8px;
-  color:rgba(255,255,255,0.92);
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-size:16px;
-  font-weight:800;
-}
-
-.hubSide{
-  border-radius:18px;
-  border:1px solid rgba(255,255,255,0.10);
-  background: rgba(255,255,255,0.04);
-  box-shadow: inset 0 0 22px rgba(0,0,0,0.45);
-  padding:14px;
-  overflow:auto;
-}
-.hubSideTitle{
-  color:rgba(255,255,255,0.70);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  letter-spacing:2px;
-  font-size:12px;
-  text-transform:uppercase;
-  margin-bottom:10px;
-}
-.hubSideText{
-  color:rgba(255,255,255,0.70);
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight:650;
-  line-height:1.45;
-  font-size:13px;
-}
-.hubPills{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:12px;
-}
-.hubPill{
-  padding:7px 10px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,0.10);
-  background: rgba(0,0,0,0.22);
-  color:rgba(255,255,255,0.72);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:11px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-}
-
-@media (max-width: 860px){
-  .hubBody{ grid-template-columns: 1fr; }
-  .hubCards{ grid-template-columns: 1fr; }
-}
-
-/* ===== SOCIAL CARD ===== */
+/* Card shell */
 .smCard{
   position:absolute;
   left:50%;
   top:50%;
   transform:translate(-50%,-50%) scale(.94);
-  width:min(520px, 92vw);
-  border-radius:22px;
-  background: rgba(18,18,20,0.86);
+  width:min(560px, 92vw);
+  border-radius:24px;
+  background: rgba(14,14,16,0.86);
   border:1px solid rgba(255,255,255,0.10);
-  box-shadow: 0 40px 180px rgba(0,0,0,0.84);
-  backdrop-filter: blur(16px);
+  box-shadow: 0 46px 210px rgba(0,0,0,0.88);
+  backdrop-filter: blur(18px);
   overflow:hidden;
   opacity:0;
   animation:smIn 320ms cubic-bezier(.12,.92,.12,1) both;
@@ -717,6 +524,16 @@ body.editOpen #editOverlay{ display:block; }
 @keyframes smIn{
   from{ opacity:0; transform:translate(-50%,-50%) scale(.92); filter:blur(10px); }
   to{ opacity:1; transform:translate(-50%,-50%) scale(1); filter:blur(0); }
+}
+/* top accent */
+.smAccent{
+  position:absolute; inset:0 0 auto 0;
+  height:120px;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255,140,70,0.22), transparent 52%),
+    radial-gradient(circle at 80% 10%, rgba(255,255,255,0.10), transparent 55%),
+    linear-gradient(to bottom, rgba(255,255,255,0.06), transparent 70%);
+  pointer-events:none;
 }
 .smCard::after{
   content:"";
@@ -738,19 +555,34 @@ body.editOpen #editOverlay{ display:block; }
   25%{ opacity:.9; }
   100%{ opacity:0; transform:translateX(45%) rotate(12deg); }
 }
+
 .smHead{
   display:flex;
   align-items:center;
   justify-content:space-between;
   padding:18px 18px 12px;
+  position:relative;
+  z-index:2;
 }
 .smTitle{
-  color:rgba(255,255,255,0.70);
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.smTitle b{
+  color:rgba(255,255,255,0.78);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   letter-spacing:2px;
   font-size:12px;
   text-transform:uppercase;
 }
+.smTitle span{
+  color:rgba(255,255,255,0.42);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight:700;
+  font-size:12px;
+}
+
 .smClose{
   border:none;
   cursor:pointer;
@@ -762,39 +594,53 @@ body.editOpen #editOverlay{ display:block; }
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }
 .smClose:hover{ background: rgba(255,255,255,0.09); }
+
 .smBody{
   padding:6px 18px 18px;
   display:flex;
   flex-direction:column;
   gap:14px;
+  position:relative;
+  z-index:2;
 }
+
 .smProfile{
   display:flex;
   flex-direction:column;
   align-items:center;
   text-align:center;
   gap:10px;
+  padding-top:2px;
 }
 .smAvatar{
-  width:86px;height:86px;
+  width:88px;height:88px;
   border-radius:50%;
-  border:1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 16px 70px rgba(0,0,0,0.72);
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 18px 90px rgba(0,0,0,0.78);
   overflow:hidden;
   background: rgba(255,255,255,0.06);
+  position:relative;
+}
+.smAvatar::after{
+  content:"";
+  position:absolute; inset:-2px;
+  border-radius:50%;
+  border:1px solid rgba(255,140,70,0.20);
+  box-shadow: 0 0 26px rgba(255,140,70,0.18);
+  pointer-events:none;
 }
 .smAvatar img{ width:100%;height:100%; object-fit:cover; display:block; }
 .smName{
-  font-size:38px;
-  letter-spacing:1px;
-  color:rgba(255,255,255,0.92);
+  font-size: clamp(26px, 5vw, 40px);
+  letter-spacing:0.4px;
+  color:rgba(255,255,255,0.94);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight:800;
+  font-weight:900;
 }
 .smBio{
   color:rgba(255,255,255,0.70);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight:600;
+  font-weight:650;
   font-size:14px;
 }
 .smLoc{
@@ -810,6 +656,7 @@ body.editOpen #editOverlay{ display:block; }
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 .smLoc svg{ width:14px;height:14px; opacity:.9; }
+
 .smIcons{
   display:flex;
   justify-content:center;
@@ -818,14 +665,14 @@ body.editOpen #editOverlay{ display:block; }
   flex-wrap:wrap;
 }
 .smIconBtn{
-  width:46px;height:46px;
-  border-radius:14px;
+  width:48px;height:48px;
+  border-radius:16px;
   background: rgba(255,255,255,0.06);
   border:1px solid rgba(255,255,255,0.10);
   cursor:pointer;
   display:grid;
   place-items:center;
-  transition: transform .15s ease, filter .15s ease, background .15s ease;
+  transition: transform .15s ease, filter .15s ease, background .15s ease, box-shadow .15s ease;
   position:relative;
   overflow:hidden;
   text-decoration:none;
@@ -841,10 +688,17 @@ body.editOpen #editOverlay{ display:block; }
   transform: translateY(-1px);
   background: rgba(255,255,255,0.08);
   filter: brightness(1.06);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.55), 0 0 26px rgba(255,140,70,0.10);
 }
 .smIconBtn:hover::after{ opacity:1; }
 .smIconBtn:active{ transform: translateY(0px) scale(0.98); }
-.smIconBtn svg{ width:20px;height:20px; opacity:.9; }
+.smIconBtn svg{ width:20px;height:20px; opacity:.92; }
+
+.smGrid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:12px;
+}
 
 .smSection{
   border-radius:18px;
@@ -884,8 +738,8 @@ body.editOpen #editOverlay{ display:block; }
 
 .smRow{ display:flex; align-items:center; gap:12px; }
 .smDiscIcon{
-  width:44px; height:44px;
-  border-radius:14px;
+  width:46px; height:46px;
+  border-radius:16px;
   overflow:hidden;
   background:rgba(255,255,255,0.06);
   border:1px solid rgba(255,255,255,0.10);
@@ -894,18 +748,18 @@ body.editOpen #editOverlay{ display:block; }
   place-items:center;
   flex:0 0 auto;
 }
-#dAvatar{ width:100%; height:100%; display:none; object-fit:cover; border-radius:14px; }
+#dAvatar{ width:100%; height:100%; display:none; object-fit:cover; border-radius:16px; }
 .smDiscText{ display:flex; flex-direction:column; gap:2px; }
 .smDiscName{
   color:rgba(255,255,255,0.92);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight:800;
+  font-weight:900;
   font-size:14px;
 }
 .smDiscSub{
   color:rgba(255,255,255,0.62);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight:600;
+  font-weight:650;
   font-size:12px;
 }
 .smFoot{
@@ -1144,6 +998,10 @@ body.playlistsOpen #playlistsOverlay{ display:block; }
   overflow:hidden;
   opacity:0;
   animation:hubIn 320ms cubic-bezier(.12,.92,.12,1) both;
+}
+@keyframes hubIn{
+  from{opacity:0; transform:translate(-50%,-50%) scale(.92); filter:blur(10px);}
+  to{opacity:1; transform:translate(-50%,-50%) scale(1); filter:blur(0);}
 }
 .plTop{
   display:flex;
@@ -1557,7 +1415,7 @@ body.adminOpen #adminOverlay{ display:block; }
             <div class="scrollInputBar">
               <div class="prompt">&gt;</div>
               <input id="cmdInput" autocomplete="off" spellcheck="false"
-                     placeholder="digite um comando (ex: hub, arquivo, lore, ajuda) e ENTER">
+                     placeholder="digite um comando (ex: social, arquivo, lore, ajuda) e ENTER">
             </div>
           </div>
 
@@ -1572,8 +1430,13 @@ body.adminOpen #adminOverlay{ display:block; }
   <div class="dim"></div>
 
   <div class="smCard" role="dialog" aria-label="Social Media">
+    <div class="smAccent" aria-hidden="true"></div>
+
     <div class="smHead">
-      <div class="smTitle">SOCIAL MEDIA</div>
+      <div class="smTitle">
+        <b>SOCIAL MEDIA</b>
+        <span>perfil • links • status ao vivo</span>
+      </div>
       <button class="smClose" id="socialClose">FECHAR</button>
     </div>
 
@@ -1631,97 +1494,37 @@ body.adminOpen #adminOverlay{ display:block; }
         </div>
       </div>
 
-      <div class="smSection">
-        <div class="smSectionTitle">
-          <span>DISCORD STATUS</span>
-          <span class="smStatusPill" id="smStatusPill" data-status="idle">
-            <span class="smDot"></span>
-            <span id="smStatusText">Ausente</span>
-          </span>
-        </div>
-
-        <div class="smRow">
-          <div class="smDiscIcon" aria-label="Avatar Discord">
-            <img id="dAvatar" alt="Avatar Discord">
-            <svg id="dFallback" viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;opacity:.85">
-              <path d="M8.5 7.5c1.2-.9 2.5-1.3 3.5-1.3s2.3.4 3.5 1.3" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M7 17c1.5-1.2 3.2-1.7 5-1.7s3.5.5 5 1.7" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M6 9.5c-1.2 2.9-1 5.8.6 8.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round"/>
-              <path d="M18 9.5c1.2 2.9 1 5.8-.6 8.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round"/>
-            </svg>
+      <div class="smGrid">
+        <div class="smSection">
+          <div class="smSectionTitle">
+            <span>DISCORD STATUS</span>
+            <span class="smStatusPill" id="smStatusPill" data-status="idle">
+              <span class="smDot"></span>
+              <span id="smStatusText">Ausente</span>
+            </span>
           </div>
 
-          <div class="smDiscText">
-            <div class="smDiscName" id="smDiscordName">Allz</div>
-            <div class="smDiscSub" id="smDiscordSub">@allzz.exe</div>
-          </div>
-        </div>
-
-        <div class="smFoot" id="smUpdatedAt">atualizando...</div>
-      </div>
-
-      <div class="smFoot"><span id="smViews">0</span> views</div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== EDIT/HUB OVERLAY (AUTO) ===== -->
-<div id="editOverlay" aria-hidden="true">
-  <div class="dim"></div>
-
-  <div class="hubShell" role="dialog" aria-label="Edit / Hub">
-    <div class="hubTop">
-      <div class="hubTitle">
-        <b>EDIT / HUB</b>
-        <span>apresentação automática</span>
-      </div>
-      <button class="hubClose" id="hubClose">FECHAR</button>
-    </div>
-
-    <div class="hubBody">
-      <div class="hubMain">
-        <div class="hubMainInner">
-          <div class="hubBig">
-            <!-- placeholder visual usando seu próprio vídeo -->
-            <video src="https://files.catbox.moe/klaol5.webm" muted autoplay loop playsinline></video>
-            <div class="hint">troque aqui pela sua EDIT depois</div>
-          </div>
-
-          <div class="hubCards">
-            <div class="hubCard">
-              <div class="k">Tema</div>
-              <div class="v">Shadow Fight 2</div>
+          <div class="smRow">
+            <div class="smDiscIcon" aria-label="Avatar Discord">
+              <img id="dAvatar" alt="Avatar Discord">
+              <svg id="dFallback" viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;opacity:.85">
+                <path d="M8.5 7.5c1.2-.9 2.5-1.3 3.5-1.3s2.3.4 3.5 1.3" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M7 17c1.5-1.2 3.2-1.7 5-1.7s3.5.5 5 1.7" stroke="rgba(255,255,255,0.85)" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M6 9.5c-1.2 2.9-1 5.8.6 8.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round"/>
+                <path d="M18 9.5c1.2 2.9 1 5.8-.6 8.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
             </div>
-            <div class="hubCard">
-              <div class="k">Lore</div>
-              <div class="v">Sombras • Titan</div>
-            </div>
-            <div class="hubCard">
-              <div class="k">V2.1</div>
-              <div class="v">Playlists + Admin</div>
+
+            <div class="smDiscText">
+              <div class="smDiscName" id="smDiscordName">Allz</div>
+              <div class="smDiscSub" id="smDiscordSub">@allzz.exe</div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div class="hubSide">
-        <div class="hubSideTitle">Como explorar</div>
-        <div class="hubSideText">
-          Use o <b>MENU</b> no canto superior direito para abrir:
-          <br><br>
-          • Social Media<br>
-          • Playlists (Spotify)<br>
-          • Archives (placeholder)
-          <br><br>
-          E o botão do <b>Pergaminho</b> para a lore/terminal.
+          <div class="smFoot" id="smUpdatedAt">atualizando...</div>
         </div>
 
-        <div class="hubPills">
-          <div class="hubPill">menu</div>
-          <div class="hubPill">pergaminho</div>
-          <div class="hubPill">playlists</div>
-          <div class="hubPill">admin</div>
-        </div>
+        <div class="smFoot"><span id="smViews">0</span> views</div>
       </div>
     </div>
   </div>
@@ -1889,9 +1692,8 @@ const scrollOverlay = document.getElementById("scrollOverlay");
 const socialOverlay = document.getElementById("socialOverlay");
 const playlistsOverlay = document.getElementById("playlistsOverlay");
 const adminOverlay = document.getElementById("adminOverlay");
-const editOverlay = document.getElementById("editOverlay");
 
-const overlayFlags = ["scrollOpen","socialOpen","playlistsOpen","adminOpen","editOpen"];
+const overlayFlags = ["scrollOpen","socialOpen","playlistsOpen","adminOpen"];
 
 function closeAllOverlays(){
   document.body.classList.remove(...overlayFlags);
@@ -1899,19 +1701,17 @@ function closeAllOverlays(){
   socialOverlay?.setAttribute("aria-hidden","true");
   playlistsOverlay?.setAttribute("aria-hidden","true");
   adminOverlay?.setAttribute("aria-hidden","true");
-  editOverlay?.setAttribute("aria-hidden","true");
 }
 
 function openOverlay(flag){
   if(!document.body.classList.contains("entered")) return;
   closeAllOverlays();
-  pauseBgAudio();
+  pauseBgAudio(); // ✅ ao abrir layout, corta o áudio
   document.body.classList.add(flag);
   if(flag==="scrollOpen") scrollOverlay.setAttribute("aria-hidden","false");
   if(flag==="socialOpen") socialOverlay.setAttribute("aria-hidden","false");
   if(flag==="playlistsOpen") playlistsOverlay.setAttribute("aria-hidden","false");
   if(flag==="adminOpen") adminOverlay.setAttribute("aria-hidden","false");
-  if(flag==="editOpen") editOverlay.setAttribute("aria-hidden","false");
 }
 
 function closeOverlay(flag){
@@ -1920,8 +1720,7 @@ function closeOverlay(flag){
   if(flag==="socialOpen") socialOverlay.setAttribute("aria-hidden","true");
   if(flag==="playlistsOpen") playlistsOverlay.setAttribute("aria-hidden","true");
   if(flag==="adminOpen") adminOverlay.setAttribute("aria-hidden","true");
-  if(flag==="editOpen") editOverlay.setAttribute("aria-hidden","true");
-  resumeBgAudio();
+  resumeBgAudio(); // ✅ ao fechar layout, o som volta
 }
 
 /* =========================
@@ -1937,24 +1736,18 @@ async function start(){
   try{
     bgAudio.currentTime = 0;
     bgAudio.volume = currentVol;
-    await bgAudio.play();
+    await bgAudio.play(); // ✅ som começa ao entrar
   }catch(e){}
 
   setTimeout(async ()=>{
     try{
-      mainVideo.muted = true;
+      mainVideo.muted = true; // ✅ vídeo sem áudio
       await mainVideo.play();
     }catch(e){}
     document.body.classList.add("entered");
 
-    // AUTO ABRIR EDIT/HUB (uma vez por sessão)
-    try{
-      const seen = sessionStorage.getItem("hub_auto_shown");
-      if(!seen){
-        sessionStorage.setItem("hub_auto_shown","1");
-        setTimeout(()=> openEditOverlay(), 900);
-      }
-    }catch(e){}
+    // ✅ AGORA: abre o Social Media automaticamente após o ENTER
+    setTimeout(()=> openSocialOverlay(), 900);
   }, 1050);
 }
 entry.addEventListener("pointerdown", start);
@@ -2020,7 +1813,7 @@ const openPlaylists = document.getElementById("openPlaylists");
 menuBtn.addEventListener("click",(e)=>{
   e.stopPropagation();
   if(!document.body.classList.contains("entered")) return;
-  document.body.classList.add("menuSeen"); // para a animação chamativa
+  document.body.classList.add("menuSeen");
   menuWrap.classList.toggle("open");
 });
 document.addEventListener("click",(e)=>{
@@ -2030,22 +1823,6 @@ document.addEventListener("click",(e)=>{
 openArchives.addEventListener("click", ()=>{
   menuWrap.classList.remove("open");
   alert("Archives (placeholder) — V2.1");
-});
-
-/* =========================
-   EDIT/HUB overlay (auto)
-   ========================= */
-const hubClose = document.getElementById("hubClose");
-function openEditOverlay(){
-  menuWrap.classList.remove("open");
-  openOverlay("editOpen");
-  setTimeout(()=>hubClose.focus(), 80);
-}
-function closeEditOverlay(){ closeOverlay("editOpen"); }
-
-hubClose.addEventListener("click", closeEditOverlay);
-editOverlay.addEventListener("click",(e)=>{
-  if(e.target.classList.contains("dim")) closeEditOverlay();
 });
 
 /* =========================
@@ -2071,6 +1848,7 @@ function incLocal(key){
 function openSocialOverlay(){
   if(!document.body.classList.contains("entered")) return;
   menuWrap.classList.remove("open");
+  metricInc("m_social_opens");
   openOverlay("socialOpen");
 
   const v = incLocal("sm_views");
@@ -2205,6 +1983,7 @@ function setActivePlaylist(i){
 function openPlaylistsOverlay(){
   if(!document.body.classList.contains("entered")) return;
   menuWrap.classList.remove("open");
+  metricInc("m_playlists_opens");
   openOverlay("playlistsOpen");
 
   renderPlaylistList();
@@ -2291,6 +2070,7 @@ function showAdminDash(){
 }
 function openAdminOverlay(){
   if(!document.body.classList.contains("entered")) return;
+  metricInc("m_admin_opens"); // opcional, se quiser
   openOverlay("adminOpen");
   setTimeout(()=>adClose.focus(), 80);
 
@@ -2458,7 +2238,7 @@ cmdInput.addEventListener("keydown", (e)=>{
   const cmd = raw.toLowerCase();
 
   if(cmd === "ajuda" || cmd === "help" || cmd === "?"){
-    writeOut(`<span class="sys">COMANDOS:</span> <b>hub</b>, <b>arquivo</b>, <b>lore</b>, <b>fechar</b>`);
+    writeOut(`<span class="sys">COMANDOS:</span> <b>social</b>, <b>arquivo</b>, <b>lore</b>, <b>fechar</b>`);
     return;
   }
   if(cmd === "fechar" || cmd === "close" || cmd === "exit"){
@@ -2466,9 +2246,9 @@ cmdInput.addEventListener("keydown", (e)=>{
     setTimeout(closeScroll, 250);
     return;
   }
-  if(cmd === "hub"){
-    writeOut(`<span class="sys">SISTEMA:</span> Abrindo EDIT/HUB...`);
-    setTimeout(openEditOverlay, 250);
+  if(cmd === "social"){
+    writeOut(`<span class="sys">SISTEMA:</span> Abrindo SOCIAL MEDIA...`);
+    setTimeout(openSocialOverlay, 250);
     return;
   }
   if(cmd === "arquivo" || cmd === "archive"){
@@ -2484,7 +2264,7 @@ cmdInput.addEventListener("keydown", (e)=>{
 });
 
 /* =========================
-   ESC fecha qualquer overlay
+   ESC fecha overlays
    ========================= */
 document.addEventListener("keydown",(e)=>{
   if(e.key !== "Escape") return;
@@ -2495,15 +2275,12 @@ document.addEventListener("keydown",(e)=>{
   if(document.body.classList.contains("playlistsOpen")) return closePlaylistsOverlay();
   if(document.body.classList.contains("socialOpen")) return closeSocialOverlay();
   if(document.body.classList.contains("scrollOpen")) return closeScroll();
-  if(document.body.classList.contains("editOpen")) return closeEditOverlay();
 });
 
 /* =========================
    MÉTRICAS
    ========================= */
 metricInc("m_site_opens");
-openSocial.addEventListener("click", ()=> metricInc("m_social_opens"), {capture:true});
-openPlaylists.addEventListener("click", ()=> metricInc("m_playlists_opens"), {capture:true});
 </script>
 
 </body>
