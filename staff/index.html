@@ -55,6 +55,7 @@
       overflow:hidden;
       display:flex;
       flex-direction:column;
+      min-width:0;
     }
     .left__header{
       padding:14px 14px 10px;
@@ -147,28 +148,42 @@
       user-select:none;
     }
 
-    /* Filters */
+    /* Filters (FIX: smaller + scroll + responsive) */
     .filters{
       position:absolute;
-      top:0; right:-360px;
-      width:340px;
+      top:0; right:-320px;
+      width:300px;
       height:100%;
+      max-height:100%;
       background:linear-gradient(180deg, rgba(12,14,20,.98), rgba(8,9,12,.98));
       border-left:1px solid var(--stroke);
       transition:right .22s ease;
       box-shadow:-18px 0 60px rgba(0,0,0,.55);
-      padding:14px;
+      padding:14px 12px;
       overflow:auto;
     }
     .filters.open{right:0}
-    .filters__header{display:flex; align-items:center; justify-content:space-between; padding-bottom:10px; border-bottom:1px solid var(--stroke)}
+    .filters__header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding-bottom:10px;
+      border-bottom:1px solid var(--stroke);
+      position:sticky;
+      top:0;
+      background:linear-gradient(180deg, rgba(12,14,20,.98), rgba(12,14,20,.92));
+      z-index:2;
+      margin:-14px -12px 10px;
+      padding:14px 12px 10px;
+    }
     .filters__title{font-weight:900}
     .filters__section{padding:12px 0; border-bottom:1px solid rgba(255,255,255,.05)}
     .filters__label{font-size:12px; color:var(--muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:.8px}
     .pillRow{display:flex; flex-wrap:wrap; gap:8px}
     .pill{
       font-size:12px;
-      padding:8px 10px;
+      padding:7px 10px;
       border-radius:999px;
       border:1px solid var(--stroke);
       background:rgba(255,255,255,.03);
@@ -476,9 +491,25 @@
       .right{grid-column: 1 / -1}
     }
     @media (max-width: 820px){
+      body{overflow:auto}
       .app{grid-template-columns: 1fr; padding:10px}
       .left,.center,.right{border-radius:16px}
-      body{overflow:auto}
+      /* filters as overlay on small screens */
+      .filters{
+        position:fixed;
+        top:10px;
+        bottom:10px;
+        height:auto;
+        right:-100vw;
+        width:min(92vw, 360px);
+        border-radius:16px;
+        border:1px solid var(--stroke);
+      }
+      .filters.open{right:10px}
+      .filters__header{
+        border-top-left-radius:16px;
+        border-top-right-radius:16px;
+      }
     }
   </style>
 </head>
@@ -635,7 +666,7 @@
      * - No reset: localStorage
      ***************/
 
-    const LS_KEY = "staff_panel_v1";
+    const LS_KEY = "staff_panel_v2";
     const AGENT = "Allz";
 
     const STATUS = [
@@ -650,18 +681,72 @@
       return Date.now() - (m*60*1000);
     }
 
-    const seedData = () => ({
-      me: AGENT,
-      selectedId: "t1",
-      filters: {
-        status: "all",
-        tag: "all",
-        onlyUnread: false,
-        onlyMine: false,
-        sortBy: "recent",
-        search: ""
-      },
-      tickets: [
+    function normalizeTag(tag){
+      return String(tag).trim().toUpperCase().replace(/\s+/g,"_");
+    }
+    function uniqueTags(arr){
+      const set = new Set(arr.map(normalizeTag));
+      return Array.from(set);
+    }
+
+    function generateExtraTickets(count){
+      const names = ["ThayS","Nina","Renan","Bryan","Laura","Letícia","Paulo","Yasmim","Brenda","Miguel","Gabi","Rafa","Davi","Malu","Caio","Luan","Iza","Noah","Bia","Hugo"];
+      const users = ["thaysw0","ninaz","renan_77","bryanbr","laura_s","leticia_m","paulo00","yas_kk","brendaX","migrez","gabi_13","rafaelo","davi_x","maluzita","caio_rbx","luanbr","iza_rob","noahdev","bianca2","hugoz"];
+      const categories = ["MM2","ROBUX_GAMEPASS","MM2","MM2","ROBUX_GAMEPASS"];
+      const items = ["MM2 — Godly","MM2 — Pacote","300 Robux (via Gamepass)","500 Robux (via Gamepass)","MM2 — Item avulso"];
+      const tagsPool = ["MM2","GAMEPASS","ENTREGUE","REEMBOLSO","MUDAR_TAG","URGENTE","BUG","FALTA_LINK","PAGAMENTO","DÚVIDA"];
+      const statuses = ["pending","paid","refunded","canceled"];
+
+      const out = [];
+      for(let i=0;i<count;i++){
+        const idx = i % names.length;
+        const status = statuses[i % statuses.length];
+        const cat = categories[i % categories.length];
+        const tagA = tagsPool[(i*3) % tagsPool.length];
+        const tagB = tagsPool[(i*3 + 2) % tagsPool.length];
+
+        const id = "tx" + (i+1);
+        const createdAt = nowMinusMinutes(170 + i*9);
+        const unread = (i % 3) !== 0;
+        const mine = (i % 4) === 0;
+
+        const item = items[i % items.length];
+        const nick = users[idx];
+
+        out.push({
+          id,
+          name: names[idx],
+          user: users[idx],
+          createdAt,
+          unread,
+          mine,
+          status,
+          category: cat,
+          total: "R$ " + (10 + (i%7)*3) + ",90",
+          nick,
+          gamepass: cat === "ROBUX_GAMEPASS" ? "https://www.roblox.com/game-pass/123456" + (100+i) : "-",
+          item,
+          client: names[idx],
+          clientEmail: "-",
+          spent: 10 + (i%7)*3,
+          orders: 1,
+          items: 1,
+          tags: uniqueTags([tagA, tagB, cat]),
+          messages: [
+            { type:"sys", text: "Ticket criado no sistema." },
+            ...(mine ? [{ type:"sys", text: AGENT + " assumiu este atendimento." }] : []),
+            { type:"them", text: cat==="ROBUX_GAMEPASS" ? "Opa, onde envio o link da gamepass?" : "Oi, quando entrega meu item?", at: createdAt + 2*60*1000 },
+            ...(status==="paid" ? [{ type:"me", text:"Entregue ✅ qualquer coisa chama!", at: createdAt + 6*60*1000 }] : []),
+            ...(status==="refunded" ? [{ type:"me", text:"Reembolso processado. 💜", at: createdAt + 6*60*1000 }] : []),
+            ...(status==="canceled" ? [{ type:"me", text:"Pedido cancelado conforme solicitado.", at: createdAt + 6*60*1000 }] : []),
+          ]
+        });
+      }
+      return out;
+    }
+
+    const seedData = () => {
+      const baseTickets = [
         {
           id:"t1",
           name:"Kamila",
@@ -777,15 +862,29 @@
             { type:"me", text:"Reembolso concluído. 💜", at: nowMinusMinutes(138)},
           ]
         },
-      ]
-    });
+      ];
+
+      const extra = generateExtraTickets(15);
+      return {
+        me: AGENT,
+        selectedId: "t1",
+        filters: {
+          status: "all",
+          tag: "all",
+          onlyUnread: false,
+          onlyMine: false,
+          sortBy: "recent",
+          search: ""
+        },
+        tickets: baseTickets.concat(extra)
+      };
+    };
 
     function load(){
       try{
         const raw = localStorage.getItem(LS_KEY);
         if(!raw) return seedData();
         const parsed = JSON.parse(raw);
-        // basic migration / safety
         if(!parsed.tickets || !Array.isArray(parsed.tickets)) return seedData();
         return parsed;
       }catch{
@@ -817,6 +916,9 @@
     const elFilters = document.getElementById("filters");
     document.getElementById("btnFilters").addEventListener("click", () => elFilters.classList.add("open"));
     document.getElementById("btnCloseFilters").addEventListener("click", () => elFilters.classList.remove("open"));
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape") elFilters.classList.remove("open");
+    });
 
     // Tabs
     document.querySelectorAll(".tab").forEach(btn=>{
@@ -843,7 +945,6 @@
       });
     }
 
-    // Tag Cloud (dynamic)
     function getAllTags(){
       const set = new Set();
       state.tickets.forEach(t => (t.tags||[]).forEach(tag=>set.add(normalizeTag(tag))));
@@ -970,15 +1071,6 @@
       renderAll();
     }
 
-    function normalizeTag(tag){
-      return String(tag).trim().toUpperCase().replace(/\s+/g,"_");
-    }
-    function uniqueTags(arr){
-      const set = new Set(arr.map(normalizeTag));
-      return Array.from(set);
-    }
-
-    // Selection
     function getSelected(){
       return state.tickets.find(x=>x.id===state.selectedId) || state.tickets[0];
     }
@@ -986,13 +1078,12 @@
     function selectTicket(id){
       state.selectedId = id;
       const t = getSelected();
-      t.unread = false; // open = read
+      t.unread = false;
       save();
       renderAll();
       scrollChatBottom();
     }
 
-    // Filtering
     function statusBadge(status){
       if(status==="paid") return ["PAGO","good"];
       if(status==="pending") return ["PENDENTE","warn"];
@@ -1004,22 +1095,16 @@
     function passesFilters(t){
       const f = state.filters;
 
-      // status
       if(f.status !== "all" && t.status !== f.status) return false;
 
-      // tag
       if(f.tag !== "all"){
         const tags = (t.tags||[]).map(normalizeTag);
         if(!tags.includes(normalizeTag(f.tag))) return false;
       }
 
-      // unread
       if(f.onlyUnread && !t.unread) return false;
-
-      // mine
       if(f.onlyMine && !t.mine) return false;
 
-      // search (name/user/tags)
       const q = (f.search||"").trim().toLowerCase();
       if(q){
         const hay = [
@@ -1041,7 +1126,6 @@
       return copy;
     }
 
-    // Render tickets list
     function renderTickets(){
       const tickets = sortTickets(state.tickets.filter(passesFilters));
       elTicketList.innerHTML = "";
@@ -1102,7 +1186,6 @@
         elTicketList.appendChild(wrap);
       });
 
-      // if filtered list doesn't include selected, select first available
       const hasSelected = tickets.some(t=>t.id===state.selectedId);
       if(!hasSelected && tickets.length){
         state.selectedId = tickets[0].id;
@@ -1110,7 +1193,6 @@
         renderAll();
       }
 
-      // empty state
       if(!tickets.length){
         const empty = document.createElement("div");
         empty.style.padding = "18px";
@@ -1127,12 +1209,10 @@
       return (last.type==="me" ? "Você: " : "") + last.text.slice(0,90);
     }
 
-    // Render chat
     function renderChat(){
       const t = getSelected();
       elChat.innerHTML = "";
 
-      // banner update
       const sysTop = (t.messages||[]).find(m => m.type==="sys");
       elBanner.textContent = sysTop ? sysTop.text : "Ticket aberto.";
 
@@ -1179,12 +1259,10 @@
       }
     }
 
-    // Right panel
     function renderRightPanel(){
       const t = getSelected();
       const activeTab = document.querySelector(".tab.active")?.dataset?.tab || "info";
 
-      // Stats
       document.getElementById("statSpent").textContent = String(t.spent ?? 13);
       document.getElementById("statOrders").textContent = String(t.orders ?? 1);
       document.getElementById("statItems").textContent = String(t.items ?? 1);
@@ -1216,21 +1294,16 @@
         `;
       }
 
-      // Ticket tags
       elTicketTags.innerHTML = "";
       (t.tags || []).forEach(tag=>{
         const tg = document.createElement("div");
         tg.className = "tag removable";
         tg.textContent = normalizeTag(tag);
         tg.title = "Clique para remover";
-        tg.addEventListener("click", ()=>{
-          // remove tag
-          removeTag(tag);
-        });
+        tg.addEventListener("click", ()=> removeTag(tag));
         elTicketTags.appendChild(tg);
       });
 
-      // If no tags
       if(!(t.tags||[]).length){
         const none = document.createElement("div");
         none.className = "muted";
@@ -1240,12 +1313,10 @@
     }
 
     function hashId(id){
-      // just a fake stable-looking id
-      const s = "4c6b26f3a71e" + id.replace("t","");
+      const s = "4c6b26f3a71e" + id.replace(/\D/g,"");
       return s.slice(0,12) + "-4...";
     }
 
-    // Render everything
     function renderAll(){
       renderStatusPills();
       renderTagCloud();
@@ -1254,7 +1325,6 @@
       renderRightPanel();
     }
 
-    // First render
     renderAll();
     setTimeout(scrollChatBottom, 60);
   </script>
