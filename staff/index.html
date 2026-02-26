@@ -58,6 +58,8 @@
       justify-content:space-between;
       border-bottom:1px solid var(--stroke);
       gap:10px;
+      position:relative;
+      z-index:5;
     }
     .brand{display:flex; gap:10px; align-items:center; min-width:0}
     .dot{
@@ -69,16 +71,21 @@
     .brand__title{font-weight:900; letter-spacing:.2px}
     .brand__sub{font-size:12px;color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
     .left__actions{display:flex; gap:8px; flex:0 0 auto}
+
+    /* Bigger, reliable hitbox */
     .iconbtn{
-      width:38px;height:38px;
-      border-radius:12px;
+      width:44px;height:44px;
+      border-radius:14px;
       border:1px solid var(--stroke);
       background:rgba(255,255,255,.03);
       color:var(--text);
       cursor:pointer;
       display:grid; place-items:center;
       transition:transform .08s ease, background .15s ease;
+      position:relative;
+      z-index:6;
     }
+    .iconbtn svg{pointer-events:none} /* <-- FIX: svg não “rouba” o clique */
     .iconbtn:hover{background:rgba(255,255,255,.06)}
     .iconbtn:active{transform:translateY(1px)}
 
@@ -195,6 +202,7 @@
       box-shadow:-18px 0 60px rgba(0,0,0,.55);
       padding:14px 12px;
       overflow:auto;
+      z-index:10;
     }
     .filters.open{right:0}
     .filters__header{
@@ -261,6 +269,7 @@
       display:flex;
       flex-direction:column;
       min-width:0;
+      position:relative;
     }
     .center__top{
       display:flex;
@@ -269,6 +278,8 @@
       gap:10px;
       padding:12px 14px;
       border-bottom:1px solid var(--stroke);
+      position:relative;
+      z-index:6;
     }
     .banner{
       flex:1;
@@ -283,7 +294,7 @@
       min-width:0;
     }
     .banner span{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .center__topRight{display:flex; gap:10px}
+    .center__topRight{display:flex; gap:10px; align-items:center}
     .btn{
       height:38px;
       padding:0 14px;
@@ -298,6 +309,7 @@
       display:flex;
       align-items:center;
       gap:8px;
+      position:relative;
     }
     .btn:hover{background:rgba(255,255,255,.06)}
     .btn:active{transform:translateY(1px)}
@@ -315,6 +327,90 @@
       background:rgba(179,0,255,.95);
       box-shadow:0 0 0 6px rgba(179,0,255,.12);
     }
+
+    /* Notification bell + panel */
+    .bell{
+      width:44px;height:44px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+      display:grid; place-items:center;
+      cursor:pointer;
+      position:relative;
+    }
+    .bell svg{pointer-events:none}
+    .bell:hover{background:rgba(255,255,255,.06)}
+    .bellBadge{
+      position:absolute;
+      top:6px; right:6px;
+      min-width:18px;
+      height:18px;
+      padding:0 6px;
+      border-radius:999px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:11px;
+      font-weight:900;
+      color:#fff;
+      background:rgba(255,0,212,.95);
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:0 10px 30px rgba(0,0,0,.45);
+    }
+
+    .notiPanel{
+      position:absolute;
+      right:14px;
+      top:60px;
+      width:min(420px, calc(100vw - 28px));
+      max-height:70vh;
+      overflow:auto;
+      border-radius:18px;
+      border:1px solid rgba(179,0,255,.25);
+      background:linear-gradient(180deg, rgba(12,14,20,.98), rgba(8,9,12,.98));
+      box-shadow:0 18px 70px rgba(0,0,0,.72);
+      display:none;
+      z-index:50;
+    }
+    .notiPanel.open{display:block}
+    .notiHead{
+      position:sticky; top:0;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+      padding:12px 12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, rgba(12,14,20,.98), rgba(12,14,20,.92));
+    }
+    .notiTitle{font-weight:900}
+    .notiActions{display:flex; gap:8px}
+    .miniBtn{
+      height:34px;
+      padding:0 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+      color:rgba(255,255,255,.9);
+      cursor:pointer;
+      font-weight:900;
+      font-size:12px;
+    }
+    .miniBtn:hover{background:rgba(255,255,255,.06)}
+    .notiItem{
+      padding:12px 12px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      display:flex;
+      gap:10px;
+      cursor:pointer;
+    }
+    .notiItem:hover{background:rgba(255,255,255,.03)}
+    .notiDot{
+      width:10px;height:10px;border-radius:50%;
+      background:rgba(255,0,212,.95);
+      box-shadow:0 0 0 6px rgba(255,0,212,.10);
+      flex:0 0 auto;
+      margin-top:4px;
+    }
+    .notiText b{font-weight:900}
+    .notiMeta{margin-top:3px; font-size:12px; color:rgba(255,255,255,.65)}
+    .notiEmpty{padding:14px; color:rgba(255,255,255,.55); font-size:13px}
 
     .chatWrap{flex:1; display:flex; flex-direction:column; min-height:0}
     .chat{
@@ -551,14 +647,14 @@
     }
 
     /* Scrollbars */
-    .list::-webkit-scrollbar, .chat::-webkit-scrollbar, .filters::-webkit-scrollbar{width:10px}
-    .list::-webkit-scrollbar-thumb, .chat::-webkit-scrollbar-thumb, .filters::-webkit-scrollbar-thumb{
+    .list::-webkit-scrollbar, .chat::-webkit-scrollbar, .filters::-webkit-scrollbar, .notiPanel::-webkit-scrollbar{width:10px}
+    .list::-webkit-scrollbar-thumb, .chat::-webkit-scrollbar-thumb, .filters::-webkit-scrollbar-thumb, .notiPanel::-webkit-scrollbar-thumb{
       background:rgba(255,255,255,.08);
       border:2px solid rgba(0,0,0,0);
       background-clip:padding-box;
       border-radius:999px;
     }
-    .list::-webkit-scrollbar-track, .chat::-webkit-scrollbar-track, .filters::-webkit-scrollbar-track{
+    .list::-webkit-scrollbar-track, .chat::-webkit-scrollbar-track, .filters::-webkit-scrollbar-track, .notiPanel::-webkit-scrollbar-track{
       background:transparent;
     }
 
@@ -586,6 +682,11 @@
       .filters__header{
         border-top-left-radius:16px;
         border-top-right-radius:16px;
+      }
+      .notiPanel{
+        right:10px;
+        top:76px;
+        width:min(92vw, 420px);
       }
     }
   </style>
@@ -651,6 +752,10 @@
             <input type="checkbox" id="soundOn" />
             <span>Som de notificação</span>
           </label>
+          <label class="check">
+            <input type="checkbox" id="demoSim" />
+            <span>Simular mensagens (DEMO)</span>
+          </label>
         </div>
 
         <div class="filters__section">
@@ -671,7 +776,7 @@
 
         <div class="filters__section" style="border-bottom:none">
           <div class="filters__label">Atualização</div>
-          <div class="muted">Este protótipo atualiza automaticamente e simula respostas do cliente.</div>
+          <div class="muted">Agora a notificação tem central (sininho) e anti-spam.</div>
         </div>
       </div>
     </aside>
@@ -685,9 +790,30 @@
         </div>
 
         <div class="center__topRight">
+          <!-- Notification Bell -->
+          <button class="bell" id="btnBell" title="Notificações">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M13.73 21a2 2 0 01-3.46 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="bellBadge" id="bellBadge" style="display:none">0</span>
+          </button>
+
           <button class="btn ghost" id="btnLiberar"><span class="dotSmall"></span>LIBERAR</button>
           <button class="btn warn" id="btnResolver">RESOLVER</button>
         </div>
+      </div>
+
+      <!-- Notification Panel -->
+      <div class="notiPanel" id="notiPanel" aria-hidden="true">
+        <div class="notiHead">
+          <div class="notiTitle">Notificações</div>
+          <div class="notiActions">
+            <button class="miniBtn" id="btnMarkAllRead">Ler tudo</button>
+            <button class="miniBtn" id="btnClearNoti">Limpar</button>
+          </div>
+        </div>
+        <div id="notiList"></div>
       </div>
 
       <div class="chatWrap">
@@ -742,7 +868,7 @@
           </div>
 
           <div class="muted" style="margin-top:10px">
-            Dica: clique numa tag acima para remover. Clique em tags na lista/filtro para filtrar.
+            Dica: clique numa tag acima para remover.
           </div>
         </div>
       </div>
@@ -751,22 +877,18 @@
 
   <script>
     /***********************
-     * STAFF PANEL v3
-     * - queues/tabs
-     * - notifications (toast + optional sound)
-     * - delete own messages
-     * - fast updates (auto-refresh + simulated incoming)
-     * - fix scroll jump on tag insert / re-render
-     * - removable tags
-     * - auto-remove delivered chats after 1 hour
-     * - "notify email" button (demo)
+     * STAFF PANEL v3.1
+     * FIXES:
+     * - Notification anti-spam
+     * - Notification center (bell + panel)
+     * - Filter icon hitbox reliably clickable
      ***********************/
-    const LS_KEY = "staff_panel_v3";
+    const LS_KEY = "staff_panel_v3_1";
     const AGENT = "Allz";
 
     const AUTO_REMOVE_DELIVERED_MS = 60 * 60 * 1000; // 1 hour
     const POLL_MS = 2500; // refresh interval
-    const SIMULATE_REPLY_PROB = 0.22; // chance per tick to create a customer reply
+    const SIMULATE_REPLY_PROB = 0.22;
 
     const QUEUES = [
       { id:"all", label:"TODAS" },
@@ -824,7 +946,8 @@
             { id: rid(), type:"me", text:"Olá! Muito obrigado pela sua compra, caso tenha alguma dúvida, pode me informar aqui ou lá no discord, abrindo suporte. Entregaremos o mais rápido possível, ainda hoje! 💜", at: nowMinusMinutes(30)},
             { id: rid(), type:"me", text:"Verifiquei que ainda não enviou sua gamepass, precisa de ajuda com isso? Caso ela apenas não tenha sido encontrada, vá em \"minhas compras\" e selecione a compra que está tendo problemas, após isso é só clicar em \"inserir link manualmente\" e colocar o link de sua gamepass! Lembre-se de desativar os preços regionais.", at: nowMinusMinutes(28)},
           ],
-          lastSeenMsgCount: 0
+          lastSeenMsgCount: 0,
+          lastNotifiedCount: 0
         },
         {
           id:"t2",
@@ -844,14 +967,15 @@
           clientEmail:"-",
           spent:49.9, orders:1, items:1,
           tags:["ENTREGUE","MM2"],
-          deliveredAt: Date.now() - (25 * 60 * 1000), // delivered 25 min ago
+          deliveredAt: Date.now() - (25 * 60 * 1000),
           messages: [
             { id: rid(), type:"sys", text:"Pagamento confirmado! Pedido liberado para entrega." },
             { id: rid(), type:"me", text:"Pedido recebido! Já estou separando seu item. ✅", at: nowMinusMinutes(52)},
             { id: rid(), type:"them", text:"Opa, beleza! Valeu", at: nowMinusMinutes(51)},
             { id: rid(), type:"me", text:"Entregue! Se precisar de algo, chama. 💜", at: nowMinusMinutes(50)},
           ],
-          lastSeenMsgCount: 0
+          lastSeenMsgCount: 0,
+          lastNotifiedCount: 0
         },
         {
           id:"t3",
@@ -877,7 +1001,8 @@
             { id: rid(), type:"sys", text:"Allz assumiu este atendimento." },
             { id: rid(), type:"them", text:"Oi, eu não achei onde manda o link", at: nowMinusMinutes(78)},
           ],
-          lastSeenMsgCount: 0
+          lastSeenMsgCount: 0,
+          lastNotifiedCount: 0
         },
         {
           id:"t4",
@@ -900,9 +1025,10 @@
           deliveredAt:null,
           messages: [
             { id: rid(), type:"sys", text:"Pedido em análise." },
-            { id: rid(), type:"them", text:"Meu ticket tá sem tag, pode arrumar?", at: nowMinusMinutes(108)},
+            { id: rid(), type:"them", text:"Posso esperar, só me avisa aqui", at: nowMinusMinutes(108)},
           ],
-          lastSeenMsgCount: 0
+          lastSeenMsgCount: 0,
+          lastNotifiedCount: 0
         },
         {
           id:"t5",
@@ -927,7 +1053,8 @@
             { id: rid(), type:"sys", text:"Reembolso processado." },
             { id: rid(), type:"me", text:"Reembolso concluído. 💜", at: nowMinusMinutes(138)},
           ],
-          lastSeenMsgCount: 0
+          lastSeenMsgCount: 0,
+          lastNotifiedCount: 0
         },
       ];
     }
@@ -989,7 +1116,8 @@
             ...(status==="refunded" ? [{ id: rid(), type:"me", text:"Reembolso processado. 💜", at: createdAt + 6*60*1000 }] : []),
             ...(status==="canceled" ? [{ id: rid(), type:"me", text:"Pedido cancelado conforme solicitado.", at: createdAt + 6*60*1000 }] : []),
           ],
-          lastSeenMsgCount: 0
+          lastSeenMsgCount: 0,
+          lastNotifiedCount: 0
         });
       }
       return out;
@@ -1009,10 +1137,11 @@
           onlyMine: false,
           sortBy: "recent",
           search: "",
-          soundOn: false
+          soundOn: false,
+          demoSim: true
         },
         tickets: base.concat(extra),
-        ui: { lastToastAt: 0 }
+        notifications: [] // {id, ticketId, name, text, at, read}
       };
     };
 
@@ -1022,33 +1151,28 @@
         if(!raw) return seedData();
         const parsed = JSON.parse(raw);
         if(!parsed.tickets || !Array.isArray(parsed.tickets)) return seedData();
-        // migrate missing fields
+
         parsed.filters = parsed.filters || {};
         parsed.filters.queue = parsed.filters.queue || "all";
         parsed.filters.soundOn = !!parsed.filters.soundOn;
+        parsed.filters.demoSim = parsed.filters.demoSim !== false;
+
+        parsed.notifications = Array.isArray(parsed.notifications) ? parsed.notifications : [];
+
         parsed.tickets.forEach(t=>{
-          t.queue = t.queue || guessQueue(t);
+          t.queue = t.queue || "PEDIDOS_NOVOS";
           t.tags = (t.tags || []).map(normalizeTag);
           t.deliveredAt = t.deliveredAt ?? null;
           t.messages = (t.messages || []).map(m => ({ id: m.id || rid(), ...m }));
           t.lastSeenMsgCount = t.lastSeenMsgCount || 0;
+          t.lastNotifiedCount = t.lastNotifiedCount || 0; // <- anti spam
         });
         return parsed;
       }catch{
         return seedData();
       }
     }
-    function save(){
-      localStorage.setItem(LS_KEY, JSON.stringify(state));
-    }
-
-    function guessQueue(t){
-      const tags = (t.tags||[]).map(normalizeTag);
-      if(tags.includes("MM2")) return "MM2";
-      if(tags.includes("BLOXFRUITS")) return "BLOXFRUITS";
-      if(tags.includes("SEM_GAMEPASS")) return "SEM_GAMEPASS";
-      return "PEDIDOS_NOVOS";
-    }
+    function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
 
     let state = load();
 
@@ -1068,14 +1192,26 @@
     const elBanner = document.getElementById("bannerText");
     const elQueueTabs = document.getElementById("queueTabs");
     const elSoundOn = document.getElementById("soundOn");
+    const elDemoSim = document.getElementById("demoSim");
     const elToasts = document.getElementById("toasts");
+
+    // Notifications
+    const elBell = document.getElementById("btnBell");
+    const elBellBadge = document.getElementById("bellBadge");
+    const elNotiPanel = document.getElementById("notiPanel");
+    const elNotiList = document.getElementById("notiList");
+    const elBtnMarkAllRead = document.getElementById("btnMarkAllRead");
+    const elBtnClearNoti = document.getElementById("btnClearNoti");
 
     // Filters drawer
     const elFilters = document.getElementById("filters");
     document.getElementById("btnFilters").addEventListener("click", () => elFilters.classList.add("open"));
     document.getElementById("btnCloseFilters").addEventListener("click", () => elFilters.classList.remove("open"));
     document.addEventListener("keydown", (e)=>{
-      if(e.key === "Escape") elFilters.classList.remove("open");
+      if(e.key === "Escape"){
+        elFilters.classList.remove("open");
+        elNotiPanel.classList.remove("open");
+      }
     });
 
     // Tabs
@@ -1087,12 +1223,13 @@
       });
     });
 
-    // Inputs (persist)
+    // Persist inputs
     elSearch.value = state.filters.search || "";
     elOnlyUnread.checked = !!state.filters.onlyUnread;
     elOnlyMine.checked = !!state.filters.onlyMine;
     elSortBy.value = state.filters.sortBy || "recent";
     elSoundOn.checked = !!state.filters.soundOn;
+    elDemoSim.checked = !!state.filters.demoSim;
 
     elSearch.addEventListener("input", (e)=>{
       state.filters.search = e.target.value;
@@ -1100,39 +1237,68 @@
       renderTicketsPreserveScroll();
       renderQueueTabs();
     });
-
     elOnlyUnread.addEventListener("change", ()=>{
       state.filters.onlyUnread = elOnlyUnread.checked;
       save();
       renderTicketsPreserveScroll();
       renderQueueTabs();
     });
-
     elOnlyMine.addEventListener("change", ()=>{
       state.filters.onlyMine = elOnlyMine.checked;
       save();
       renderTicketsPreserveScroll();
       renderQueueTabs();
     });
-
     elSortBy.addEventListener("change", ()=>{
       state.filters.sortBy = elSortBy.value;
       save();
       renderTicketsPreserveScroll();
       renderQueueTabs();
     });
-
     elSoundOn.addEventListener("change", ()=>{
       state.filters.soundOn = elSoundOn.checked;
       save();
       toast("Som de notificação", elSoundOn.checked ? "Ativado" : "Desativado", "🔔");
     });
+    elDemoSim.addEventListener("change", ()=>{
+      state.filters.demoSim = elDemoSim.checked;
+      save();
+      toast("Simulação (DEMO)", elDemoSim.checked ? "Ativada" : "Desativada", "🧪");
+    });
 
-    // Messaging
-    const elMsgInput = document.getElementById("msgInput");
-    document.getElementById("btnSend").addEventListener("click", sendMsg);
-    elMsgInput.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter") sendMsg();
+    // Notification bell toggle
+    elBell.addEventListener("click", ()=>{
+      elNotiPanel.classList.toggle("open");
+      renderNotifications();
+      // se abrir, marca como "visualizado" mas não precisa marcar como lido
+    });
+    elBtnMarkAllRead.addEventListener("click", ()=>{
+      state.notifications.forEach(n => n.read = true);
+      save();
+      renderNotifications();
+      renderBellBadge();
+      toast("Notificações", "Marcadas como lidas.", "✅");
+    });
+    elBtnClearNoti.addEventListener("click", ()=>{
+      state.notifications = [];
+      save();
+      renderNotifications();
+      renderBellBadge();
+      toast("Notificações", "Lista limpa.", "🧹");
+    });
+
+    // close noti panel when click outside
+    document.addEventListener("click", (e)=>{
+      const inBell = elBell.contains(e.target);
+      const inPanel = elNotiPanel.contains(e.target);
+      if(!inBell && !inPanel){
+        elNotiPanel.classList.remove("open");
+      }
+      // close filters if click outside too
+      if(elFilters.classList.contains("open")){
+        const inFilters = elFilters.contains(e.target) || document.getElementById("btnFilters").contains(e.target);
+        if(!inFilters) elFilters.classList.remove("open");
+      }
     });
 
     function getSelected(){
@@ -1146,26 +1312,33 @@
         t.unread = false;
         t.lastSeenMsgCount = (t.messages||[]).length;
       }
+      // marca notificações desse ticket como lidas
+      state.notifications.forEach(n => { if(n.ticketId === id) n.read = true; });
       save();
       renderAll({ keepChatScroll:false });
       scrollChatBottom();
+      renderBellBadge();
+      renderNotifications();
     }
+
+    // Messaging
+    const elMsgInput = document.getElementById("msgInput");
+    document.getElementById("btnSend").addEventListener("click", sendMsg);
+    elMsgInput.addEventListener("keydown", (e)=>{ if(e.key === "Enter") sendMsg(); });
 
     function sendMsg(){
       const text = (elMsgInput.value || "").trim();
       if(!text) return;
-
       const t = getSelected();
       if(!t) return;
 
       t.messages.push({ id: rid(), type:"me", text, at: Date.now() });
       t.unread = false;
       t.lastSeenMsgCount = t.messages.length;
-
       elMsgInput.value = "";
       save();
 
-      renderChat();      // fast update without re-open
+      renderChat();
       renderTicketsPreserveScroll();
       renderRightPanel();
       renderQueueTabs();
@@ -1193,8 +1366,8 @@
       t.queue = "FILA_DE_ENTREGA";
       t.unread = false;
       t.deliveredAt = Date.now();
-
       t.messages.push({ id: rid(), type:"sys", text:"Pedido marcado como ENTREGUE. Este chat será removido automaticamente após 1 hora." });
+      t.lastSeenMsgCount = t.messages.length;
 
       save();
       toast("Pedido resolvido", "Marcado como ENTREGUE + movido para FILA DE ENTREGA", "✅");
@@ -1218,27 +1391,22 @@
 
     // Tag add/remove
     elBtnAddTag.addEventListener("click", addTagFromInput);
-    elTagInput.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter") addTagFromInput();
-    });
+    elTagInput.addEventListener("keydown", (e)=>{ if(e.key === "Enter") addTagFromInput(); });
 
     function addTagFromInput(){
       const raw = (elTagInput.value || "").trim();
       if(!raw) return;
       const tag = normalizeTag(raw);
-
       const t = getSelected();
       if(!t) return;
 
-      // FIX: preserve list scroll (no jump to top)
       const prevScroll = elTicketList.scrollTop;
-
       t.tags = uniqueTags([...(t.tags||[]), tag]);
       elTagInput.value = "";
       save();
 
       renderTagCloud();
-      renderTickets(); // will be restored below
+      renderTickets();
       elTicketList.scrollTop = prevScroll;
 
       renderRightPanel();
@@ -1250,7 +1418,6 @@
       if(!t) return;
 
       const prevScroll = elTicketList.scrollTop;
-
       t.tags = (t.tags||[]).filter(x => normalizeTag(x) !== normalizeTag(tag));
       save();
 
@@ -1273,32 +1440,20 @@
 
     function passesFilters(t){
       const f = state.filters;
-
-      // queue
       if(f.queue !== "all" && t.queue !== f.queue) return false;
-
-      // status
       if(f.status !== "all" && t.status !== f.status) return false;
-
-      // tag
       if(f.tag !== "all"){
         const tags = (t.tags||[]).map(normalizeTag);
         if(!tags.includes(normalizeTag(f.tag))) return false;
       }
-
-      // unread / mine
       if(f.onlyUnread && !t.unread) return false;
       if(f.onlyMine && !t.mine) return false;
 
-      // search
       const q = (f.search||"").trim().toLowerCase();
       if(q){
-        const hay = [
-          t.name, t.user, t.category, t.item, t.queue, (t.tags||[]).join(" ")
-        ].join(" ").toLowerCase();
+        const hay = [t.name, t.user, t.category, t.item, t.queue, (t.tags||[]).join(" ")].join(" ").toLowerCase();
         if(!hay.includes(q)) return false;
       }
-
       return true;
     }
 
@@ -1312,9 +1467,7 @@
       return copy;
     }
 
-    function getVisibleTickets(){
-      return sortTickets(state.tickets.filter(passesFilters));
-    }
+    function getVisibleTickets(){ return sortTickets(state.tickets.filter(passesFilters)); }
 
     function getSnippet(t){
       const msgs = t.messages || [];
@@ -1323,11 +1476,9 @@
       return (last.type==="me" ? "Você: " : "") + last.text.slice(0,90);
     }
 
-    // Queue tabs render
     function renderQueueTabs(){
       const counts = countQueuesWithCurrentFilters();
       elQueueTabs.innerHTML = "";
-
       QUEUES.forEach(q=>{
         const btn = document.createElement("div");
         btn.className = "qtab" + (state.filters.queue===q.id ? " active" : "");
@@ -1336,28 +1487,40 @@
           save();
           renderAll({ keepChatScroll:true });
         });
-
         const label = document.createElement("span");
         label.textContent = q.label;
-
         const badge = document.createElement("span");
         badge.className = "qbadge";
         badge.textContent = String(counts[q.id] ?? 0);
-
         btn.appendChild(label);
         btn.appendChild(badge);
         elQueueTabs.appendChild(btn);
       });
     }
 
+    function passesFiltersWith(filters, t){
+      const f = filters;
+      if(f.status !== "all" && t.status !== f.status) return false;
+      if(f.tag !== "all"){
+        const tags = (t.tags||[]).map(normalizeTag);
+        if(!tags.includes(normalizeTag(f.tag))) return false;
+      }
+      if(f.onlyUnread && !t.unread) return false;
+      if(f.onlyMine && !t.mine) return false;
+      const q = (f.search||"").trim().toLowerCase();
+      if(q){
+        const hay = [t.name, t.user, t.category, t.item, t.queue, (t.tags||[]).join(" ")].join(" ").toLowerCase();
+        if(!hay.includes(q)) return false;
+      }
+      return true;
+    }
+
     function countQueuesWithCurrentFilters(){
-      // Count per queue respecting filters except queue itself (so tabs remain informative)
       const f = state.filters;
       const counts = {};
       QUEUES.forEach(q => counts[q.id]=0);
 
       state.tickets.forEach(t=>{
-        // apply filters but ignore queue filter
         const temp = { ...f, queue:"all" };
         if(!passesFiltersWith(temp, t)) return;
         counts["all"]++;
@@ -1367,31 +1530,6 @@
       return counts;
     }
 
-    function passesFiltersWith(filters, t){
-      const f = filters;
-
-      if(f.status !== "all" && t.status !== f.status) return false;
-
-      if(f.tag !== "all"){
-        const tags = (t.tags||[]).map(normalizeTag);
-        if(!tags.includes(normalizeTag(f.tag))) return false;
-      }
-
-      if(f.onlyUnread && !t.unread) return false;
-      if(f.onlyMine && !t.mine) return false;
-
-      const q = (f.search||"").trim().toLowerCase();
-      if(q){
-        const hay = [
-          t.name, t.user, t.category, t.item, t.queue, (t.tags||[]).join(" ")
-        ].join(" ").toLowerCase();
-        if(!hay.includes(q)) return false;
-      }
-
-      return true;
-    }
-
-    // Status pills + tag cloud
     function renderStatusPills(){
       elStatusPills.innerHTML = "";
       STATUS.forEach(s=>{
@@ -1440,7 +1578,6 @@
       });
     }
 
-    // Render tickets list (with unread dot, tags, queue)
     function renderTickets(){
       const tickets = getVisibleTickets();
       elTicketList.innerHTML = "";
@@ -1508,7 +1645,6 @@
         elTicketList.appendChild(wrap);
       });
 
-      // if filtered list doesn't include selected, select first available
       const hasSelected = tickets.some(t=>t.id===state.selectedId);
       if(!hasSelected && tickets.length){
         state.selectedId = tickets[0].id;
@@ -1530,16 +1666,13 @@
       elTicketList.scrollTop = prev;
     }
 
-    // Render chat
     function formatTime(ts){
       try{
         const d = new Date(ts);
         const hh = String(d.getHours()).padStart(2,"0");
         const mm = String(d.getMinutes()).padStart(2,"0");
         return `${hh}:${mm}`;
-      }catch{
-        return "";
-      }
+      }catch{ return ""; }
     }
 
     function renderChat(){
@@ -1547,7 +1680,6 @@
       if(!t){ elChat.innerHTML=""; return; }
 
       elChat.innerHTML = "";
-
       const sysTop = (t.messages||[]).find(m => m.type==="sys");
       elBanner.textContent = sysTop ? sysTop.text : "Ticket aberto.";
 
@@ -1572,7 +1704,6 @@
         const meta = document.createElement("div");
         meta.className = "meta";
 
-        // delete button for own messages
         if(m.type==="me"){
           const del = document.createElement("button");
           del.className = "delBtn";
@@ -1595,11 +1726,8 @@
       });
     }
 
-    function scrollChatBottom(){
-      elChat.scrollTop = elChat.scrollHeight;
-    }
+    function scrollChatBottom(){ elChat.scrollTop = elChat.scrollHeight; }
 
-    // Right panel
     function hashId(id){
       const s = "4c6b26f3a71e" + id.replace(/\D/g,"");
       return s.slice(0,12) + "-4...";
@@ -1609,7 +1737,6 @@
       const t = getSelected();
       if(!t){ elPanelBody.innerHTML=""; return; }
 
-      // Stats
       document.getElementById("statSpent").textContent = String(t.spent ?? 13);
       document.getElementById("statOrders").textContent = String(t.orders ?? 1);
       document.getElementById("statItems").textContent = String(t.items ?? 1);
@@ -1637,7 +1764,6 @@
           <div class="row"><div class="k">Quantidade</div><div class="v">1</div></div>
         `;
       } else {
-        // Actions tab: move queue + email notify demo + archive info
         elPanelBody.innerHTML = `
           <div class="row"><div class="k">Mover para fila</div><div class="v"></div></div>
           <select id="queueSelect" class="select" style="margin-top:6px">
@@ -1645,15 +1771,10 @@
           </select>
 
           <div class="row" style="margin-top:12px"><div class="k">Notificar cliente</div><div class="v"></div></div>
-          <div class="muted">Botão de e-mail aqui é DEMO. Para e-mail real precisa backend.</div>
+          <div class="muted">E-mail aqui é DEMO. Para e-mail real precisa backend.</div>
           <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap">
             <button class="btn small ghost" id="btnEmail">ENVIAR E-MAIL</button>
             <button class="btn small" id="btnPing">NOTIFICAÇÃO (DEMO)</button>
-          </div>
-
-          <div class="row" style="margin-top:12px"><div class="k">Auto-remover</div><div class="v"></div></div>
-          <div class="muted">
-            Se marcado como ENTREGUE, este chat será removido automaticamente após 1 hora para limpar a fila.
           </div>
         `;
 
@@ -1675,7 +1796,6 @@
             toast("E-mail indisponível", "Este ticket não tem e-mail cadastrado.", "✉️");
             return;
           }
-          // demo
           toast("E-mail (DEMO)", `Simulando envio para ${email}`, "📨");
           t.messages.push({ id: rid(), type:"sys", text:`(DEMO) E-mail enviado para o cliente: ${email}` });
           t.lastSeenMsgCount = t.messages.length;
@@ -1689,7 +1809,7 @@
         });
       }
 
-      // Ticket tags (removable)
+      // Ticket tags
       elTicketTags.innerHTML = "";
       (t.tags || []).forEach(tag=>{
         const tg = document.createElement("div");
@@ -1708,7 +1828,7 @@
       }
     }
 
-    // Toast + sound
+    // Toast
     function toast(title, msg, icon="🟣"){
       const t = document.createElement("div");
       t.className = "toast";
@@ -1721,13 +1841,12 @@
       `;
       elToasts.appendChild(t);
 
-      // auto remove
       setTimeout(()=> {
         t.style.opacity = "0";
         t.style.transform = "translateY(-6px)";
         t.style.transition = "all .18s ease";
         setTimeout(()=> t.remove(), 220);
-      }, 2600);
+      }, 1900);
     }
 
     function escapeHtml(s){
@@ -1751,11 +1870,81 @@
         g.gain.value = 0.05;
         o.connect(g); g.connect(ctx.destination);
         o.start();
-        setTimeout(()=>{ o.stop(); ctx.close(); }, 120);
+        setTimeout(()=>{ o.stop(); ctx.close(); }, 110);
       }catch{}
     }
 
-    // Auto-remove delivered chats after 1h
+    // Notification center
+    function addNotification(ticket, msgText){
+      const notif = {
+        id: rid(),
+        ticketId: ticket.id,
+        name: ticket.name,
+        text: msgText,
+        at: Date.now(),
+        read: false
+      };
+      state.notifications.unshift(notif);
+      // cap size
+      if(state.notifications.length > 80) state.notifications = state.notifications.slice(0,80);
+    }
+
+    function renderBellBadge(){
+      const unread = state.notifications.filter(n => !n.read).length;
+      if(unread > 0){
+        elBellBadge.style.display = "flex";
+        elBellBadge.textContent = String(Math.min(unread, 99));
+      }else{
+        elBellBadge.style.display = "none";
+      }
+    }
+
+    function renderNotifications(){
+      renderBellBadge();
+      elNotiList.innerHTML = "";
+
+      if(!state.notifications.length){
+        const d = document.createElement("div");
+        d.className = "notiEmpty";
+        d.textContent = "Sem notificações.";
+        elNotiList.appendChild(d);
+        return;
+      }
+
+      state.notifications.forEach(n=>{
+        const item = document.createElement("div");
+        item.className = "notiItem";
+        item.addEventListener("click", ()=>{
+          n.read = true;
+          save();
+          selectTicket(n.ticketId);
+          elNotiPanel.classList.remove("open");
+        });
+
+        const dot = document.createElement("div");
+        dot.className = "notiDot";
+        dot.style.opacity = n.read ? "0" : "1";
+
+        const txt = document.createElement("div");
+        txt.className = "notiText";
+        txt.innerHTML = `<b>${escapeHtml(n.name)}</b> • ${escapeHtml(n.text.slice(0,80))}`;
+
+        const meta = document.createElement("div");
+        meta.className = "notiMeta";
+        meta.textContent = new Date(n.at).toLocaleString("pt-BR");
+
+        const wrap = document.createElement("div");
+        wrap.appendChild(txt);
+        wrap.appendChild(meta);
+
+        item.appendChild(dot);
+        item.appendChild(wrap);
+
+        elNotiList.appendChild(item);
+      });
+    }
+
+    // Auto-remove delivered
     function cleanupDelivered(){
       const before = state.tickets.length;
       const now = Date.now();
@@ -1769,49 +1958,55 @@
 
       const after = state.tickets.length;
       if(after !== before){
-        // selected removed?
         const still = state.tickets.some(x=>x.id===state.selectedId);
-        if(!still){
-          state.selectedId = state.tickets[0]?.id || null;
-        }
+        if(!still) state.selectedId = state.tickets[0]?.id || null;
         save();
-        toast("Limpeza automática", "Chats ENTREGUES removidos (após 1 hora).", "🧹");
         renderAll({ keepChatScroll:true });
       }
     }
 
-    // Notifications when customer replies
+    // Anti-spam detection of new customer messages
     function detectNewCustomerMessages(){
       const selected = getSelected();
+
       state.tickets.forEach(t=>{
         const msgCount = (t.messages||[]).length;
-        const lastSeen = t.lastSeenMsgCount || 0;
+        const lastNotified = t.lastNotifiedCount || 0;
 
-        if(msgCount > lastSeen){
-          // check if new messages contain "them"
-          const newMsgs = t.messages.slice(lastSeen);
-          const hasThem = newMsgs.some(m => m.type === "them");
-          if(hasThem){
-            t.unread = true;
-
-            // Don't spam toast for the currently open ticket if user is at bottom
+        if(msgCount > lastNotified){
+          const newMsgs = t.messages.slice(lastNotified);
+          const latestThem = [...newMsgs].reverse().find(m => m.type === "them");
+          if(latestThem){
+            // mark ticket unread unless currently open
             const isOpen = selected && selected.id === t.id;
             if(!isOpen){
-              toast("Cliente respondeu", `${t.name}: ${newMsgs.find(m=>m.type==="them")?.text?.slice(0,80) || "Nova mensagem"}`, "💬");
+              t.unread = true;
+
+              // Add to notification center ONCE per new message batch
+              addNotification(t, latestThem.text);
+
+              // Light toast only (1) + optional sound
+              toast("Cliente respondeu", `${t.name}: ${latestThem.text.slice(0,64)}`, "💬");
               playBeep();
             }
           }
 
-          // Update lastSeen only if ticket is open
+          // update lastNotifiedCount so it doesn't spam
+          t.lastNotifiedCount = msgCount;
+
+          // if open ticket, consider read
           if(selected && selected.id === t.id){
-            t.lastSeenMsgCount = msgCount;
             t.unread = false;
+            t.lastSeenMsgCount = msgCount;
           }
         }
       });
+
+      renderBellBadge();
+      save();
     }
 
-    // Simulate incoming messages for demo
+    // DEMO simulate
     const SIM_REPLIES = [
       "Oi, tô aqui! Conseguiu ver?",
       "Eu mandei o link agora, confere por favor",
@@ -1824,7 +2019,7 @@
     ];
 
     function simulateIncoming(){
-      // pick one eligible ticket with pending status sometimes
+      if(!state.filters.demoSim) return;
       if(Math.random() > SIMULATE_REPLY_PROB) return;
 
       const candidates = state.tickets.filter(t => t.status === "pending");
@@ -1833,8 +2028,6 @@
       const t = candidates[Math.floor(Math.random()*candidates.length)];
       const txt = SIM_REPLIES[Math.floor(Math.random()*SIM_REPLIES.length)];
       t.messages.push({ id: rid(), type:"them", text: txt, at: Date.now() });
-
-      // unread will be handled by detectNewCustomerMessages
       save();
     }
 
@@ -1843,8 +2036,6 @@
       renderQueueTabs();
       renderStatusPills();
       renderTagCloud();
-
-      // preserve list scroll always (fix jump)
       renderTicketsPreserveScroll();
 
       if(keepChatScroll){
@@ -1856,32 +2047,35 @@
       }
 
       renderRightPanel();
+      renderNotifications();
     }
 
-    // Initial render
+    // Init render
     renderAll({ keepChatScroll:false });
     setTimeout(()=> scrollChatBottom(), 60);
 
-    // Queue tab default
-    if(!state.filters.queue) state.filters.queue = "all";
-
-    // Close filters on outside click (optional)
-    document.addEventListener("click", (e)=>{
-      if(!elFilters.classList.contains("open")) return;
-      const isInside = elFilters.contains(e.target) || e.target.id === "btnFilters";
-      if(!isInside) elFilters.classList.remove("open");
+    // Chat click marks read
+    elChat.addEventListener("click", ()=>{
+      const t = getSelected();
+      if(!t) return;
+      t.unread = false;
+      t.lastSeenMsgCount = (t.messages||[]).length;
+      // mark notifications of this ticket read
+      state.notifications.forEach(n => { if(n.ticketId === t.id) n.read = true; });
+      save();
+      renderTicketsPreserveScroll();
+      renderQueueTabs();
+      renderBellBadge();
+      renderNotifications();
     });
 
     // Auto-refresh loop
     setInterval(()=>{
       cleanupDelivered();
-
-      // simulate + detect
       simulateIncoming();
       detectNewCustomerMessages();
 
-      // fast update UI (no need close/open)
-      // preserve scroll positions:
+      // fast repaint (preserve scroll)
       const listScroll = elTicketList.scrollTop;
       const chatScroll = elChat.scrollTop;
       const atBottom = (elChat.scrollHeight - elChat.scrollTop - elChat.clientHeight) < 80;
@@ -1895,22 +2089,9 @@
       else elChat.scrollTop = chatScroll;
 
       renderRightPanel();
-
+      renderBellBadge();
       save();
     }, POLL_MS);
-
-    // When user focuses/open chat, mark as read
-    elChat.addEventListener("click", ()=>{
-      const t = getSelected();
-      if(!t) return;
-      t.unread = false;
-      t.lastSeenMsgCount = (t.messages||[]).length;
-      save();
-      renderTicketsPreserveScroll();
-      renderQueueTabs();
-    });
-
-    // Filters: status + tag also require preserving scroll (already handled in renderAll)
   </script>
 </body>
 </html>
