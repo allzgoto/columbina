@@ -8,8 +8,7 @@
   <style>
     :root{
       --bg:#050507;
-      --glass: rgba(0,0,0,.38);      /* preto ofuscado */
-      --glass2: rgba(10,10,14,.55);
+      --glass: rgba(0,0,0,.38);
       --line: rgba(255,255,255,.10);
       --line2: rgba(255,255,255,.14);
       --text: rgba(255,255,255,.90);
@@ -17,9 +16,8 @@
       --orange: rgba(255,140,50,.92);
       --orangeSoft: rgba(255,140,50,.22);
 
-      /* “XP bevel” (borda clara em cima, escura embaixo) */
       --bevelTop: rgba(255,255,255,.22);
-      --bevelBot: rgba(0,0,0,.70);
+      --bevelBot: rgba(0,0,0,.80);
 
       --good:#43d17a;
       --idle:#f2c14e;
@@ -40,7 +38,7 @@
       overflow:hidden;
     }
 
-    /* fundo discreto (nada exagerado) */
+    /* fundo discreto */
     .bg-soft{
       position:fixed; inset:0;
       pointer-events:none;
@@ -50,7 +48,6 @@
         linear-gradient(180deg, rgba(255,255,255,.02), transparent 40%, rgba(0,0,0,.18));
       opacity:.9;
     }
-
     .bg-noise{
       position:fixed; inset:0;
       pointer-events:none;
@@ -61,117 +58,51 @@
         repeating-linear-gradient(90deg, rgba(255,255,255,.02), rgba(255,255,255,.02) 1px, transparent 1px, transparent 6px);
       filter:contrast(110%) saturate(105%);
     }
-
     #particles{
       position:fixed; inset:0;
       z-index:0;
     }
 
-    /* ===== ENTER (simples, preto, central) ===== */
+    /* ===== ENTER (só a palavra) ===== */
     .enter{
       position:fixed; inset:0;
-      z-index:50;
+      z-index:60;
       display:flex;
       align-items:center;
       justify-content:center;
       background:#000;
-    }
-
-    .enter-box{
-      width:min(420px, 92vw);
-      text-align:center;
-      padding:22px 18px 18px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.35);
-      box-shadow: 0 30px 90px rgba(0,0,0,.85);
-      position:relative;
-      overflow:hidden;
-    }
-
-    /* “XP vibes” + toque moderno */
-    .enter-box:before{
-      content:"";
-      position:absolute; inset:-1px;
-      background:
-        linear-gradient(90deg, transparent, rgba(255,140,50,.20), transparent),
-        radial-gradient(220px 120px at 30% 25%, rgba(255,255,255,.08), transparent 60%),
-        radial-gradient(260px 140px at 75% 75%, rgba(255,140,50,.10), transparent 65%);
-      opacity:.55;
-      pointer-events:none;
-    }
-
-    .enter-title{
-      position:relative; z-index:1;
-      font-family:var(--mono);
-      font-size:12px;
-      letter-spacing:.20em;
-      text-transform:uppercase;
-      color:rgba(255,255,255,.82);
-      margin:0 0 10px;
-    }
-
-    .enter-sub{
-      position:relative; z-index:1;
-      font-family:var(--mono);
-      font-size:12px;
-      color:rgba(255,255,255,.60);
-      letter-spacing:.06em;
-      margin:0 0 14px;
-    }
-
-    .enter-btn{
-      position:relative; z-index:1;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
       cursor:pointer;
       user-select:none;
-
-      padding:11px 16px;
-      border-radius:10px;
-
-      /* bevel XP */
-      border:1px solid rgba(255,255,255,.18);
-      border-top-color: var(--bevelTop);
-      border-left-color: var(--bevelTop);
-      border-right-color: rgba(0,0,0,.70);
-      border-bottom-color: rgba(0,0,0,.80);
-
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02)),
-        rgba(15,15,18,.55);
-
-      box-shadow:
-        0 0 0 1px rgba(255,140,50,.10) inset,
-        0 0 26px rgba(255,140,50,.10);
-
-      font-family:var(--mono);
-      font-size:12px;
-      letter-spacing:.14em;
-      text-transform:uppercase;
-      color:rgba(255,255,255,.90);
-
-      transition: transform .12s ease, filter .12s ease, border-color .12s ease;
-    }
-    .enter-btn:hover{
-      transform: translateY(-1px);
-      filter:brightness(1.07);
-      border-color: rgba(255,140,50,.35);
-    }
-    .enter-btn:active{
-      transform: translateY(0px) scale(.99);
-      filter:brightness(1.02);
     }
 
-    .enter-hint{
-      position:relative; z-index:1;
-      margin-top:12px;
-      font-family:var(--mono);
-      font-size:11px;
-      color:rgba(255,255,255,.46);
-      letter-spacing:.06em;
+    .enter-word{
+      font-family: var(--mono);
+      font-size: 22px;
+      letter-spacing: .55em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.86);
+      text-shadow: 0 0 16px rgba(255,140,50,.10);
+      position:relative;
+    }
+    .enter-word::after{
+      content:"";
+      position:absolute;
+      right:-14px;
+      top:50%;
+      width:8px;
+      height:1px;
+      background: rgba(255,140,50,.75);
+      transform: translateY(-50%);
+      opacity:.0;
+      animation: blink 1.1s infinite ease;
+    }
+    @keyframes blink{
+      0%,45%{ opacity:0; }
+      55%,100%{ opacity:.9; }
+    }
+    .enter:hover .enter-word{
+      color: rgba(255,255,255,.95);
+      text-shadow: 0 0 22px rgba(255,140,50,.18);
     }
 
     /* ===== APP ===== */
@@ -185,7 +116,6 @@
       padding:14px;
     }
 
-    /* Painel “programa antigo” + preto moderno */
     .panel{
       border-radius:14px;
       border:1px solid rgba(255,255,255,.12);
@@ -195,7 +125,6 @@
       position:relative;
       backdrop-filter: blur(4px);
     }
-
     .panel:before{
       content:"";
       position:absolute; inset:0;
@@ -206,7 +135,7 @@
       opacity:.75;
     }
 
-    /* ===== MENU ESQUERDO (toolbox estilo Paint) ===== */
+    /* ===== MENU ESQUERDO (toolbox) ===== */
     .menu{
       padding:12px;
       display:flex;
@@ -229,7 +158,6 @@
       background:
         linear-gradient(180deg, rgba(40,40,55,.60), rgba(12,12,18,.55));
     }
-
     .xp-titlebar .left{
       display:flex; align-items:center; gap:10px;
       font-family:var(--mono);
@@ -238,7 +166,6 @@
       text-transform:uppercase;
       color:rgba(255,255,255,.86);
     }
-
     .mini-lights{ display:flex; gap:6px; opacity:.9; }
     .mini-lights span{
       width:10px; height:10px; border-radius:3px;
@@ -248,7 +175,6 @@
     }
     .mini-lights span:nth-child(2){ background: rgba(255,140,50,.14); }
     .mini-lights span:nth-child(3){ background: rgba(255,255,255,.09); }
-
     .xp-titlebar .right{
       font-family:var(--mono);
       font-size:10px;
@@ -264,7 +190,6 @@
       gap:8px;
       padding:10px;
       border-radius:12px;
-
       border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.22);
     }
@@ -281,7 +206,6 @@
       padding:10px 10px;
       border-radius:10px;
 
-      /* bevel XP */
       border:1px solid rgba(255,255,255,.16);
       border-top-color: rgba(255,255,255,.22);
       border-left-color: rgba(255,255,255,.20);
@@ -303,19 +227,13 @@
       transform: translateY(0px) scale(.99);
       filter:brightness(1.02);
     }
-    .toolbtn.active{
-      border-color: rgba(255,140,50,.46);
-      box-shadow: 0 0 0 1px rgba(255,140,50,.12) inset, 0 0 24px rgba(255,140,50,.10);
-    }
 
     .tool-ico{
       width:22px; height:22px;
       border-radius:6px;
-
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.05);
       display:grid; place-items:center;
-
       font-family:var(--mono);
       font-size:12px;
       color:rgba(255,255,255,.80);
@@ -334,7 +252,6 @@
       margin-top:auto;
       padding:10px 12px;
       border-radius:12px;
-
       border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.22);
     }
@@ -389,10 +306,8 @@
       box-shadow: 0 0 12px rgba(255,140,50,.18);
     }
 
-    .audio-ctrl{
-      display:flex; align-items:center; gap:8px;
-    }
-    .mute{
+    .audio-ctrl{ display:flex; align-items:center; gap:8px; }
+    .btn-bevel{
       all:unset;
       cursor:pointer;
       user-select:none;
@@ -418,8 +333,8 @@
 
       transition: transform .12s ease, border-color .12s ease, filter .12s ease;
     }
-    .mute:hover{ transform: translateY(-1px); border-color: rgba(255,140,50,.30); filter:brightness(1.06); }
-    .mute:active{ transform: translateY(0px) scale(.99); }
+    .btn-bevel:hover{ transform: translateY(-1px); border-color: rgba(255,140,50,.30); filter:brightness(1.06); }
+    .btn-bevel:active{ transform: translateY(0px) scale(.99); filter:brightness(1.02); }
 
     .stage{
       flex:1;
@@ -434,11 +349,8 @@
       width:min(980px, 100%);
       border-radius:14px;
       overflow:hidden;
-
       border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.30);
-
-      /* bevel leve (pra lembrar app antigo) */
       box-shadow:
         0 0 0 1px rgba(255,255,255,.05) inset,
         0 28px 90px rgba(0,0,0,.70);
@@ -449,11 +361,10 @@
       display:block;
       width:100%;
       height:auto;
-      max-height: 64vh; /* não fullscreen */
+      max-height: 70vh;
       background:#000;
     }
 
-    /* overlay AMV antigo (Bandicam + timestamp + legenda) */
     .amv-overlay{
       position:absolute; inset:0;
       pointer-events:none;
@@ -495,28 +406,92 @@
       opacity:.95;
     }
 
-    .content{
-      width:min(980px, 100%);
-      margin:0 auto;
-      padding:12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      position:relative; z-index:1;
+    /* ===== MODAL “JANELA” (abre quando clica no menu) ===== */
+    .modal{
+      position:fixed; inset:0;
+      z-index:55;
       display:none;
+      align-items:center;
+      justify-content:center;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(2px);
+      padding:14px;
     }
-    .content.active{ display:block; }
+    .modal.open{ display:flex; }
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
+    .window{
+      width:min(920px, 96vw);
+      max-height:min(78vh, 760px);
+      display:flex;
+      flex-direction:column;
+
+      border-radius:14px;
+      overflow:hidden;
+
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.45);
+      box-shadow: 0 30px 100px rgba(0,0,0,.80);
+    }
+
+    .winbar{
+      display:flex; align-items:center; justify-content:space-between;
       gap:10px;
+      padding:10px 10px;
+
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(180deg, rgba(40,40,55,.55), rgba(12,12,18,.55));
+
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.84);
+    }
+
+    .winbar .left{ display:flex; align-items:center; gap:10px; }
+    .winbar .pilldot{
+      width:7px; height:7px; border-radius:999px;
+      background: rgba(255,140,50,.55);
+      box-shadow: 0 0 12px rgba(255,140,50,.18);
+    }
+    .winbar .right{ display:flex; align-items:center; gap:8px; }
+
+    .close{
+      all:unset;
+      cursor:pointer;
+      user-select:none;
+      width:34px; height:28px;
+      border-radius:10px;
+
+      border:1px solid rgba(255,255,255,.16);
+      border-top-color: rgba(255,255,255,.22);
+      border-left-color: rgba(255,255,255,.20);
+      border-right-color: rgba(0,0,0,.72);
+      border-bottom-color: rgba(0,0,0,.82);
+
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+        rgba(12,12,15,.55);
+
+      display:grid; place-items:center;
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(255,255,255,.78);
+      transition:.12s ease;
+    }
+    .close:hover{ border-color: rgba(255,140,50,.30); transform: translateY(-1px); filter:brightness(1.06); }
+    .close:active{ transform: translateY(0px) scale(.99); }
+
+    .winbody{
+      padding:12px;
+      overflow:auto;
     }
 
     .card{
       border-radius:12px;
       border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
+      background: rgba(0,0,0,.22);
       padding:12px;
       position:relative;
       overflow:hidden;
@@ -532,7 +507,13 @@
     }
     .card > *{ position:relative; z-index:1; }
 
-    .card h3{
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:10px;
+    }
+
+    .h3{
       margin:0 0 10px 0;
       font-family:var(--mono);
       font-size:11px;
@@ -541,9 +522,15 @@
       color:rgba(255,255,255,.78);
     }
 
-    .social-hero{
-      display:flex; align-items:center; gap:12px;
+    .mini{
+      font-family:var(--mono);
+      font-size:11px;
+      color:rgba(255,255,255,.58);
+      letter-spacing:.06em;
+      line-height:1.5;
     }
+
+    .social-hero{ display:flex; align-items:center; gap:12px; }
     .social-ava{
       width:72px; height:72px;
       border-radius:12px;
@@ -557,11 +544,7 @@
       letter-spacing:.10em;
       color:rgba(255,255,255,.70);
     }
-    .social-hero strong{
-      display:block;
-      font-size:20px;
-      letter-spacing:.02em;
-    }
+    .social-hero strong{ display:block; font-size:20px; letter-spacing:.02em; }
     .social-hero span{
       display:block;
       margin-top:4px;
@@ -589,10 +572,7 @@
       box-shadow: 0 0 12px rgba(255,140,50,.18);
     }
 
-    .btnrow{
-      display:flex; flex-wrap:wrap; gap:8px;
-      margin-top:12px;
-    }
+    .btnrow{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
     .linkbtn{
       text-decoration:none;
       display:inline-flex; align-items:center; gap:8px;
@@ -620,15 +600,7 @@
     .linkbtn:hover{ border-color: rgba(255,140,50,.30); transform: translateY(-1px); filter:brightness(1.06); }
     .linkbtn:active{ transform: translateY(0px); filter:brightness(1.02); }
 
-    .mini{
-      font-family:var(--mono);
-      font-size:11px;
-      color:rgba(255,255,255,.58);
-      letter-spacing:.06em;
-      line-height:1.5;
-    }
-
-    /* ===== Discord widget (canto inferior esquerdo) ===== */
+    /* ===== Discord widget (sem “separadores” pesados) ===== */
     .discord-widget{
       position:fixed;
       left:12px;
@@ -645,7 +617,6 @@
       box-shadow: 0 20px 60px rgba(0,0,0,.70);
       overflow:hidden;
     }
-
     .discord-widget .head{
       display:flex; align-items:center; justify-content:space-between;
       gap:10px;
@@ -660,22 +631,15 @@
       text-transform:uppercase;
       color:rgba(255,255,255,.82);
     }
-
     .discord-widget .state{
       font-size:10px;
       color:rgba(255,255,255,.55);
       letter-spacing:.10em;
       text-transform:uppercase;
     }
+    .discord-widget .body{ padding:10px 10px 10px; }
 
-    .discord-widget .body{
-      padding:10px 10px 10px;
-    }
-
-    .discord-row{
-      display:flex; align-items:center; gap:10px;
-    }
-
+    .discord-row{ display:flex; align-items:center; gap:10px; }
     .d-ava{
       width:48px; height:48px;
       border-radius:12px;
@@ -694,7 +658,6 @@
       text-transform:uppercase;
       color:rgba(255,255,255,.88);
     }
-
     .statusline{
       display:flex; align-items:center; gap:8px;
       margin-top:6px;
@@ -709,57 +672,38 @@
       box-shadow: 0 0 12px rgba(255,255,255,.08);
     }
 
-    .info{
+    .dlines{
       margin-top:10px;
       display:grid;
       gap:8px;
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.02em;
+      color:rgba(255,255,255,.78);
     }
-    .ibox{
+    .dline{
+      padding:8px 9px;
       border-radius:12px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.18);
-      padding:9px 10px;
     }
-    .ibox .k{
-      font-family:var(--mono);
+    .dline .k{
+      display:block;
       font-size:10px;
       letter-spacing:.12em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.55);
+      color:rgba(255,255,255,.52);
+      margin-bottom:5px;
     }
-    .ibox .v{
-      margin-top:6px;
-      font-family:var(--mono);
-      font-size:11px;
-      color:rgba(255,255,255,.82);
-      letter-spacing:.02em;
+    .dline .v{
+      color:rgba(255,255,255,.84);
       line-height:1.35;
       word-break:break-word;
     }
 
-    .spotify{
-      display:flex; align-items:center; gap:10px;
-    }
-    .cover{
-      width:42px; height:42px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      overflow:hidden;
-      flex:0 0 auto;
-    }
-    .cover img{ width:100%; height:100%; object-fit:cover; display:block; }
-
     /* ===== ADMIN ===== */
-    .form{
-      display:grid;
-      gap:10px;
-      max-width:520px;
-    }
-    .field{
-      display:grid;
-      gap:6px;
-    }
+    .form{ display:grid; gap:10px; max-width:520px; }
+    .field{ display:grid; gap:6px; }
     .field label{
       font-family:var(--mono);
       font-size:10px;
@@ -783,55 +727,17 @@
       box-shadow: 0 0 0 3px rgba(255,140,50,.10);
     }
 
-    .admin-note{
-      font-family:var(--mono);
-      font-size:11px;
-      color:rgba(255,255,255,.55);
-      letter-spacing:.06em;
-      line-height:1.5;
-    }
-
-    .btn{
-      all:unset;
-      cursor:pointer;
-      user-select:none;
-
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-
-      padding:10px 12px;
-      border-radius:10px;
-
-      border:1px solid rgba(255,255,255,.16);
-      border-top-color: rgba(255,255,255,.22);
-      border-left-color: rgba(255,255,255,.20);
-      border-right-color: rgba(0,0,0,.72);
-      border-bottom-color: rgba(0,0,0,.82);
-
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
-        rgba(12,12,15,.55);
-
-      font-family:var(--mono);
-      font-size:11px;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:rgba(255,255,255,.88);
-
-      transition:.12s ease;
-    }
-    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,140,50,.30); filter:brightness(1.06); }
-    .btn:active{ transform: translateY(0px) scale(.99); filter:brightness(1.02); }
-
     .hidden{ display:none !important; }
 
-    /* responsivo */
     @media (max-width: 980px){
       body{ overflow:auto; }
       .app{ grid-template-columns: 1fr; height:auto; }
       video{ max-height: 52vh; }
-      .discord-widget{ position:static; width:100%; margin: 0 14px 14px; }
+      .discord-widget{
+        position:static;
+        width:calc(100% - 28px);
+        margin: 0 14px 14px;
+      }
     }
   </style>
 </head>
@@ -842,18 +748,13 @@
   <div class="bg-noise"></div>
 
   <!-- ENTER -->
-  <div class="enter" id="enter">
-    <div class="enter-box">
-      <div class="enter-title">ALLZ HUB</div>
-      <div class="enter-sub">clique em ENTER para iniciar</div>
-      <div class="enter-btn" id="enterBtn">ENTER</div>
-      <div class="enter-hint">música fixa 4% · botão de mute · vibe AMV antiga</div>
-    </div>
+  <div class="enter" id="enter" aria-label="Clique para entrar">
+    <div class="enter-word">ENTER</div>
   </div>
 
   <!-- APP -->
   <div class="app" id="app">
-    <!-- MENU (toolbox) -->
+    <!-- MENU -->
     <aside class="panel menu">
       <div class="xp-titlebar">
         <div class="left">
@@ -864,7 +765,7 @@
       </div>
 
       <nav class="toolbox" id="nav">
-        <button class="toolbtn active" data-view="social">
+        <button class="toolbtn" data-view="social">
           <span class="tool-ico">👤</span>
           <span class="tool-label">social</span>
         </button>
@@ -894,144 +795,164 @@
     <!-- CENTER -->
     <main class="panel center">
       <div class="topbar">
-        <div class="crumb"><span class="dot"></span><span id="crumb">SOCIAL</span></div>
+        <div class="crumb"><span class="dot"></span><span>ALLZ HUB</span></div>
         <div class="audio-ctrl">
-          <button class="mute" id="muteBtn">MUTAR</button>
+          <button class="btn-bevel" id="muteBtn">MUTAR</button>
         </div>
       </div>
 
       <section class="stage">
         <div class="video-shell">
-          <video id="amv" playsinline preload="auto">
+          <!-- autoplay muted ajuda a rodar (depois do ENTER a gente dá play também) -->
+          <video id="amv" playsinline muted autoplay loop preload="auto">
             <source src="https://files.catbox.moe/fhahqy.mp4" type="video/mp4">
           </video>
 
           <div class="amv-overlay">
             <div class="bandicam">Bandicam.com</div>
             <div class="timestamp" id="ts">00:00:00</div>
-            <div class="caption" id="caption">ALLZ HUB / awake and unafraid</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SOCIAL -->
-      <section class="content active" id="view-social">
-        <div class="grid">
-          <div class="card">
-            <h3>Perfil</h3>
-            <div class="social-hero">
-              <div class="social-ava">ALLZ</div>
-              <div>
-                <strong>Allz</strong>
-                <span>awake and unafraid</span>
-                <div class="pill"><span class="pdot"></span> purgatório</div>
-              </div>
-            </div>
-
-            <div class="btnrow">
-              <!-- coloca seus links reais -->
-              <a class="linkbtn" href="#" target="_blank" rel="noopener">TikTok</a>
-              <a class="linkbtn" href="#" target="_blank" rel="noopener">Spotify</a>
-              <a class="linkbtn" href="#" target="_blank" rel="noopener">Instagram</a>
-              <a class="linkbtn" href="#" target="_blank" rel="noopener">Steam</a>
-              <a class="linkbtn" href="#" target="_blank" rel="noopener">X</a>
-            </div>
-
-            <p class="mini" style="margin-top:12px">
-              hub pessoal / playlists / arquivos / progresso / discord ao vivo.
-              <br/>vibe: internet antiga + UI dark moderna + AMV.
-            </p>
-          </div>
-
-          <div class="card">
-            <h3>Notas</h3>
-            <p class="mini">
-              • música: volume fixo 4% <br/>
-              • botão mutar/desmutar <br/>
-              • ao trocar de menu: música pausa <br/>
-              • status do discord ao vivo (lanyard) <br/>
-              • admin: só você vê dados internos
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ARCHIVES -->
-      <section class="content" id="view-archives">
-        <div class="card">
-          <h3>Arquivos</h3>
-          <p class="mini">
-            Aqui você guarda: <br/>
-            • jogos (links, installs, saves) <br/>
-            • progresso (texto, prints, notas) <br/>
-            • arquivos (zip, docs, links pessoais) <br/><br/>
-            (depois dá pra virar cards e listas)
-          </p>
-        </div>
-      </section>
-
-      <!-- PLAYLISTS -->
-      <section class="content" id="view-playlists">
-        <div class="card">
-          <h3>Playlists</h3>
-          <p class="mini">
-            Área pra músicas favoritas / listas / links. <br/>
-            (pode puxar do Spotify depois, ou manter manual)
-          </p>
-        </div>
-      </section>
-
-      <!-- ADMIN -->
-      <section class="content" id="view-admin">
-        <div class="card">
-          <h3>Admin</h3>
-
-          <div id="adminLocked">
-            <p class="admin-note">
-              Login é só pra você ver dados internos. <br/>
-              Em site estático, segurança real só com backend.
-              Aqui é um “gate” no front-end usando hash (não deixa a senha em texto no código).
-            </p>
-
-            <div class="form" style="margin-top:12px">
-              <div class="field">
-                <label>Usuário</label>
-                <input id="user" autocomplete="username" placeholder="allz" />
-              </div>
-              <div class="field">
-                <label>Senha</label>
-                <input id="pass" type="password" autocomplete="current-password" placeholder="••••••••" />
-              </div>
-              <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
-                <button class="btn" id="loginBtn">ENTRAR</button>
-                <span class="admin-note" id="loginMsg"></span>
-              </div>
-            </div>
-
-            <p class="admin-note" style="margin-top:12px">
-              Para trocar sua senha, edite no JS: <b>ADMIN_USER</b> e <b>ADMIN_PASS_HASH</b>. <br/>
-              Pra gerar o hash, abra o console e rode: <code style="font-family:var(--mono); color:rgba(255,255,255,.72)">allzHash("SUA_SENHA")</code>
-            </p>
-          </div>
-
-          <div id="adminUnlocked" class="hidden">
-            <p class="mini">✅ admin destravado. aqui entram seus dados internos.</p>
-            <div class="card" style="margin-top:12px">
-              <h3>Interno</h3>
-              <p class="mini">
-                • painel de links internos <br/>
-                • atalhos de admin <br/>
-                • notas privadas <br/>
-                • (quando quiser, dá pra plugar um backend real)
-              </p>
-            </div>
+            <div class="caption">ALLZ HUB / awake and unafraid</div>
           </div>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- DISCORD widget fixo (canto inferior esquerdo) -->
+  <!-- MODAL / JANELA -->
+  <div class="modal" id="modal">
+    <div class="window" role="dialog" aria-modal="true" aria-label="Janela">
+      <div class="winbar">
+        <div class="left">
+          <span class="pilldot"></span>
+          <span id="winTitle">SOCIAL</span>
+        </div>
+        <div class="right">
+          <button class="close" id="closeWin" aria-label="Fechar">✕</button>
+        </div>
+      </div>
+
+      <div class="winbody">
+        <!-- SOCIAL -->
+        <div id="pane-social" class="pane hidden">
+          <div class="grid">
+            <div class="card">
+              <div class="h3">Perfil</div>
+              <div class="social-hero">
+                <div class="social-ava">ALLZ</div>
+                <div>
+                  <strong style="font-size:20px;">Allz</strong>
+                  <span>awake and unafraid</span>
+                  <div class="pill"><span class="pdot"></span> purgatório</div>
+                </div>
+              </div>
+
+              <div class="btnrow">
+                <!-- coloca seus links reais -->
+                <a class="linkbtn" href="#" target="_blank" rel="noopener">TikTok</a>
+                <a class="linkbtn" href="#" target="_blank" rel="noopener">Spotify</a>
+                <a class="linkbtn" href="#" target="_blank" rel="noopener">Instagram</a>
+                <a class="linkbtn" href="#" target="_blank" rel="noopener">Steam</a>
+                <a class="linkbtn" href="#" target="_blank" rel="noopener">X</a>
+              </div>
+
+              <p class="mini" style="margin-top:12px">
+                hub pessoal / playlists / arquivos / progresso / discord ao vivo.
+                <br>vibe: internet antiga + UI dark moderna + AMV.
+              </p>
+            </div>
+
+            <div class="card">
+              <div class="h3">Notas</div>
+              <p class="mini">
+                • música: volume fixo 4% <br>
+                • botão mutar/desmutar <br>
+                • ao abrir janela: música pausa <br>
+                • discord ao vivo (lanyard) <br>
+                • admin: só você vê dados internos
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ARQUIVOS -->
+        <div id="pane-archives" class="pane hidden">
+          <div class="card">
+            <div class="h3">Arquivos</div>
+            <p class="mini">
+              Área pra guardar: <br>
+              • jogos (links, installs, saves) <br>
+              • progresso (texto, prints, notas) <br>
+              • arquivos (zip, docs, links pessoais) <br><br>
+              (depois a gente deixa isso com cards e listas mais brabas)
+            </p>
+          </div>
+        </div>
+
+        <!-- PLAYLISTS -->
+        <div id="pane-playlists" class="pane hidden">
+          <div class="card">
+            <div class="h3">Playlists</div>
+            <p class="mini">
+              Área pra músicas favoritas / listas / links. <br>
+              (pode puxar do Spotify depois, ou manter manual)
+            </p>
+          </div>
+        </div>
+
+        <!-- ADMIN -->
+        <div id="pane-admin" class="pane hidden">
+          <div class="card">
+            <div class="h3">Admin</div>
+
+            <div id="adminLocked">
+              <p class="mini">
+                Login é só pra você ver dados internos. <br>
+                Em site estático, segurança real só com backend.
+                Aqui é um “gate” no front-end usando hash (não deixa a senha em texto no código).
+              </p>
+
+              <div class="form" style="margin-top:12px">
+                <div class="field">
+                  <label>Usuário</label>
+                  <input id="user" autocomplete="username" placeholder="allz" />
+                </div>
+                <div class="field">
+                  <label>Senha</label>
+                  <input id="pass" type="password" autocomplete="current-password" placeholder="••••••••" />
+                </div>
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+                  <button class="btn-bevel" id="loginBtn">ENTRAR</button>
+                  <span class="mini" id="loginMsg"></span>
+                </div>
+              </div>
+
+              <p class="mini" style="margin-top:12px; color:rgba(255,255,255,.55)">
+                Pra trocar a senha, edite no JS: <b>ADMIN_USER</b> e <b>ADMIN_PASS_HASH</b>. <br>
+                Pra gerar o hash, console: <code style="font-family:var(--mono); color:rgba(255,255,255,.72)">allzHash("SUA_SENHA")</code>
+              </p>
+            </div>
+
+            <div id="adminUnlocked" class="hidden">
+              <p class="mini">✅ admin destravado. aqui entram seus dados internos.</p>
+              <div class="card" style="margin-top:12px">
+                <div class="h3">Interno</div>
+                <p class="mini">
+                  • painel de links internos <br>
+                  • atalhos de admin <br>
+                  • notas privadas <br>
+                  • (quando quiser, dá pra plugar um backend real)
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- DISCORD widget -->
   <div class="discord-widget" id="discordWidget">
     <div class="head">
       <div>discord ao vivo</div>
@@ -1050,21 +971,20 @@
         </div>
       </div>
 
-      <div class="info">
-        <div class="ibox">
-          <div class="k">Atividade</div>
+      <div class="dlines">
+        <div class="dline">
+          <span class="k">Atividade</span>
           <div class="v" id="dAct">—</div>
         </div>
-
-        <div class="ibox">
-          <div class="k">Spotify</div>
+        <div class="dline">
+          <span class="k">Spotify</span>
           <div class="v" id="dSpot">—</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- áudio separado (começa após ENTER) -->
+  <!-- áudio (começa após ENTER) -->
   <audio id="bgm" preload="auto" loop>
     <source src="https://files.catbox.moe/7es5uf.mp3" type="audio/mpeg">
   </audio>
@@ -1083,19 +1003,29 @@
     const ADMIN_PASS_HASH = "a88c9e2d5e0f6d3cbb9f06e2e2c8e8f8e0c63c8b93d1f8f9df58bbdffb3c74a7"; // hash("allz")
 
     /*********************
-     * ENTER / BOOT
+     * ELEMENTOS
      *********************/
     const enter = document.getElementById("enter");
     const app = document.getElementById("app");
-    const enterBtn = document.getElementById("enterBtn");
 
     const amv = document.getElementById("amv");
     const bgm = document.getElementById("bgm");
     const muteBtn = document.getElementById("muteBtn");
 
+    const modal = document.getElementById("modal");
+    const closeWin = document.getElementById("closeWin");
+    const winTitle = document.getElementById("winTitle");
+
+    const nav = document.getElementById("nav");
+
+    const ts = document.getElementById("ts");
+
     let started = false;
     let muted = false;
 
+    /*********************
+     * BOOT
+     *********************/
     async function boot(){
       if(started) return;
       started = true;
@@ -1103,72 +1033,48 @@
       enter.classList.add("hidden");
       app.style.display = "grid";
 
-      amv.muted = true; // o som “principal” é o bgm
+      // vídeo: tenta garantir play
+      try {
+        amv.muted = true;
+        amv.autoplay = true;
+        amv.playsInline = true;
+        await amv.play();
+      } catch(e) {
+        // fallback: tenta no primeiro clique depois
+        window.addEventListener("pointerdown", () => amv.play().catch(()=>{}), { once:true });
+      }
 
-      try { await amv.play(); } catch(e){}
-
-      bgm.volume = 0.04; // 4% fixo
-      try { await bgm.play(); } catch(e){
-        window.addEventListener("pointerdown", tryPlayOnce, { once:true });
+      // áudio: só depois do ENTER (gesto do user)
+      bgm.volume = 0.04;
+      try { await bgm.play(); }
+      catch(e){
+        window.addEventListener("pointerdown", () => bgm.play().catch(()=>{}), { once:true });
       }
 
       startLanyard();
       startParticles();
-
       setInterval(updateTimestamp, 250);
     }
 
-    function tryPlayOnce(){
-      bgm.volume = 0.04;
-      bgm.play().catch(()=>{});
-      amv.play().catch(()=>{});
-    }
-
-    enterBtn.addEventListener("click", boot);
-    enter.addEventListener("click", (e)=>{
-      if(e.target === enter) boot();
+    enter.addEventListener("click", boot);
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter") boot();
     });
 
     /*********************
-     * MENU / VIEWS
+     * TIMESTAMP
      *********************/
-    const nav = document.getElementById("nav");
-    const crumb = document.getElementById("crumb");
-
-    function setView(view){
-      // regra: música pausa ao abrir menus / trocar seção
-      bgm.pause();
-
-      [...nav.querySelectorAll("button[data-view]")].forEach(b=>{
-        b.classList.toggle("active", b.dataset.view === view);
-      });
-
-      document.querySelectorAll(".content").forEach(s=>s.classList.remove("active"));
-      const el = document.getElementById("view-" + view);
-      if(el) el.classList.add("active");
-
-      const map = {
-        social: "SOCIAL",
-        archives: "ARQUIVOS",
-        playlists: "PLAYLISTS",
-        admin: "ADMIN",
-      };
-      crumb.textContent = map[view] || view.toUpperCase();
-
-      // volta música após um “tempo de UI”
-      setTimeout(()=>{
-        if(!muted) bgm.play().catch(()=>{});
-      }, 320);
+    function pad2(n){ return String(n).padStart(2,"0"); }
+    function updateTimestamp(){
+      const t = Math.floor(amv.currentTime || 0);
+      const h = Math.floor(t/3600);
+      const m = Math.floor((t%3600)/60);
+      const s = t%60;
+      ts.textContent = `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
     }
 
-    nav.addEventListener("click", (e)=>{
-      const btn = e.target.closest("button[data-view]");
-      if(!btn) return;
-      setView(btn.dataset.view);
-    });
-
     /*********************
-     * MUTE (sem slider)
+     * MUTE
      *********************/
     muteBtn.addEventListener("click", ()=>{
       muted = !muted;
@@ -1183,21 +1089,68 @@
     });
 
     /*********************
-     * BANDICAM TIMESTAMP
+     * MODAL (JANELAS)
      *********************/
-    const ts = document.getElementById("ts");
-    function pad2(n){ return String(n).padStart(2,"0"); }
+    const panes = {
+      social: document.getElementById("pane-social"),
+      archives: document.getElementById("pane-archives"),
+      playlists: document.getElementById("pane-playlists"),
+      admin: document.getElementById("pane-admin"),
+    };
 
-    function updateTimestamp(){
-      const t = Math.floor(amv.currentTime || 0);
-      const h = Math.floor(t/3600);
-      const m = Math.floor((t%3600)/60);
-      const s = t%60;
-      ts.textContent = `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+    const titles = {
+      social: "SOCIAL",
+      archives: "ARQUIVOS",
+      playlists: "PLAYLISTS",
+      admin: "ADMIN",
+    };
+
+    function openWindow(view){
+      // pausa a música ao abrir janela
+      bgm.pause();
+
+      // ativa botão visualmente
+      [...nav.querySelectorAll("button[data-view]")].forEach(b=>{
+        b.style.boxShadow = "";
+        b.style.borderColor = "";
+      });
+
+      // troca conteúdo
+      Object.values(panes).forEach(p=>p.classList.add("hidden"));
+      if(panes[view]) panes[view].classList.remove("hidden");
+
+      winTitle.textContent = titles[view] || view.toUpperCase();
+      modal.classList.add("open");
     }
 
+    function closeWindow(){
+      modal.classList.remove("open");
+      // volta música depois de fechar (se não estiver mutado)
+      setTimeout(()=>{
+        if(!muted) bgm.play().catch(()=>{});
+      }, 220);
+    }
+
+    nav.addEventListener("click", (e)=>{
+      const btn = e.target.closest("button[data-view]");
+      if(!btn) return;
+      openWindow(btn.dataset.view);
+    });
+
+    closeWin.addEventListener("click", closeWindow);
+
+    // fechar clicando fora
+    modal.addEventListener("click", (e)=>{
+      if(e.target === modal) closeWindow();
+    });
+
+    // ESC fecha
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape" && modal.classList.contains("open")) closeWindow();
+    });
+
     /*********************
-     * DISCORD LIVE (LANYARD)
+     * DISCORD LIVE (LANYARD) - PT-BR
      *********************/
     const dAva = document.getElementById("dAva");
     const dName = document.getElementById("dName");
@@ -1213,14 +1166,12 @@
     function getCss(varName){
       return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
     }
-
     function statusColor(s){
       if(s === "online") return getCss("--good");
       if(s === "idle") return getCss("--idle");
       if(s === "dnd") return getCss("--dnd");
       return getCss("--offline");
     }
-
     function statusPtBr(s){
       const map = {
         online: "online",
@@ -1229,6 +1180,11 @@
         offline: "offline"
       };
       return map[s] || "offline";
+    }
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
+      }[m]));
     }
 
     function applyLanyard(payload){
@@ -1252,7 +1208,7 @@
       dDot.style.background = c;
       dDot.style.boxShadow = `0 0 12px ${c}55`;
 
-      // activity (ignora custom status se tiver outra)
+      // activity principal (ignora custom status se existir outra)
       const acts = Array.isArray(data.activities) ? data.activities : [];
       const filtered = acts.filter(a => a && a.type !== 4);
       const main = filtered[0] || acts[0];
@@ -1266,34 +1222,14 @@
         dAct.textContent = "—";
       }
 
-      // spotify
       if(data.spotify){
         const sp = data.spotify;
         const song = sp.song || "—";
         const artist = sp.artist || "";
-        const album = sp.album || "";
-        const cover = sp.album_art_url;
-
-        dSpot.innerHTML = `
-          <div class="spotify">
-            <div class="cover">${cover ? `<img src="${cover}" alt="">` : ""}</div>
-            <div>
-              <div style="font-family:var(--mono); font-size:11px; color:rgba(255,255,255,.84); letter-spacing:.02em">${escapeHtml(song)}</div>
-              <div style="font-family:var(--mono); font-size:10px; color:rgba(255,255,255,.58); letter-spacing:.04em; margin-top:4px">
-                ${escapeHtml(artist)}${album ? " · " + escapeHtml(album) : ""}
-              </div>
-            </div>
-          </div>
-        `;
+        dSpot.innerHTML = `${escapeHtml(song)} <span style="color:rgba(255,255,255,.55)">·</span> ${escapeHtml(artist)}`;
       }else{
         dSpot.textContent = "—";
       }
-    }
-
-    function escapeHtml(str){
-      return String(str).replace(/[&<>"']/g, m => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
-      }[m]));
     }
 
     async function pollLanyard(){
@@ -1387,8 +1323,6 @@
       const buf = await crypto.subtle.digest("SHA-256", enc);
       return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
     }
-
-    // helper pra gerar hash no console:
     window.allzHash = async (txt)=>{
       const h = await sha256Hex(txt);
       console.log(h);
@@ -1462,6 +1396,18 @@
       }
       tick();
     }
+
+    /*********************
+     * EXTRA: tenta garantir vídeo em alguns browsers
+     *********************/
+    document.addEventListener("visibilitychange", ()=>{
+      if(document.visibilityState === "visible" && started){
+        amv.play().catch(()=>{});
+        if(!muted) bgm.play().catch(()=>{});
+      } else {
+        bgm.pause();
+      }
+    });
   </script>
 </body>
 </html>
