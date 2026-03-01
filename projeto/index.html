@@ -7,46 +7,58 @@
 
   <style>
     :root{
-      --bg:#07070a;
-      --panel:#0c0d12;
-      --panel2:#0a0a0e;
-      --line:rgba(255,255,255,.08);
-      --text:rgba(255,255,255,.88);
-      --muted:rgba(255,255,255,.55);
-      --orange:rgba(255,140,50,.95);
-      --orangeSoft:rgba(255,140,50,.25);
+      --bg:#050507;
+      --glass: rgba(0,0,0,.38);      /* preto ofuscado */
+      --glass2: rgba(10,10,14,.55);
+      --line: rgba(255,255,255,.10);
+      --line2: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.90);
+      --muted: rgba(255,255,255,.60);
+      --orange: rgba(255,140,50,.92);
+      --orangeSoft: rgba(255,140,50,.22);
+
+      /* “XP bevel” (borda clara em cima, escura embaixo) */
+      --bevelTop: rgba(255,255,255,.22);
+      --bevelBot: rgba(0,0,0,.70);
+
       --good:#43d17a;
       --idle:#f2c14e;
       --dnd:#ff4d4d;
       --offline:#8b8f9a;
-      --shadow: 0 18px 45px rgba(0,0,0,.55);
-      --radius: 14px;
-      --radius2: 18px;
+
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       --ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
     body{
       margin:0;
-      background:var(--bg);
-      color:var(--text);
-      font-family:var(--ui);
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ui);
       overflow:hidden;
     }
 
-    /* fundo com “nostalgia / amv / bandicam” (sem virar site 2008 puro) */
+    /* fundo discreto (nada exagerado) */
+    .bg-soft{
+      position:fixed; inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(900px 520px at 55% 30%, rgba(255,140,50,.06), transparent 60%),
+        radial-gradient(700px 420px at 40% 70%, rgba(255,255,255,.03), transparent 65%),
+        linear-gradient(180deg, rgba(255,255,255,.02), transparent 40%, rgba(0,0,0,.18));
+      opacity:.9;
+    }
+
     .bg-noise{
       position:fixed; inset:0;
       pointer-events:none;
-      opacity:.55;
+      opacity:.35;
       mix-blend-mode:overlay;
       background:
-        radial-gradient(700px 500px at 55% 35%, rgba(255,140,50,.06), transparent 60%),
-        radial-gradient(700px 500px at 45% 65%, rgba(255,140,50,.04), transparent 60%),
-        repeating-linear-gradient(0deg, rgba(255,255,255,.03), rgba(255,255,255,.03) 1px, transparent 1px, transparent 3px),
-        repeating-linear-gradient(90deg, rgba(255,255,255,.02), rgba(255,255,255,.02) 1px, transparent 1px, transparent 5px);
+        repeating-linear-gradient(0deg, rgba(255,255,255,.03), rgba(255,255,255,.03) 1px, transparent 1px, transparent 4px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.02), rgba(255,255,255,.02) 1px, transparent 1px, transparent 6px);
       filter:contrast(110%) saturate(105%);
     }
 
@@ -55,154 +67,133 @@
       z-index:0;
     }
 
-    /* ENTER screen */
+    /* ===== ENTER (simples, preto, central) ===== */
     .enter{
       position:fixed; inset:0;
       z-index:50;
       display:flex;
       align-items:center;
       justify-content:center;
-      background: radial-gradient(900px 600px at 50% 50%, rgba(255,140,50,.06), transparent 60%), #000;
+      background:#000;
     }
 
-    .enter-card{
-      width:min(520px, 92vw);
-      border:1px solid rgba(255,255,255,.10);
+    .enter-box{
+      width:min(420px, 92vw);
+      text-align:center;
+      padding:22px 18px 18px;
       border-radius:12px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
-        rgba(10,10,14,.70);
-      box-shadow: 0 25px 80px rgba(0,0,0,.7);
-      padding:18px 18px 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.35);
+      box-shadow: 0 30px 90px rgba(0,0,0,.85);
       position:relative;
       overflow:hidden;
     }
 
-    .enter-card:before{
+    /* “XP vibes” + toque moderno */
+    .enter-box:before{
       content:"";
       position:absolute; inset:-1px;
       background:
-        linear-gradient(90deg, transparent, rgba(255,140,50,.18), transparent),
-        radial-gradient(240px 120px at 30% 20%, rgba(255,255,255,.08), transparent 60%),
-        radial-gradient(320px 160px at 75% 65%, rgba(255,140,50,.10), transparent 65%);
-      opacity:.45;
+        linear-gradient(90deg, transparent, rgba(255,140,50,.20), transparent),
+        radial-gradient(220px 120px at 30% 25%, rgba(255,255,255,.08), transparent 60%),
+        radial-gradient(260px 140px at 75% 75%, rgba(255,140,50,.10), transparent 65%);
+      opacity:.55;
       pointer-events:none;
     }
 
-    .enter-top{
-      display:flex; align-items:center; justify-content:space-between;
-      position:relative;
-      z-index:1;
-      gap:12px;
-    }
-
-    .xp-dot{
-      display:flex; gap:7px; align-items:center;
-      opacity:.85;
-    }
-    .xp-dot span{
-      width:9px; height:9px; border-radius:999px; display:inline-block;
-      border:1px solid rgba(255,255,255,.22);
-      background: rgba(255,255,255,.05);
-      box-shadow: 0 0 0 2px rgba(0,0,0,.35) inset;
-    }
-    .xp-dot span:nth-child(2){background: rgba(255,140,50,.12)}
-    .xp-dot span:nth-child(3){background: rgba(255,255,255,.08)}
-
     .enter-title{
+      position:relative; z-index:1;
       font-family:var(--mono);
       font-size:12px;
-      letter-spacing:.22em;
-      color:rgba(255,255,255,.75);
+      letter-spacing:.20em;
       text-transform:uppercase;
-      white-space:nowrap;
+      color:rgba(255,255,255,.82);
+      margin:0 0 10px;
     }
 
-    .enter-mid{
-      margin-top:14px;
-      padding:14px 12px;
-      border:1px dashed rgba(255,255,255,.14);
+    .enter-sub{
+      position:relative; z-index:1;
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(255,255,255,.60);
+      letter-spacing:.06em;
+      margin:0 0 14px;
+    }
+
+    .enter-btn{
+      position:relative; z-index:1;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      cursor:pointer;
+      user-select:none;
+
+      padding:11px 16px;
       border-radius:10px;
-      background: rgba(0,0,0,.25);
-      position:relative;
-      z-index:1;
+
+      /* bevel XP */
+      border:1px solid rgba(255,255,255,.18);
+      border-top-color: var(--bevelTop);
+      border-left-color: var(--bevelTop);
+      border-right-color: rgba(0,0,0,.70);
+      border-bottom-color: rgba(0,0,0,.80);
+
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02)),
+        rgba(15,15,18,.55);
+
+      box-shadow:
+        0 0 0 1px rgba(255,140,50,.10) inset,
+        0 0 26px rgba(255,140,50,.10);
+
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.90);
+
+      transition: transform .12s ease, filter .12s ease, border-color .12s ease;
+    }
+    .enter-btn:hover{
+      transform: translateY(-1px);
+      filter:brightness(1.07);
+      border-color: rgba(255,140,50,.35);
+    }
+    .enter-btn:active{
+      transform: translateY(0px) scale(.99);
+      filter:brightness(1.02);
     }
 
     .enter-hint{
-      font-family:var(--mono);
-      font-size:12px;
-      color:rgba(255,255,255,.70);
-      line-height:1.4;
-    }
-    .enter-hint .small{
-      display:block;
-      margin-top:8px;
-      color:rgba(255,255,255,.50);
-      letter-spacing:.08em;
-    }
-
-    .enter-actions{
-      margin-top:14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      position:relative;
-      z-index:1;
-    }
-
-    .btn{
-      border:1px solid rgba(255,255,255,.14);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
-      color:rgba(255,255,255,.88);
-      padding:10px 12px;
-      border-radius:10px;
-      cursor:pointer;
-      transition: transform .12s ease, border-color .12s ease, filter .12s ease;
-      font-family:var(--mono);
-      font-size:12px;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      user-select:none;
-    }
-    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,140,50,.35); filter:brightness(1.06);}
-    .btn:active{ transform: translateY(0px) scale(.99);}
-
-    .btn-primary{
-      border-color: rgba(255,140,50,.45);
-      box-shadow: 0 0 0 1px rgba(255,140,50,.12) inset, 0 0 28px rgba(255,140,50,.10);
-    }
-
-    .enter-foot{
+      position:relative; z-index:1;
+      margin-top:12px;
       font-family:var(--mono);
       font-size:11px;
-      color:rgba(255,255,255,.45);
-      letter-spacing:.08em;
-      opacity:.9;
-      text-align:right;
+      color:rgba(255,255,255,.46);
+      letter-spacing:.06em;
     }
 
-    /* layout principal */
+    /* ===== APP ===== */
     .app{
       position:relative;
       z-index:1;
       height:100%;
       display:none;
-      grid-template-columns: 270px minmax(520px, 1fr) 320px;
+      grid-template-columns: 290px minmax(520px, 1fr);
       gap:14px;
       padding:14px;
     }
 
+    /* Painel “programa antigo” + preto moderno */
     .panel{
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)),
-        rgba(9,9,12,.72);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:var(--radius2);
-      box-shadow:var(--shadow);
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: var(--glass);
+      box-shadow: 0 20px 60px rgba(0,0,0,.60);
       overflow:hidden;
       position:relative;
+      backdrop-filter: blur(4px);
     }
 
     .panel:before{
@@ -210,122 +201,151 @@
       position:absolute; inset:0;
       pointer-events:none;
       background:
-        radial-gradient(520px 260px at 30% 15%, rgba(255,140,50,.08), transparent 60%),
-        radial-gradient(420px 220px at 75% 70%, rgba(255,255,255,.05), transparent 60%);
-      opacity:.65;
+        radial-gradient(520px 260px at 25% 20%, rgba(255,140,50,.10), transparent 60%),
+        radial-gradient(420px 240px at 85% 85%, rgba(255,255,255,.05), transparent 65%);
+      opacity:.75;
     }
 
-    /* menu esquerdo */
+    /* ===== MENU ESQUERDO (toolbox estilo Paint) ===== */
     .menu{
+      padding:12px;
       display:flex;
       flex-direction:column;
-      padding:14px;
-      gap:12px;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
       gap:10px;
-      padding:12px 12px;
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:14px;
-      background: rgba(0,0,0,.22);
-      position:relative;
-      z-index:1;
     }
 
-    .brand-badge{
-      width:34px; height:34px;
-      border-radius:11px;
-      border:1px solid rgba(255,140,50,.35);
+    .xp-titlebar{
+      position:relative; z-index:1;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:8px 10px;
+      border-radius:10px;
+
+      border:1px solid rgba(255,255,255,.14);
+      border-top-color: rgba(255,255,255,.22);
+      border-left-color: rgba(255,255,255,.20);
+      border-right-color: rgba(0,0,0,.72);
+      border-bottom-color: rgba(0,0,0,.82);
+
       background:
-        radial-gradient(circle at 30% 30%, rgba(255,140,50,.35), transparent 55%),
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
-      box-shadow: 0 0 18px rgba(255,140,50,.10);
+        linear-gradient(180deg, rgba(40,40,55,.60), rgba(12,12,18,.55));
     }
-    .brand-text strong{
-      display:block;
-      font-family:var(--mono);
-      letter-spacing:.10em;
-      font-size:12px;
-      text-transform:uppercase;
-    }
-    .brand-text span{
+
+    .xp-titlebar .left{
+      display:flex; align-items:center; gap:10px;
       font-family:var(--mono);
       font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.86);
+    }
+
+    .mini-lights{ display:flex; gap:6px; opacity:.9; }
+    .mini-lights span{
+      width:10px; height:10px; border-radius:3px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 0 0 2px rgba(0,0,0,.35) inset;
+    }
+    .mini-lights span:nth-child(2){ background: rgba(255,140,50,.14); }
+    .mini-lights span:nth-child(3){ background: rgba(255,255,255,.09); }
+
+    .xp-titlebar .right{
+      font-family:var(--mono);
+      font-size:10px;
       color:rgba(255,255,255,.55);
-      letter-spacing:.08em;
+      letter-spacing:.10em;
+      text-transform:uppercase;
     }
 
-    .nav{
-      display:flex;
-      flex-direction:column;
+    .toolbox{
+      position:relative; z-index:1;
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
       gap:8px;
-      position:relative;
-      z-index:1;
+      padding:10px;
+      border-radius:12px;
+
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
     }
 
-    .nav button{
+    .toolbtn{
       all:unset;
+      cursor:pointer;
+      user-select:none;
+
       display:flex;
       align-items:center;
       gap:10px;
-      padding:12px 12px;
-      border-radius:14px;
-      cursor:pointer;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      transition: transform .12s ease, border-color .12s ease, background .12s ease;
-      user-select:none;
+
+      padding:10px 10px;
+      border-radius:10px;
+
+      /* bevel XP */
+      border:1px solid rgba(255,255,255,.16);
+      border-top-color: rgba(255,255,255,.22);
+      border-left-color: rgba(255,255,255,.20);
+      border-right-color: rgba(0,0,0,.72);
+      border-bottom-color: rgba(0,0,0,.82);
+
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)),
+        rgba(12,12,15,.55);
+
+      transition: transform .12s ease, border-color .12s ease, filter .12s ease;
     }
-    .nav button:hover{
+    .toolbtn:hover{
       transform: translateY(-1px);
-      border-color: rgba(255,140,50,.32);
-      background: rgba(0,0,0,.26);
+      border-color: rgba(255,140,50,.30);
+      filter:brightness(1.06);
     }
-    .nav button.active{
-      border-color: rgba(255,140,50,.48);
+    .toolbtn:active{
+      transform: translateY(0px) scale(.99);
+      filter:brightness(1.02);
+    }
+    .toolbtn.active{
+      border-color: rgba(255,140,50,.46);
       box-shadow: 0 0 0 1px rgba(255,140,50,.12) inset, 0 0 24px rgba(255,140,50,.10);
-      background: rgba(0,0,0,.32);
     }
 
-    .ico{
-      width:18px; height:18px;
-      display:inline-grid;
-      place-items:center;
+    .tool-ico{
+      width:22px; height:22px;
       border-radius:6px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      font-family:var(--mono);
-      font-size:10px;
-      color: rgba(255,255,255,.70);
-    }
 
-    .nav .label{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      display:grid; place-items:center;
+
       font-family:var(--mono);
       font-size:12px;
+      color:rgba(255,255,255,.80);
+    }
+
+    .tool-label{
+      font-family:var(--mono);
+      font-size:11px;
       letter-spacing:.10em;
       text-transform:uppercase;
       color:rgba(255,255,255,.86);
     }
 
-    .menu-footer{
+    .profile{
+      position:relative; z-index:1;
       margin-top:auto;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
+      padding:10px 12px;
+      border-radius:12px;
+
+      border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.22);
-      position:relative;
-      z-index:1;
     }
-    .menu-footer .name{
+    .profile .name{
       font-family:var(--mono);
       font-size:12px;
       letter-spacing:.10em;
       text-transform:uppercase;
+      color:rgba(255,255,255,.88);
     }
-    .menu-footer .tag{
+    .profile .tag{
       margin-top:6px;
       font-family:var(--mono);
       font-size:11px;
@@ -333,81 +353,107 @@
       letter-spacing:.06em;
     }
 
-    /* centro (conteúdo) */
+    /* ===== CENTRO ===== */
     .center{
-      padding:14px;
+      padding:12px;
       display:flex;
       flex-direction:column;
-      gap:12px;
+      gap:10px;
     }
 
     .topbar{
+      position:relative; z-index:1;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
-      position:relative;
-      z-index:1;
+      gap:10px;
+
+      padding:10px 10px;
+      border-radius:12px;
+
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
     }
 
     .crumb{
-      font-family:var(--mono);
-      font-size:12px;
-      letter-spacing:.10em;
-      color:rgba(255,255,255,.68);
-      text-transform:uppercase;
       display:flex; align-items:center; gap:10px;
-    }
-    .crumb .dot{
-      width:6px; height:6px; border-radius:999px;
-      background: rgba(255,140,50,.55);
-      box-shadow: 0 0 12px rgba(255,140,50,.20);
-    }
-
-    .audio-ctrl{
-      display:flex; align-items:center; gap:10px;
-      position:relative;
-      z-index:1;
-    }
-    .mute{
-      all:unset;
-      cursor:pointer;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
       font-family:var(--mono);
       font-size:11px;
       letter-spacing:.10em;
       text-transform:uppercase;
-      transition:.12s ease;
-      user-select:none;
+      color:rgba(255,255,255,.70);
     }
-    .mute:hover{ border-color: rgba(255,140,50,.32); transform: translateY(-1px); }
-    .mute:active{ transform: translateY(0px); }
+    .crumb .dot{
+      width:7px; height:7px; border-radius:999px;
+      background: rgba(255,140,50,.55);
+      box-shadow: 0 0 12px rgba(255,140,50,.18);
+    }
+
+    .audio-ctrl{
+      display:flex; align-items:center; gap:8px;
+    }
+    .mute{
+      all:unset;
+      cursor:pointer;
+      user-select:none;
+
+      padding:9px 10px;
+      border-radius:10px;
+
+      border:1px solid rgba(255,255,255,.16);
+      border-top-color: rgba(255,255,255,.22);
+      border-left-color: rgba(255,255,255,.20);
+      border-right-color: rgba(0,0,0,.72);
+      border-bottom-color: rgba(0,0,0,.82);
+
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+        rgba(12,12,15,.55);
+
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.88);
+
+      transition: transform .12s ease, border-color .12s ease, filter .12s ease;
+    }
+    .mute:hover{ transform: translateY(-1px); border-color: rgba(255,140,50,.30); filter:brightness(1.06); }
+    .mute:active{ transform: translateY(0px) scale(.99); }
 
     .stage{
       flex:1;
       display:grid;
       place-items:center;
-      padding:12px 8px;
+      padding:10px 6px;
       position:relative;
       z-index:1;
     }
 
     .video-shell{
       width:min(980px, 100%);
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
-        rgba(0,0,0,.35);
-      box-shadow: 0 30px 90px rgba(0,0,0,.65);
+      border-radius:14px;
       overflow:hidden;
+
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.30);
+
+      /* bevel leve (pra lembrar app antigo) */
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.05) inset,
+        0 28px 90px rgba(0,0,0,.70);
       position:relative;
     }
 
-    /* “AMV antigo” por cima do container moderno */
+    video{
+      display:block;
+      width:100%;
+      height:auto;
+      max-height: 64vh; /* não fullscreen */
+      background:#000;
+    }
+
+    /* overlay AMV antigo (Bandicam + timestamp + legenda) */
     .amv-overlay{
       position:absolute; inset:0;
       pointer-events:none;
@@ -417,73 +463,61 @@
       content:"";
       position:absolute; inset:0;
       background:
-        radial-gradient(900px 450px at 50% 50%, transparent 35%, rgba(0,0,0,.55) 75%),
+        radial-gradient(900px 450px at 50% 50%, transparent 35%, rgba(0,0,0,.62) 78%),
         repeating-linear-gradient(0deg, rgba(255,255,255,.03), rgba(255,255,255,.03) 1px, transparent 1px, transparent 4px);
-      opacity:.65;
+      opacity:.75;
       mix-blend-mode:overlay;
     }
+
     .bandicam{
-      position:absolute;
-      top:10px; left:12px;
+      position:absolute; top:10px; left:12px;
       font-family:var(--mono);
       font-size:12px;
-      color:rgba(255,255,255,.85);
-      text-shadow: 0 2px 10px rgba(0,0,0,.9);
+      color:rgba(255,255,255,.88);
+      text-shadow: 0 2px 12px rgba(0,0,0,.95);
       letter-spacing:.04em;
     }
     .timestamp{
-      position:absolute;
-      top:10px; right:12px;
+      position:absolute; top:10px; right:12px;
       font-family:var(--mono);
       font-size:12px;
-      color:rgba(255,255,255,.80);
-      text-shadow: 0 2px 10px rgba(0,0,0,.9);
+      color:rgba(255,255,255,.82);
+      text-shadow: 0 2px 12px rgba(0,0,0,.95);
       letter-spacing:.04em;
     }
     .caption{
-      position:absolute;
-      bottom:10px; left:12px;
+      position:absolute; bottom:10px; left:12px;
       font-family:var(--mono);
       font-size:12px;
-      color:rgba(255,255,255,.78);
-      text-shadow: 0 2px 12px rgba(0,0,0,.95);
+      color:rgba(255,255,255,.80);
+      text-shadow: 0 2px 14px rgba(0,0,0,.98);
       letter-spacing:.06em;
       opacity:.95;
     }
 
-    video{
-      display:block;
-      width:100%;
-      height:auto;
-      max-height: 62vh; /* NÃO tela inteira */
-      background:#000;
-    }
-
     .content{
       width:min(980px, 100%);
-      margin-top:12px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      padding:14px;
-      position:relative;
-      z-index:1;
+      margin:0 auto;
+      padding:12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      position:relative; z-index:1;
       display:none;
     }
     .content.active{ display:block; }
 
-    /* cards */
     .grid{
       display:grid;
       grid-template-columns: 1.2fr .8fr;
-      gap:12px;
+      gap:10px;
     }
 
     .card{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.22);
-      border-radius:16px;
-      padding:14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      padding:12px;
       position:relative;
       overflow:hidden;
     }
@@ -492,8 +526,8 @@
       position:absolute; inset:-1px;
       pointer-events:none;
       background:
-        radial-gradient(420px 220px at 20% 20%, rgba(255,140,50,.10), transparent 60%),
-        radial-gradient(420px 220px at 70% 80%, rgba(255,255,255,.05), transparent 60%);
+        radial-gradient(420px 220px at 22% 15%, rgba(255,140,50,.10), transparent 60%),
+        radial-gradient(420px 220px at 78% 85%, rgba(255,255,255,.05), transparent 65%);
       opacity:.55;
     }
     .card > *{ position:relative; z-index:1; }
@@ -501,18 +535,18 @@
     .card h3{
       margin:0 0 10px 0;
       font-family:var(--mono);
-      font-size:12px;
+      font-size:11px;
       letter-spacing:.12em;
       text-transform:uppercase;
       color:rgba(255,255,255,.78);
     }
 
     .social-hero{
-      display:flex; align-items:center; gap:14px;
+      display:flex; align-items:center; gap:12px;
     }
     .social-ava{
       width:72px; height:72px;
-      border-radius:16px;
+      border-radius:12px;
       border:1px solid rgba(255,140,50,.30);
       background:
         radial-gradient(circle at 35% 30%, rgba(255,140,50,.25), transparent 60%),
@@ -542,7 +576,7 @@
       margin-top:10px;
       padding:7px 10px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.20);
       font-family:var(--mono);
       font-size:11px;
@@ -562,63 +596,90 @@
     .linkbtn{
       text-decoration:none;
       display:inline-flex; align-items:center; gap:8px;
+
       padding:9px 10px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      color:rgba(255,255,255,.82);
+      border-radius:10px;
+
+      border:1px solid rgba(255,255,255,.16);
+      border-top-color: rgba(255,255,255,.22);
+      border-left-color: rgba(255,255,255,.20);
+      border-right-color: rgba(0,0,0,.72);
+      border-bottom-color: rgba(0,0,0,.82);
+
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+        rgba(12,12,15,.55);
+
+      color:rgba(255,255,255,.84);
       font-family:var(--mono);
       font-size:11px;
       letter-spacing:.10em;
       text-transform:uppercase;
       transition:.12s ease;
     }
-    .linkbtn:hover{ border-color: rgba(255,140,50,.32); transform: translateY(-1px); }
-    .linkbtn:active{ transform: translateY(0px); }
+    .linkbtn:hover{ border-color: rgba(255,140,50,.30); transform: translateY(-1px); filter:brightness(1.06); }
+    .linkbtn:active{ transform: translateY(0px); filter:brightness(1.02); }
 
     .mini{
       font-family:var(--mono);
       font-size:11px;
-      color:rgba(255,255,255,.55);
+      color:rgba(255,255,255,.58);
       letter-spacing:.06em;
       line-height:1.5;
     }
 
-    /* painel direito (discord live) */
-    .right{
-      padding:14px;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
+    /* ===== Discord widget (canto inferior esquerdo) ===== */
+    .discord-widget{
+      position:fixed;
+      left:12px;
+      bottom:12px;
+      z-index:20;
 
-    .discord-card{
-      padding:14px;
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:16px;
-      background: rgba(0,0,0,.22);
-      position:relative;
-      overflow:hidden;
-      z-index:1;
-    }
-    .discord-card:before{
-      content:"";
-      position:absolute; inset:-1px;
-      pointer-events:none;
-      background:
-        radial-gradient(420px 220px at 25% 15%, rgba(255,140,50,.10), transparent 60%),
-        radial-gradient(420px 220px at 75% 75%, rgba(255,255,255,.05), transparent 60%);
-      opacity:.55;
-    }
-    .discord-card > *{ position:relative; z-index:1; }
-
-    .discord-head{
-      display:flex; align-items:center; gap:12px;
-    }
-    .d-ava{
-      width:52px; height:52px;
+      width:min(330px, calc(100vw - 24px));
       border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
+
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.40);
+      backdrop-filter: blur(4px);
+
+      box-shadow: 0 20px 60px rgba(0,0,0,.70);
+      overflow:hidden;
+    }
+
+    .discord-widget .head{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+      padding:10px 10px;
+
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(180deg, rgba(40,40,55,.55), rgba(12,12,18,.55));
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.82);
+    }
+
+    .discord-widget .state{
+      font-size:10px;
+      color:rgba(255,255,255,.55);
+      letter-spacing:.10em;
+      text-transform:uppercase;
+    }
+
+    .discord-widget .body{
+      padding:10px 10px 10px;
+    }
+
+    .discord-row{
+      display:flex; align-items:center; gap:10px;
+    }
+
+    .d-ava{
+      width:48px; height:48px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.05);
       overflow:hidden;
       flex:0 0 auto;
@@ -631,13 +692,15 @@
       letter-spacing:.08em;
       font-size:12px;
       text-transform:uppercase;
+      color:rgba(255,255,255,.88);
     }
-    .d-meta span{
+
+    .statusline{
       display:flex; align-items:center; gap:8px;
       margin-top:6px;
       font-family:var(--mono);
       font-size:11px;
-      color:rgba(255,255,255,.60);
+      color:rgba(255,255,255,.62);
       letter-spacing:.06em;
     }
     .status-dot{
@@ -646,29 +709,28 @@
       box-shadow: 0 0 12px rgba(255,255,255,.08);
     }
 
-    .rows{
-      margin-top:12px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
+    .info{
+      margin-top:10px;
+      display:grid;
+      gap:8px;
     }
-    .row{
+    .ibox{
+      border-radius:12px;
       border:1px solid rgba(255,255,255,.10);
-      border-radius:14px;
       background: rgba(0,0,0,.18);
-      padding:10px 10px;
+      padding:9px 10px;
     }
-    .row .k{
+    .ibox .k{
       font-family:var(--mono);
-      font-size:11px;
-      letter-spacing:.10em;
+      font-size:10px;
+      letter-spacing:.12em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.62);
+      color:rgba(255,255,255,.55);
     }
-    .row .v{
+    .ibox .v{
       margin-top:6px;
       font-family:var(--mono);
-      font-size:12px;
+      font-size:11px;
       color:rgba(255,255,255,.82);
       letter-spacing:.02em;
       line-height:1.35;
@@ -679,7 +741,7 @@
       display:flex; align-items:center; gap:10px;
     }
     .cover{
-      width:44px; height:44px;
+      width:42px; height:42px;
       border-radius:12px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.05);
@@ -688,7 +750,7 @@
     }
     .cover img{ width:100%; height:100%; object-fit:cover; display:block; }
 
-    /* admin */
+    /* ===== ADMIN ===== */
     .form{
       display:grid;
       gap:10px;
@@ -700,10 +762,10 @@
     }
     .field label{
       font-family:var(--mono);
-      font-size:11px;
-      letter-spacing:.10em;
+      font-size:10px;
+      letter-spacing:.12em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.62);
+      color:rgba(255,255,255,.60);
     }
     .field input{
       width:100%;
@@ -711,15 +773,16 @@
       border-radius:12px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.22);
-      color:rgba(255,255,255,.88);
+      color:rgba(255,255,255,.90);
       outline:none;
       font-family:var(--mono);
       letter-spacing:.02em;
     }
     .field input:focus{
-      border-color: rgba(255,140,50,.35);
+      border-color: rgba(255,140,50,.30);
       box-shadow: 0 0 0 3px rgba(255,140,50,.10);
     }
+
     .admin-note{
       font-family:var(--mono);
       font-size:11px;
@@ -728,81 +791,101 @@
       line-height:1.5;
     }
 
+    .btn{
+      all:unset;
+      cursor:pointer;
+      user-select:none;
+
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+
+      padding:10px 12px;
+      border-radius:10px;
+
+      border:1px solid rgba(255,255,255,.16);
+      border-top-color: rgba(255,255,255,.22);
+      border-left-color: rgba(255,255,255,.20);
+      border-right-color: rgba(0,0,0,.72);
+      border-bottom-color: rgba(0,0,0,.82);
+
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+        rgba(12,12,15,.55);
+
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.88);
+
+      transition:.12s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,140,50,.30); filter:brightness(1.06); }
+    .btn:active{ transform: translateY(0px) scale(.99); filter:brightness(1.02); }
+
     .hidden{ display:none !important; }
 
     /* responsivo */
-    @media (max-width: 1100px){
+    @media (max-width: 980px){
       body{ overflow:auto; }
-      .app{
-        height:auto;
-        grid-template-columns: 1fr;
-      }
-      .right{ order:3; }
-      .center{ order:2; }
-      .menu{ order:1; }
-      video{ max-height: 55vh; }
+      .app{ grid-template-columns: 1fr; height:auto; }
+      video{ max-height: 52vh; }
+      .discord-widget{ position:static; width:100%; margin: 0 14px 14px; }
     }
   </style>
 </head>
 
 <body>
   <canvas id="particles"></canvas>
+  <div class="bg-soft"></div>
   <div class="bg-noise"></div>
 
   <!-- ENTER -->
   <div class="enter" id="enter">
-    <div class="enter-card">
-      <div class="enter-top">
-        <div class="xp-dot" aria-hidden="true"><span></span><span></span><span></span></div>
-        <div class="enter-title">allz hub — boot</div>
-      </div>
-
-      <div class="enter-mid">
-        <div class="enter-hint">
-          click to enter
-          <span class="small">music starts after ENTER · fixed volume · mute only</span>
-        </div>
-      </div>
-
-      <div class="enter-actions">
-        <button class="btn btn-primary" id="enterBtn">ENTER</button>
-        <div class="enter-foot">allz.exe</div>
-      </div>
+    <div class="enter-box">
+      <div class="enter-title">ALLZ HUB</div>
+      <div class="enter-sub">clique em ENTER para iniciar</div>
+      <div class="enter-btn" id="enterBtn">ENTER</div>
+      <div class="enter-hint">música fixa 4% · botão de mute · vibe AMV antiga</div>
     </div>
   </div>
 
   <!-- APP -->
   <div class="app" id="app">
-    <!-- MENU -->
+    <!-- MENU (toolbox) -->
     <aside class="panel menu">
-      <div class="brand">
-        <div class="brand-badge" aria-hidden="true"></div>
-        <div class="brand-text">
-          <strong>ALLZ HUB</strong>
-          <span>nostalgia + dark ui</span>
+      <div class="xp-titlebar">
+        <div class="left">
+          <div class="mini-lights" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div>allz.exe</div>
         </div>
+        <div class="right">toolbox</div>
       </div>
 
-      <nav class="nav" id="nav">
-        <button data-view="social" class="active">
-          <span class="ico">S</span>
-          <span class="label">SOCIAL</span>
+      <nav class="toolbox" id="nav">
+        <button class="toolbtn active" data-view="social">
+          <span class="tool-ico">👤</span>
+          <span class="tool-label">social</span>
         </button>
-        <button data-view="archives">
-          <span class="ico">A</span>
-          <span class="label">ARCHIVES</span>
+
+        <button class="toolbtn" data-view="archives">
+          <span class="tool-ico">📁</span>
+          <span class="tool-label">arquivos</span>
         </button>
-        <button data-view="playlists">
-          <span class="ico">P</span>
-          <span class="label">PLAYLISTS</span>
+
+        <button class="toolbtn" data-view="playlists">
+          <span class="tool-ico">♪</span>
+          <span class="tool-label">playlists</span>
         </button>
-        <button data-view="admin">
-          <span class="ico">★</span>
-          <span class="label">ADMIN</span>
+
+        <button class="toolbtn" data-view="admin">
+          <span class="tool-ico">★</span>
+          <span class="tool-label">admin</span>
         </button>
       </nav>
 
-      <div class="menu-footer">
+      <div class="profile">
         <div class="name">Allz.exe</div>
         <div class="tag">awake and unafraid</div>
       </div>
@@ -813,7 +896,7 @@
       <div class="topbar">
         <div class="crumb"><span class="dot"></span><span id="crumb">SOCIAL</span></div>
         <div class="audio-ctrl">
-          <button class="mute" id="muteBtn">MUTE</button>
+          <button class="mute" id="muteBtn">MUTAR</button>
         </div>
       </div>
 
@@ -835,7 +918,7 @@
       <section class="content active" id="view-social">
         <div class="grid">
           <div class="card">
-            <h3>Profile</h3>
+            <h3>Perfil</h3>
             <div class="social-hero">
               <div class="social-ava">ALLZ</div>
               <div>
@@ -855,18 +938,18 @@
             </div>
 
             <p class="mini" style="margin-top:12px">
-              hub pessoal / playlists / arquivos / progresso / discord live.
+              hub pessoal / playlists / arquivos / progresso / discord ao vivo.
               <br/>vibe: internet antiga + UI dark moderna + AMV.
             </p>
           </div>
 
           <div class="card">
-            <h3>Notes</h3>
+            <h3>Notas</h3>
             <p class="mini">
               • música: volume fixo 4% <br/>
-              • botão mute <br/>
+              • botão mutar/desmutar <br/>
               • ao trocar de menu: música pausa <br/>
-              • lanyard: status ao vivo <br/>
+              • status do discord ao vivo (lanyard) <br/>
               • admin: só você vê dados internos
             </p>
           </div>
@@ -876,13 +959,13 @@
       <!-- ARCHIVES -->
       <section class="content" id="view-archives">
         <div class="card">
-          <h3>Archives</h3>
+          <h3>Arquivos</h3>
           <p class="mini">
-            Aqui é onde você vai guardar: <br/>
+            Aqui você guarda: <br/>
             • jogos (links, installs, saves) <br/>
             • progresso (texto, prints, notas) <br/>
             • arquivos (zip, docs, links pessoais) <br/><br/>
-            (depois a gente transforma isso em cards e listas bonitinhas)
+            (depois dá pra virar cards e listas)
           </p>
         </div>
       </section>
@@ -893,7 +976,7 @@
           <h3>Playlists</h3>
           <p class="mini">
             Área pra músicas favoritas / listas / links. <br/>
-            (dá pra puxar do Spotify depois, mas por enquanto pode ser manual)
+            (pode puxar do Spotify depois, ou manter manual)
           </p>
         </div>
       </section>
@@ -906,8 +989,8 @@
           <div id="adminLocked">
             <p class="admin-note">
               Login é só pra você ver dados internos. <br/>
-              Importante: em site estático, login 100% seguro só com backend.
-              Aqui é um “gate” no front-end usando hash (não expõe senha em texto).
+              Em site estático, segurança real só com backend.
+              Aqui é um “gate” no front-end usando hash (não deixa a senha em texto no código).
             </p>
 
             <div class="form" style="margin-top:12px">
@@ -919,91 +1002,66 @@
                 <label>Senha</label>
                 <input id="pass" type="password" autocomplete="current-password" placeholder="••••••••" />
               </div>
-              <div style="display:flex; gap:10px; align-items:center">
-                <button class="btn btn-primary" id="loginBtn">LOGIN</button>
+              <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+                <button class="btn" id="loginBtn">ENTRAR</button>
                 <span class="admin-note" id="loginMsg"></span>
               </div>
             </div>
 
             <p class="admin-note" style="margin-top:12px">
-              Para trocar sua senha, edite no JS a constante <b>ADMIN_USER</b> e o <b>ADMIN_PASS_HASH</b>.
-              Você pode gerar o hash abrindo o console do navegador e rodando:
-              <br/><br/>
-              <code style="font-family:var(--mono); color:rgba(255,255,255,.7)">
-                allzHash("SUA_SENHA_AQUI")
-              </code>
+              Para trocar sua senha, edite no JS: <b>ADMIN_USER</b> e <b>ADMIN_PASS_HASH</b>. <br/>
+              Pra gerar o hash, abra o console e rode: <code style="font-family:var(--mono); color:rgba(255,255,255,.72)">allzHash("SUA_SENHA")</code>
             </p>
           </div>
 
           <div id="adminUnlocked" class="hidden">
-            <p class="mini">
-              ✅ admin destravado. <br/>
-              Aqui entram seus dados internos (logs, links privados, config, etc).
-            </p>
+            <p class="mini">✅ admin destravado. aqui entram seus dados internos.</p>
             <div class="card" style="margin-top:12px">
-              <h3>Internal</h3>
+              <h3>Interno</h3>
               <p class="mini">
                 • painel de links internos <br/>
                 • atalhos de admin <br/>
                 • notas privadas <br/>
-                • (quando quiser, a gente pluga backend de verdade)
+                • (quando quiser, dá pra plugar um backend real)
               </p>
             </div>
           </div>
-
         </div>
       </section>
     </main>
+  </div>
 
-    <!-- RIGHT -->
-    <aside class="panel right">
-      <div class="discord-card">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-          <div style="font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.78)">
-            Discord Live
-          </div>
-          <div style="font-family:var(--mono); font-size:11px; color:rgba(255,255,255,.55); letter-spacing:.06em" id="lanyardState">
-            connecting…
-          </div>
-        </div>
+  <!-- DISCORD widget fixo (canto inferior esquerdo) -->
+  <div class="discord-widget" id="discordWidget">
+    <div class="head">
+      <div>discord ao vivo</div>
+      <div class="state" id="lanyardState">conectando…</div>
+    </div>
 
-        <div class="discord-head" style="margin-top:12px">
-          <div class="d-ava"><img id="dAva" alt="" /></div>
-          <div class="d-meta">
-            <strong id="dName">—</strong>
-            <span><span class="status-dot" id="dDot"></span><span id="dStatus">—</span></span>
-          </div>
-        </div>
-
-        <div class="rows">
-          <div class="row">
-            <div class="k">Activity</div>
-            <div class="v" id="dAct">—</div>
-          </div>
-
-          <div class="row">
-            <div class="k">Spotify</div>
-            <div class="v" id="dSpot">—</div>
+    <div class="body">
+      <div class="discord-row">
+        <div class="d-ava"><img id="dAva" alt=""></div>
+        <div class="d-meta">
+          <strong id="dName">—</strong>
+          <div class="statusline">
+            <span class="status-dot" id="dDot"></span>
+            <span id="dStatus">—</span>
           </div>
         </div>
       </div>
 
-      <div class="discord-card">
-        <div style="font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.78)">
-          Quick
+      <div class="info">
+        <div class="ibox">
+          <div class="k">Atividade</div>
+          <div class="v" id="dAct">—</div>
         </div>
-        <div class="rows">
-          <div class="row">
-            <div class="k">Now</div>
-            <div class="v" id="nowTxt">—</div>
-          </div>
-          <div class="row">
-            <div class="k">Mode</div>
-            <div class="v">nostalgia / dark / amv</div>
-          </div>
+
+        <div class="ibox">
+          <div class="k">Spotify</div>
+          <div class="v" id="dSpot">—</div>
         </div>
       </div>
-    </aside>
+    </div>
   </div>
 
   <!-- áudio separado (começa após ENTER) -->
@@ -1020,12 +1078,12 @@
 
     // Admin “gate” (front-end). Troque pra você:
     const ADMIN_USER = "allz";
-    // SHA-256 em HEX da sua senha (não é “segurança perfeita”, mas não expõe senha em texto).
-    // Padrão: senha = "allz" (troca isso!)
+    // SHA-256 em HEX da sua senha (não expõe senha em texto).
+    // Padrão atual: senha = "allz" (TROCA ISSO!)
     const ADMIN_PASS_HASH = "a88c9e2d5e0f6d3cbb9f06e2e2c8e8f8e0c63c8b93d1f8f9df58bbdffb3c74a7"; // hash("allz")
 
     /*********************
-     * ENTER / APP BOOT
+     * ENTER / BOOT
      *********************/
     const enter = document.getElementById("enter");
     const app = document.getElementById("app");
@@ -1042,33 +1100,22 @@
       if(started) return;
       started = true;
 
-      // mostra app
       enter.classList.add("hidden");
       app.style.display = "grid";
 
-      // vídeo: não precisa de som (AMV visual), áudio vem do bgm
-      amv.muted = true;
+      amv.muted = true; // o som “principal” é o bgm
 
-      // começa vídeo e áudio após gesto do usuário (ENTER)
       try { await amv.play(); } catch(e){}
+
       bgm.volume = 0.04; // 4% fixo
       try { await bgm.play(); } catch(e){
-        // se o browser bloquear mesmo assim, tenta ao primeiro clique dentro do app
         window.addEventListener("pointerdown", tryPlayOnce, { once:true });
       }
 
-      // lanyard
       startLanyard();
-
-      // particles
       startParticles();
 
-      // relógio overlay
       setInterval(updateTimestamp, 250);
-
-      // now
-      setInterval(updateNow, 500);
-      updateNow();
     }
 
     function tryPlayOnce(){
@@ -1079,7 +1126,6 @@
 
     enterBtn.addEventListener("click", boot);
     enter.addEventListener("click", (e)=>{
-      // clique em qualquer lugar da tela inicial também funciona (menos no “vazio” do body)
       if(e.target === enter) boot();
     });
 
@@ -1090,26 +1136,29 @@
     const crumb = document.getElementById("crumb");
 
     function setView(view){
-      // pausa música ao abrir menus (troca de seção)
-      // (se você quiser: só pausar quando não for SOCIAL, é só ajustar aqui)
+      // regra: música pausa ao abrir menus / trocar seção
       bgm.pause();
 
-      // marca botões
-      [...nav.querySelectorAll("button")].forEach(b=>{
+      [...nav.querySelectorAll("button[data-view]")].forEach(b=>{
         b.classList.toggle("active", b.dataset.view === view);
       });
 
-      // mostra seção
       document.querySelectorAll(".content").forEach(s=>s.classList.remove("active"));
       const el = document.getElementById("view-" + view);
       if(el) el.classList.add("active");
 
-      crumb.textContent = view.toUpperCase();
+      const map = {
+        social: "SOCIAL",
+        archives: "ARQUIVOS",
+        playlists: "PLAYLISTS",
+        admin: "ADMIN",
+      };
+      crumb.textContent = map[view] || view.toUpperCase();
 
-      // volta música 350ms depois (pra dar a “sensação” de UI abrindo)
+      // volta música após um “tempo de UI”
       setTimeout(()=>{
         if(!muted) bgm.play().catch(()=>{});
-      }, 350);
+      }, 320);
     }
 
     nav.addEventListener("click", (e)=>{
@@ -1125,23 +1174,21 @@
       muted = !muted;
       if(muted){
         bgm.pause();
-        muteBtn.textContent = "UNMUTE";
+        muteBtn.textContent = "DESMUTAR";
       }else{
         bgm.volume = 0.04;
         bgm.play().catch(()=>{});
-        muteBtn.textContent = "MUTE";
+        muteBtn.textContent = "MUTAR";
       }
     });
 
     /*********************
-     * BANDICAM TIMESTAMP + NOW
+     * BANDICAM TIMESTAMP
      *********************/
     const ts = document.getElementById("ts");
-    const nowTxt = document.getElementById("nowTxt");
     function pad2(n){ return String(n).padStart(2,"0"); }
 
     function updateTimestamp(){
-      // timestamp estilo “gravador”
       const t = Math.floor(amv.currentTime || 0);
       const h = Math.floor(t/3600);
       const m = Math.floor((t%3600)/60);
@@ -1149,21 +1196,8 @@
       ts.textContent = `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
     }
 
-    function updateNow(){
-      const d = new Date();
-      const dd = pad2(d.getDate());
-      const mm = pad2(d.getMonth()+1);
-      const yy = d.getFullYear();
-      const hh = pad2(d.getHours());
-      const mi = pad2(d.getMinutes());
-      const ss = pad2(d.getSeconds());
-      nowTxt.textContent = `${dd}/${mm}/${yy} ${hh}:${mi}:${ss}`;
-    }
-
     /*********************
      * DISCORD LIVE (LANYARD)
-     * - usa WebSocket oficial do Lanyard
-     * - fallback: polling HTTP
      *********************/
     const dAva = document.getElementById("dAva");
     const dName = document.getElementById("dName");
@@ -1176,24 +1210,35 @@
     let ws;
     let pollTimer;
 
+    function getCss(varName){
+      return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    }
+
     function statusColor(s){
       if(s === "online") return getCss("--good");
       if(s === "idle") return getCss("--idle");
       if(s === "dnd") return getCss("--dnd");
       return getCss("--offline");
     }
-    function getCss(varName){
-      return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+
+    function statusPtBr(s){
+      const map = {
+        online: "online",
+        idle: "ausente",
+        dnd: "não perturbe",
+        offline: "offline"
+      };
+      return map[s] || "offline";
     }
 
     function applyLanyard(payload){
-      // modelo: payload.data.discord_user.avatar / global_name / discord_status / activities / spotify
-      const data = payload?.data || payload; // ws envia {t,d}; http envia {data:...}
+      const data = payload?.data || payload;
       if(!data) return;
 
       const u = data.discord_user || {};
       const globalName = u.global_name || u.username || "—";
       const avatarHash = u.avatar;
+
       const avatarUrl = (avatarHash)
         ? `https://cdn.discordapp.com/avatars/${LANYARD_USER_ID}/${avatarHash}.png?size=128`
         : `https://cdn.discordapp.com/embed/avatars/0.png`;
@@ -1202,20 +1247,21 @@
       dName.textContent = globalName;
 
       const st = data.discord_status || "offline";
-      dStatus.textContent = st;
-      dDot.style.background = statusColor(st);
-      dDot.style.boxShadow = `0 0 12px ${statusColor(st)}55`;
+      dStatus.textContent = statusPtBr(st);
+      const c = statusColor(st);
+      dDot.style.background = c;
+      dDot.style.boxShadow = `0 0 12px ${c}55`;
 
-      // activity principal (ignorando "custom" se tiver outra)
+      // activity (ignora custom status se tiver outra)
       const acts = Array.isArray(data.activities) ? data.activities : [];
-      const filtered = acts.filter(a => a && a.type !== 4); // type 4 costuma ser custom status
+      const filtered = acts.filter(a => a && a.type !== 4);
       const main = filtered[0] || acts[0];
 
       if(main){
         const name = main.name || "—";
         const details = main.details ? ` · ${main.details}` : "";
         const state = main.state ? ` · ${main.state}` : "";
-        dAct.textContent = `${name}${details}${state}`.slice(0, 140);
+        dAct.textContent = `${name}${details}${state}`.slice(0, 160);
       }else{
         dAct.textContent = "—";
       }
@@ -1232,8 +1278,8 @@
           <div class="spotify">
             <div class="cover">${cover ? `<img src="${cover}" alt="">` : ""}</div>
             <div>
-              <div style="font-family:var(--mono); font-size:12px; color:rgba(255,255,255,.84); letter-spacing:.02em">${escapeHtml(song)}</div>
-              <div style="font-family:var(--mono); font-size:11px; color:rgba(255,255,255,.58); letter-spacing:.04em; margin-top:4px">
+              <div style="font-family:var(--mono); font-size:11px; color:rgba(255,255,255,.84); letter-spacing:.02em">${escapeHtml(song)}</div>
+              <div style="font-family:var(--mono); font-size:10px; color:rgba(255,255,255,.58); letter-spacing:.04em; margin-top:4px">
                 ${escapeHtml(artist)}${album ? " · " + escapeHtml(album) : ""}
               </div>
             </div>
@@ -1252,64 +1298,56 @@
 
     async function pollLanyard(){
       try{
-        lanyardState.textContent = "polling…";
+        lanyardState.textContent = "atualizando…";
         const res = await fetch(LANYARD_HTTP, { cache:"no-store" });
         const json = await res.json();
         applyLanyard(json);
-        lanyardState.textContent = "live";
+        lanyardState.textContent = "ao vivo";
       }catch(e){
         lanyardState.textContent = "offline";
       }
     }
 
     function startLanyard(){
-      // tenta WS primeiro
       try{
-        lanyardState.textContent = "connecting…";
+        lanyardState.textContent = "conectando…";
         ws = new WebSocket("wss://api.lanyard.rest/socket");
-        ws.onopen = ()=>{
-          lanyardState.textContent = "handshake…";
-        };
+
         ws.onmessage = (ev)=>{
           const msg = JSON.parse(ev.data);
 
-          // hello -> manda init
           if(msg.op === 1){
             ws.send(JSON.stringify({
               op: 2,
-              d: {
-                subscribe_to_id: LANYARD_USER_ID
-              }
+              d: { subscribe_to_id: LANYARD_USER_ID }
             }));
-            // heartbeat
+
             const interval = msg.d.heartbeat_interval;
             setInterval(()=>{
               try{ ws.send(JSON.stringify({ op: 3, d: {} })); }catch(e){}
             }, interval);
           }
 
-          // event
           if(msg.t === "INIT_STATE" || msg.t === "PRESENCE_UPDATE"){
             applyLanyard(msg.d);
-            lanyardState.textContent = "live";
+            lanyardState.textContent = "ao vivo";
           }
         };
+
         ws.onerror = ()=>{
-          // fallback
           if(!pollTimer){
             pollLanyard();
             pollTimer = setInterval(pollLanyard, 15000);
           }
         };
         ws.onclose = ()=>{
-          // fallback
           if(!pollTimer){
             pollLanyard();
             pollTimer = setInterval(pollLanyard, 15000);
           }
         };
+
       }catch(e){
-        // fallback
         pollLanyard();
         pollTimer = setInterval(pollLanyard, 15000);
       }
@@ -1350,7 +1388,7 @@
       return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
     }
 
-    // helper pra você gerar hash no console:
+    // helper pra gerar hash no console:
     window.allzHash = async (txt)=>{
       const h = await sha256Hex(txt);
       console.log(h);
@@ -1376,17 +1414,17 @@
       window.addEventListener("resize", resize);
       resize();
 
-      const count = Math.floor(Math.min(120, Math.max(60, (window.innerWidth * window.innerHeight) / 18000)));
+      const count = Math.floor(Math.min(110, Math.max(55, (window.innerWidth * window.innerHeight) / 20000)));
       const particles = Array.from({length: count}, ()=>spawn());
 
       function spawn(){
         return {
           x: Math.random()*W,
           y: Math.random()*H,
-          r: (Math.random()*1.6 + 0.6) * DPR,
-          a: Math.random()*0.22 + 0.06,
-          vx: (Math.random()*0.18 - 0.09) * DPR,
-          vy: (Math.random()*0.22 + 0.05) * DPR,
+          r: (Math.random()*1.5 + 0.5) * DPR,
+          a: Math.random()*0.20 + 0.06,
+          vx: (Math.random()*0.16 - 0.08) * DPR,
+          vy: (Math.random()*0.20 + 0.04) * DPR,
           tw: Math.random()*0.8 + 0.2,
         };
       }
@@ -1395,8 +1433,6 @@
       function tick(){
         t += 0.016;
         ctx.clearRect(0,0,W,H);
-
-        // glow bem leve
         ctx.globalCompositeOperation = "lighter";
 
         for(let i=0;i<particles.length;i++){
@@ -1409,17 +1445,15 @@
             particles[i].y = H + (Math.random()*120*DPR);
           }
 
-          // cor laranja “brasa” suave
           const alpha = p.a * (0.75 + 0.25*Math.sin(t*p.tw));
           ctx.fillStyle = `rgba(255, 140, 50, ${alpha})`;
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
           ctx.fill();
 
-          // micro halo
-          ctx.fillStyle = `rgba(255, 140, 50, ${alpha*0.25})`;
+          ctx.fillStyle = `rgba(255, 140, 50, ${alpha*0.22})`;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r*3.1, 0, Math.PI*2);
+          ctx.arc(p.x, p.y, p.r*3.0, 0, Math.PI*2);
           ctx.fill();
         }
 
@@ -1428,9 +1462,6 @@
       }
       tick();
     }
-
-    // se você abrir direto no arquivo (file://), o autoplay pode ser mais chato.
-    // Recomendo rodar com um serverzinho local.
   </script>
 </body>
 </html>
