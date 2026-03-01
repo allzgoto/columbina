@@ -7,16 +7,24 @@
 
   <style>
     :root{
+      /* ====== TEMA (ESCURO default) ====== */
       --bg:#050507;
+      --bgSoft1: rgba(255,140,50,.06);
+      --bgSoft2: rgba(255,255,255,.03);
+
       --glass: rgba(0,0,0,.38);
+      --panelStroke: rgba(255,255,255,.12);
+      --panelStroke2: rgba(255,255,255,.14);
+
       --text: rgba(255,255,255,.90);
       --muted: rgba(255,255,255,.60);
+      --muted2: rgba(255,255,255,.48);
+
       --orange: rgba(255,140,50,.92);
 
       /* XP-ish bevel */
       --bevelTop: rgba(255,255,255,.26);
-      --bevelMid: rgba(255,255,255,.10);
-      --bevelBot: rgba(0,0,0,.88);
+      --bevelBot: rgba(0,0,0,.90);
 
       --good:#43d17a;
       --idle:#f2c14e;
@@ -25,6 +33,24 @@
 
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       --ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+
+    /* ====== TEMA CLARO (XP branco) ====== */
+    body[data-theme="xp"]{
+      --bg: #e9edf5;
+      --bgSoft1: rgba(0,0,0,.06);
+      --bgSoft2: rgba(0,0,0,.04);
+
+      --glass: rgba(255,255,255,.62);
+      --panelStroke: rgba(0,0,0,.14);
+      --panelStroke2: rgba(0,0,0,.18);
+
+      --text: rgba(0,0,0,.86);
+      --muted: rgba(0,0,0,.62);
+      --muted2: rgba(0,0,0,.48);
+
+      --bevelTop: rgba(255,255,255,.75);
+      --bevelBot: rgba(0,0,0,.35);
     }
 
     *{ box-sizing:border-box }
@@ -42,21 +68,35 @@
       position:fixed; inset:0;
       pointer-events:none;
       background:
-        radial-gradient(900px 520px at 55% 30%, rgba(255,140,50,.06), transparent 60%),
-        radial-gradient(700px 420px at 40% 70%, rgba(255,255,255,.03), transparent 65%),
-        linear-gradient(180deg, rgba(255,255,255,.02), transparent 40%, rgba(0,0,0,.18));
+        radial-gradient(900px 520px at 55% 30%, var(--bgSoft1), transparent 60%),
+        radial-gradient(700px 420px at 40% 70%, var(--bgSoft2), transparent 65%),
+        linear-gradient(180deg, rgba(255,255,255,.02), transparent 40%, rgba(0,0,0,.10));
       opacity:.95;
     }
+    body[data-theme="xp"] .bg-soft{
+      background:
+        radial-gradient(900px 520px at 55% 30%, rgba(0,0,0,.06), transparent 60%),
+        radial-gradient(700px 420px at 40% 70%, rgba(0,0,0,.04), transparent 65%),
+        linear-gradient(180deg, rgba(255,255,255,.42), transparent 45%, rgba(0,0,0,.06));
+      opacity:.95;
+    }
+
     .bg-noise{
       position:fixed; inset:0;
       pointer-events:none;
-      opacity:.35;
+      opacity:.30;
       mix-blend-mode:overlay;
       background:
         repeating-linear-gradient(0deg, rgba(255,255,255,.03), rgba(255,255,255,.03) 1px, transparent 1px, transparent 4px),
         repeating-linear-gradient(90deg, rgba(255,255,255,.02), rgba(255,255,255,.02) 1px, transparent 1px, transparent 6px);
       filter:contrast(110%) saturate(105%);
     }
+    body[data-theme="xp"] .bg-noise{
+      opacity:.22;
+      mix-blend-mode:multiply;
+      filter:contrast(105%);
+    }
+
     #particles{
       position:fixed; inset:0;
       z-index:0;
@@ -85,7 +125,7 @@
       transition: .14s ease;
     }
     .enter:hover .enter-word{
-      color: rgba(255,255,255,.95);
+      color: rgba(255,255,255,.96);
       text-shadow: 0 0 22px rgba(255,140,50,.20);
       filter: brightness(1.05);
     }
@@ -106,6 +146,26 @@
       55%,100%{ opacity:.95; }
     }
 
+    /* flash CRT no ENTER */
+    .crtflash{
+      position:fixed; inset:0;
+      pointer-events:none;
+      z-index:90;
+      opacity:0;
+      background:
+        radial-gradient(900px 500px at 50% 45%, rgba(255,255,255,.22), transparent 60%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,.06), rgba(255,255,255,.06) 1px, transparent 1px, transparent 3px);
+      mix-blend-mode:screen;
+    }
+    .crtflash.on{
+      animation: crt 120ms ease-out forwards;
+    }
+    @keyframes crt{
+      0%{ opacity:0; }
+      25%{ opacity:1; }
+      100%{ opacity:0; }
+    }
+
     /* ===== APP ===== */
     .app{
       position:relative;
@@ -119,13 +179,18 @@
 
     .panel{
       border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
+      border:1px solid var(--panelStroke);
       background: var(--glass);
       box-shadow: 0 20px 60px rgba(0,0,0,.60);
       overflow:hidden;
       position:relative;
       backdrop-filter: blur(4px);
     }
+    body[data-theme="xp"] .panel{
+      box-shadow: 0 18px 45px rgba(0,0,0,.18);
+      backdrop-filter: blur(2px);
+    }
+
     .panel:before{
       content:"";
       position:absolute; inset:0;
@@ -134,6 +199,12 @@
         radial-gradient(520px 260px at 25% 20%, rgba(255,140,50,.10), transparent 60%),
         radial-gradient(420px 240px at 85% 85%, rgba(255,255,255,.05), transparent 65%);
       opacity:.75;
+    }
+    body[data-theme="xp"] .panel:before{
+      opacity:.32;
+      background:
+        radial-gradient(520px 260px at 25% 20%, rgba(0,0,0,.08), transparent 60%),
+        radial-gradient(420px 240px at 85% 85%, rgba(0,0,0,.05), transparent 65%);
     }
 
     /* ===== MENU ESQUERDO (mais Paint) ===== */
@@ -150,22 +221,26 @@
       padding:8px 10px;
       border-radius:10px;
 
-      border:1px solid rgba(255,255,255,.14);
+      border:1px solid var(--panelStroke2);
       border-top-color: var(--bevelTop);
       border-left-color: var(--bevelTop);
       border-right-color: rgba(0,0,0,.76);
-      border-bottom-color: rgba(0,0,0,.88);
+      border-bottom-color: var(--bevelBot);
 
       background:
         linear-gradient(180deg, rgba(58,58,78,.55), rgba(12,12,18,.55));
     }
+    body[data-theme="xp"] .xp-titlebar{
+      background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(240,243,250,.62));
+    }
+
     .xp-titlebar .left{
       display:flex; align-items:center; gap:10px;
       font-family:var(--mono);
       font-size:11px;
       letter-spacing:.12em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.86);
+      color:var(--text);
     }
     .mini-lights{ display:flex; gap:6px; opacity:.95; }
     .mini-lights span{
@@ -174,11 +249,16 @@
       background: rgba(255,255,255,.06);
       box-shadow: 0 0 0 2px rgba(0,0,0,.35) inset;
     }
+    body[data-theme="xp"] .mini-lights span{
+      border-color: rgba(0,0,0,.20);
+      box-shadow: 0 0 0 2px rgba(255,255,255,.55) inset;
+    }
+
     .mini-lights span:nth-child(2){ background: rgba(255,140,50,.14); }
     .xp-titlebar .right{
       font-family:var(--mono);
       font-size:10px;
-      color:rgba(255,255,255,.55);
+      color:var(--muted);
       letter-spacing:.10em;
       text-transform:uppercase;
     }
@@ -190,8 +270,11 @@
       gap:8px;
       padding:10px;
       border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
+      border:1px solid var(--panelStroke);
+      background: rgba(0,0,0,.18);
+    }
+    body[data-theme="xp"] .toolbox{
+      background: rgba(255,255,255,.35);
     }
 
     .toolbtn{
@@ -210,7 +293,7 @@
       border-top-color: var(--bevelTop);
       border-left-color: var(--bevelTop);
       border-right-color: rgba(0,0,0,.78);
-      border-bottom-color: rgba(0,0,0,.90);
+      border-bottom-color: var(--bevelBot);
 
       background:
         linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.02)),
@@ -221,12 +304,29 @@
         0 -1px 0 rgba(0,0,0,.45) inset;
 
       transition: transform .10s ease, border-color .12s ease, filter .12s ease, box-shadow .12s ease;
+      position:relative;
     }
+    body[data-theme="xp"] .toolbtn{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.85), rgba(235,240,250,.70));
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.65) inset,
+        0 -1px 0 rgba(0,0,0,.10) inset;
+      border-color: rgba(0,0,0,.14);
+      border-right-color: rgba(0,0,0,.22);
+      border-bottom-color: rgba(0,0,0,.26);
+    }
+
     .toolbtn:hover{
       transform: translateY(-1px);
       border-color: rgba(255,140,50,.32);
       filter:brightness(1.07);
     }
+    body[data-theme="xp"] .toolbtn:hover{
+      border-color: rgba(0,0,0,.24);
+      filter:brightness(1.02);
+    }
+
     /* pressed XP */
     .toolbtn:active{
       transform: translateY(0px);
@@ -234,6 +334,11 @@
         0 2px 0 rgba(0,0,0,.55) inset,
         0 -1px 0 rgba(255,255,255,.05) inset;
       filter:brightness(1.03);
+    }
+    body[data-theme="xp"] .toolbtn:active{
+      box-shadow:
+        0 2px 0 rgba(0,0,0,.18) inset,
+        0 -1px 0 rgba(255,255,255,.55) inset;
     }
 
     .toolbtn.active{
@@ -243,8 +348,14 @@
         0 0 22px rgba(255,140,50,.10),
         0 2px 0 rgba(0,0,0,.45) inset;
     }
+    body[data-theme="xp"] .toolbtn.active{
+      border-color: rgba(0,0,0,.30);
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,.08) inset,
+        0 2px 0 rgba(0,0,0,.12) inset;
+    }
 
-    /* ícone “pixel/old” (sem depender de imagens) */
+    /* ícone “old” */
     .tool-ico{
       width:22px; height:22px;
       border-radius:6px;
@@ -255,8 +366,13 @@
       display:grid; place-items:center;
       font-family:var(--mono);
       font-size:12px;
-      color:rgba(255,255,255,.82);
+      color:var(--text);
       image-rendering: pixelated;
+    }
+    body[data-theme="xp"] .tool-ico{
+      border-color: rgba(0,0,0,.18);
+      background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(240,243,250,.70));
+      color: rgba(0,0,0,.76);
     }
 
     .tool-label{
@@ -264,7 +380,42 @@
       font-size:11px;
       letter-spacing:.10em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.88);
+      color:var(--text);
+    }
+
+    /* Tooltip estilo Windows (só CSS) */
+    .toolbtn[data-tip]:hover::after{
+      content: attr(data-tip);
+      position:absolute;
+      left: 10px;
+      top: 100%;
+      margin-top:8px;
+      z-index:99;
+
+      padding:7px 9px;
+      border-radius:10px;
+
+      border:1px solid rgba(255,255,255,.14);
+      border-top-color: rgba(255,255,255,.22);
+      border-left-color: rgba(255,255,255,.20);
+      border-right-color: rgba(0,0,0,.78);
+      border-bottom-color: rgba(0,0,0,.90);
+
+      background: rgba(0,0,0,.78);
+      color: rgba(255,255,255,.88);
+
+      font-family: var(--mono);
+      font-size:10px;
+      letter-spacing:.06em;
+      white-space:nowrap;
+      box-shadow: 0 18px 40px rgba(0,0,0,.60);
+      pointer-events:none;
+    }
+    body[data-theme="xp"] .toolbtn[data-tip]:hover::after{
+      background: rgba(255,255,255,.95);
+      color: rgba(0,0,0,.78);
+      border-color: rgba(0,0,0,.22);
+      box-shadow: 0 18px 40px rgba(0,0,0,.20);
     }
 
     .profile{
@@ -272,21 +423,24 @@
       margin-top:auto;
       padding:10px 12px;
       border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
+      border:1px solid var(--panelStroke);
+      background: rgba(0,0,0,.18);
+    }
+    body[data-theme="xp"] .profile{
+      background: rgba(255,255,255,.35);
     }
     .profile .name{
       font-family:var(--mono);
       font-size:12px;
       letter-spacing:.10em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.88);
+      color:var(--text);
     }
     .profile .tag{
       margin-top:6px;
       font-family:var(--mono);
       font-size:11px;
-      color:rgba(255,255,255,.55);
+      color:var(--muted);
       letter-spacing:.06em;
     }
 
@@ -308,8 +462,11 @@
       padding:10px 10px;
       border-radius:12px;
 
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
+      border:1px solid var(--panelStroke);
+      background: rgba(0,0,0,.18);
+    }
+    body[data-theme="xp"] .topbar{
+      background: rgba(255,255,255,.35);
     }
 
     .crumb{
@@ -318,7 +475,7 @@
       font-size:11px;
       letter-spacing:.10em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.70);
+      color:var(--muted);
     }
     .crumb .dot{
       width:7px; height:7px; border-radius:999px;
@@ -339,7 +496,7 @@
       border-top-color: var(--bevelTop);
       border-left-color: var(--bevelTop);
       border-right-color: rgba(0,0,0,.78);
-      border-bottom-color: rgba(0,0,0,.90);
+      border-bottom-color: var(--bevelBot);
 
       background:
         linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02)),
@@ -349,18 +506,28 @@
       font-size:11px;
       letter-spacing:.10em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.90);
+      color:var(--text);
 
       transition: transform .10s ease, border-color .12s ease, filter .12s ease, box-shadow .12s ease;
     }
+    body[data-theme="xp"] .btn-bevel{
+      background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(235,240,250,.70));
+      border-color: rgba(0,0,0,.18);
+      border-right-color: rgba(0,0,0,.22);
+      border-bottom-color: rgba(0,0,0,.26);
+      color: rgba(0,0,0,.78);
+    }
+
     .btn-bevel:hover{ transform: translateY(-1px); border-color: rgba(255,140,50,.30); filter:brightness(1.07); }
     .btn-bevel:active{
       transform: translateY(0px);
       box-shadow: 0 2px 0 rgba(0,0,0,.55) inset;
       filter:brightness(1.03);
     }
+    body[data-theme="xp"] .btn-bevel:hover{ border-color: rgba(0,0,0,.26); filter:brightness(1.02); }
+    body[data-theme="xp"] .btn-bevel:active{ box-shadow: 0 2px 0 rgba(0,0,0,.18) inset; }
 
-    /* Barra fake “Arquivo Editar Exibir Ajuda” (AMV/2008 vibes) */
+    /* Barra fake “Arquivo Editar Exibir Ajuda” + ticker */
     .menubar{
       position:relative; z-index:1;
       display:flex;
@@ -370,14 +537,18 @@
       padding:8px 10px;
       border-radius:12px;
 
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
+      border:1px solid var(--panelStroke);
+      background: rgba(0,0,0,.14);
 
       font-family:var(--mono);
       font-size:11px;
       letter-spacing:.08em;
-      color:rgba(255,255,255,.62);
+      color:var(--muted);
     }
+    body[data-theme="xp"] .menubar{
+      background: rgba(255,255,255,.40);
+    }
+
     .menubar .item{
       cursor:default;
       padding:4px 6px;
@@ -387,16 +558,21 @@
     .menubar .item:hover{
       border-color: rgba(255,255,255,.12);
       background: rgba(255,255,255,.04);
-      color:rgba(255,255,255,.76);
+      color: rgba(255,255,255,.80);
     }
+    body[data-theme="xp"] .menubar .item:hover{
+      border-color: rgba(0,0,0,.16);
+      background: rgba(0,0,0,.04);
+      color: rgba(0,0,0,.78);
+    }
+
     .menubar .sep{
       margin-left:auto;
       font-size:10px;
-      color:rgba(255,255,255,.45);
+      color:var(--muted2);
       letter-spacing:.10em;
     }
 
-    /* “marquee” sutil, lento */
     .ticker{
       position:relative;
       height:18px;
@@ -412,7 +588,7 @@
       font-family:var(--mono);
       font-size:10px;
       letter-spacing:.08em;
-      color:rgba(255,255,255,.55);
+      color: var(--muted2);
       animation: scroll 22s linear infinite;
     }
     @keyframes scroll{
@@ -429,23 +605,30 @@
       z-index:1;
     }
 
+    /* ===== VIDEO MAIS “PESO” (maior, sem fullscreen) ===== */
     .video-shell{
-      width:min(980px, 100%);
+      width:min(1100px, 100%);     /* era 980 */
       border-radius:14px;
       overflow:hidden;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.30);
+      border:1px solid var(--panelStroke2);
+      background: rgba(0,0,0,.28);
       box-shadow:
         0 0 0 1px rgba(255,255,255,.05) inset,
         0 28px 90px rgba(0,0,0,.70);
       position:relative;
+    }
+    body[data-theme="xp"] .video-shell{
+      background: rgba(255,255,255,.45);
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,.08) inset,
+        0 22px 60px rgba(0,0,0,.18);
     }
 
     video{
       display:block;
       width:100%;
       height:auto;
-      max-height: 70vh;
+      max-height: 74vh;            /* era 70 */
       background:#000;
     }
 
@@ -530,7 +713,7 @@
       opacity:.85;
     }
 
-    /* ===== MODAL “JANELA” ===== */
+    /* ===== MODAL “JANELA” com micro animação ===== */
     .modal{
       position:fixed; inset:0;
       z-index:70;
@@ -540,6 +723,10 @@
       background: rgba(0,0,0,.55);
       backdrop-filter: blur(2px);
       padding:14px;
+    }
+    body[data-theme="xp"] .modal{
+      background: rgba(0,0,0,.32);
+      backdrop-filter: blur(1px);
     }
     .modal.open{ display:flex; }
 
@@ -552,9 +739,22 @@
       border-radius:14px;
       overflow:hidden;
 
-      border:1px solid rgba(255,255,255,.14);
+      border:1px solid var(--panelStroke2);
       background: rgba(0,0,0,.45);
       box-shadow: 0 30px 100px rgba(0,0,0,.80);
+
+      opacity:0;
+      transform: translateY(6px);
+      transition: 120ms ease;
+    }
+    body[data-theme="xp"] .window{
+      background: rgba(255,255,255,.72);
+      box-shadow: 0 24px 70px rgba(0,0,0,.25);
+    }
+
+    .modal.open .window{
+      opacity:1;
+      transform: translateY(0px);
     }
 
     .winbar{
@@ -572,6 +772,12 @@
       text-transform:uppercase;
       color:rgba(255,255,255,.84);
     }
+    body[data-theme="xp"] .winbar{
+      background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(235,240,250,.70));
+      color: rgba(0,0,0,.78);
+      border-bottom-color: rgba(0,0,0,.12);
+    }
+
     .winbar .left{ display:flex; align-items:center; gap:10px; }
     .winbar .pilldot{
       width:7px; height:7px; border-radius:999px;
@@ -590,7 +796,7 @@
       border-top-color: var(--bevelTop);
       border-left-color: var(--bevelTop);
       border-right-color: rgba(0,0,0,.78);
-      border-bottom-color: rgba(0,0,0,.90);
+      border-bottom-color: var(--bevelBot);
 
       background:
         linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02)),
@@ -602,8 +808,17 @@
       color:rgba(255,255,255,.78);
       transition:.10s ease;
     }
+    body[data-theme="xp"] .close{
+      background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(235,240,250,.70));
+      border-color: rgba(0,0,0,.18);
+      border-right-color: rgba(0,0,0,.22);
+      border-bottom-color: rgba(0,0,0,.26);
+      color: rgba(0,0,0,.78);
+    }
     .close:hover{ border-color: rgba(255,140,50,.30); transform: translateY(-1px); filter:brightness(1.07); }
     .close:active{ transform: translateY(0px); box-shadow: 0 2px 0 rgba(0,0,0,.55) inset; }
+    body[data-theme="xp"] .close:hover{ border-color: rgba(0,0,0,.26); filter:brightness(1.02); }
+    body[data-theme="xp"] .close:active{ box-shadow: 0 2px 0 rgba(0,0,0,.18) inset; }
 
     .winbody{
       padding:12px;
@@ -612,12 +827,16 @@
 
     .card{
       border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
+      border:1px solid var(--panelStroke);
+      background: rgba(0,0,0,.18);
       padding:12px;
       position:relative;
       overflow:hidden;
     }
+    body[data-theme="xp"] .card{
+      background: rgba(255,255,255,.42);
+    }
+
     .card:before{
       content:"";
       position:absolute; inset:-1px;
@@ -626,6 +845,12 @@
         radial-gradient(420px 220px at 22% 15%, rgba(255,140,50,.10), transparent 60%),
         radial-gradient(420px 220px at 78% 85%, rgba(255,255,255,.05), transparent 65%);
       opacity:.55;
+    }
+    body[data-theme="xp"] .card:before{
+      opacity:.22;
+      background:
+        radial-gradient(420px 220px at 22% 15%, rgba(0,0,0,.08), transparent 60%),
+        radial-gradient(420px 220px at 78% 85%, rgba(0,0,0,.05), transparent 65%);
     }
     .card > *{ position:relative; z-index:1; }
 
@@ -641,12 +866,13 @@
       font-size:11px;
       letter-spacing:.12em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.78);
+      color:var(--muted);
     }
+
     .mini{
       font-family:var(--mono);
       font-size:11px;
-      color:rgba(255,255,255,.58);
+      color:var(--muted);
       letter-spacing:.06em;
       line-height:1.5;
     }
@@ -665,12 +891,20 @@
       letter-spacing:.10em;
       color:rgba(255,255,255,.70);
     }
+    body[data-theme="xp"] .social-ava{
+      color: rgba(0,0,0,.72);
+      background:
+        radial-gradient(circle at 35% 30%, rgba(0,0,0,.10), transparent 60%),
+        rgba(255,255,255,.75);
+      box-shadow: 0 0 22px rgba(0,0,0,.10);
+    }
+
     .social-hero strong{ display:block; font-size:20px; letter-spacing:.02em; }
     .social-hero span{
       display:block;
       margin-top:4px;
       font-family:var(--mono);
-      color:rgba(255,255,255,.60);
+      color:var(--muted);
       font-size:12px;
       letter-spacing:.06em;
     }
@@ -680,13 +914,17 @@
       margin-top:10px;
       padding:7px 10px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
+      border:1px solid var(--panelStroke);
+      background: rgba(0,0,0,.14);
       font-family:var(--mono);
       font-size:11px;
-      color:rgba(255,255,255,.62);
+      color:var(--muted);
       letter-spacing:.06em;
     }
+    body[data-theme="xp"] .pill{
+      background: rgba(255,255,255,.45);
+    }
+
     .pill .pdot{
       width:7px;height:7px;border-radius:999px;
       background: rgba(255,140,50,.55);
@@ -705,145 +943,146 @@
       border-top-color: var(--bevelTop);
       border-left-color: var(--bevelTop);
       border-right-color: rgba(0,0,0,.78);
-      border-bottom-color: rgba(0,0,0,.90);
+      border-bottom-color: var(--bevelBot);
 
       background:
         linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02)),
         rgba(12,12,15,.55);
 
-      color:rgba(255,255,255,.84);
+      color:var(--text);
       font-family:var(--mono);
       font-size:11px;
       letter-spacing:.10em;
       text-transform:uppercase;
       transition:.10s ease;
     }
+    body[data-theme="xp"] .linkbtn{
+      background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(235,240,250,.70));
+      border-color: rgba(0,0,0,.18);
+      border-right-color: rgba(0,0,0,.22);
+      border-bottom-color: rgba(0,0,0,.26);
+      color: rgba(0,0,0,.78);
+    }
+
     .linkbtn:hover{ border-color: rgba(255,140,50,.30); transform: translateY(-1px); filter:brightness(1.07); }
     .linkbtn:active{ transform: translateY(0px); box-shadow: 0 2px 0 rgba(0,0,0,.55) inset; }
+    body[data-theme="xp"] .linkbtn:hover{ border-color: rgba(0,0,0,.26); filter:brightness(1.02); }
+    body[data-theme="xp"] .linkbtn:active{ box-shadow: 0 2px 0 rgba(0,0,0,.18) inset; }
 
-    /* ===== Discord widget (mais janela) ===== */
-    .discord-widget{
+    /* ===== Discord widget (COMPACTO, sem barra enorme) ===== */
+    .discord-compact{
       position:fixed;
       left:12px;
       bottom:12px;
       z-index:25;
 
-      width:min(330px, calc(100vw - 24px));
-      border-radius:14px;
+      display:flex;
+      align-items:center;
+      gap:10px;
 
-      border:1px solid rgba(255,255,255,.14);
+      width:min(320px, calc(100vw - 24px));
+      padding:10px 10px;
+
+      border-radius:14px;
+      border:1px solid var(--panelStroke2);
+
       background: rgba(0,0,0,.40);
       backdrop-filter: blur(4px);
 
       box-shadow: 0 20px 60px rgba(0,0,0,.70);
       overflow:hidden;
     }
-
-    .discord-widget .head{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
-      padding:10px 10px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      background: linear-gradient(180deg, rgba(58,58,78,.55), rgba(12,12,18,.55));
-      font-family:var(--mono);
-      font-size:11px;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:rgba(255,255,255,.84);
-    }
-    .discord-widget .state{
-      font-size:10px;
-      color:rgba(255,255,255,.55);
-      letter-spacing:.10em;
-      text-transform:uppercase;
+    body[data-theme="xp"] .discord-compact{
+      background: rgba(255,255,255,.75);
+      box-shadow: 0 18px 45px rgba(0,0,0,.22);
+      backdrop-filter: blur(2px);
     }
 
-    .discord-widget .body{ padding:10px 10px 10px; }
-
-    .discord-row{ display:flex; align-items:center; gap:10px; }
     .d-ava{
-      width:48px; height:48px;
+      width:44px; height:44px;
       border-radius:12px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.05);
+      border:1px solid var(--panelStroke2);
+      background: rgba(255,255,255,.06);
       overflow:hidden;
       flex:0 0 auto;
     }
+    body[data-theme="xp"] .d-ava{ background: rgba(0,0,0,.04); }
+
     .d-ava img{ width:100%; height:100%; object-fit:cover; display:block; }
 
-    .d-meta strong{
-      display:block;
-      font-family:var(--mono);
-      letter-spacing:.08em;
-      font-size:12px;
-      text-transform:uppercase;
-      color:rgba(255,255,255,.88);
+    .d-meta{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:5px;
+      flex:1;
     }
 
-    .statusline{
-      display:flex; align-items:center; gap:8px;
-      margin-top:6px;
+    .d-top{
+      display:flex;
+      align-items:baseline;
+      gap:8px;
+      min-width:0;
+    }
+
+    .d-nick{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--text);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 140px;
+    }
+
+    .d-user{
+      font-family:var(--mono);
+      font-size:10px;
+      letter-spacing:.08em;
+      color:var(--muted2);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 120px;
+    }
+
+    .d-status{
+      display:flex;
+      align-items:center;
+      gap:8px;
       font-family:var(--mono);
       font-size:11px;
-      color:rgba(255,255,255,.62);
       letter-spacing:.06em;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
+
     .status-dot{
       width:8px; height:8px; border-radius:999px;
       background: var(--offline);
       box-shadow: 0 0 12px rgba(255,255,255,.08);
+      flex:0 0 auto;
     }
 
-    .rows{
-      margin-top:10px;
-      display:grid;
-      gap:8px;
-    }
-    .rowline{
-      padding:8px 9px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      font-family:var(--mono);
-      font-size:11px;
-      color:rgba(255,255,255,.82);
-      letter-spacing:.02em;
-      line-height:1.35;
-    }
-    .rowline b{
-      display:inline-block;
-      min-width:86px;
-      font-size:10px;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:rgba(255,255,255,.52);
-      margin-right:8px;
-    }
-
-    /* ===== ADMIN ===== */
-    .form{ display:grid; gap:10px; max-width:520px; }
-    .field{ display:grid; gap:6px; }
-    .field label{
+    .d-mini{
+      margin-left:auto;
+      text-align:right;
+      display:flex;
+      flex-direction:column;
+      gap:5px;
+      flex:0 0 auto;
       font-family:var(--mono);
       font-size:10px;
-      letter-spacing:.12em;
+      letter-spacing:.08em;
+      color:var(--muted2);
+    }
+    .d-mini .live{
       text-transform:uppercase;
-      color:rgba(255,255,255,.60);
-    }
-    .field input{
-      width:100%;
-      padding:12px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      color:rgba(255,255,255,.90);
-      outline:none;
-      font-family:var(--mono);
-      letter-spacing:.02em;
-    }
-    .field input:focus{
-      border-color: rgba(255,140,50,.30);
-      box-shadow: 0 0 0 3px rgba(255,140,50,.10);
+      letter-spacing:.10em;
     }
 
     .hidden{ display:none !important; }
@@ -852,7 +1091,7 @@
       body{ overflow:auto; }
       .app{ grid-template-columns: 1fr; height:auto; }
       video{ max-height: 52vh; }
-      .discord-widget{
+      .discord-compact{
         position:static;
         width:calc(100% - 28px);
         margin: 0 14px 14px;
@@ -863,10 +1102,13 @@
   </style>
 </head>
 
-<body>
+<body data-theme="dark">
   <canvas id="particles"></canvas>
   <div class="bg-soft"></div>
   <div class="bg-noise"></div>
+
+  <!-- CRT flash -->
+  <div class="crtflash" id="crtflash"></div>
 
   <!-- ENTER -->
   <div class="enter" id="enter" aria-label="Clique para entrar">
@@ -886,22 +1128,22 @@
       </div>
 
       <nav class="toolbox" id="nav">
-        <button class="toolbtn" data-view="social">
+        <button class="toolbtn" data-view="social" data-tip="social media / links / perfil">
           <span class="tool-ico">☺</span>
           <span class="tool-label">social</span>
         </button>
 
-        <button class="toolbtn" data-view="archives">
+        <button class="toolbtn" data-view="archives" data-tip="jogos / progresso / arquivos">
           <span class="tool-ico">▦</span>
           <span class="tool-label">arquivos</span>
         </button>
 
-        <button class="toolbtn" data-view="playlists">
+        <button class="toolbtn" data-view="playlists" data-tip="músicas favoritas / listas">
           <span class="tool-ico">♪</span>
           <span class="tool-label">playlists</span>
         </button>
 
-        <button class="toolbtn" data-view="admin">
+        <button class="toolbtn" data-view="admin" data-tip="login privado / interno">
           <span class="tool-ico">★</span>
           <span class="tool-label">admin</span>
         </button>
@@ -918,11 +1160,11 @@
       <div class="topbar">
         <div class="crumb"><span class="dot"></span><span>ALLZ HUB</span></div>
         <div class="audio-ctrl">
+          <button class="btn-bevel" id="themeBtn" title="Alternar tema (T)">TEMA</button>
           <button class="btn-bevel" id="muteBtn">MUTAR</button>
         </div>
       </div>
 
-      <!-- upgrades: menubar + ticker -->
       <div class="menubar" aria-hidden="true">
         <div class="item">Arquivo</div>
         <div class="item">Editar</div>
@@ -933,7 +1175,7 @@
           <span id="tickerText">ALLZ HUB — nostalgia internet antiga + UI dark moderna — Bandicam vibes — awake and unafraid —</span>
         </div>
 
-        <div class="sep">ALLZ_2009</div>
+        <div class="sep" id="themeLabel">ESCURO</div>
       </div>
 
       <section class="stage">
@@ -983,7 +1225,7 @@
               </div>
 
               <div class="btnrow">
-                <!-- coloca seus links reais -->
+                <!-- bota teus links reais -->
                 <a class="linkbtn" href="#" target="_blank" rel="noopener">TikTok</a>
                 <a class="linkbtn" href="#" target="_blank" rel="noopener">Spotify</a>
                 <a class="linkbtn" href="#" target="_blank" rel="noopener">Instagram</a>
@@ -1000,11 +1242,11 @@
             <div class="card">
               <div class="h3">Notas</div>
               <p class="mini">
-                • música: volume fixo 4% <br>
+                • música: volume fixo 20% <br>
                 • botão mutar/desmutar <br>
                 • ao abrir janela: música pausa <br>
                 • discord ao vivo (lanyard) <br>
-                • admin: só você vê dados internos
+                • tema: ESCURO / XP branco (botão TEMA ou tecla T)
               </p>
             </div>
           </div>
@@ -1018,8 +1260,7 @@
               Área pra guardar: <br>
               • jogos (links, installs, saves) <br>
               • progresso (texto, prints, notas) <br>
-              • arquivos (zip, docs, links pessoais) <br><br>
-              (depois a gente deixa isso com cards e listas mais brabas)
+              • arquivos (zip, docs, links pessoais)
             </p>
           </div>
         </div>
@@ -1030,7 +1271,7 @@
             <div class="h3">Playlists</div>
             <p class="mini">
               Área pra músicas favoritas / listas / links. <br>
-              (pode puxar do Spotify depois, ou manter manual)
+              (dá pra puxar do Spotify depois, ou manter manual)
             </p>
           </div>
         </div>
@@ -1062,9 +1303,9 @@
                 </div>
               </div>
 
-              <p class="mini" style="margin-top:12px; color:rgba(255,255,255,.55)">
+              <p class="mini" style="margin-top:12px; color:var(--muted2)">
                 Pra trocar a senha, edite no JS: <b>ADMIN_USER</b> e <b>ADMIN_PASS_HASH</b>. <br>
-                Pra gerar o hash, console: <code style="font-family:var(--mono); color:rgba(255,255,255,.72)">allzHash("SUA_SENHA")</code>
+                Pra gerar o hash, console: <code style="font-family:var(--mono);">allzHash("SUA_SENHA")</code>
               </p>
             </div>
 
@@ -1074,9 +1315,8 @@
                 <div class="h3">Interno</div>
                 <p class="mini">
                   • painel de links internos <br>
-                  • atalhos de admin <br>
                   • notas privadas <br>
-                  • (quando quiser, dá pra plugar um backend real)
+                  • atalhos de admin
                 </p>
               </div>
             </div>
@@ -1088,41 +1328,34 @@
     </div>
   </div>
 
-  <!-- DISCORD widget -->
-  <div class="discord-widget" id="discordWidget">
-    <div class="head">
-      <div>Discord - presença</div>
-      <div class="state" id="lanyardState">conectando…</div>
+  <!-- DISCORD compacto -->
+  <div class="discord-compact" id="discordCompact">
+    <div class="d-ava"><img id="dAva" alt=""></div>
+
+    <div class="d-meta">
+      <div class="d-top">
+        <div class="d-nick" id="dNick">—</div>
+        <div class="d-user" id="dUser">—</div>
+      </div>
+      <div class="d-status">
+        <span class="status-dot" id="dDot"></span>
+        <span id="dStatus">—</span>
+      </div>
     </div>
 
-    <div class="body">
-      <div class="discord-row">
-        <div class="d-ava"><img id="dAva" alt=""></div>
-        <div class="d-meta">
-          <strong id="dName">—</strong>
-          <div class="statusline">
-            <span class="status-dot" id="dDot"></span>
-            <span id="dStatus">—</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="rows">
-        <div class="rowline"><b>Status:</b> <span id="dStatus2">—</span></div>
-        <div class="rowline"><b>Atividade:</b> <span id="dAct">—</span></div>
-        <div class="rowline"><b>Spotify:</b> <span id="dSpot">—</span></div>
-      </div>
+    <div class="d-mini">
+      <div class="live" id="lanyardState">…</div>
+      <div id="lastUpdate">—</div>
     </div>
   </div>
 
-  <!-- áudio -->
+  <!-- áudio (troquei o link + volume 20%) -->
   <audio id="bgm" preload="auto" loop>
-    <source src="https://files.catbox.moe/7es5uf.mp3" type="audio/mpeg">
+    <source src="https://files.catbox.moe/mkmd7z.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- beep (XP click) -->
+  <!-- beep (click) -->
   <audio id="beep" preload="auto">
-    <!-- base64 WAV curto (sem arquivo externo) -->
     <source src="data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YVAAAAB8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fA==" type="audio/wav">
   </audio>
 
@@ -1143,21 +1376,40 @@
      *********************/
     const enter = document.getElementById("enter");
     const app = document.getElementById("app");
+    const crtflash = document.getElementById("crtflash");
 
     const amv = document.getElementById("amv");
     const bgm = document.getElementById("bgm");
     const beep = document.getElementById("beep");
+
     const muteBtn = document.getElementById("muteBtn");
+    const themeBtn = document.getElementById("themeBtn");
+    const themeLabel = document.getElementById("themeLabel");
 
     const modal = document.getElementById("modal");
     const closeWin = document.getElementById("closeWin");
     const winTitle = document.getElementById("winTitle");
     const nav = document.getElementById("nav");
-
     const ts = document.getElementById("ts");
 
     let started = false;
     let muted = false;
+
+    /*********************
+     * TEMA (ESCURO / XP)
+     *********************/
+    function applyTheme(theme){
+      document.body.setAttribute("data-theme", theme);
+      themeLabel.textContent = (theme === "xp") ? "XP" : "ESCURO";
+    }
+    function toggleTheme(){
+      const cur = document.body.getAttribute("data-theme") || "dark";
+      applyTheme(cur === "xp" ? "dark" : "xp");
+    }
+    themeBtn.addEventListener("click", toggleTheme);
+    window.addEventListener("keydown", (e)=>{
+      if(e.key.toLowerCase() === "t" && started) toggleTheme();
+    });
 
     /*********************
      * BOOT
@@ -1166,7 +1418,13 @@
       if(started) return;
       started = true;
 
-      // beep XP (bem baixo)
+      // flash CRT + beep
+      try{
+        crtflash.classList.remove("on");
+        void crtflash.offsetWidth;
+        crtflash.classList.add("on");
+      }catch(e){}
+
       try{
         beep.volume = 0.12;
         beep.currentTime = 0;
@@ -1186,8 +1444,8 @@
         window.addEventListener("pointerdown", () => amv.play().catch(()=>{}), { once:true });
       }
 
-      // música fixa 4% (após ENTER)
-      bgm.volume = 0.04;
+      // música fixa 20% (após ENTER)
+      bgm.volume = 0.20;
       try { await bgm.play(); }
       catch(e){
         window.addEventListener("pointerdown", () => bgm.play().catch(()=>{}), { once:true });
@@ -1224,14 +1482,14 @@
         bgm.pause();
         muteBtn.textContent = "DESMUTAR";
       }else{
-        bgm.volume = 0.04;
+        bgm.volume = 0.20;
         bgm.play().catch(()=>{});
         muteBtn.textContent = "MUTAR";
       }
     });
 
     /*********************
-     * MODAL (JANELAS)
+     * MODAL (JANELAS) + CLICK SOUND
      *********************/
     const panes = {
       social: document.getElementById("pane-social"),
@@ -1300,19 +1558,19 @@
     });
 
     /*********************
-     * DISCORD (LANYARD) - PT-BR
+     * DISCORD (LANYARD) - compacto + última atualização
      *********************/
     const dAva = document.getElementById("dAva");
-    const dName = document.getElementById("dName");
+    const dNick = document.getElementById("dNick");
+    const dUser = document.getElementById("dUser");
     const dStatus = document.getElementById("dStatus");
-    const dStatus2 = document.getElementById("dStatus2");
     const dDot = document.getElementById("dDot");
-    const dAct = document.getElementById("dAct");
-    const dSpot = document.getElementById("dSpot");
     const lanyardState = document.getElementById("lanyardState");
+    const lastUpdate = document.getElementById("lastUpdate");
 
     let ws;
     let pollTimer;
+    let lastUpdateTs = null;
 
     function getCss(varName){
       return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
@@ -1327,10 +1585,12 @@
       const map = { online:"online", idle:"ausente", dnd:"não perturbe", offline:"offline" };
       return map[s] || "offline";
     }
-    function escapeHtml(str){
-      return String(str).replace(/[&<>"']/g, m => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
-      }[m]));
+
+    function setLastUpdateNow(){
+      lastUpdateTs = new Date();
+      const hh = String(lastUpdateTs.getHours()).padStart(2,"0");
+      const mm = String(lastUpdateTs.getMinutes()).padStart(2,"0");
+      lastUpdate.textContent = `${hh}:${mm}`;
     }
 
     function applyLanyard(payload){
@@ -1339,6 +1599,7 @@
 
       const u = data.discord_user || {};
       const globalName = u.global_name || u.username || "—";
+      const username = u.username ? `@${u.username}` : "—";
       const avatarHash = u.avatar;
 
       const avatarUrl = (avatarHash)
@@ -1346,57 +1607,36 @@
         : `https://cdn.discordapp.com/embed/avatars/0.png`;
 
       dAva.src = avatarUrl;
-      dName.textContent = globalName;
+      dNick.textContent = globalName;
+      dUser.textContent = username;
 
       const st = data.discord_status || "offline";
       const stBr = statusPtBr(st);
       dStatus.textContent = stBr;
-      dStatus2.textContent = stBr;
 
       const c = statusColor(st);
       dDot.style.background = c;
       dDot.style.boxShadow = `0 0 12px ${c}55`;
 
-      // Atividade principal (ignora custom status se existir outra)
-      const acts = Array.isArray(data.activities) ? data.activities : [];
-      const filtered = acts.filter(a => a && a.type !== 4);
-      const main = filtered[0] || acts[0];
-
-      if(main){
-        const name = main.name || "—";
-        const details = main.details ? ` · ${main.details}` : "";
-        const state = main.state ? ` · ${main.state}` : "";
-        dAct.textContent = `${name}${details}${state}`.slice(0, 160);
-      }else{
-        dAct.textContent = "—";
-      }
-
-      // Spotify
-      if(data.spotify){
-        const sp = data.spotify;
-        const song = sp.song || "—";
-        const artist = sp.artist || "";
-        dSpot.innerHTML = `${escapeHtml(song)} <span style="color:rgba(255,255,255,.55)">·</span> ${escapeHtml(artist)}`;
-      }else{
-        dSpot.textContent = "—";
-      }
+      setLastUpdateNow();
     }
 
     async function pollLanyard(){
       try{
-        lanyardState.textContent = "atualizando…";
+        lanyardState.textContent = "atualizando";
         const res = await fetch(LANYARD_HTTP, { cache:"no-store" });
         const json = await res.json();
         applyLanyard(json);
-        lanyardState.textContent = "ao vivo";
+        lanyardState.textContent = "online";
       }catch(e){
         lanyardState.textContent = "offline";
+        if(!lastUpdateTs) lastUpdate.textContent = "—";
       }
     }
 
     function startLanyard(){
       try{
-        lanyardState.textContent = "conectando…";
+        lanyardState.textContent = "conectando";
         ws = new WebSocket("wss://api.lanyard.rest/socket");
 
         ws.onmessage = (ev)=>{
@@ -1412,7 +1652,7 @@
 
           if(msg.t === "INIT_STATE" || msg.t === "PRESENCE_UPDATE"){
             applyLanyard(msg.d);
-            lanyardState.textContent = "ao vivo";
+            lanyardState.textContent = "online";
           }
         };
 
@@ -1435,7 +1675,7 @@
     }
 
     /*********************
-     * ADMIN LOGIN (hash)
+     * ADMIN LOGIN (hash) — mantive como tava
      *********************/
     const loginBtn = document.getElementById("loginBtn");
     const loginMsg = document.getElementById("loginMsg");
@@ -1498,7 +1738,7 @@
           x: Math.random()*W,
           y: Math.random()*H,
           r: (Math.random()*1.5 + 0.5) * DPR,
-          a: Math.random()*0.20 + 0.06,
+          a: Math.random()*0.18 + 0.05,
           vx: (Math.random()*0.16 - 0.08) * DPR,
           vy: (Math.random()*0.20 + 0.04) * DPR,
           tw: Math.random()*0.8 + 0.2,
@@ -1511,6 +1751,8 @@
         ctx.clearRect(0,0,W,H);
         ctx.globalCompositeOperation = "lighter";
 
+        const isXp = (document.body.getAttribute("data-theme") === "xp");
+
         for(let i=0;i<particles.length;i++){
           const p = particles[i];
           p.x += p.vx * (0.7 + Math.sin(t*p.tw)*0.25);
@@ -1521,16 +1763,22 @@
             particles[i].y = H + (Math.random()*120*DPR);
           }
 
-          const alpha = p.a * (0.75 + 0.25*Math.sin(t*p.tw));
-          ctx.fillStyle = `rgba(255, 140, 50, ${alpha})`;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-          ctx.fill();
+          if(!isXp){
+            const alpha = p.a * (0.75 + 0.25*Math.sin(t*p.tw));
+            ctx.fillStyle = `rgba(255, 140, 50, ${alpha})`;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
 
-          ctx.fillStyle = `rgba(255, 140, 50, ${alpha*0.22})`;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r*3.0, 0, Math.PI*2);
-          ctx.fill();
+            ctx.fillStyle = `rgba(255, 140, 50, ${alpha*0.22})`;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r*3.0, 0, Math.PI*2); ctx.fill();
+          }else{
+            // XP: partícula “poeirinha” cinza bem leve
+            const alpha = (p.a * 0.55) * (0.75 + 0.25*Math.sin(t*p.tw));
+            ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+
+            ctx.fillStyle = `rgba(0, 0, 0, ${alpha*0.18})`;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r*3.0, 0, Math.PI*2); ctx.fill();
+          }
         }
 
         ctx.globalCompositeOperation = "source-over";
