@@ -7,23 +7,22 @@
 
   <style>
     :root{
-      /* ====== TOKENS (UI dark + nostalgia) ====== */
-      --bg:#050507;            /* fundo real do tema escuro */
-      --bgDesk:#e9edf5;        /* fundo “desktop” (mix) */
+      /* ====== PALETA NOVA (sem laranja) ====== */
+      --bg:#050507;
+      --bgDesk:#e9edf5;
+
       --text: rgba(255,255,255,.90);
       --muted: rgba(255,255,255,.60);
       --muted2: rgba(255,255,255,.48);
 
-      --orange: rgba(255,140,50,.92);
+      --panel: rgba(10,10,14,.90);
+      --panel2: rgba(12,12,18,.92);
 
-      /* painéis (menos “vidro”, mais sólido) */
-      --panel: rgba(10,10,14,.88);
-      --panel2: rgba(12,12,18,.90);
       --stroke: rgba(255,255,255,.12);
-      --stroke2: rgba(255,255,255,.16);
+      --stroke2: rgba(255,255,255,.18);
 
       --bevelTop: rgba(255,255,255,.22);
-      --bevelBot: rgba(0,0,0,.90);
+      --bevelBot: rgba(0,0,0,.92);
 
       --good:#43d17a;
       --idle:#f2c14e;
@@ -32,37 +31,54 @@
 
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       --ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+
+      /* destaque neutro (cinza frio) */
+      --accent: rgba(220,225,238,.92);
+      --accent2: rgba(255,255,255,.18);
+      --ring: rgba(255,255,255,.42);
     }
 
-    /* ====== TEMA XP (claro real) ====== */
+    /* ====== TEMA XP (claro) ====== */
     body[data-theme="xp"]{
       --bg: #e9edf5;
       --text: rgba(0,0,0,.86);
       --muted: rgba(0,0,0,.62);
       --muted2: rgba(0,0,0,.48);
 
-      --panel: rgba(255,255,255,.92);
-      --panel2: rgba(245,248,255,.92);
-      --stroke: rgba(0,0,0,.14);
-      --stroke2: rgba(0,0,0,.18);
+      --panel: rgba(255,255,255,.96);
+      --panel2: rgba(245,248,255,.94);
 
-      --bevelTop: rgba(255,255,255,.78);
+      --stroke: rgba(0,0,0,.14);
+      --stroke2: rgba(0,0,0,.20);
+
+      --bevelTop: rgba(255,255,255,.82);
       --bevelBot: rgba(0,0,0,.28);
+
+      --accent: rgba(0,0,0,.70);
+      --accent2: rgba(0,0,0,.16);
+      --ring: rgba(0,0,0,.30);
     }
 
-    /* ====== TEMA MIX (fundo branco estilo desktop + UI dark por cima) ====== */
+    /* ====== TEMA MIX (fundo “desktop” claro + UI dark) ====== */
     body[data-theme="mix"]{
       --bg: var(--bgDesk);
+
       --text: rgba(255,255,255,.90);
       --muted: rgba(255,255,255,.60);
       --muted2: rgba(255,255,255,.48);
 
-      --panel: rgba(10,10,14,.88);
-      --panel2: rgba(12,12,18,.90);
-      --stroke: rgba(0,0,0,.18);      /* no fundo claro fica melhor */
-      --stroke2: rgba(0,0,0,.22);
-      --bevelTop: rgba(255,255,255,.20);
-      --bevelBot: rgba(0,0,0,.88);
+      --panel: rgba(10,10,14,.90);
+      --panel2: rgba(12,12,18,.92);
+
+      --stroke: rgba(0,0,0,.18);
+      --stroke2: rgba(0,0,0,.24);
+
+      --bevelTop: rgba(255,255,255,.22);
+      --bevelBot: rgba(0,0,0,.92);
+
+      --accent: rgba(220,225,238,.92);
+      --accent2: rgba(255,255,255,.16);
+      --ring: rgba(255,255,255,.42);
     }
 
     *{ box-sizing:border-box }
@@ -82,20 +98,20 @@
       z-index:0;
 
       background:
-        radial-gradient(900px 520px at 55% 30%, rgba(255,140,50,.06), transparent 60%),
+        radial-gradient(900px 520px at 55% 30%, rgba(255,255,255,.06), transparent 60%),
         radial-gradient(700px 420px at 40% 70%, rgba(255,255,255,.03), transparent 65%),
-        linear-gradient(180deg, rgba(255,255,255,.02), transparent 40%, rgba(0,0,0,.12));
-      opacity:.95;
+        linear-gradient(180deg, rgba(255,255,255,.02), transparent 40%, rgba(0,0,0,.14));
+      opacity:.98;
     }
     body[data-theme="xp"] .bg-soft{
       background:
         radial-gradient(900px 520px at 55% 30%, rgba(0,0,0,.06), transparent 60%),
         radial-gradient(700px 420px at 40% 70%, rgba(0,0,0,.04), transparent 65%),
-        linear-gradient(180deg, rgba(255,255,255,.40), transparent 45%, rgba(0,0,0,.06));
-      opacity:.95;
+        linear-gradient(180deg, rgba(255,255,255,.44), transparent 45%, rgba(0,0,0,.06));
+      opacity:.98;
     }
-    /* mix: fundo claro com vinheta escura forte */
     body[data-theme="mix"] .bg-soft{
+      /* vinheta forte no fundo claro */
       background:
         radial-gradient(1000px 560px at 50% 45%, rgba(0,0,0,.00), rgba(0,0,0,.42) 78%),
         radial-gradient(900px 520px at 55% 30%, rgba(0,0,0,.06), transparent 60%),
@@ -108,7 +124,7 @@
       position:fixed; inset:0;
       pointer-events:none;
       z-index:0;
-      opacity:.26;
+      opacity:.24;
       mix-blend-mode:overlay;
       background:
         repeating-linear-gradient(0deg, rgba(255,255,255,.03), rgba(255,255,255,.03) 1px, transparent 1px, transparent 4px),
@@ -148,14 +164,14 @@
       font-size: 22px;
       letter-spacing: .55em;
       text-transform: uppercase;
-      color: rgba(255,255,255,.86);
-      text-shadow: 0 0 16px rgba(255,140,50,.10);
+      color: rgba(255,255,255,.88);
+      text-shadow: 0 0 16px rgba(255,255,255,.10);
       position:relative;
       transition: .14s ease;
     }
     .enter:hover .enter-word{
-      color: rgba(255,255,255,.96);
-      text-shadow: 0 0 22px rgba(255,140,50,.20);
+      color: rgba(255,255,255,.98);
+      text-shadow: 0 0 22px rgba(255,255,255,.18);
       filter: brightness(1.05);
     }
     .enter-word::after{
@@ -165,7 +181,7 @@
       top:50%;
       width:8px;
       height:1px;
-      background: rgba(255,140,50,.75);
+      background: rgba(255,255,255,.80);
       transform: translateY(-50%);
       opacity:.0;
       animation: blink 1.05s infinite ease;
@@ -186,9 +202,7 @@
         repeating-linear-gradient(0deg, rgba(255,255,255,.06), rgba(255,255,255,.06) 1px, transparent 1px, transparent 3px);
       mix-blend-mode:screen;
     }
-    .crtflash.on{
-      animation: crt 120ms ease-out forwards;
-    }
+    .crtflash.on{ animation: crt 120ms ease-out forwards; }
     @keyframes crt{
       0%{ opacity:0; }
       25%{ opacity:1; }
@@ -222,7 +236,7 @@
       position:absolute; inset:0;
       pointer-events:none;
       background:
-        radial-gradient(520px 260px at 25% 20%, rgba(255,140,50,.10), transparent 60%),
+        radial-gradient(520px 260px at 25% 20%, rgba(255,255,255,.08), transparent 60%),
         radial-gradient(420px 240px at 85% 85%, rgba(255,255,255,.05), transparent 65%);
       opacity:.55;
     }
@@ -254,11 +268,15 @@
       border-right-color: rgba(0,0,0,.76);
       border-bottom-color: var(--bevelBot);
 
-      background:
-        linear-gradient(180deg, rgba(58,58,78,.55), rgba(12,12,18,.55));
+      background: linear-gradient(180deg, rgba(58,58,78,.55), rgba(12,12,18,.55));
     }
     body[data-theme="xp"] .xp-titlebar{
       background: linear-gradient(180deg, rgba(255,255,255,.78), rgba(240,243,250,.68));
+      border-right-color: rgba(0,0,0,.22);
+      border-bottom-color: rgba(0,0,0,.26);
+    }
+    body[data-theme="mix"] .xp-titlebar{
+      border-color: rgba(0,0,0,.22);
     }
 
     .xp-titlebar .left{
@@ -280,7 +298,8 @@
       border-color: rgba(0,0,0,.20);
       box-shadow: 0 0 0 2px rgba(255,255,255,.55) inset;
     }
-    .mini-lights span:nth-child(2){ background: rgba(255,140,50,.14); }
+    /* sem “laranja” aqui */
+    .mini-lights span:nth-child(2){ background: rgba(255,255,255,.10); }
 
     .xp-titlebar .right{
       font-family:var(--mono);
@@ -300,8 +319,6 @@
       border:1px solid var(--stroke);
       background: var(--panel2);
     }
-    body[data-theme="xp"] .toolbox{ background: var(--panel2); }
-    body[data-theme="mix"] .toolbox{ background: var(--panel2); }
 
     .toolbtn{
       all:unset;
@@ -333,19 +350,19 @@
       position:relative;
     }
     body[data-theme="xp"] .toolbtn{
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.88), rgba(235,240,250,.72));
+      background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(235,240,250,.72));
       border-color: rgba(0,0,0,.14);
       border-right-color: rgba(0,0,0,.22);
       border-bottom-color: rgba(0,0,0,.26);
       box-shadow:
         0 1px 0 rgba(255,255,255,.65) inset,
         0 -1px 0 rgba(0,0,0,.10) inset;
+      color: rgba(0,0,0,.78);
     }
 
     .toolbtn:hover{
       transform: translateY(-1px);
-      border-color: rgba(255,140,50,.32);
+      border-color: rgba(255,255,255,.30);
       filter:brightness(1.06);
     }
     body[data-theme="xp"] .toolbtn:hover{
@@ -367,10 +384,10 @@
     }
 
     .toolbtn.active{
-      border-color: rgba(255,140,50,.50);
+      border-color: rgba(255,255,255,.48);
       box-shadow:
-        0 0 0 1px rgba(255,140,50,.12) inset,
-        0 0 22px rgba(255,140,50,.08),
+        0 0 0 1px rgba(255,255,255,.10) inset,
+        0 0 20px rgba(255,255,255,.06),
         0 2px 0 rgba(0,0,0,.45) inset;
     }
     body[data-theme="xp"] .toolbtn.active{
@@ -407,7 +424,6 @@
       color:var(--text);
     }
 
-    /* Tooltip estilo Windows */
     .toolbtn[data-tip]:hover::after{
       content: attr(data-tip);
       position:absolute;
@@ -496,8 +512,8 @@
     }
     .crumb .dot{
       width:7px; height:7px; border-radius:999px;
-      background: rgba(255,140,50,.55);
-      box-shadow: 0 0 12px rgba(255,140,50,.18);
+      background: rgba(255,255,255,.60);
+      box-shadow: 0 0 12px rgba(255,255,255,.12);
     }
 
     .audio-ctrl{ display:flex; align-items:center; gap:8px; }
@@ -535,7 +551,7 @@
       color: rgba(0,0,0,.78);
     }
 
-    .btn-bevel:hover{ transform: translateY(-1px); border-color: rgba(255,140,50,.30); filter:brightness(1.06); }
+    .btn-bevel:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.30); filter:brightness(1.06); }
     .btn-bevel:active{ transform: translateY(0px); box-shadow: 0 2px 0 rgba(0,0,0,.55) inset; }
     body[data-theme="xp"] .btn-bevel:hover{ border-color: rgba(0,0,0,.26); filter:brightness(1.02); }
     body[data-theme="xp"] .btn-bevel:active{ box-shadow: 0 2px 0 rgba(0,0,0,.18) inset; }
@@ -735,19 +751,33 @@
       opacity:.85;
     }
 
-    /* ===== MODAL (JANELAS) ===== */
+    /* ===== MODAL BASE (overlay com “XP antigo”) ===== */
     .modal{
       position:fixed; inset:0;
       z-index:70;
       display:none;
       align-items:center;
       justify-content:center;
-      background: rgba(0,0,0,.55);
       padding:14px;
+      /* padrão (dark) */
+      background: rgba(0,0,0,.55);
     }
-    body[data-theme="xp"] .modal{ background: rgba(0,0,0,.30); }
-    body[data-theme="mix"] .modal{ background: rgba(0,0,0,.36); }
     .modal.open{ display:flex; }
+
+    /* XP overlay: o “fundo pra fechar” vira aquele ar de desktop antigo */
+    body[data-theme="xp"] .modal{
+      background:
+        radial-gradient(1200px 620px at 50% 40%, rgba(255,255,255,.35), rgba(0,0,0,.16) 78%),
+        repeating-linear-gradient(0deg, rgba(0,0,0,.03), rgba(0,0,0,.03) 1px, transparent 1px, transparent 4px),
+        rgba(30,34,40,.18);
+      backdrop-filter: blur(1.5px);
+    }
+    body[data-theme="mix"] .modal{
+      background:
+        radial-gradient(1200px 620px at 50% 40%, rgba(255,255,255,.14), rgba(0,0,0,.26) 78%),
+        repeating-linear-gradient(0deg, rgba(0,0,0,.02), rgba(0,0,0,.02) 1px, transparent 1px, transparent 4px),
+        rgba(0,0,0,.28);
+    }
 
     .window{
       width:min(920px, 96vw);
@@ -759,12 +789,13 @@
       overflow:hidden;
 
       border:1px solid var(--stroke2);
-      background: rgba(12,12,16,.94); /* sólido */
+      background: rgba(12,12,16,.94);
       box-shadow: 0 30px 100px rgba(0,0,0,.80);
 
       opacity:0;
       transform: translateY(6px);
       transition: 120ms ease;
+      position:relative;
     }
     body[data-theme="xp"] .window{
       background: rgba(255,255,255,.96);
@@ -780,14 +811,24 @@
       transform: translateY(0px);
     }
 
+    /* “skin” XP na janela (bordinha + brilho) */
+    body[data-theme="xp"] .window:before{
+      content:"";
+      position:absolute; inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.70), transparent 38%),
+        repeating-linear-gradient(0deg, rgba(0,0,0,.02), rgba(0,0,0,.02) 1px, transparent 1px, transparent 5px);
+      opacity:.45;
+    }
+
     .winbar{
       display:flex; align-items:center; justify-content:space-between;
       gap:10px;
       padding:10px 10px;
 
       border-bottom:1px solid rgba(255,255,255,.10);
-      background:
-        linear-gradient(180deg, rgba(58,58,78,.55), rgba(12,12,18,.55));
+      background: linear-gradient(180deg, rgba(58,58,78,.55), rgba(12,12,18,.55));
 
       font-family:var(--mono);
       font-size:11px;
@@ -796,7 +837,7 @@
       color:rgba(255,255,255,.84);
     }
     body[data-theme="xp"] .winbar{
-      background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(235,240,250,.70));
+      background: linear-gradient(180deg, rgba(246,249,255,.90), rgba(228,234,246,.78));
       color: rgba(0,0,0,.78);
       border-bottom-color: rgba(0,0,0,.12);
     }
@@ -804,8 +845,12 @@
     .winbar .left{ display:flex; align-items:center; gap:10px; }
     .winbar .pilldot{
       width:7px; height:7px; border-radius:999px;
-      background: rgba(255,140,50,.55);
-      box-shadow: 0 0 12px rgba(255,140,50,.18);
+      background: rgba(255,255,255,.70);
+      box-shadow: 0 0 12px rgba(255,255,255,.12);
+    }
+    body[data-theme="xp"] .winbar .pilldot{
+      background: rgba(0,0,0,.35);
+      box-shadow:none;
     }
 
     .close{
@@ -832,13 +877,13 @@
       transition:.10s ease;
     }
     body[data-theme="xp"] .close{
-      background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(235,240,250,.72));
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(235,240,250,.76));
       border-color: rgba(0,0,0,.18);
       border-right-color: rgba(0,0,0,.22);
       border-bottom-color: rgba(0,0,0,.26);
       color: rgba(0,0,0,.78);
     }
-    .close:hover{ border-color: rgba(255,140,50,.30); transform: translateY(-1px); filter:brightness(1.06); }
+    .close:hover{ border-color: rgba(255,255,255,.34); transform: translateY(-1px); filter:brightness(1.06); }
     .close:active{ transform: translateY(0px); box-shadow: 0 2px 0 rgba(0,0,0,.55) inset; }
     body[data-theme="xp"] .close:hover{ border-color: rgba(0,0,0,.26); filter:brightness(1.02); }
     body[data-theme="xp"] .close:active{ box-shadow: 0 2px 0 rgba(0,0,0,.18) inset; }
@@ -847,11 +892,13 @@
       padding:16px;
       overflow:auto;
       display:grid;
-      place-items:center; /* social centralizado */
+      place-items:center;
       min-height: 380px;
+      position:relative;
+      z-index:1;
     }
 
-    /* ===== SOCIAL NOVO (card central, sem “vidro”) ===== */
+    /* ===== SOCIAL (sem laranja) + DISCORD EMBUTIDO ===== */
     .social-card{
       width:min(560px, 100%);
       border-radius:18px;
@@ -873,10 +920,10 @@
       position:absolute; inset:-1px;
       pointer-events:none;
       background:
-        radial-gradient(600px 300px at 50% 20%, rgba(255,140,50,.10), transparent 60%),
+        radial-gradient(600px 300px at 50% 20%, rgba(255,255,255,.10), transparent 60%),
         radial-gradient(520px 320px at 50% 110%, rgba(255,255,255,.06), transparent 70%),
         repeating-linear-gradient(0deg, rgba(255,255,255,.03), rgba(255,255,255,.03) 1px, transparent 1px, transparent 4px);
-      opacity:.45;
+      opacity:.42;
       mix-blend-mode:overlay;
     }
     body[data-theme="xp"] .social-card:before{
@@ -901,8 +948,8 @@
     .sc-avatar{
       width:118px; height:118px;
       border-radius:999px;
-      border:2px solid rgba(255,140,50,.55);
-      box-shadow: 0 0 0 6px rgba(255,140,50,.08);
+      border:2px solid var(--ring);            /* agora neutro */
+      box-shadow: 0 0 0 6px rgba(255,255,255,.06);
       overflow:hidden;
       background: rgba(0,0,0,.22);
     }
@@ -951,17 +998,113 @@
     }
     .sc-loc .pin{
       width:10px; height:10px; border-radius:999px;
-      background: rgba(255,140,50,.58);
-      box-shadow: 0 0 12px rgba(255,140,50,.18);
+      background: rgba(255,255,255,.62);
+      box-shadow: 0 0 12px rgba(255,255,255,.12);
     }
     body[data-theme="xp"] .sc-loc .pin{
       background: rgba(0,0,0,.35);
       box-shadow:none;
     }
 
-    /* mini “now playing” (puxa do Lanyard se tiver spotify) */
+    /* Discord embutido no social */
+    .discord-row{
+      margin-top:14px;
+      width:100%;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      padding:12px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      text-align:left;
+    }
+    body[data-theme="xp"] .discord-row{
+      border-color: rgba(0,0,0,.14);
+      background: rgba(0,0,0,.04);
+    }
+    .dr-ava{
+      width:52px; height:52px;
+      border-radius:14px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      flex:0 0 auto;
+    }
+    body[data-theme="xp"] .dr-ava{
+      border-color: rgba(0,0,0,.14);
+      background: rgba(0,0,0,.04);
+    }
+    .dr-ava img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    .dr-meta{ min-width:0; flex:1; }
+    .dr-line1{
+      display:flex;
+      gap:10px;
+      align-items:baseline;
+      min-width:0;
+    }
+    .dr-nick{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--text);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 170px;
+    }
+    .dr-user{
+      font-family:var(--mono);
+      font-size:10px;
+      letter-spacing:.08em;
+      color:var(--muted2);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 160px;
+    }
+    .dr-line2{
+      margin-top:6px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.06em;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .status-dot{
+      width:8px; height:8px; border-radius:999px;
+      background: var(--offline);
+      box-shadow: 0 0 12px rgba(255,255,255,.08);
+      flex:0 0 auto;
+    }
+    .dr-pill{
+      flex:0 0 auto;
+      font-family: var(--mono);
+      font-size:10px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      background: rgba(0,0,0,.18);
+    }
+    body[data-theme="xp"] .dr-pill{
+      border-color: rgba(0,0,0,.14);
+      background: rgba(0,0,0,.04);
+      color: rgba(0,0,0,.56);
+    }
+
+    /* mini “now playing” (spotify/activity) */
     .now{
-      margin-top:16px;
+      margin-top:12px;
       width:100%;
       border-radius:16px;
       border:1px solid rgba(255,255,255,.10);
@@ -1045,7 +1188,7 @@
 
     /* ícones grandes embaixo */
     .icons{
-      margin-top:16px;
+      margin-top:14px;
       display:flex;
       justify-content:center;
       gap:16px;
@@ -1086,19 +1229,19 @@
         0 -1px 0 rgba(0,0,0,.10) inset;
     }
 
-    .iconbtn:hover{ transform: translateY(-1px); border-color: rgba(255,140,50,.32); filter:brightness(1.06); }
+    .iconbtn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.32); filter:brightness(1.06); }
     .iconbtn:active{ transform: translateY(0px); box-shadow: 0 2px 0 rgba(0,0,0,.55) inset; }
     body[data-theme="xp"] .iconbtn:hover{ border-color: rgba(0,0,0,.26); filter:brightness(1.02); }
     body[data-theme="xp"] .iconbtn:active{ box-shadow: 0 2px 0 rgba(0,0,0,.18) inset; }
 
     .iconbtn svg{
       width:22px; height:22px;
-      fill: rgba(255,255,255,.84);
+      fill: rgba(255,255,255,.86);
     }
     body[data-theme="xp"] .iconbtn svg{ fill: rgba(0,0,0,.70); }
 
     .footmini{
-      margin-top:14px;
+      margin-top:12px;
       font-family: var(--mono);
       font-size: 10px;
       letter-spacing:.08em;
@@ -1107,7 +1250,7 @@
     }
     body[data-theme="xp"] .footmini{ color: rgba(0,0,0,.42); }
 
-    /* ===== Discord widget compacto ===== */
+    /* ===== Discord widget compacto (fora do modal) ===== */
     .discord-compact{
       position:fixed;
       left:12px;
@@ -1173,7 +1316,6 @@
       text-overflow:ellipsis;
       max-width: 140px;
     }
-    body[data-theme="mix"] .d-nick{ color: rgba(255,255,255,.90); }
     .d-user{
       font-family:var(--mono);
       font-size:10px;
@@ -1184,7 +1326,6 @@
       text-overflow:ellipsis;
       max-width: 120px;
     }
-    body[data-theme="mix"] .d-user{ color: rgba(255,255,255,.55); }
 
     .d-status{
       display:flex;
@@ -1198,12 +1339,6 @@
       overflow:hidden;
       text-overflow:ellipsis;
     }
-    .status-dot{
-      width:8px; height:8px; border-radius:999px;
-      background: var(--offline);
-      box-shadow: 0 0 12px rgba(255,255,255,.08);
-      flex:0 0 auto;
-    }
     .d-mini{
       margin-left:auto;
       text-align:right;
@@ -1216,11 +1351,7 @@
       letter-spacing:.08em;
       color:var(--muted2);
     }
-    body[data-theme="mix"] .d-mini{ color: rgba(255,255,255,.52); }
-    .d-mini .live{
-      text-transform:uppercase;
-      letter-spacing:.10em;
-    }
+    .d-mini .live{ text-transform:uppercase; letter-spacing:.10em; }
 
     .hidden{ display:none !important; }
 
@@ -1245,7 +1376,6 @@
   <div class="bg-soft"></div>
   <div class="bg-noise"></div>
 
-  <!-- CRT flash -->
   <div class="crtflash" id="crtflash"></div>
 
   <!-- ENTER -->
@@ -1348,18 +1478,35 @@
       </div>
 
       <div class="winbody">
-        <!-- SOCIAL (novo layout) -->
+        <!-- SOCIAL -->
         <div id="pane-social" class="pane hidden">
           <div class="social-card">
             <div class="sc-top">
-              <div class="sc-avatar">
-                <img src="https://files.catbox.moe/ce9qvw.gif" alt="avatar">
+              <div class="sc-avatar" id="scAvatarWrap">
+                <img id="scAvatarImg" src="https://files.catbox.moe/ce9qvw.gif" alt="avatar">
               </div>
 
               <div class="sc-name" id="scName">allz</div>
               <div class="sc-tag">awake and unafraid</div>
               <div class="sc-loc"><span class="pin"></span> purgatório</div>
 
+              <!-- DISCORD (API) dentro do Social -->
+              <div class="discord-row" id="discordRow">
+                <div class="dr-ava"><img id="drAva" alt=""></div>
+                <div class="dr-meta">
+                  <div class="dr-line1">
+                    <div class="dr-nick" id="drNick">—</div>
+                    <div class="dr-user" id="drUser">@—</div>
+                  </div>
+                  <div class="dr-line2">
+                    <span class="status-dot" id="drDot"></span>
+                    <span id="drStatus">—</span>
+                  </div>
+                </div>
+                <div class="dr-pill" id="drPill">discord</div>
+              </div>
+
+              <!-- NOW PLAYING / ATIVIDADE -->
               <div class="now" id="nowWrap">
                 <div class="now-cover">
                   <img id="nowCover" alt="" src="">
@@ -1373,9 +1520,7 @@
               </div>
 
               <div class="icons" aria-label="links">
-                <!-- Troque os href pelos seus links -->
                 <a class="iconbtn" href="#" target="_blank" rel="noopener" title="TikTok" aria-label="TikTok">
-                  <!-- TikTok (simplificado) -->
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M16.6 3c.4 2.7 2 4.3 4.4 4.6v3.2c-1.6.1-3-.4-4.4-1.3v6.2c0 4-3.3 6.7-7.2 5.8-2.7-.6-4.6-3-4.4-5.8.2-2.8 2.5-5 5.4-5.1.5 0 1 .1 1.5.2v3.4c-.4-.2-.9-.3-1.4-.3-1.4 0-2.6 1.1-2.7 2.5-.1 1.6 1.2 2.9 2.8 2.9 1.6 0 2.7-1.1 2.7-3V3h3.3z"/>
                   </svg>
@@ -1485,7 +1630,7 @@
     </div>
   </div>
 
-  <!-- DISCORD compacto -->
+  <!-- DISCORD compacto (canto) -->
   <div class="discord-compact" id="discordCompact">
     <div class="d-ava"><img id="dAva" alt=""></div>
 
@@ -1506,14 +1651,14 @@
     </div>
   </div>
 
-  <!-- áudio (música inteira) -->
+  <!-- áudio -->
   <audio id="bgm" preload="auto" loop>
     <source src="https://files.catbox.moe/mkmd7z.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- beep (click) -->
+  <!-- beep -->
   <audio id="beep" preload="auto">
-    <source src="data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YVAAAAB8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fA==" type="audio/wav">
+    <source src="data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YVAAAAB8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fA==" type="audio/wav">
   </audio>
 
   <script>
@@ -1549,15 +1694,24 @@
     const nav = document.getElementById("nav");
     const ts = document.getElementById("ts");
 
-    // Social dynamic fields (Spotify/status)
+    // Social fields
     const scName = document.getElementById("scName");
     const scMini = document.getElementById("scMini");
+
     const nowWrap = document.getElementById("nowWrap");
     const nowCover = document.getElementById("nowCover");
     const nowUser = document.getElementById("nowUser");
     const nowTrack = document.getElementById("nowTrack");
     const nowSub = document.getElementById("nowSub");
     const nowPill = document.getElementById("nowPill");
+
+    // Social discord row
+    const drAva = document.getElementById("drAva");
+    const drNick = document.getElementById("drNick");
+    const drUser = document.getElementById("drUser");
+    const drStatus = document.getElementById("drStatus");
+    const drDot = document.getElementById("drDot");
+    const drPill = document.getElementById("drPill");
 
     let started = false;
     let muted = false;
@@ -1695,9 +1849,7 @@
 
     function openWindow(view){
       uiClick();
-
-      // pausa música ao abrir janela
-      bgm.pause();
+      bgm.pause(); // pausa música ao abrir janela
 
       setActiveBtn(view);
 
@@ -1731,7 +1883,7 @@
     });
 
     /*********************
-     * DISCORD (LANYARD) - compacto + última atualização
+     * DISCORD (LANYARD) - canto + dentro do social
      *********************/
     const dAva = document.getElementById("dAva");
     const dNick = document.getElementById("dNick");
@@ -1766,17 +1918,30 @@
       lastUpdate.textContent = `${hh}:${mm}`;
     }
 
-    function updateSocialFromPresence(data){
-      // nome/mini: usa discord_user se vier
+    function applyPresenceToSocial(data){
       const u = data?.discord_user || {};
-      const gname = u.global_name || u.username || "allz";
-      scName.textContent = (gname || "allz").toLowerCase();
-
-      // status
       const st = data?.discord_status || "offline";
-      scMini.textContent = `status: ${statusPtBr(st)} • hub pessoal / playlists / arquivos / progresso / discord ao vivo`;
+      const stBr = statusPtBr(st);
+      const c = statusColor(st);
 
-      // spotify
+      // social discord row
+      const avatarHash = u.avatar;
+      const avatarUrl = (avatarHash)
+        ? `https://cdn.discordapp.com/avatars/${LANYARD_USER_ID}/${avatarHash}.png?size=128`
+        : `https://cdn.discordapp.com/embed/avatars/0.png`;
+
+      drAva.src = avatarUrl;
+      drNick.textContent = u.global_name || u.username || "—";
+      drUser.textContent = u.username ? `@${u.username}` : "@—";
+      drStatus.textContent = stBr;
+      drDot.style.background = c;
+      drDot.style.boxShadow = `0 0 12px ${c}55`;
+      drPill.textContent = "discord";
+
+      // texto embaixo do social
+      scMini.textContent = `status: ${stBr} • hub pessoal / playlists / arquivos / progresso / discord ao vivo`;
+
+      // spotify / atividade
       const sp = data?.spotify;
       if(sp && sp.song && sp.artist){
         nowWrap.style.display = "flex";
@@ -1784,15 +1949,10 @@
         nowTrack.textContent = sp.song;
         nowSub.textContent = `${sp.artist} • ${sp.album || ""}`.replace(/\s•\s$/, "");
         nowPill.textContent = "spotify";
-        if(sp.album_art_url){
-          nowCover.src = sp.album_art_url;
-        }else{
-          nowCover.src = "";
-        }
+        nowCover.src = sp.album_art_url || "";
       }else{
-        // fallback: atividade principal ou nada
         const acts = Array.isArray(data?.activities) ? data.activities : [];
-        const act = acts.find(a=>a.type !== 4) || acts[0]; // ignora custom status
+        const act = acts.find(a=>a.type !== 4) || acts[0];
         nowWrap.style.display = "flex";
         nowUser.textContent = (u.username ? u.username : "—");
         nowTrack.textContent = act ? (act.name || "—") : "—";
@@ -1800,6 +1960,10 @@
         nowPill.textContent = "atividade";
         nowCover.src = "";
       }
+
+      // se quiser que o nome do card seja o global_name do discord:
+      const gname = u.global_name || u.username || "allz";
+      scName.textContent = String(gname).toLowerCase();
     }
 
     function applyLanyard(payload){
@@ -1817,6 +1981,7 @@
         ? `https://cdn.discordapp.com/avatars/${LANYARD_USER_ID}/${avatarHash}.png?size=128`
         : `https://cdn.discordapp.com/embed/avatars/0.png`;
 
+      // widget canto
       dAva.src = avatarUrl;
       dNick.textContent = globalName;
       dUser.textContent = username;
@@ -1829,7 +1994,8 @@
       dDot.style.background = c;
       dDot.style.boxShadow = `0 0 12px ${c}55`;
 
-      updateSocialFromPresence(data);
+      // social
+      applyPresenceToSocial(data);
 
       setLastUpdateNow();
     }
@@ -1923,7 +2089,7 @@
     };
 
     /*********************
-     * PARTICLES
+     * PARTICLES (sem laranja: poeira cinza no dark, cinza no xp)
      *********************/
     function startParticles(){
       const canvas = document.getElementById("particles");
@@ -1977,18 +2143,22 @@
           const alpha = p.a * (0.75 + 0.25*Math.sin(t*p.tw));
 
           if(theme === "xp"){
-            // poeirinha cinza
             ctx.fillStyle = `rgba(0, 0, 0, ${alpha*0.55})`;
             ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
 
-            ctx.fillStyle = `rgba(0, 0, 0, ${alpha*0.18})`;
+            ctx.fillStyle = `rgba(0, 0, 0, ${alpha*0.16})`;
             ctx.beginPath(); ctx.arc(p.x, p.y, p.r*3.0, 0, Math.PI*2); ctx.fill();
-          }else{
-            // dark + mix: brasa leve
-            ctx.fillStyle = `rgba(255, 140, 50, ${alpha*0.85})`;
+          }else if(theme === "mix"){
+            ctx.fillStyle = `rgba(0, 0, 0, ${alpha*0.40})`;
             ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
 
-            ctx.fillStyle = `rgba(255, 140, 50, ${alpha*0.20})`;
+            ctx.fillStyle = `rgba(0, 0, 0, ${alpha*0.12})`;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r*3.0, 0, Math.PI*2); ctx.fill();
+          }else{
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha*0.18})`;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha*0.06})`;
             ctx.beginPath(); ctx.arc(p.x, p.y, p.r*3.0, 0, Math.PI*2); ctx.fill();
           }
         }
