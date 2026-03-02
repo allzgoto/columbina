@@ -19,8 +19,6 @@
 
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
       --ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", Helvetica, sans-serif;
-
-      --r:16px;
     }
 
     body[data-theme="dark"]{
@@ -92,6 +90,7 @@
       opacity:0;
       background: linear-gradient(180deg, rgba(255,255,255,.10), transparent 30%, rgba(255,255,255,.06));
       transition:opacity .18s ease;
+      z-index:5;
     }
     .crt.on{ opacity:1; }
 
@@ -134,6 +133,7 @@
       gap:14px;
       padding:14px;
       box-sizing:border-box;
+      z-index:10;
     }
 
     /* sidebar */
@@ -296,6 +296,7 @@
       font-size:11px;
       letter-spacing:.10em;
       user-select:none;
+      white-space:nowrap;
     }
     body[data-theme="xp"] .btn{
       background: rgba(255,255,255,.75);
@@ -312,6 +313,7 @@
       color:var(--m);
       display:flex;
       gap:18px;
+      user-select:none;
     }
 
     /* stage */
@@ -490,6 +492,11 @@
       border:1px solid var(--edge2);
       background: rgba(0,0,0,.25);
       flex:0 0 auto;
+      display:grid;
+      place-items:center;
+      font-family:var(--mono);
+      font-size:12px;
+      opacity:.85;
     }
     body[data-theme="xp"] .plCover{ background: rgba(255,255,255,.85); }
 
@@ -540,8 +547,9 @@
       background: rgba(0,0,0,.35);
       display:grid; place-items:center;
       overflow:hidden;
+      font-family:var(--mono);
+      opacity:.85;
     }
-    .plCardImg img{ width:100%; height:100%; object-fit:cover; display:block; }
     .plCardBody{ padding:10px; }
     .plCardTitle{
       font-family:var(--mono);
@@ -569,7 +577,6 @@
     body[data-theme="xp"] .embedBox{ background: rgba(255,255,255,.85); }
     .embedBox iframe{ width:100%; height:380px; border:0; display:block; }
 
-    .btnRow{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:16px; }
     .btnBevel{
       border:1px solid var(--edge);
       background: rgba(255,255,255,.06);
@@ -596,7 +603,7 @@
   <div class="crt" id="crt"></div>
 
   <!-- ENTER -->
-  <div class="enter" id="enterScreen">
+  <div class="enter" id="enterScreen" role="button" aria-label="Entrar">
     <div class="enterWord">ENTER</div>
   </div>
 
@@ -690,7 +697,6 @@
               <div style="display:grid;place-items:center;gap:12px">
                 <img src="https://files.catbox.moe/ce9qvw.gif" alt=""
                      style="width:112px;height:112px;border-radius:99px;border:1px solid var(--edge);object-fit:cover;background:rgba(0,0,0,.25)" />
-
                 <div style="font-family:var(--mono);letter-spacing:.14em;font-size:18px;opacity:.92">allz</div>
                 <div class="hint" style="font-size:11px;opacity:.9">awake and unafraid</div>
                 <div class="hint" style="font-size:11px">purgatório</div>
@@ -713,7 +719,7 @@
                   </div>
                 </div>
 
-                <div class="btnRow">
+                <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px">
                   <button class="btnBevel" data-link="https://tiktok.com">TIKTOK</button>
                   <button class="btnBevel" data-link="https://open.spotify.com">SPOTIFY</button>
                   <button class="btnBevel" data-link="https://instagram.com">INSTAGRAM</button>
@@ -729,11 +735,11 @@
         <div id="view-archives" class="hidden">
           <div class="hint">Área simples pra guardar jogos / progresso / arquivos.</div>
           <div style="margin-top:12px;border:1px solid var(--edge2);border-radius:16px;padding:12px;background:rgba(255,255,255,.03)">
-            <div class="hint">• Em breve: cards + pastas + links</div>
+            <div class="hint">• em breve</div>
           </div>
         </div>
 
-        <!-- PLAYLISTS (PÚBLICO: cards + player embed + link) -->
+        <!-- PLAYLISTS (PÚBLICO) -->
         <div id="view-playlists" class="hidden">
           <div class="plWrap">
             <div class="plCol">
@@ -741,37 +747,30 @@
                 <div>BIBLIOTECA (PÚBLICO)</div>
                 <div class="hint">cards + player</div>
               </div>
-              <div class="plList" id="pubList">
-                <!-- preenchido via JS -->
-              </div>
+              <div class="plList" id="pubList"></div>
             </div>
 
             <div class="plCol">
               <div class="plColHead">
-                <div>PLAYLISTS</div>
+                <div>SPOTIFY</div>
                 <div class="hint" id="pubNow">—</div>
               </div>
 
               <div class="plCenter">
-                <div class="hint">
-                  Sem login, sem API. Você só cola seus links aqui e todo mundo consegue ver.
-                </div>
+                <div class="hint">Sem login. Todo mundo consegue ver e tocar.</div>
 
                 <div class="plGrid" id="pubGrid"></div>
 
                 <div class="embedBox" id="embedBox" style="display:none">
-                  <iframe id="spotifyEmbed" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                          loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                  <iframe id="spotifyEmbed"
+                          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                          loading="lazy"
+                          referrerpolicy="strict-origin-when-cross-origin"></iframe>
                 </div>
 
                 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
                   <button class="btnBevel" id="openOnSpotifyBtn" style="display:none">ABRIR NO SPOTIFY</button>
                   <button class="btnBevel" id="copyLinkBtn" style="display:none">COPIAR LINK</button>
-                </div>
-
-                <div style="height:10px"></div>
-                <div class="hint">
-                  Obs: se você quiser “auto-importar” playlists, aí volta a precisar do login/API (burocracia). Aqui é o modo sem dor de cabeça.
                 </div>
               </div>
             </div>
@@ -780,17 +779,9 @@
 
         <!-- ADMIN -->
         <div id="view-admin" class="hidden">
-          <div class="hint">Login simples (só pra você). (Placeholder)</div>
-          <div style="margin-top:12px;display:grid;gap:10px;max-width:420px">
-            <input id="admUser" placeholder="Usuário"
-                   style="padding:10px;border-radius:12px;border:1px solid var(--edge);background:rgba(0,0,0,.25);color:var(--t);font-family:var(--mono)" />
-            <input id="admPass" type="password" placeholder="Senha"
-                   style="padding:10px;border-radius:12px;border:1px solid var(--edge);background:rgba(0,0,0,.25);color:var(--t);font-family:var(--mono)" />
-            <button class="btnBevel" id="loginBtn">ENTRAR</button>
-            <div class="hint" id="loginMsg"></div>
-            <div class="hint" style="opacity:.8">Dica: dá pra trocar isso depois por backend de verdade.</div>
-          </div>
+          <div class="hint">Admin (placeholder).</div>
         </div>
+
       </div>
     </div>
   </div>
@@ -799,9 +790,6 @@
   <audio id="bgAudio" preload="auto"></audio>
 
   <script>
-    /********************
-     * CONFIG
-     ********************/
     const CONFIG = {
       videoUrl: "https://files.catbox.moe/fhahqy.mp4",
       audioUrl: "https://files.catbox.moe/mkmd7z.mp3",
@@ -812,128 +800,95 @@
 
       themeCycle: ["dark", "mix", "xp"],
 
-      // ✅ PLAYLISTS PÚBLICAS (sem API)
-      // Troca pelos SEUS links do Spotify (playlist/album/track).
- 
-   PUBLIC_PLAYLISTS: [
-  {
-    title: "Track 1",
-    subtitle: "spotify track",
-    cover: "",
-    url: "https://open.spotify.com/track/3ubIkwW8FXdv1TsriICJBe"
-  },
-  {
-    title: "Track 2",
-    subtitle: "spotify track",
-    cover: "",
-    url: "https://open.spotify.com/track/2OZVskV28xxJjjhQqKTLSg"
-  },
-  {
-    title: "Track 3",
-    subtitle: "spotify track",
-    cover: "",
-    url: "https://open.spotify.com/track/21qg0IBZf8R12qHd9A3AA4"
-  }
-]
+      PUBLIC_ITEMS: [
+        { title:"Track 01", subtitle:"spotify track", url:"https://open.spotify.com/intl-pt/track/3ubIkwW8FXdv1TsriICJBe?si=cf841f2ffbef42b8" },
+        { title:"Track 02", subtitle:"spotify track", url:"https://open.spotify.com/intl-pt/track/2OZVskV28xxJjjhQqKTLSg?si=f3458f17a73643d0" },
+        { title:"Track 03", subtitle:"spotify track", url:"https://open.spotify.com/intl-pt/track/21qg0IBZf8R12qHd9A3AA4?si=3af847b816714aab" },
+      ]
+    };
 
-    /********************
-     * ELEMENTOS
-     ********************/
-    const enterScreen = document.getElementById("enterScreen");
-    const crt = document.getElementById("crt");
-    const app = document.getElementById("app");
+    const $ = (id) => document.getElementById(id);
 
-    const themeBtn = document.getElementById("themeBtn");
-    const themeLabel = document.getElementById("themeLabel");
-    const muteBtn = document.getElementById("muteBtn");
+    const enterScreen = $("enterScreen");
+    const crt = $("crt");
+    const app = $("app");
 
-    const amvVideo = document.getElementById("amvVideo");
-    const hudTime = document.getElementById("hudTime");
+    const themeBtn = $("themeBtn");
+    const themeLabel = $("themeLabel");
+    const muteBtn = $("muteBtn");
 
-    const bgAudio = document.getElementById("bgAudio");
+    const amvVideo = $("amvVideo");
+    const hudTime = $("hudTime");
+    const bgAudio = $("bgAudio");
 
-    const overlay = document.getElementById("overlay");
-    const closeModal = document.getElementById("closeModal");
-    const modalTitleText = document.getElementById("modalTitleText");
-    const crumbTitle = document.getElementById("crumbTitle");
+    const overlay = $("overlay");
+    const closeModal = $("closeModal");
+    const modalTitleText = $("modalTitleText");
+    const crumbTitle = $("crumbTitle");
 
     const toolBtns = Array.from(document.querySelectorAll(".toolbtn"));
     const views = {
-      social: document.getElementById("view-social"),
-      archives: document.getElementById("view-archives"),
-      playlists: document.getElementById("view-playlists"),
-      admin: document.getElementById("view-admin"),
+      social: $("view-social"),
+      archives: $("view-archives"),
+      playlists: $("view-playlists"),
+      admin: $("view-admin"),
     };
 
-    // Discord mini
-    const dAvatar = document.getElementById("dAvatar");
-    const dName = document.getElementById("dName");
-    const dUser = document.getElementById("dUser");
-    const dStatus = document.getElementById("dStatus");
-    const sDot = document.getElementById("sDot");
+    const dAvatar = $("dAvatar");
+    const dName = $("dName");
+    const dUser = $("dUser");
+    const dStatus = $("dStatus");
+    const sDot = $("sDot");
 
-    // Social row
-    const rowDiscordAvatar = document.getElementById("rowDiscordAvatar");
-    const rowDiscordDot = document.getElementById("rowDiscordDot");
-    const rowDiscordSub = document.getElementById("rowDiscordSub");
-    const activityText = document.getElementById("activityText");
-    const copyStatusBtn = document.getElementById("copyStatusBtn");
-    const openDiscordBtn = document.getElementById("openDiscordBtn");
+    const rowDiscordAvatar = $("rowDiscordAvatar");
+    const rowDiscordDot = $("rowDiscordDot");
+    const rowDiscordSub = $("rowDiscordSub");
+    const activityText = $("activityText");
+    const copyStatusBtn = $("copyStatusBtn");
+    const openDiscordBtn = $("openDiscordBtn");
 
-    // Admin (placeholder)
-    const admUser = document.getElementById("admUser");
-    const admPass = document.getElementById("admPass");
-    const loginBtn = document.getElementById("loginBtn");
-    const loginMsg = document.getElementById("loginMsg");
+    const pubList = $("pubList");
+    const pubGrid = $("pubGrid");
+    const pubNow = $("pubNow");
+    const embedBox = $("embedBox");
+    const spotifyEmbed = $("spotifyEmbed");
+    const openOnSpotifyBtn = $("openOnSpotifyBtn");
+    const copyLinkBtn = $("copyLinkBtn");
 
-    // Playlists public
-    const pubList = document.getElementById("pubList");
-    const pubGrid = document.getElementById("pubGrid");
-    const pubNow = document.getElementById("pubNow");
-    const embedBox = document.getElementById("embedBox");
-    const spotifyEmbed = document.getElementById("spotifyEmbed");
-    const openOnSpotifyBtn = document.getElementById("openOnSpotifyBtn");
-    const copyLinkBtn = document.getElementById("copyLinkBtn");
-
-    /********************
-     * ESTADO
-     ********************/
     let hasEntered = false;
     let isMuted = false;
     let themeIndex = 0;
 
+    function flashCRT(){
+      crt.classList.add("on");
+      setTimeout(() => crt.classList.remove("on"), 140);
+    }
+
+    function applyTheme(t, initial=false){
+      document.body.setAttribute("data-theme", t);
+      themeLabel.textContent = (t === "dark") ? "ESCURO" : (t === "xp") ? "XP" : "MIX";
+      if(!initial) flashCRT();
+    }
     applyTheme(CONFIG.themeCycle[themeIndex], true);
 
-    /********************
-     * ENTER
-     ********************/
-    enterScreen.addEventListener("click", async () => {
-      if (hasEntered) return;
-      hasEntered = true;
+    function pad(n){ return String(n).padStart(2,"0"); }
 
-      crt.classList.add("on");
-      setTimeout(() => crt.classList.remove("on"), 160);
+    function startHudTimer(){
+      setInterval(()=>{
+        const t = amvVideo && !isNaN(amvVideo.currentTime) ? Math.floor(amvVideo.currentTime) : 0;
+        const h = Math.floor(t/3600);
+        const m = Math.floor((t%3600)/60);
+        const s = t%60;
+        hudTime.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+      }, 250);
+    }
 
-      enterScreen.style.display = "none";
-      app.style.display = "grid";
-
-      amvVideo.src = CONFIG.videoUrl;
-      try { await amvVideo.play(); } catch(e){}
-
-      bgAudio.src = CONFIG.audioUrl;
-      bgAudio.volume = CONFIG.audioVolume;
-      bgAudio.loop = true;
-      try { await bgAudio.play(); } catch(e){}
-
-      startHudTimer();
-
-      fetchLanyard();
-      setInterval(fetchLanyard, CONFIG.lanyardPollMs);
+    // LOOP garantido
+    amvVideo.addEventListener("ended", () => {
+      amvVideo.currentTime = 0;
+      amvVideo.play().catch(()=>{});
     });
 
-    /********************
-     * MUTE
-     ********************/
     function updateMuteUI(){
       muteBtn.textContent = isMuted ? "DESMUTAR" : "MUTAR";
       bgAudio.muted = isMuted;
@@ -941,30 +896,49 @@
     muteBtn.addEventListener("click", () => {
       isMuted = !isMuted;
       updateMuteUI();
+      if(hasEntered && !isMuted){
+        bgAudio.play().catch(()=>{});
+      }
     });
     updateMuteUI();
 
-    /********************
-     * TEMA
-     ********************/
     themeBtn.addEventListener("click", () => {
       themeIndex = (themeIndex + 1) % CONFIG.themeCycle.length;
       applyTheme(CONFIG.themeCycle[themeIndex]);
     });
 
-    function applyTheme(t, initial=false){
-      document.body.setAttribute("data-theme", t);
-      themeLabel.textContent = (t === "dark") ? "ESCURO" : (t === "xp") ? "XP" : "MIX";
-      if(!initial){
-        crt.classList.add("on");
-        setTimeout(()=>crt.classList.remove("on"), 120);
-      }
+    // ENTER — click + teclado
+    async function doEnter(){
+      if (hasEntered) return;
+      hasEntered = true;
+
+      flashCRT();
+      enterScreen.style.display = "none";
+      app.style.display = "grid";
+
+      amvVideo.src = CONFIG.videoUrl;
+      try { await amvVideo.play(); } catch(e){ /* ok */ }
+
+      bgAudio.src = CONFIG.audioUrl;
+      bgAudio.volume = CONFIG.audioVolume;
+      bgAudio.loop = true;
+      try { await bgAudio.play(); } catch(e){ /* ok */ }
+
+      startHudTimer();
+
+      fetchLanyard();
+      setInterval(fetchLanyard, CONFIG.lanyardPollMs);
     }
 
-    /********************
-     * MODAL
-     * música pausa ao abrir; volta ao fechar
-     ********************/
+    enterScreen.addEventListener("click", doEnter);
+    window.addEventListener("keydown", (e) => {
+      if(!hasEntered && (e.key === "Enter" || e.key === " ")){
+        e.preventDefault();
+        doEnter();
+      }
+    });
+
+    // Modal (pausa música e vídeo ao abrir)
     function openModal(viewKey){
       overlay.style.display = "flex";
       try { bgAudio.pause(); } catch(e){}
@@ -981,7 +955,7 @@
       const btn = toolBtns.find(b => b.dataset.view === viewKey);
       if(btn) btn.classList.add("active");
 
-      if(viewKey === "playlists") renderPublicPlaylists();
+      if(viewKey === "playlists") renderPublic();
     }
 
     function closeModalFn(){
@@ -989,10 +963,8 @@
       crumbTitle.textContent = "ALLZ HUB";
 
       if(hasEntered){
-        try { amvVideo.play(); } catch(e){}
-        if(!isMuted){
-          try { bgAudio.play(); } catch(e){}
-        }
+        amvVideo.play().catch(()=>{});
+        if(!isMuted) bgAudio.play().catch(()=>{});
       }
     }
 
@@ -1001,9 +973,7 @@
     overlay.addEventListener("click", (e) => { if(e.target === overlay) closeModalFn(); });
     window.addEventListener("keydown", (e) => { if(e.key === "Escape" && overlay.style.display === "flex") closeModalFn(); });
 
-    /********************
-     * SOCIAL LINKS
-     ********************/
+    // Social links
     document.querySelectorAll("[data-link]").forEach(btn=>{
       btn.addEventListener("click", ()=>{
         const url = btn.getAttribute("data-link");
@@ -1011,29 +981,7 @@
       });
     });
 
-    /********************
-     * HUD TIMER
-     ********************/
-    function pad(n){ return String(n).padStart(2,"0"); }
-    function startHudTimer(){
-      setInterval(()=>{
-        const t = amvVideo && !isNaN(amvVideo.currentTime) ? Math.floor(amvVideo.currentTime) : 0;
-        const h = Math.floor(t/3600);
-        const m = Math.floor((t%3600)/60);
-        const s = t%60;
-        hudTime.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
-      }, 250);
-    }
-
-    // ✅ garante loop mesmo se browser bugar
-    amvVideo.addEventListener("ended", () => {
-      amvVideo.currentTime = 0;
-      amvVideo.play().catch(()=>{});
-    });
-
-    /********************
-     * DISCORD (LANYARD)
-     ********************/
+    // Discord (Lanyard) em PT
     function statusLabel(st){
       switch(st){
         case "online": return {txt:"online", color:"var(--good)"};
@@ -1073,21 +1021,17 @@
 
         const st = statusLabel(presence);
 
-        // mini
         dAvatar.src = avatarUrl;
         dName.textContent = globalName.toUpperCase();
         dUser.textContent = username;
         dStatus.textContent = st.txt;
         sDot.style.background = st.color;
 
-        // social row
         rowDiscordAvatar.src = avatarUrl;
         rowDiscordDot.style.background = st.color;
 
         const now = new Date();
-        const hh = pad(now.getHours());
-        const mm = pad(now.getMinutes());
-        rowDiscordSub.textContent = `${st.txt} • ${hh}:${mm}`;
+        rowDiscordSub.textContent = `${st.txt} • ${pad(now.getHours())}:${pad(now.getMinutes())}`;
 
         if(spotify && spotify.song){
           const artist = spotify.artist || "";
@@ -1103,7 +1047,6 @@
         }
 
         openDiscordBtn.onclick = () => window.open("https://discord.com/users/" + uid, "_blank", "noopener,noreferrer");
-
         copyStatusBtn.onclick = async () => {
           const txt = `${globalName} ${username} — ${st.txt} — ${activityText.textContent}`;
           try{ await navigator.clipboard.writeText(txt); }catch{}
@@ -1117,37 +1060,94 @@
       }
     }
 
-    /********************
-     * PLAYLISTS PÚBLICAS
-     * - cards + lista + embed
-     ********************/
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, (c) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
-      }[c]));
-    }
-
-    function parseSpotifyEmbed(url){
+    // Playlists público (serve pra track/playlist/album — inclusive /intl-pt/)
+    function normalizeSpotifyUrl(url){
       try{
         const u = new URL(url);
+        // remove query
+        u.search = "";
+        // se tiver /intl-pt/ no começo, remove
+        const parts = u.pathname.split("/").filter(Boolean);
+        if(parts[0] && parts[0].startsWith("intl-")){
+          parts.shift(); // remove intl-pt
+          u.pathname = "/" + parts.join("/");
+        }
+        return u.toString();
+      }catch{
+        return url;
+      }
+    }
+
+    function parseSpotify(url){
+      try{
+        const clean = normalizeSpotifyUrl(url);
+        const u = new URL(clean);
         if(u.hostname !== "open.spotify.com") return null;
         const parts = u.pathname.split("/").filter(Boolean); // [type, id]
         if(parts.length < 2) return null;
-        const type = parts[0]; // playlist/album/track/artist
+        const type = parts[0];
         const id = parts[1];
-        // embed
         return {
           type, id,
+          cleanUrl: `https://open.spotify.com/${type}/${id}`,
           embedUrl: `https://open.spotify.com/embed/${type}/${id}?utm_source=generator`,
-          cleanUrl: `https://open.spotify.com/${type}/${id}`
         };
       }catch{
         return null;
       }
     }
 
-    function selectPublicPlaylist(item){
-      const parsed = parseSpotifyEmbed(item.url);
+    function renderPublic(){
+      const items = (CONFIG.PUBLIC_ITEMS || []).map(x => ({
+        ...x,
+        url: normalizeSpotifyUrl(x.url || "")
+      }));
+
+      if(!items.length){
+        pubList.innerHTML = `<div class="hint">Sem itens ainda.</div>`;
+        pubGrid.innerHTML = "";
+        embedBox.style.display = "none";
+        return;
+      }
+
+      pubList.innerHTML = items.map((it, idx) => `
+        <div class="plItem" data-idx="${idx}">
+          <div class="plCover">♪</div>
+          <div class="plMeta">
+            <div class="plName">${escapeHtml(it.title || "item")}</div>
+            <div class="plSub">${escapeHtml(it.subtitle || "spotify")}</div>
+          </div>
+        </div>
+      `).join("");
+
+      pubGrid.innerHTML = items.map((it, idx) => `
+        <div class="plCard" data-idx="${idx}">
+          <div class="plCardImg">♪</div>
+          <div class="plCardBody">
+            <div class="plCardTitle">${escapeHtml(it.title || "item")}</div>
+            <div class="plCardFoot">${escapeHtml(it.subtitle || "spotify")}</div>
+          </div>
+        </div>
+      `).join("");
+
+      pubList.querySelectorAll(".plItem").forEach(el=>{
+        el.addEventListener("click", ()=>{
+          const idx = Number(el.getAttribute("data-idx"));
+          selectItem(items[idx]);
+        });
+      });
+      pubGrid.querySelectorAll(".plCard").forEach(el=>{
+        el.addEventListener("click", ()=>{
+          const idx = Number(el.getAttribute("data-idx"));
+          selectItem(items[idx]);
+        });
+      });
+
+      selectItem(items[0]);
+    }
+
+    function selectItem(item){
+      const parsed = parseSpotify(item.url);
       pubNow.textContent = item.title || "—";
 
       if(parsed){
@@ -1169,76 +1169,14 @@
       }
     }
 
-    function renderPublicPlaylists(){
-      const items = Array.isArray(CONFIG.PUBLIC_PLAYLISTS) ? CONFIG.PUBLIC_PLAYLISTS : [];
-
-      if(!items.length){
-        pubList.innerHTML = `<div class="hint">Sem playlists ainda. Cola seus links no CONFIG.PUBLIC_PLAYLISTS.</div>`;
-        pubGrid.innerHTML = "";
-        embedBox.style.display = "none";
-        return;
-      }
-
-      pubList.innerHTML = items.map((pl, idx) => {
-        const cover = pl.cover ? `<img class="plCover" src="${escapeHtml(pl.cover)}" alt="">`
-                               : `<div class="plCover" style="display:grid;place-items:center;font-family:var(--mono);font-size:10px;opacity:.7">♪</div>`;
-        const sub = pl.subtitle ? escapeHtml(pl.subtitle) : "playlist";
-        return `
-          <div class="plItem" data-idx="${idx}">
-            ${cover}
-            <div class="plMeta">
-              <div class="plName">${escapeHtml(pl.title || "playlist")}</div>
-              <div class="plSub">${sub}</div>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      pubGrid.innerHTML = items.map((pl, idx) => {
-        const img = pl.cover ? `<img src="${escapeHtml(pl.cover)}" alt="">`
-                             : `<div style="font-family:var(--mono);opacity:.7">sem capa</div>`;
-        return `
-          <div class="plCard" data-idx="${idx}">
-            <div class="plCardImg">${img}</div>
-            <div class="plCardBody">
-              <div class="plCardTitle">${escapeHtml(pl.title || "playlist")}</div>
-              <div class="plCardFoot">${escapeHtml(pl.subtitle || "spotify")}</div>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      // handlers
-      pubList.querySelectorAll(".plItem").forEach(el=>{
-        el.addEventListener("click", ()=>{
-          const idx = Number(el.getAttribute("data-idx"));
-          selectPublicPlaylist(items[idx]);
-        });
-      });
-      pubGrid.querySelectorAll(".plCard").forEach(el=>{
-        el.addEventListener("click", ()=>{
-          const idx = Number(el.getAttribute("data-idx"));
-          selectPublicPlaylist(items[idx]);
-        });
-      });
-
-      // auto-select 1ª
-      selectPublicPlaylist(items[0]);
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+      }[c]));
     }
 
-    /********************
-     * ADMIN placeholder
-     ********************/
-    loginBtn.addEventListener("click", ()=>{
-      const u = (admUser.value||"").trim();
-      const p = (admPass.value||"").trim();
-      loginMsg.textContent = (u && p) ? "ok (placeholder)." : "preenche usuário e senha.";
-    });
-
-    /********************
-     * Partículas neutras
-     ********************/
-    const canvas = document.getElementById("particles");
+    // Partículas neutras
+    const canvas = $("particles");
     const ctx = canvas.getContext("2d");
     let W=0,H=0,particles=[];
     function resize(){
@@ -1260,14 +1198,12 @@
     function tick(){
       ctx.clearRect(0,0,W,H);
       ctx.fillStyle = getComputedStyle(document.body).getPropertyValue("--particle").trim() || "rgba(255,255,255,.12)";
-
       for(const p of particles){
         p.x += p.vx;
         p.y += p.vy;
         if(p.y < -20){ p.y = H+20; p.x = Math.random()*W; }
         if(p.x < -20) p.x = W+20;
         if(p.x > W+20) p.x = -20;
-
         ctx.globalAlpha = p.a;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
@@ -1277,6 +1213,9 @@
       requestAnimationFrame(tick);
     }
     tick();
+
+    // Se o ENTER estiver “morto” por algum bug do browser, isso garante que dá pra entrar pelo teclado.
+    console.log("[ALLZ HUB] carregou ok");
   </script>
 </body>
 </html>
