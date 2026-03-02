@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ALLZ HUB — callback</title>
+  <style>
+    body{font-family:monospace;background:#000;color:#fff;display:grid;place-items:center;height:100vh;margin:0}
+    .box{opacity:.8}
+  </style>
+</head>
+<body>
+  <div class="box">autenticando com spotify…</div>
+
+  <script type="module">
+    import { spotifyHandleCallback } from "./spotify-auth.js";
+    spotifyHandleCallback().catch(err => {
+      document.querySelector(".box").textContent = "erro: " + err.message;
+    });
+  </script>
+</body>
+</html>
