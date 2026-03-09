@@ -1,2941 +1,414 @@
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ALLZ HUB</title>
-
-  <style>
-    :root{
-      --ui: Tahoma, "Segoe UI", Verdana, Arial, sans-serif;
-      --mono: "Lucida Console", Consolas, monospace;
-
-      --bg:#0f120f;
-      --bg2:#181d18;
-      --panel:#151913ee;
-      --panel2:#10130fee;
-      --ink:#ebe6d8;
-      --muted:#b3ab96;
-
-      --olive:#55614f;
-      --sage:#6a7763;
-      --moss:#78816e;
-      --bone:#d7d0bc;
-      --rust:#7f6248;
-      --shadow:rgba(0,0,0,.42);
-
-      --line:rgba(215,208,188,.16);
-      --line2:rgba(215,208,188,.10);
-
-      --good:#87c48d;
-      --idle:#d8bb69;
-      --dnd:#cb6767;
-      --offline:#73756c;
-
-      --radius:18px;
-      --radius-sm:12px;
-    }
-
-    body[data-theme="dark"]{
-      --page:#10130f;
-      --page2:#171b16;
-      --mainText:var(--ink);
-      --mainMuted:var(--muted);
-      --frame:#181d18ee;
-      --frame2:#121611ee;
-      --accent:#98a78d;
-      --surface:#1b211a;
-      --surface2:#242a22;
-      --bevel1:rgba(255,255,255,.06);
-      --bevel2:rgba(0,0,0,.45);
-      --ornament:rgba(214,202,178,.12);
-    }
-
-    body[data-theme="xp"]{
-      --page:#d8d4c7;
-      --page2:#ece7da;
-      --mainText:#26241f;
-      --mainMuted:#615b52;
-      --frame:#efeadfee;
-      --frame2:#e4deceee;
-      --accent:#687760;
-      --surface:#f4efe4;
-      --surface2:#ddd7c8;
-      --bevel1:rgba(255,255,255,.52);
-      --bevel2:rgba(0,0,0,.12);
-      --ornament:rgba(63,67,52,.12);
-    }
-
-    body[data-theme="mix"]{
-      --page:#cfd4ca;
-      --page2:#e3e5dd;
-      --mainText:#f0ead8;
-      --mainMuted:#c5bea9;
-      --frame:#171b17ee;
-      --frame2:#232921ee;
-      --accent:#91a186;
-      --surface:#262b24;
-      --surface2:#32392f;
-      --bevel1:rgba(255,255,255,.08);
-      --bevel2:rgba(0,0,0,.40);
-      --ornament:rgba(214,202,178,.12);
-    }
-
-    html,body{height:100%;}
-    body{
-      margin:0;
-      font-family:var(--ui);
-      color:var(--mainText);
-      background:
-        radial-gradient(900px 500px at 20% 10%, rgba(255,255,255,.05), transparent 60%),
-        radial-gradient(1100px 700px at 80% 20%, rgba(180,190,160,.05), transparent 60%),
-        linear-gradient(180deg, var(--page), var(--page2));
-      overflow:hidden;
-    }
-
-    body::before{
-      content:"";
-      position:fixed; inset:0;
-      pointer-events:none;
-      background:
-        radial-gradient(circle at 50% 50%, transparent 45%, rgba(0,0,0,.18) 100%),
-        repeating-linear-gradient(0deg, rgba(255,255,255,.015) 0 1px, transparent 1px 3px);
-      mix-blend-mode:overlay;
-      opacity:.8;
-      z-index:1;
-    }
-
-    #particles{
-      position:fixed; inset:0;
-      width:100%; height:100%;
-      pointer-events:none;
-      opacity:.45;
-      z-index:2;
-    }
-
-    .crt{
-      position:fixed; inset:0;
-      pointer-events:none;
-      opacity:0;
-      z-index:6;
-      transition:opacity .18s ease;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.04), transparent 35%, rgba(255,255,255,.03)),
-        repeating-linear-gradient(180deg, transparent 0 2px, rgba(255,255,255,.03) 2px 3px);
-      mix-blend-mode:screen;
-    }
-    .crt.on{ opacity:1; }
-
-    .flash{
-      position:fixed; inset:0;
-      pointer-events:none;
-      opacity:0;
-      z-index:7;
-      background:radial-gradient(700px 400px at 50% 40%, rgba(255,255,255,.16), transparent 70%);
-      transition:opacity .16s ease;
-    }
-    .flash.on{ opacity:1; }
-
-    body[data-cursor="xp"]{
-      cursor:url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'>\
-<path d='M6 2 L6 24 L11 19 L14 30 L18 28 L15 18 L22 18 Z' fill='white' stroke='black' stroke-width='2'/>\
-</svg>") 4 2, auto;
-    }
-
-    .clickFx{
-      position:fixed;
-      width:18px;height:18px;
-      border-radius:999px;
-      border:2px solid rgba(220,220,220,.55);
-      transform:translate(-50%,-50%) scale(.4);
-      opacity:0;
-      pointer-events:none;
-      z-index:9;
-      animation:clickPop .34s ease forwards;
-    }
-    @keyframes clickPop{
-      0%{opacity:0; transform:translate(-50%,-50%) scale(.3);}
-      20%{opacity:.9;}
-      100%{opacity:0; transform:translate(-50%,-50%) scale(2.1);}
-    }
-
-    .enter{
-      position:fixed; inset:0;
-      display:grid; place-items:center;
-      background:#080908;
-      z-index:50;
-      cursor:pointer;
-      user-select:none;
-    }
-
-    .enterCard{
-      width:min(620px, 92vw);
-      padding:18px;
-      border-radius:22px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)),
-        rgba(15,18,15,.88);
-      border:1px solid rgba(230,220,195,.12);
-      box-shadow:0 30px 100px rgba(0,0,0,.55);
-      position:relative;
-      overflow:hidden;
-    }
-
-    .enterCard::before{
-      content:"";
-      position:absolute; inset:0;
-      pointer-events:none;
-      background:
-        radial-gradient(circle at 20% 10%, rgba(255,255,255,.05), transparent 30%),
-        repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 1px, transparent 1px 4px);
-      opacity:.65;
-    }
-
-    .enterTop{
-      position:relative;
-      z-index:2;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      font-family:var(--mono);
-      font-size:11px;
-      letter-spacing:.12em;
-      color:#cbc4b2;
-    }
-
-    .enterWord{
-      position:relative;
-      z-index:2;
-      display:inline-block;
-      margin:18px 0 10px;
-      padding:10px 14px;
-      border-radius:12px;
-      border:1px solid rgba(230,220,195,.12);
-      background:rgba(0,0,0,.28);
-      font-family:var(--mono);
-      font-size:22px;
-      letter-spacing:.28em;
-      color:#f2ecdf;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 -1px 0 rgba(0,0,0,.65);
-    }
-
-    .enterWord::after{
-      content:"";
-      position:absolute;
-      right:-10px;
-      top:50%;
-      transform:translateY(-50%);
-      width:8px;height:16px;
-      border-radius:2px;
-      background:#f2ecdf;
-      animation:blink 1s steps(1,end) infinite;
-    }
-    @keyframes blink{50%{opacity:0}}
-
-    .enterHint{
-      position:relative;
-      z-index:2;
-      font-family:var(--mono);
-      font-size:10px;
-      letter-spacing:.1em;
-      color:#b7ae98;
-    }
-
-    .bootline{
-      position:relative;
-      z-index:2;
-      margin-top:14px;
-      height:10px;
-      border-radius:999px;
-      border:1px solid rgba(230,220,195,.12);
-      background:rgba(255,255,255,.04);
-      overflow:hidden;
-    }
-
-    .bootline > i{
-      display:block;
-      width:35%;
-      height:100%;
-      background:linear-gradient(90deg, transparent, rgba(210,220,195,.35), transparent);
-      animation:bootSweep 1.1s linear infinite;
-    }
-    @keyframes bootSweep{
-      0%{transform:translateX(-60%)}
-      100%{transform:translateX(260%)}
-    }
-
-    .app{
-      position:relative;
-      z-index:10;
-      display:none;
-      height:100%;
-      grid-template-columns:250px 1fr;
-      gap:16px;
-      padding:14px;
-      box-sizing:border-box;
-    }
-
-    .panel{
-      background:var(--frame);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:0 20px 60px var(--shadow);
-      overflow:hidden;
-      position:relative;
-      backdrop-filter: blur(7px);
-    }
-
-    .panel::after{
-      content:"";
-      position:absolute; inset:0;
-      border-radius:inherit;
-      pointer-events:none;
-      box-shadow:
-        inset 0 1px 0 var(--bevel1),
-        inset 0 -1px 0 var(--bevel2);
-    }
-
-    .topline{
-      position:relative;
-      z-index:1;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:10px 12px;
-      border-bottom:1px solid var(--line2);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.04), transparent),
-        radial-gradient(500px 60px at 20% 0%, var(--ornament), transparent 70%);
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.06em;
-    }
-
-    .brandOrb{
-      width:10px;height:10px;
-      border-radius:999px;
-      background:linear-gradient(180deg, #8e9785, #40443c);
-      box-shadow:0 0 0 2px rgba(255,255,255,.06);
-    }
-
-    .topBtns{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-
-    .miniBtn, .btnBevel{
-      border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.01));
-      color:var(--mainText);
-      padding:7px 10px;
-      border-radius:12px;
-      cursor:pointer;
-      font-family:var(--ui);
-      font-weight:800;
-      font-size:11px;
-      letter-spacing:.05em;
-      box-shadow: inset 0 1px 0 var(--bevel1), inset 0 -1px 0 var(--bevel2);
-    }
-
-    .miniBtn:hover, .btnBevel:hover{ filter:brightness(1.06); }
-
-    .badge{
-      border:1px solid var(--line2);
-      background:rgba(255,255,255,.05);
-      color:var(--mainMuted);
-      padding:6px 10px;
-      border-radius:999px;
-      font-family:var(--mono);
-      font-size:10px;
-      letter-spacing:.1em;
-    }
-
-    .icoVol{
-      width:14px;height:14px;
-      display:inline-block;
-      background-size:14px 14px;
-      background-repeat:no-repeat;
-      image-rendering:pixelated;
-      opacity:.95;
-      vertical-align:middle;
-    }
-    .icoVol.on{
-      background-image:url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14'>\
-<path d='M2 6h2l3-3v8L4 8H2z' fill='white'/>\
-<path d='M10 4c1 1 1 5 0 6' stroke='white' stroke-width='1.2' fill='none'/>\
-<path d='M11.6 2.8c1.8 2 1.8 6.4 0 8.4' stroke='white' stroke-width='1.2' fill='none' opacity='0.9'/>\
-</svg>");
-    }
-    .icoVol.off{
-      background-image:url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14'>\
-<path d='M2 6h2l3-3v8L4 8H2z' fill='white'/>\
-<path d='M9 5l3 4' stroke='white' stroke-width='1.4'/>\
-<path d='M12 5l-3 4' stroke='white' stroke-width='1.4'/>\
-</svg>");
-    }
-    body[data-theme="xp"] .icoVol.on,
-    body[data-theme="xp"] .icoVol.off{ filter:invert(1); }
-    body[data-theme="mix"] .icoVol.on,
-    body[data-theme="mix"] .icoVol.off{ filter:invert(0); }
-
-    .menubar{
-      position:relative;
-      z-index:1;
-      display:flex;
-      gap:6px;
-      padding:8px 10px;
-      border-bottom:1px solid var(--line2);
-      color:var(--mainMuted);
-      font-size:12px;
-    }
-
-    .menubar > div{
-      padding:4px 8px;
-      border-radius:8px;
-    }
-    .menubar > div:hover{
-      background:rgba(255,255,255,.05);
-      color:var(--mainText);
-    }
-
-    .sidebar{
-      display:flex;
-      flex-direction:column;
-    }
-
-    .toolbox{
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
-    .toolbtn{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
-      color:var(--mainText);
-      cursor:pointer;
-      position:relative;
-      overflow:hidden;
-      box-shadow: inset 0 1px 0 var(--bevel1), inset 0 -1px 0 var(--bevel2);
-    }
-
-    .toolbtn::after{
-      content:"";
-      position:absolute;
-      left:0; top:0; bottom:0;
-      width:0;
-      background:rgba(215,208,188,.22);
-      transition:width .12s ease;
-    }
-
-    .toolbtn:hover{ filter:brightness(1.05); }
-    .toolbtn.active::after{ width:4px; }
-
-    .toolLeft{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width:0;
-      position:relative;
-      z-index:1;
-    }
-
-    .toolTag{
-      position:relative;
-      z-index:1;
-      font-family:var(--mono);
-      font-size:10px;
-      color:var(--mainMuted);
-      letter-spacing:.08em;
-    }
-
-    .ico{
-      width:18px;height:18px;
-      border-radius:4px;
-      border:1px solid var(--line2);
-      background:rgba(0,0,0,.18);
-      display:grid;
-      place-items:center;
-      overflow:hidden;
-      flex:0 0 auto;
-    }
-
-    .ico::before{
-      content:"";
-      width:16px;height:16px;
-      background-size:16px 16px;
-      background-repeat:no-repeat;
-      image-rendering:pixelated;
-    }
-
-    .toolbtn[data-view="social"] .ico::before{
-      background-image:url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'>\
-<rect x='1' y='2' width='14' height='12' rx='2' fill='%236d7d61'/>\
-<rect x='2' y='3' width='12' height='3' fill='%23ffffff' opacity='0.35'/>\
-<circle cx='6' cy='9' r='2' fill='%23ffffff'/>\
-<rect x='9' y='8' width='4' height='2' fill='%23ffffff'/>\
-</svg>");
-    }
-    .toolbtn[data-view="archives"] .ico::before{
-      background-image:url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'>\
-<rect x='2' y='4' width='12' height='10' rx='2' fill='%23968d78'/>\
-<rect x='2' y='3' width='12' height='3' rx='1' fill='%23e8e1d0'/>\
-</svg>");
-    }
-    .toolbtn[data-view="playlists"] .ico::before{
-      background-image:url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'>\
-<rect x='2' y='2' width='12' height='12' rx='2' fill='%23202020'/>\
-<path d='M6 6v6a1.5 1.5 0 1 1-1-1.4V6h6v4.8a1.5 1.5 0 1 1-1-1.4V6H6z' fill='%23ffffff'/>\
-</svg>");
-    }
-    .toolbtn[data-view="admin"] .ico::before{
-      background-image:url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'>\
-<rect x='3' y='7' width='10' height='7' rx='2' fill='%23714e42'/>\
-<rect x='5' y='3' width='6' height='5' rx='2' fill='%23e8e1d0'/>\
-</svg>");
-    }
-
-    .discordMini{
-      margin-top:auto;
-      padding:12px;
-      border-top:1px solid var(--line2);
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      position:relative;
-      z-index:1;
-    }
-
-    .dRow{ display:flex; align-items:center; gap:10px; }
-
-    .dA{
-      width:42px;height:42px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:rgba(0,0,0,.22);
-      object-fit:cover;
-    }
-
-    .dTxt{
-      display:flex;
-      flex-direction:column;
-      min-width:0;
-      line-height:1.1;
-    }
-
-    .dLine1{
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-
-    .dot{
-      width:9px;height:9px;
-      border-radius:999px;
-      background:var(--offline);
-      box-shadow:0 0 0 2px rgba(255,255,255,.06);
-      flex:0 0 auto;
-    }
-
-    .dName{
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.05em;
-    }
-
-    .dUser,.dStatus,.dAct{
-      font-family:var(--mono);
-      font-size:10px;
-      color:var(--mainMuted);
-      letter-spacing:.08em;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width:220px;
-    }
-
-    .main{
-      display:flex;
-      flex-direction:column;
-    }
-
-    .stage{
-      flex:1;
-      padding:14px;
-      box-sizing:border-box;
-      display:grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap:16px;
-      align-items:stretch;
-    }
-
-    .collage{
-      display:grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap:16px;
-      min-height:100%;
-    }
-
-    .leftStack, .rightStack{
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-    }
-
-    .frame{
-      border:1px solid var(--line);
-      border-radius:22px;
-      background:var(--frame2);
-      box-shadow:0 16px 50px var(--shadow);
-      position:relative;
-      overflow:hidden;
-    }
-
-    .frame::before{
-      content:"";
-      position:absolute; inset:0;
-      pointer-events:none;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.03), transparent 24%),
-        repeating-linear-gradient(0deg, rgba(255,255,255,.015) 0 1px, transparent 1px 4px);
-      opacity:.7;
-    }
-
-    .ornate{
-      position:absolute;
-      inset:8px;
-      border:1px dashed rgba(215,208,188,.12);
-      border-radius:16px;
-      pointer-events:none;
-    }
-
-    .videoWrap{
-      min-height:420px;
-      padding:18px;
-      box-sizing:border-box;
-      display:grid;
-      place-items:center;
-    }
-
-    .videoShell{
-      width:100%;
-      max-width:760px;
-      aspect-ratio: 16 / 9;
-      border-radius:18px;
-      border:1px solid var(--line);
-      background:#050505;
-      position:relative;
-      overflow:hidden;
-      box-shadow:0 20px 80px rgba(0,0,0,.55);
-    }
-
-    .videoShell::before{
-      content:"";
-      position:absolute; inset:0;
-      pointer-events:none;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.08),
-        inset 0 -1px 0 rgba(0,0,0,.65),
-        inset 0 0 0 10px rgba(0,0,0,.18);
-      z-index:3;
-    }
-
-    .videoShell.grain::after{
-      content:"";
-      position:absolute; inset:0;
-      pointer-events:none;
-      background:
-        repeating-linear-gradient(180deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px),
-        radial-gradient(800px 450px at 50% 40%, transparent 45%, rgba(0,0,0,.24) 92%);
-      opacity:.32;
-      mix-blend-mode:overlay;
-      z-index:2;
-    }
-
-    .videoShell.vhsNoise::after{
-      content:"";
-      position:absolute; inset:0;
-      pointer-events:none;
-      background:
-        repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 1px, transparent 1px 2px),
-        linear-gradient(90deg, transparent 0, rgba(255,255,255,.05) 35%, transparent 70%);
-      opacity:.4;
-      mix-blend-mode:overlay;
-      animation:vhsJitter 2.6s ease-in-out infinite;
-      z-index:2;
-    }
-
-    @keyframes vhsJitter{
-      0%,100%{transform:translateX(0)}
-      45%{transform:translateX(-1px)}
-      55%{transform:translateX(1px)}
-    }
-
-    video{
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      background:#000;
-      display:block;
-      position:relative;
-      z-index:1;
-    }
-
-    .tape{
-      position:absolute;
-      left:12px; top:12px;
-      z-index:4;
-      padding:6px 10px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.08);
-      background:rgba(0,0,0,.35);
-      font-family:var(--mono);
-      font-size:10px;
-      letter-spacing:.1em;
-      color:#f0eadb;
-    }
-
-    .hud{
-      position:absolute; inset:0;
-      pointer-events:none;
-      z-index:4;
-      font-family:var(--mono);
-      font-size:11px;
-      letter-spacing:.08em;
-      color:rgba(255,255,255,.88);
-      text-shadow:0 2px 10px rgba(0,0,0,.65);
-    }
-
-    .hud .tl{
-      position:absolute;
-      top:10px; left:12px;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-
-    .hud .rec{
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-
-    .rDot{
-      width:6px;height:6px;
-      border-radius:999px;
-      background:#ff4a4a;
-      box-shadow:0 0 14px rgba(255,74,74,.4);
-    }
-
-    .hud .tr{ position:absolute; top:10px; right:12px; text-align:right; }
-    .hud .bl{ position:absolute; bottom:10px; left:12px; }
-    .hud .br{ position:absolute; bottom:10px; right:12px; text-align:right; }
-    .hudSmall{ font-size:10px; opacity:.84; }
-
-    .floatingGif{
-      position:absolute;
-      right:14px;
-      bottom:6px;
-      width:130px;
-      z-index:5;
-      pointer-events:none;
-      opacity:.95;
-      filter: drop-shadow(0 10px 24px rgba(0,0,0,.45));
-    }
-
-    .rightCards{
-      display:grid;
-      grid-template-rows: auto auto 1fr;
-      gap:14px;
-      height:100%;
-    }
-
-    .memoCard, .statusCard, .ornamentCard{
-      padding:14px;
-      box-sizing:border-box;
-    }
-
-    .memoCard{
-      min-height:160px;
-    }
-
-    .statusCard{
-      min-height:180px;
-    }
-
-    .ornamentCard{
-      min-height:220px;
-    }
-
-    .cardTitle{
-      font-family:var(--mono);
-      font-size:10px;
-      letter-spacing:.12em;
-      color:var(--mainMuted);
-      margin-bottom:10px;
-    }
-
-    .quote{
-      font-size:22px;
-      line-height:1.2;
-      font-weight:900;
-      letter-spacing:.04em;
-      color:var(--bone);
-    }
-
-    .smallText{
-      margin-top:10px;
-      font-family:var(--mono);
-      font-size:10px;
-      color:var(--mainMuted);
-      letter-spacing:.08em;
-    }
-
-    .statusBox{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
-    .statusHead{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-
-    .statusAvatar{
-      width:42px;height:42px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      object-fit:cover;
-      background:rgba(0,0,0,.22);
-    }
-
-    .statusName{
-      font-size:13px;
-      font-weight:900;
-      letter-spacing:.05em;
-    }
-
-    .statusUser, .statusActivity, .statusPresence{
-      font-family:var(--mono);
-      font-size:10px;
-      color:var(--mainMuted);
-      letter-spacing:.08em;
-    }
-
-    .statusButtons{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:8px;
-    }
-
-    .lace{
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      opacity:.18;
-      background:
-        radial-gradient(circle at 8% 14%, rgba(255,255,255,.22) 0 1px, transparent 2px) 0 0/20px 20px,
-        radial-gradient(circle at 92% 86%, rgba(255,255,255,.22) 0 1px, transparent 2px) 0 0/20px 20px;
-    }
-
-    .overlay{
-      position:fixed; inset:0;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      background:rgba(0,0,0,.58);
-      z-index:40;
-      padding:18px;
-      box-sizing:border-box;
-    }
-
-    .window{
-      width:min(1180px,100%);
-      background:var(--frame);
-      border:1px solid var(--line);
-      border-radius:22px;
-      box-shadow:0 34px 120px rgba(0,0,0,.6);
-      overflow:hidden;
-      position:relative;
-    }
-
-    .window::after{
-      content:"";
-      position:absolute; inset:0;
-      pointer-events:none;
-      box-shadow:
-        inset 0 1px 0 var(--bevel1),
-        inset 0 -1px 0 var(--bevel2);
-      border-radius:inherit;
-    }
-
-    .winTop{
-      position:relative;
-      z-index:1;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:10px 12px;
-      border-bottom:1px solid var(--line2);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.04), transparent),
-        radial-gradient(500px 60px at 20% 0%, var(--ornament), transparent 70%);
-    }
-
-    .winLeftTitle{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.06em;
-    }
-
-    .winBullet{
-      width:8px;height:8px;
-      border-radius:3px;
-      background:rgba(255,255,255,.65);
-      border:1px solid rgba(0,0,0,.12);
-    }
-
-    .xbtn{
-      width:36px;height:26px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.01));
-      color:var(--mainText);
-      font-family:var(--mono);
-      cursor:pointer;
-      box-shadow: inset 0 1px 0 var(--bevel1), inset 0 -1px 0 var(--bevel2);
-    }
-
-    .winBody{
-      position:relative;
-      z-index:1;
-      padding:16px;
-      box-sizing:border-box;
-      max-height:78vh;
-      overflow:auto;
-    }
-
-    .hidden{ display:none !important; }
-
-    .sectionBox{
-      border:1px solid var(--line);
-      border-radius:18px;
-      background:rgba(255,255,255,.03);
-      overflow:hidden;
-      box-shadow:0 14px 40px rgba(0,0,0,.26);
-    }
-
-    .sectionHead{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      padding:10px 12px;
-      border-bottom:1px solid var(--line2);
-      font-family:var(--mono);
-      font-size:10px;
-      letter-spacing:.1em;
-      color:var(--mainMuted);
-      background:linear-gradient(180deg, rgba(255,255,255,.03), transparent);
-    }
-
-    .sectionBody{
-      padding:14px;
-      box-sizing:border-box;
-    }
-
-    .hint{
-      font-family:var(--mono);
-      font-size:10px;
-      letter-spacing:.08em;
-      color:var(--mainMuted);
-    }
-
-    .input, .textarea{
-      border:1px solid var(--line);
-      border-radius:12px;
-      background:rgba(255,255,255,.08);
-      color:var(--mainText);
-      padding:10px 12px;
-      font-family:var(--ui);
-      box-sizing:border-box;
-      outline:none;
-      width:100%;
-    }
-
-    .textarea{
-      resize:vertical;
-      min-height:120px;
-    }
-
-    @media (max-width: 1100px){
-      .stage{ grid-template-columns:1fr; }
-      .collage{ grid-template-columns:1fr; }
-      .rightCards{ grid-template-rows:auto auto auto; }
-    }
-
-    @media (max-width: 860px){
-      body{ overflow:auto; }
-      .app{
-        grid-template-columns:1fr;
-        height:auto;
-        min-height:100%;
-      }
-      .floatingGif{
-        width:90px;
-        right:10px;
-        bottom:6px;
-      }
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
+<body class="theme-dark effects-vhs effects-grain effects-crt">
 
-<body data-theme="dark" data-cursor="default">
-  <canvas id="particles"></canvas>
-  <div class="crt" id="crt"></div>
-  <div class="flash" id="flash"></div>
-
-  <div class="enter" id="enterScreen" role="button" aria-label="Entrar">
-    <div class="enterCard">
-      <div class="enterTop">
-        <div>ALLZ HUB</div>
-        <div>old web / scrapbook / amv</div>
-      </div>
-      <div class="enterWord">ENTER</div>
-      <div class="enterHint">tecla [ENTER] ou clique • CRT / cursor / ambient mood</div>
-      <div class="bootline"><i></i></div>
+  <!-- ENTER SCREEN -->
+  <div id="enter-screen" class="enter-screen">
+    <div class="enter-box">
+      <div class="enter-title">ALLZ HUB</div>
+      <div class="enter-sub">old web / xp / dark scrapbook</div>
+      <button id="enter-btn" class="enter-btn">ENTER</button>
+      <p class="enter-hint">Clique ou pressione ENTER</p>
     </div>
   </div>
 
-  <div class="app" id="app">
-    <aside class="panel sidebar">
-      <div class="topline">
-        <div class="brand">
-          <div class="brandOrb"></div>
-          <div>ALLZ.EXE</div>
-        </div>
+  <!-- AUDIO -->
+  <audio id="bg-audio" loop preload="auto">
+    <source src="https://files.catbox.moe/mkmd7z.mp3" type="audio/mpeg" />
+  </audio>
 
-        <div class="topBtns">
-          <button class="miniBtn" id="crtBtn">CRT</button>
-          <button class="miniBtn" id="cursorBtn">CUR</button>
+  <div class="ambient-particles"></div>
+
+  <main class="app-shell">
+    <!-- LEFT -->
+    <aside class="sidebar-left panel-window">
+      <div class="window-top">
+        <span class="window-dot"></span>
+        <span class="window-title">ALLZ.EXE</span>
+        <div class="window-actions">
+          <button class="mini-pill">CRT</button>
+          <button class="mini-pill">CUR</button>
         </div>
       </div>
 
-      <div class="toolbox">
-        <div class="toolbtn active" data-view="social" tabindex="0">
-          <div class="toolLeft"><div class="ico"></div><div>SOCIAL</div></div>
-          <div class="toolTag">open</div>
-        </div>
+      <div class="sidebar-menu">
+        <button class="nav-btn active" data-section="social">
+          <span class="nav-icon">◉</span>
+          <span class="nav-label">SOCIAL</span>
+          <span class="nav-meta">open</span>
+        </button>
 
-        <div class="toolbtn" data-view="archives" tabindex="0">
-          <div class="toolLeft"><div class="ico"></div><div>ARQUIVOS</div></div>
-          <div class="toolTag">menu</div>
-        </div>
+        <button class="nav-btn" data-section="files">
+          <span class="nav-icon">▣</span>
+          <span class="nav-label">ARQUIVOS</span>
+          <span class="nav-meta">menu</span>
+        </button>
 
-        <div class="toolbtn" data-view="playlists" tabindex="0">
-          <div class="toolLeft"><div class="ico"></div><div>PLAYLISTS</div></div>
-          <div class="toolTag">player</div>
-        </div>
+        <button class="nav-btn" data-section="playlists">
+          <span class="nav-icon">♫</span>
+          <span class="nav-label">PLAYLISTS</span>
+          <span class="nav-meta">player</span>
+        </button>
 
-        <div class="toolbtn" data-view="admin" tabindex="0">
-          <div class="toolLeft"><div class="ico"></div><div>ADMIN</div></div>
-          <div class="toolTag">lock</div>
-        </div>
+        <button class="nav-btn" data-section="admin">
+          <span class="nav-icon">▣</span>
+          <span class="nav-label">ADMIN</span>
+          <span class="nav-meta">lock</span>
+        </button>
       </div>
 
-      <div class="discordMini">
-        <div class="dRow">
-          <img class="dA" id="dAvatar" alt="">
-          <div class="dTxt">
-            <div class="dLine1">
-              <div class="dot" id="sDot"></div>
-              <div class="dName" id="dName">ALLZ</div>
-            </div>
-            <div class="dUser" id="dUser">@allzz.exe</div>
-            <div class="dStatus" id="dStatus">offline</div>
-          </div>
+      <div class="sidebar-profile">
+        <img
+          id="profile-avatar-left"
+          src="https://cdn.discordapp.com/embed/avatars/0.png"
+          alt="avatar"
+          class="profile-avatar-small"
+        />
+        <div class="sidebar-profile-info">
+          <strong id="profile-name-left">ALLZ</strong>
+          <span id="profile-user-left">@allz.exe</span>
+          <span id="profile-status-left">offline</span>
         </div>
-        <div class="dAct" id="dActivity">—</div>
       </div>
     </aside>
 
-    <main class="panel main">
-      <div class="topline">
-        <div class="brand">
-          <div class="brandOrb"></div>
-          <div id="crumbTitle">ALLZ HUB</div>
-        </div>
-
-        <div class="topBtns">
-          <button class="miniBtn" id="themeBtn">TEMA</button>
-          <div class="badge" id="themeLabel">ESCURO</div>
-          <button class="miniBtn" id="muteBtn">
-            <span class="icoVol on" id="volIcon"></span>
-            <span id="muteTxt">MUTAR</span>
-          </button>
+    <!-- CENTER -->
+    <section class="center-stage panel-window">
+      <div class="window-top">
+        <span class="window-dot"></span>
+        <span class="window-title">ALLZ HUB</span>
+        <div class="window-actions window-actions-right">
+          <button class="mini-pill">TEMA</button>
+          <button class="mini-pill">ESCURO</button>
+          <button class="mini-pill" id="mute-toggle">MUTAR</button>
         </div>
       </div>
 
-      <div class="menubar">
-        <div>Arquivo</div>
-        <div>Editar</div>
-        <div>Exibir</div>
-        <div>Ajuda</div>
-        <div style="margin-left:auto;opacity:.75">ALLZ HUB — nostalgic collage mode</div>
+      <div class="top-menubar">
+        <button>Arquivo</button>
+        <button>Editar</button>
+        <button>Exibir</button>
+        <button>Ajuda</button>
+        <span class="menubar-note">ALLZ HUB — XP/2009 + dark intencional</span>
       </div>
 
-      <section class="stage">
-        <div class="collage">
-          <div class="leftStack">
-            <div class="frame videoWrap">
-              <div class="ornate"></div>
-
-              <div class="videoShell grain" id="videoShell">
-                <div class="tape">CAPTURE • ALLZ_2009 • VHS</div>
-
-                <video id="amvVideo" playsinline preload="auto" muted loop></video>
-
-                <div class="hud">
-                  <div class="tl">
-                    <div>Bandicam.com</div>
-                    <div class="rec"><div class="rDot"></div> REC</div>
-                    <div class="hudSmall" id="hudMeta1">RES: 1280x720 • FPS: 30</div>
-                    <div class="hudSmall" id="hudMeta2">MIC: ON • VOL: 20%</div>
-                  </div>
-                  <div class="tr">
-                    <div id="hudTime">00:00:00</div>
-                    <div class="hudSmall" id="hudDate">00/00/0000</div>
-                  </div>
-                  <div class="bl">ALLZ HUB / awake and unafraid</div>
-                  <div class="br">
-                    <div>SF2 / AMV</div>
-                    <div class="hudSmall" id="hudNow">NOW: —</div>
-                  </div>
-                </div>
-              </div>
-
-              <img class="floatingGif" src="https://files.catbox.moe/0bgopj.gif" alt="">
+      <div class="section-holder">
+        <!-- SOCIAL -->
+        <section class="main-section active" id="section-social">
+          <div class="video-shell">
+            <div class="video-hud hud-left">
+              <div>Bandicam.com</div>
+              <div><span class="rec-dot"></span> CAPTURE • ALLZ_2009 • VHS</div>
+              <div>REC</div>
+              <div>RES: 1280x720 • FPS: 30</div>
+              <div>MIC: ON • VOL: 20%</div>
             </div>
+
+            <div class="video-hud hud-right">
+              <div id="video-time">00:00:00</div>
+              <div id="video-date">--/--/----</div>
+            </div>
+
+            <video
+              id="hero-video"
+              class="hero-video"
+              autoplay
+              loop
+              muted
+              playsinline
+            >
+              <source src="https://files.catbox.moe/fhahqy.mp4" type="video/mp4" />
+            </video>
+
+            <div class="video-hud hud-bottom-left">
+              <span>ALLZ HUB / awake and unafraid</span>
+            </div>
+
+            <div class="video-hud hud-bottom-center">
+              <span>você está ouvindo: Mons</span>
+            </div>
+
+            <div class="video-hud hud-bottom-right">
+              <span>SF2 / AMV</span>
+              <span>NOW: _</span>
+            </div>
+
+            <div class="scanlines"></div>
           </div>
+        </section>
 
-          <div class="rightStack">
-            <div class="frame memoCard">
-              <div class="lace"></div>
-              <div class="cardTitle">MOOD / PAGE NOTE</div>
-              <div class="quote">normal people worry me</div>
-              <div class="smallText">nostalgia internet antiga • dark melancólico • scrapbook pessoal</div>
+        <!-- FILES -->
+        <section class="main-section" id="section-files">
+          <div class="files-window">
+            <div class="files-tabs">
+              <button class="file-tab active" data-filetab="progress">PROGRESSO</button>
+              <button class="file-tab" data-filetab="games">JOGOS</button>
+              <button class="file-tab" data-filetab="album">ÁLBUM</button>
+              <button class="file-tab" data-filetab="profile">PERFIL</button>
+              <button class="file-tab" data-filetab="wallpapers">IMAGENS</button>
             </div>
 
-            <div class="frame statusCard">
-              <div class="cardTitle">STATUS / DISCORD</div>
-              <div class="statusBox">
-                <div class="statusHead">
-                  <img class="statusAvatar" id="dockAvatar" alt="">
-                  <div>
-                    <div class="statusName" id="dockName">ALLZ</div>
-                    <div class="statusUser" id="dockUser">@allzz.exe</div>
+            <div class="files-content">
+              <div class="file-panel active" id="filetab-progress">
+                <div class="rpg-card">
+                  <div class="rpg-char">
+                    <img src="https://files.catbox.moe/0bgopj.gif" alt="character" />
                   </div>
-                </div>
-
-                <div class="statusPresence" id="dockPresence">offline</div>
-                <div class="statusActivity" id="dockAct">—</div>
-
-                <div class="statusButtons">
-                  <button class="btnBevel" id="dockOpenDiscord">DISCORD</button>
-                  <button class="btnBevel" id="dockCopyStatus">COPIAR</button>
-                  <button class="btnBevel" id="openPlaylistsBtn">PLAYLISTS</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="frame ornamentCard">
-              <div class="cardTitle">CONTROL / VISUAL</div>
-              <div class="statusButtons">
-                <button class="btnBevel" id="vhsBtn">VHS</button>
-                <button class="btnBevel" id="grainBtn">GRAIN</button>
-                <button class="btnBevel" id="ambientBtn">AMBIENT</button>
-              </div>
-
-              <div class="smallText" style="margin-top:14px" id="dockThemeName">tema atual: escuro</div>
-              <div class="smallText" id="dockThemeSub">base funcional + arte old-web personalizada</div>
-              <div class="smallText" id="dockClock" style="margin-top:18px">—</div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <div class="overlay" id="overlay">
-    <div class="window" role="dialog" aria-modal="true">
-      <div class="winTop">
-        <div class="winLeftTitle">
-          <div class="winBullet"></div>
-          <div id="modalTitleText">SOCIAL</div>
-        </div>
-        <button class="xbtn" id="closeModal">X</button>
-      </div>
-
-      <div class="winBody">
-                <!-- SOCIAL -->
-        <div id="view-social">
-          <div style="display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:start" id="socialLayout">
-            <div class="sectionBox" style="position:relative;overflow:hidden">
-              <div style="position:absolute;inset:0;pointer-events:none;opacity:.38;background:
-                radial-gradient(circle at 15% 10%, rgba(255,255,255,.08), transparent 22%),
-                repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 1px, transparent 1px 4px)"></div>
-
-              <div class="sectionHead">
-                <div>PROFILE / MAIN</div>
-                <div class="hint">old web card</div>
-              </div>
-
-              <div class="sectionBody" style="display:grid;grid-template-columns:180px 1fr;gap:16px;position:relative;z-index:1">
-                <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
-                  <div style="width:160px;height:160px;border-radius:18px;border:1px solid var(--line);overflow:hidden;background:rgba(0,0,0,.18);box-shadow:0 10px 30px rgba(0,0,0,.25)">
-                    <img src="https://files.catbox.moe/ce9qvw.gif" alt="" style="width:100%;height:100%;object-fit:cover;display:block">
-                  </div>
-
-                  <div class="hint" style="text-align:center">awake and unafraid</div>
-                  <div class="hint" style="text-align:center">purgatório / allz</div>
-                </div>
-
-                <div style="display:flex;flex-direction:column;gap:12px">
-                  <div style="font-size:24px;font-weight:900;letter-spacing:.05em">allz</div>
-                  <div style="line-height:1.6;opacity:.95">
-                    hub pessoal visual com estética de internet antiga, amv, windows, layouts customizados e arquivos de jogos.
-                  </div>
-
-                  <div class="sectionBox" style="background:rgba(255,255,255,.025)">
-                    <div class="sectionHead">
-                      <div>LIVE STATUS</div>
-                      <div class="hint">lanyard</div>
+                  <div class="rpg-stats">
+                    <h3>SAVE STATUS</h3>
+                    <p>Character: ALLZ</p>
+                    <p>Level: 22</p>
+                    <div class="stat-grid">
+                      <div>HP <span>87</span></div>
+                      <div>DEF <span>63</span></div>
+                      <div>SPD <span>71</span></div>
+                      <div>CRIT <span>54</span></div>
+                      <div>ACC <span>90</span></div>
                     </div>
-                    <div class="sectionBody" style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
-                      <div style="display:flex;align-items:center;gap:10px;min-width:260px">
-                        <img id="rowDiscordAvatar" alt="" style="width:36px;height:36px;border-radius:10px;border:1px solid var(--line2);object-fit:cover;background:rgba(0,0,0,.25)">
-                        <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
-                          <div style="display:flex;align-items:center;gap:8px">
-                            <div id="rowDiscordDot" class="dot" style="width:8px;height:8px"></div>
-                            <div class="hint" id="rowDiscordSub">offline</div>
-                          </div>
-                          <div class="hint" id="activityText" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:440px">—</div>
-                        </div>
-                      </div>
-
-                      <div style="display:flex;gap:10px;flex-wrap:wrap">
-                        <button class="btnBevel" id="copyStatusBtn">COPIAR</button>
-                        <button class="btnBevel" id="openDiscordBtn">DISCORD</button>
-                      </div>
+                    <div class="quest-note">
+                      <strong>Quest Log:</strong> organizar hub pessoal, playlists, jogos e arquivos.
                     </div>
                   </div>
+                </div>
+              </div>
 
-                  <div style="display:flex;gap:10px;flex-wrap:wrap">
-                    <button class="btnBevel" data-link="https://tiktok.com">TIKTOK</button>
-                    <button class="btnBevel" data-link="https://open.spotify.com">SPOTIFY</button>
-                    <button class="btnBevel" data-link="https://instagram.com">INSTAGRAM</button>
-                    <button class="btnBevel" data-link="https://store.steampowered.com">STEAM</button>
-                    <button class="btnBevel" data-link="https://x.com">X</button>
+              <div class="file-panel" id="filetab-games">
+                <div class="game-grid">
+                  <article class="game-card">
+                    <div class="game-cover">RE2</div>
+                    <div class="game-info">
+                      <strong>Resident Evil 2</strong>
+                      <span>Survival Horror</span>
+                    </div>
+                  </article>
+                  <article class="game-card">
+                    <div class="game-cover">TQ</div>
+                    <div class="game-info">
+                      <strong>The Quarry</strong>
+                      <span>Interactive Horror</span>
+                    </div>
+                  </article>
+                  <article class="game-card">
+                    <div class="game-cover">UNCH</div>
+                    <div class="game-info">
+                      <strong>Uncharted</strong>
+                      <span>Action Adventure</span>
+                    </div>
+                  </article>
+                  <article class="game-card">
+                    <div class="game-cover">MC</div>
+                    <div class="game-info">
+                      <strong>Minecraft</strong>
+                      <span>Sandbox</span>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
+              <div class="file-panel" id="filetab-album">
+                <div class="album-grid">
+                  <div class="album-item">Screenshot 01</div>
+                  <div class="album-item">Screenshot 02</div>
+                  <div class="album-item">Nota antiga</div>
+                  <div class="album-item">Imagem AMV</div>
+                  <div class="album-item">Pasta nostalgia</div>
+                  <div class="album-item">Memórias</div>
+                </div>
+              </div>
+
+              <div class="file-panel" id="filetab-profile">
+                <div class="profile-panel">
+                  <div class="profile-large-avatar" id="profile-large-avatar-wrap">
+                    <img id="profile-large-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="avatar">
+                  </div>
+                  <div class="profile-texts">
+                    <h3 id="profile-display-name">ALLZ</h3>
+                    <p id="profile-username-main">@allz.exe</p>
+                    <p class="profile-bio">
+                      hub pessoal / nostalgia internet antiga / dark melancólico / arquivos / jogos / playlists
+                    </p>
+                    <div class="profile-meta-grid">
+                      <div><span>Jogos</span><strong>4+</strong></div>
+                      <div><span>Horas</span><strong>???</strong></div>
+                      <div><span>Status</span><strong id="profile-status-main">offline</strong></div>
+                      <div><span>Integração</span><strong>Steam futuramente</strong></div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div style="display:grid;gap:16px">
-              <div class="sectionBox">
-                <div class="sectionHead">
-                  <div>SCRAP NOTE</div>
-                  <div class="hint">page mood</div>
-                </div>
-                <div class="sectionBody">
-                  <div style="font-size:22px;font-weight:900;line-height:1.2;color:var(--bone)">you got mail.</div>
-                  <div class="smallText">all the typed out notes are here, and the paper is pink and lined.</div>
-                </div>
-              </div>
-
-              <div class="sectionBox">
-                <div class="sectionHead">
-                  <div>ABOUT</div>
-                  <div class="hint">personal</div>
-                </div>
-                <div class="sectionBody" style="line-height:1.6;opacity:.95">
-                  não é portfólio comercial. é um hub pessoal com estética, música, arquivos, progresso de jogos e identidade visual própria.
+              <div class="file-panel" id="filetab-wallpapers">
+                <div class="wallpaper-grid">
+                  <div class="wallpaper-box"></div>
+                  <div class="wallpaper-box"></div>
+                  <div class="wallpaper-box"></div>
+                  <div class="wallpaper-box"></div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- ARQUIVOS -->
-        <div id="view-archives" class="hidden">
-          <div style="display:grid;grid-template-columns:260px 1fr;gap:16px;min-height:600px" id="filesWrap">
-            <div class="sectionBox">
-              <div class="sectionHead">
-                <div>ARQUIVOS</div>
-                <div class="hint">game hub</div>
-              </div>
-
-              <div class="sectionBody" style="display:flex;flex-direction:column;gap:10px">
-                <div class="toolbtn active filesTab" data-ftab="progress" tabindex="0">
-                  <div class="toolLeft"><div class="ico"></div><div>PROGRESSO</div></div>
-                  <div class="toolTag" id="countProgress">1</div>
-                </div>
-
-                <div class="toolbtn filesTab" data-ftab="games" tabindex="0">
-                  <div class="toolLeft"><div class="ico"></div><div>JOGOS</div></div>
-                  <div class="toolTag" id="countGames">0</div>
-                </div>
-
-                <div class="toolbtn filesTab" data-ftab="album" tabindex="0">
-                  <div class="toolLeft"><div class="ico"></div><div>ÁLBUM</div></div>
-                  <div class="toolTag" id="countAlbum">0</div>
-                </div>
-
-                <div class="toolbtn filesTab" data-ftab="profile" tabindex="0">
-                  <div class="toolLeft"><div class="ico"></div><div>PERFIL</div></div>
-                  <div class="toolTag" id="countProfile">1</div>
-                </div>
-
-                <div class="toolbtn filesTab" data-ftab="images" tabindex="0">
-                  <div class="toolLeft"><div class="ico"></div><div>IMAGENS</div></div>
-                  <div class="toolTag" id="countImages">0</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="sectionBox">
-              <div class="sectionHead">
-                <div id="filesTitle">PROGRESSO</div>
-                <div style="display:flex;gap:10px;flex-wrap:wrap">
-                  <button class="btnBevel" id="filesAddBtn">ADICIONAR</button>
-                  <button class="btnBevel" id="filesClearBtn">LIMPAR</button>
-                </div>
-              </div>
-
-              <div class="sectionBody">
-                <!-- PROGRESSO -->
-                <div id="files-progress">
-                  <div style="display:grid;grid-template-columns:320px 1fr;gap:16px" id="progressLayout">
-                    <div class="sectionBox" style="background:rgba(0,0,0,.12)">
-                      <div class="sectionHead">
-                        <div>CHARACTER</div>
-                        <div class="hint">status</div>
-                      </div>
-
-                      <div class="sectionBody">
-                        <div style="display:flex;align-items:center;gap:12px">
-                          <div style="font-size:30px;font-weight:900;letter-spacing:.06em" id="charLevel">17</div>
-                          <div>
-                            <div style="font-weight:900;letter-spacing:.06em;font-size:16px" id="charName">Allz</div>
-                            <div class="hint" id="charClass">Shadow Build</div>
-                          </div>
-                        </div>
-
-                        <div style="margin-top:14px;border:1px solid var(--line2);border-radius:14px;background:rgba(0,0,0,.20);padding:10px;display:grid;place-items:center;min-height:290px">
-                          <img id="charImage" src="https://files.catbox.moe/ce9qvw.gif" alt="" style="max-width:100%;max-height:270px;object-fit:contain;border-radius:10px">
-                        </div>
-
-                        <div style="margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-                          <div class="btnBevel" style="text-align:center">GEAR</div>
-                          <div class="btnBevel" style="text-align:center">BUILD</div>
-                          <div class="btnBevel" style="text-align:center">STYLE</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style="display:grid;gap:16px">
-                      <div class="sectionBox" style="background:rgba(0,0,0,.12)">
-                        <div class="sectionHead">
-                          <div>OFFENSIVE</div>
-                          <div class="hint">battle stats</div>
-                        </div>
-                        <div class="sectionBody">
-                          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-family:var(--mono);font-size:12px">
-                            <div>DMG</div><div id="statDmg" style="text-align:right;color:#98d39f;font-weight:800">510</div>
-                            <div>CRIT</div><div id="statCrit" style="text-align:right;color:#98d39f;font-weight:800">62</div>
-                            <div>SPD</div><div id="statSpd" style="text-align:right;color:#98d39f;font-weight:800">69</div>
-                            <div>ACC</div><div id="statAcc" style="text-align:right;color:#98d39f;font-weight:800">101%</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="sectionBox" style="background:rgba(0,0,0,.12)">
-                        <div class="sectionHead">
-                          <div>DEFENSIVE</div>
-                          <div class="hint">survival stats</div>
-                        </div>
-                        <div class="sectionBody">
-                          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-family:var(--mono);font-size:12px">
-                            <div>HP</div><div id="statHp" style="text-align:right;color:#98d39f;font-weight:800">2343</div>
-                            <div>DEF</div><div id="statDef" style="text-align:right;color:#98d39f;font-weight:800">643</div>
-                            <div>EVA</div><div id="statEva" style="text-align:right;color:#98d39f;font-weight:800">179</div>
-                            <div>MOVE SPD</div><div id="statMove" style="text-align:right;color:#98d39f;font-weight:800">106%</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="sectionBox" style="background:rgba(0,0,0,.12)">
-                        <div class="sectionHead">
-                          <div>NOTES</div>
-                          <div class="hint">progress log</div>
-                        </div>
-                        <div class="sectionBody">
-                          <div id="progressLog" style="line-height:1.6;opacity:.95">
-                            personagem principal / progresso geral / build atual.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- JOGOS -->
-                <div id="files-games" class="hidden">
-                  <div class="sectionBox">
-                    <div class="sectionHead">
-                      <div>GAME LIBRARY</div>
-                      <div class="hint">steam / local / favorites</div>
-                    </div>
-
-                    <div class="sectionBody">
-                      <div id="gamesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- ALBUM -->
-                <div id="files-album" class="hidden">
-                  <div class="sectionBox">
-                    <div class="sectionHead">
-                      <div>ALBUM</div>
-                      <div class="hint">memory / screenshots</div>
-                    </div>
-
-                    <div class="sectionBody">
-                      <div style="display:grid;grid-template-columns:320px 1fr;gap:16px" id="albumLayout">
-                        <div style="border:1px solid var(--line2);border-radius:14px;padding:10px;background:rgba(0,0,0,.12)">
-                          <div style="aspect-ratio:4/3;border:1px solid var(--line2);border-radius:10px;overflow:hidden;background:rgba(0,0,0,.18);display:grid;place-items:center">
-                            <img id="albumPreview" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none">
-                            <div id="albumPreviewFallback" class="hint">sem imagem</div>
-                          </div>
-                        </div>
-
-                        <div style="display:flex;flex-direction:column;gap:12px">
-                          <div style="font-weight:900;font-size:18px;letter-spacing:.05em" id="albumTitle">Selecione um item</div>
-                          <div class="hint" id="albumMeta">info</div>
-                          <div id="albumDesc" style="line-height:1.6;opacity:.95">Aqui vai descrição, contexto ou nota da screenshot / memória / cena.</div>
-                        </div>
-                      </div>
-
-                      <div id="albumThumbs" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;margin-top:14px"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- PERFIL -->
-                <div id="files-profile" class="hidden">
-                  <div class="sectionBox">
-                    <div class="sectionHead">
-                      <div>PLAYER PROFILE</div>
-                      <div class="hint">steam / about / stats</div>
-                    </div>
-
-                    <div class="sectionBody">
-                      <div style="display:grid;grid-template-columns:180px 1fr;gap:16px" id="profileLayout">
-                        <div style="border:1px solid var(--line2);border-radius:14px;padding:10px;background:rgba(0,0,0,.14);display:grid;place-items:center">
-                          <img id="profileAvatar" src="https://files.catbox.moe/ce9qvw.gif" alt="" style="width:140px;height:140px;object-fit:cover;border-radius:12px;border:1px solid var(--line)">
-                        </div>
-
-                        <div style="display:flex;flex-direction:column;gap:10px">
-                          <div style="font-size:20px;font-weight:900;letter-spacing:.05em" id="profileName">ALLZ</div>
-                          <div class="hint" id="profileHandle">@steam / jogador</div>
-                          <div id="profileBio" style="line-height:1.6;opacity:.95">Perfil gamer / backlog / gêneros favoritos / observações.</div>
-
-                          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px">
-                            <div class="sectionBox">
-                              <div class="sectionBody" style="text-align:center">
-                                <div class="hint">JOGOS</div>
-                                <div id="profileGames" style="font-size:22px;font-weight:900;margin-top:6px">0</div>
-                              </div>
-                            </div>
-
-                            <div class="sectionBox">
-                              <div class="sectionBody" style="text-align:center">
-                                <div class="hint">ZERADOS</div>
-                                <div id="profileDone" style="font-size:22px;font-weight:900;margin-top:6px">0</div>
-                              </div>
-                            </div>
-
-                            <div class="sectionBox">
-                              <div class="sectionBody" style="text-align:center">
-                                <div class="hint">HORAS</div>
-                                <div id="profileHours" style="font-size:22px;font-weight:900;margin-top:6px">0</div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- IMAGENS -->
-                <div id="files-images" class="hidden">
-                  <div class="sectionBox">
-                    <div class="sectionHead">
-                      <div>IMAGENS</div>
-                      <div class="hint">wallpapers / refs / icons</div>
-                    </div>
-
-                    <div class="sectionBody">
-                      <div id="imagesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px"></div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        </div>
+        </section>
 
         <!-- PLAYLISTS -->
-        <div id="view-playlists" class="hidden">
-          <div style="display:grid;grid-template-columns:300px 1fr;gap:16px;min-height:560px" id="plWrap">
-            <div class="sectionBox">
-              <div class="sectionHead">
-                <div>BIBLIOTECA</div>
-                <div class="hint" id="pubNow">—</div>
+        <section class="main-section" id="section-playlists">
+          <div class="cd-player">
+            <div class="cd-left">
+              <div class="album-art">
+                <div class="album-disc">
+                  <div class="disc-inner"></div>
+                </div>
               </div>
-
-              <div class="sectionBody" id="pubList" style="display:flex;flex-direction:column;gap:10px;max-height:520px;overflow:auto"></div>
             </div>
 
-            <div class="sectionBox">
-              <div class="sectionHead">
-                <div>CD PLAYER</div>
-                <div class="hint" id="playerMeta">mode</div>
+            <div class="cd-right">
+              <div class="player-screen">
+                <div class="player-line"><span>ARTIST</span><strong id="track-artist">mons</strong></div>
+                <div class="player-line"><span>TRACK</span><strong id="track-title">awake and unafraid</strong></div>
+                <div class="player-line"><span>SOURCE</span><strong>ambient mp3</strong></div>
               </div>
 
-              <div class="sectionBody">
-                <div style="
-                  border:1px solid rgba(0,0,0,.35);
-                  border-radius:10px;
-                  background:
-                    linear-gradient(180deg, rgba(235,235,235,.18), rgba(190,190,190,.06)),
-                    rgba(150,150,150,.12);
-                  padding:14px;
-                  box-shadow:
-                    inset 0 1px 0 rgba(255,255,255,.22),
-                    inset 0 -1px 0 rgba(0,0,0,.18);
-                " id="cdPlayerShell">
-                  <div style="display:grid;grid-template-columns:160px 1fr;gap:14px" id="cdPlayerLayout">
-                    <div style="border:1px solid rgba(0,0,0,.28);background:rgba(0,0,0,.18);border-radius:6px;overflow:hidden;aspect-ratio:1/1;display:grid;place-items:center" id="coverBig">
-                      <div class="hint">NO COVER</div>
-                    </div>
+              <div class="player-progress-wrap">
+                <input type="range" min="0" max="100" value="0" id="playlist-progress" />
+              </div>
 
-                    <div style="display:flex;flex-direction:column;gap:10px">
-                      <div style="display:grid;grid-template-columns:70px 1fr 60px;gap:8px;align-items:center">
-                        <div class="hint">Artist:</div>
-                        <div id="trkArtist" style="border:1px solid rgba(0,0,0,.24);padding:8px 10px;border-radius:4px;background:rgba(255,255,255,.18);font-weight:900;color:var(--mainText)">—</div>
-                        <div id="trkMode" style="border:1px solid rgba(0,0,0,.24);padding:8px 10px;border-radius:4px;background:rgba(255,255,255,.18);text-align:center">&lt;D&gt;</div>
-                      </div>
+              <div class="player-controls">
+                <button id="prev-track">PREV</button>
+                <button id="play-track">PLAY</button>
+                <button id="pause-track">PAUSE</button>
+                <button id="stop-track">STOP</button>
+                <button id="next-track">NEXT</button>
+              </div>
 
-                      <div style="display:grid;grid-template-columns:70px 1fr 60px;gap:8px;align-items:center">
-                        <div class="hint">Track:</div>
-                        <div id="trkTitle" style="border:1px solid rgba(0,0,0,.24);padding:8px 10px;border-radius:4px;background:rgba(255,255,255,.18);font-weight:900;color:var(--mainText)">—</div>
-                        <div id="trkRate" style="border:1px solid rgba(0,0,0,.24);padding:8px 10px;border-radius:4px;background:rgba(255,255,255,.18);text-align:center">&lt;44&gt;</div>
-                      </div>
-
-                      <div style="margin-top:6px;border-top:1px solid rgba(0,0,0,.18);padding-top:10px">
-                        <div style="height:8px;border:1px solid rgba(0,0,0,.25);border-radius:999px;background:rgba(0,0,0,.12);overflow:hidden" id="seekBar">
-                          <div id="seekFill" style="height:100%;width:0%;background:linear-gradient(90deg, rgba(210,210,210,.45), rgba(240,240,240,.86))"></div>
-                        </div>
-
-                        <div style="display:flex;justify-content:space-between;margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--mainMuted)">
-                          <div id="tCur">00:00</div>
-                          <div id="tDur">00:00</div>
-                        </div>
-                      </div>
-
-                      <div style="display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap">
-                        <button class="btnBevel" id="prevBtn">⏮</button>
-                        <button class="btnBevel" id="playBtn">▶</button>
-                        <button class="btnBevel" id="nextBtn">⏭</button>
-                        <button class="btnBevel" id="stopBtn">■</button>
-
-                        <div id="eq" style="display:flex;align-items:flex-end;gap:4px;height:22px;margin-left:6px">
-                          <i style="display:block;width:6px;height:30%;background:rgba(220,220,220,.55)"></i>
-                          <i style="display:block;width:6px;height:60%;background:rgba(220,220,220,.85)"></i>
-                          <i style="display:block;width:6px;height:40%;background:rgba(220,220,220,.72)"></i>
-                          <i style="display:block;width:6px;height:75%;background:rgba(220,220,220,.92)"></i>
-                          <i style="display:block;width:6px;height:35%;background:rgba(220,220,220,.66)"></i>
-                        </div>
-                      </div>
-
-                      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
-                        <button class="btnBevel" id="openOnSpotifyBtn">ABRIR NO SPOTIFY</button>
-                        <button class="btnBevel" id="copyLinkBtn">COPIAR LINK</button>
-                      </div>
-
-                      <div style="margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--mainMuted)" id="trkSub">—</div>
-                    </div>
-                  </div>
-                </div>
-
-                <audio id="plAudio" preload="none"></audio>
+              <div class="playlist-list">
+                <button class="track-item active" data-src="https://files.catbox.moe/mkmd7z.mp3" data-title="awake and unafraid" data-artist="mons">
+                  01 — awake and unafraid
+                </button>
+                <button class="track-item" data-src="https://files.catbox.moe/mkmd7z.mp3" data-title="ambient loop" data-artist="allz hub">
+                  02 — ambient loop
+                </button>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- ADMIN -->
-        <div id="view-admin" class="hidden">
-                    <div style="display:grid;place-items:center;padding:18px 0">
-            <div style="
-              width:min(820px,100%);
-              min-height:540px;
-              border:1px solid var(--line);
-              border-radius:22px;
-              overflow:hidden;
-              position:relative;
-              background:
-                linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.34)),
-                url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
-              box-shadow:0 26px 80px rgba(0,0,0,.45)
-            ">
-              <div style="
-                position:absolute;inset:0;pointer-events:none;
-                background:
-                  radial-gradient(circle at 50% 30%, rgba(255,255,255,.12), transparent 35%),
-                  linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.42));
-              "></div>
+        <section class="main-section" id="section-admin">
+          <div class="admin-shell">
+            <div class="admin-login" id="admin-login-box">
+              <div class="admin-titlebar">Windows Security</div>
+              <div class="admin-body">
+                <h3>Login required</h3>
+                <label>User name</label>
+                <input type="text" id="admin-user" placeholder="User name" />
+                <label>Password</label>
+                <input type="password" id="admin-pass" placeholder="Password" />
+                <div class="admin-actions">
+                  <button id="admin-login-btn">Log in</button>
+                </div>
+                <p class="admin-hint">demo: admin / 2009</p>
+              </div>
+            </div>
 
-              <div id="adminLogin" style="
-                position:relative;z-index:1;
-                display:grid;place-items:center;
-                min-height:540px;
-                padding:24px;box-sizing:border-box
-              ">
-                <div style="width:min(380px,100%);display:flex;flex-direction:column;align-items:center;gap:14px">
-                  <div style="
-                    width:118px;height:118px;border-radius:22px;
-                    border:1px solid rgba(255,255,255,.28);
-                    background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.05));
-                    box-shadow: inset 0 1px 0 rgba(255,255,255,.20), 0 16px 40px rgba(0,0,0,.28);
-                    overflow:hidden;display:grid;place-items:center
-                  ">
-                    <img src="https://files.catbox.moe/ce9qvw.gif" alt="" style="width:100%;height:100%;object-fit:cover;opacity:.88">
-                  </div>
-
-                  <div style="display:flex;flex-direction:column;gap:10px;width:100%">
-                    <input class="input" id="adminUser" type="text" placeholder="User name"
-                      style="height:44px;background:rgba(255,255,255,.88);color:#111;border-color:rgba(0,0,0,.18)">
-                    <div style="display:grid;grid-template-columns:1fr 48px;gap:8px">
-                      <input class="input" id="adminPass" type="password" placeholder="Password"
-                        style="height:44px;background:rgba(255,255,255,.88);color:#111;border-color:rgba(0,0,0,.18)">
-                      <button class="btnBevel" id="adminLoginBtn" style="height:44px;border-radius:999px;padding:0;font-size:18px">➜</button>
-                    </div>
-                  </div>
-
-                  <button class="btnBevel" id="adminHintBtn" style="min-width:110px;background:rgba(30,30,30,.55);border-color:rgba(255,255,255,.14)">Cancel</button>
-
-                  <div class="hint" id="adminMsg" style="color:rgba(255,255,255,.82);text-align:center">Windows 7 style login / local access</div>
+            <div class="admin-dashboard hidden" id="admin-dashboard">
+              <div class="admin-board">
+                <div class="admin-card">
+                  <h4>PRIVATE NOTES</h4>
+                  <p>— ajustar arquivos</p>
+                  <p>— conectar steam futuramente</p>
+                  <p>— organizar wallpapers</p>
+                </div>
+                <div class="admin-card">
+                  <h4>PRIVATE LINKS</h4>
+                  <p>discord / drive / playlists</p>
+                </div>
+                <div class="admin-card">
+                  <h4>SYSTEM SNAPSHOT</h4>
+                  <p>theme: nostalgic dark</p>
+                  <p>effects: vhs / grain / crt</p>
+                  <p>status: running</p>
                 </div>
               </div>
-
-              <div id="adminDash" class="hidden" style="
-                position:relative;z-index:1;
-                padding:18px;box-sizing:border-box;min-height:540px
-              ">
-                <div class="sectionBox" style="background:rgba(0,0,0,.20)">
-                  <div class="sectionHead">
-                    <div>ADMIN DASHBOARD</div>
-                    <div style="display:flex;gap:10px;flex-wrap:wrap">
-                      <button class="btnBevel" id="adminLogoutBtn">SAIR</button>
-                    </div>
-                  </div>
-
-                  <div class="sectionBody">
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" id="adminGrid">
-                      <div class="sectionBox">
-                        <div class="sectionHead">
-                          <div>NOTAS CONFIDENCIAIS</div>
-                          <div class="hint">local</div>
-                        </div>
-                        <div class="sectionBody">
-                          <textarea class="textarea" id="adminNotes" placeholder="Escreve aqui..." style="min-height:180px"></textarea>
-                          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
-                            <button class="btnBevel" id="adminSaveNotes">SALVAR</button>
-                            <button class="btnBevel" id="adminClearNotes">APAGAR</button>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="sectionBox">
-                        <div class="sectionHead">
-                          <div>LINKS PRIVADOS</div>
-                          <div class="hint">1 por linha</div>
-                        </div>
-                        <div class="sectionBody">
-                          <textarea class="textarea" id="adminLinks" placeholder="https://..." style="min-height:180px"></textarea>
-                          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
-                            <button class="btnBevel" id="adminSaveLinks">SALVAR</button>
-                            <button class="btnBevel" id="adminOpenLinks">ABRIR TUDO</button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="sectionBox" style="margin-top:14px">
-                      <div class="sectionHead">
-                        <div>SYSTEM SNAPSHOT</div>
-                        <div class="hint">status</div>
-                      </div>
-                      <div class="sectionBody">
-                        <div style="display:grid;grid-template-columns:1fr auto;gap:10px;font-family:var(--mono);font-size:11px">
-                          <div>tema</div><div id="admTheme" style="font-weight:800">—</div>
-                          <div>crt</div><div id="admCrt" style="font-weight:800">—</div>
-                          <div>cursor</div><div id="admCursor" style="font-weight:800">—</div>
-                          <div>último login</div><div id="admLoginAt" style="font-weight:800">—</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
             </div>
           </div>
-        </div>
-
+        </section>
       </div>
-    </div>
-  </div>
 
-  <audio id="bgAudio" preload="auto"></audio>
-
-  <script>
-    const CONFIG = {
-      videoUrl: "https://files.catbox.moe/fhahqy.mp4",
-      audioUrl: "https://files.catbox.moe/mkmd7z.mp3",
-      audioVolume: 0.20,
-
-      ambientUrl: "",
-
-      lanyardEndpoint: "https://api.lanyard.rest/v1/users/513830615225860096",
-      lanyardPollMs: 5000,
-
-      themeCycle: ["dark", "mix", "xp"],
-
-      PUBLIC_ITEMS: [
-        {
-          title:"Track 01",
-          subtitle:"Meg & Dia, 2006",
-          artist:"Meg & Dia",
-          url:"https://open.spotify.com/intl-pt/track/3ubIkwW8FXdv1TsriICJBe?si=cf841f2ffbef42b8",
-          audioUrl:"",
-          coverUrl:""
-        },
-        {
-          title:"Track 02",
-          subtitle:"spotify track",
-          artist:"Unknown",
-          url:"https://open.spotify.com/intl-pt/track/2OZVskV28xxJjjhQqKTLSg?si=f3458f17a73643d0",
-          audioUrl:"",
-          coverUrl:""
-        },
-        {
-          title:"Track 03",
-          subtitle:"spotify track",
-          artist:"Unknown",
-          url:"https://open.spotify.com/intl-pt/track/21qg0IBZf8R12qHd9A3AA4?si=3af847b816714aab",
-          audioUrl:"",
-          coverUrl:""
-        }
-      ],
-
-      adminUser: "allz",
-      adminPassword: "allz",
-
-      enterClickSound: true,
-      defaultCRT: false,
-      defaultCursorXP: false,
-      hudFps: 30,
-      hudRes: "1280x720"
-    };
-
-    const $ = (id) => document.getElementById(id);
-
-    const enterScreen = $("enterScreen");
-    const crt = $("crt");
-    const flash = $("flash");
-    const app = $("app");
-
-    const themeBtn = $("themeBtn");
-    const themeLabel = $("themeLabel");
-    const muteBtn = $("muteBtn");
-    const muteTxt = $("muteTxt");
-    const volIcon = $("volIcon");
-
-    const amvVideo = $("amvVideo");
-    const bgAudio = $("bgAudio");
-
-    const hudTime = $("hudTime");
-    const hudDate = $("hudDate");
-    const hudMeta1 = $("hudMeta1");
-    const hudMeta2 = $("hudMeta2");
-    const hudNow = $("hudNow");
-    const videoShell = $("videoShell");
-
-    const overlay = $("overlay");
-    const closeModal = $("closeModal");
-    const modalTitleText = $("modalTitleText");
-    const crumbTitle = $("crumbTitle");
-
-    const toolBtns = Array.from(document.querySelectorAll(".toolbtn"));
-    const views = {
-      social: $("view-social"),
-      archives: $("view-archives"),
-      playlists: $("view-playlists"),
-      admin: $("view-admin"),
-    };
-
-    const crtBtn = $("crtBtn");
-    const cursorBtn = $("cursorBtn");
-    const vhsBtn = $("vhsBtn");
-    const grainBtn = $("grainBtn");
-    const ambientBtn = $("ambientBtn");
-    const openPlaylistsBtn = $("openPlaylistsBtn");
-
-    const dockClock = $("dockClock");
-    const dockName = $("dockName");
-    const dockUser = $("dockUser");
-    const dockPresence = $("dockPresence");
-    const dockAct = $("dockAct");
-    const dockAvatar = $("dockAvatar");
-    const dockOpenDiscord = $("dockOpenDiscord");
-    const dockCopyStatus = $("dockCopyStatus");
-    const dockThemeName = $("dockThemeName");
-    const dockThemeSub = $("dockThemeSub");
-
-    const dAvatar = $("dAvatar");
-    const dName = $("dName");
-    const dUser = $("dUser");
-    const dStatus = $("dStatus");
-    const dActivity = $("dActivity");
-    const sDot = $("sDot");
-
-    const rowDiscordAvatar = $("rowDiscordAvatar");
-    const rowDiscordDot = $("rowDiscordDot");
-    const rowDiscordSub = $("rowDiscordSub");
-    const activityText = $("activityText");
-    const copyStatusBtn = $("copyStatusBtn");
-    const openDiscordBtn = $("openDiscordBtn");
-
-    const filesTitle = $("filesTitle");
-    const filesAddBtn = $("filesAddBtn");
-    const filesClearBtn = $("filesClearBtn");
-    const filesTabs = Array.from(document.querySelectorAll(".filesTab"));
-    const countProgress = $("countProgress");
-    const countGames = $("countGames");
-    const countAlbum = $("countAlbum");
-    const countProfile = $("countProfile");
-    const countImages = $("countImages");
-
-    const filesProgress = $("files-progress");
-    const filesGames = $("files-games");
-    const filesAlbum = $("files-album");
-    const filesProfile = $("files-profile");
-    const filesImages = $("files-images");
-
-    const charLevel = $("charLevel");
-    const charName = $("charName");
-    const charClass = $("charClass");
-    const charImage = $("charImage");
-    const statDmg = $("statDmg");
-    const statCrit = $("statCrit");
-    const statSpd = $("statSpd");
-    const statAcc = $("statAcc");
-    const statHp = $("statHp");
-    const statDef = $("statDef");
-    const statEva = $("statEva");
-    const statMove = $("statMove");
-    const progressLog = $("progressLog");
-
-    const gamesGrid = $("gamesGrid");
-    const albumPreview = $("albumPreview");
-    const albumPreviewFallback = $("albumPreviewFallback");
-    const albumTitle = $("albumTitle");
-    const albumMeta = $("albumMeta");
-    const albumDesc = $("albumDesc");
-    const albumThumbs = $("albumThumbs");
-
-    const profileAvatar = $("profileAvatar");
-    const profileName = $("profileName");
-    const profileHandle = $("profileHandle");
-    const profileBio = $("profileBio");
-    const profileGames = $("profileGames");
-    const profileDone = $("profileDone");
-    const profileHours = $("profileHours");
-
-    const imagesGrid = $("imagesGrid");
-
-    const pubList = $("pubList");
-    const pubNow = $("pubNow");
-    const playerMeta = $("playerMeta");
-    const coverBig = $("coverBig");
-    const trkArtist = $("trkArtist");
-    const trkTitle = $("trkTitle");
-    const trkMode = $("trkMode");
-    const trkRate = $("trkRate");
-    const trkSub = $("trkSub");
-    const prevBtn = $("prevBtn");
-    const playBtn = $("playBtn");
-    const nextBtn = $("nextBtn");
-    const stopBtn = $("stopBtn");
-    const seekBar = $("seekBar");
-    const seekFill = $("seekFill");
-    const tCur = $("tCur");
-    const tDur = $("tDur");
-    const eq = $("eq");
-    const openOnSpotifyBtn = $("openOnSpotifyBtn");
-    const copyLinkBtn = $("copyLinkBtn");
-    const plAudio = $("plAudio");
-
-    const adminLogin = $("adminLogin");
-    const adminDash = $("adminDash");
-    const adminUser = $("adminUser");
-    const adminPass = $("adminPass");
-    const adminLoginBtn = $("adminLoginBtn");
-    const adminHintBtn = $("adminHintBtn");
-    const adminMsg = $("adminMsg");
-    const adminLogoutBtn = $("adminLogoutBtn");
-    const adminNotes = $("adminNotes");
-    const adminLinks = $("adminLinks");
-    const adminSaveNotes = $("adminSaveNotes");
-    const adminClearNotes = $("adminClearNotes");
-    const adminSaveLinks = $("adminSaveLinks");
-    const adminOpenLinks = $("adminOpenLinks");
-    const admTheme = $("admTheme");
-    const admCrt = $("admCrt");
-    const admCursor = $("admCursor");
-    const admLoginAt = $("admLoginAt");
-
-    let hasEntered = false;
-    let isMuted = false;
-    let themeIndex = 0;
-
-    let crtOn = !!CONFIG.defaultCRT;
-    let cursorXP = !!CONFIG.defaultCursorXP;
-    let vhsOn = false;
-    let grainOn = true;
-    let ambientOn = false;
-
-    let currentFilesTab = "progress";
-    let playlistItems = [];
-    let curIdx = 0;
-
-    let lastDiscord = {
-      uid:"513830615225860096",
-      globalName:"ALLZ",
-      username:"@allzz.exe",
-      presence:"offline",
-      statusTxt:"offline",
-      activity:"—"
-    };
-
-    function pad(n){ return String(n).padStart(2,"0"); }
-
-    function mmss(sec){
-      sec = Math.max(0, Math.floor(sec || 0));
-      const m = Math.floor(sec / 60);
-      const s = sec % 60;
-      return `${pad(m)}:${pad(s)}`;
-    }
-
-    function setFlash(){
-      flash.classList.add("on");
-      setTimeout(()=> flash.classList.remove("on"), 160);
-    }
-
-    function setCRT(on){
-      crtOn = !!on;
-      if(crtOn) crt.classList.add("on");
-      else crt.classList.remove("on");
-      try{ localStorage.setItem("allz_crt", crtOn ? "1" : "0"); }catch{}
-      refreshAdminSnapshot();
-    }
-
-    function setCursor(on){
-      cursorXP = !!on;
-      document.body.setAttribute("data-cursor", cursorXP ? "xp" : "default");
-      try{ localStorage.setItem("allz_cursor", cursorXP ? "1" : "0"); }catch{}
-      refreshAdminSnapshot();
-    }
-
-    function applyTheme(t, initial=false){
-      document.body.setAttribute("data-theme", t);
-      themeLabel.textContent = (t === "dark") ? "ESCURO" : (t === "xp") ? "XP" : "MIX";
-      dockThemeName.textContent = `tema atual: ${(t === "dark") ? "escuro" : (t === "xp") ? "xp" : "mix"}`;
-      dockThemeSub.textContent =
-        t === "dark" ? "colagem melancólica / old web" :
-        t === "xp" ? "old windows / day mode" :
-        "hybrid / scrapbook system";
-
-      if(!initial){
-        setFlash();
-        if(crtOn) crt.classList.add("on");
-        else{
-          crt.classList.add("on");
-          setTimeout(()=>{ if(!crtOn) crt.classList.remove("on"); }, 140);
-        }
-      }
-
-      try{ localStorage.setItem("allz_theme", t); }catch{}
-      refreshAdminSnapshot();
-    }
-
-    function updateDockClock(){
-      const now = new Date();
-      dockClock.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-    }
-    setInterval(updateDockClock, 1000);
-    updateDockClock();
-
-    function updateMuteUI(){
-      muteTxt.textContent = isMuted ? "DESMUTAR" : "MUTAR";
-      bgAudio.muted = isMuted;
-      volIcon.className = "icoVol " + (isMuted ? "off" : "on");
-      hudMeta2.textContent = `MIC: ON • VOL: ${Math.round(CONFIG.audioVolume*100)}%`;
-    }
-
-    function playEnterClick(){
-      if(!CONFIG.enterClickSound) return;
-      try{
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if(!AudioCtx) return;
-
-        const ctx = new AudioCtx();
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-
-        o.type = "square";
-        o.frequency.value = 520;
-
-        g.gain.value = 0.0001;
-        o.connect(g);
-        g.connect(ctx.destination);
-
-        const now = ctx.currentTime;
-        g.gain.setValueAtTime(0.0001, now);
-        g.gain.exponentialRampToValueAtTime(0.05, now + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
-
-        o.start(now);
-        o.stop(now + 0.08);
-        o.onended = () => ctx.close().catch(()=>{});
-      }catch{}
-    }
-
-    function clickFx(x,y){
-      const el = document.createElement("div");
-      el.className = "clickFx";
-      el.style.left = x + "px";
-      el.style.top = y + "px";
-      document.body.appendChild(el);
-      setTimeout(()=> el.remove(), 380);
-    }
-
-    window.addEventListener("pointerdown", (e)=>{
-      if(!hasEntered) return;
-      if(!cursorXP) return;
-      clickFx(e.clientX, e.clientY);
-    });
-
-    try{
-      const savedTheme = localStorage.getItem("allz_theme");
-      const idx = CONFIG.themeCycle.indexOf(savedTheme);
-      if(idx >= 0) themeIndex = idx;
-    }catch{}
-
-    try{
-      const savedCRT = localStorage.getItem("allz_crt");
-      if(savedCRT === "1") crtOn = true;
-      if(savedCRT === "0") crtOn = false;
-    }catch{}
-
-    try{
-      const savedCursor = localStorage.getItem("allz_cursor");
-      if(savedCursor === "1") cursorXP = true;
-      if(savedCursor === "0") cursorXP = false;
-    }catch{}
-
-    applyTheme(CONFIG.themeCycle[themeIndex], true);
-    setCRT(crtOn);
-    setCursor(cursorXP);
-    updateMuteUI();
-
-    function setVhs(on){
-      vhsOn = !!on;
-      videoShell.classList.toggle("vhsNoise", vhsOn);
-      refreshAdminSnapshot();
-    }
-
-    function setGrain(on){
-      grainOn = !!on;
-      videoShell.classList.toggle("grain", grainOn);
-    }
-
-    setVhs(false);
-    setGrain(true);
-
-    vhsBtn.addEventListener("click", ()=> setVhs(!vhsOn));
-    grainBtn.addEventListener("click", ()=> setGrain(!grainOn));
-    crtBtn.addEventListener("click", ()=> setCRT(!crtOn));
-    cursorBtn.addEventListener("click", ()=> setCursor(!cursorXP));
-
-    ambientBtn.addEventListener("click", ()=>{
-      ambientOn = !ambientOn;
-      ambientBtn.textContent = ambientOn ? "AMBIENT ON" : "AMBIENT";
-    });
-
-    muteBtn.addEventListener("click", ()=>{
-      isMuted = !isMuted;
-      updateMuteUI();
-      if(hasEntered && !isMuted){
-        bgAudio.play().catch(()=>{});
-      }
-    });
-
-    themeBtn.addEventListener("click", ()=>{
-      themeIndex = (themeIndex + 1) % CONFIG.themeCycle.length;
-      applyTheme(CONFIG.themeCycle[themeIndex]);
-    });
-
-    openPlaylistsBtn.addEventListener("click", ()=> openModal("playlists"));
-
-    async function doEnter(){
-      if(hasEntered) return;
-      hasEntered = true;
-
-      playEnterClick();
-      setFlash();
-
-      enterScreen.style.display = "none";
-      app.style.display = "grid";
-
-      amvVideo.src = CONFIG.videoUrl;
-      try{ await amvVideo.play(); }catch(e){}
-
-      bgAudio.src = CONFIG.audioUrl;
-      bgAudio.volume = CONFIG.audioVolume;
-      bgAudio.loop = true;
-      try{ await bgAudio.play(); }catch(e){}
-
-      startHudTimer();
-      hudMeta1.textContent = `RES: ${CONFIG.hudRes} • FPS: ${CONFIG.hudFps}`;
-      hudMeta2.textContent = `MIC: ON • VOL: ${Math.round(CONFIG.audioVolume*100)}%`;
-
-      fetchLanyard();
-      setInterval(fetchLanyard, CONFIG.lanyardPollMs);
-    }
-
-    enterScreen.addEventListener("click", doEnter);
-    window.addEventListener("keydown", (e)=>{
-      if(!hasEntered && (e.key === "Enter" || e.key === " ")){
-        e.preventDefault();
-        doEnter();
-      }
-    });
-
-    function startHudTimer(){
-      setInterval(()=>{
-        const t = amvVideo && !isNaN(amvVideo.currentTime) ? Math.floor(amvVideo.currentTime) : 0;
-        const h = Math.floor(t / 3600);
-        const m = Math.floor((t % 3600) / 60);
-        const s = t % 60;
-        hudTime.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
-
-        const now = new Date();
-        hudDate.textContent = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`;
-      }, 250);
-    }
-
-    amvVideo.addEventListener("ended", ()=>{
-      amvVideo.currentTime = 0;
-      amvVideo.play().catch(()=>{});
-    });
-
-    function openModal(viewKey){
-      overlay.style.display = "flex";
-
-      try{ bgAudio.pause(); }catch(e){}
-      try{ amvVideo.pause(); }catch(e){}
-
-      Object.values(views).forEach(v => v.classList.add("hidden"));
-      views[viewKey].classList.remove("hidden");
-
-      const titleMap = {
-        social:"SOCIAL",
-        archives:"ARQUIVOS",
-        playlists:"PLAYLISTS",
-        admin:"ADMIN"
-      };
-
-      modalTitleText.textContent = titleMap[viewKey] || "JANELA";
-      crumbTitle.textContent = titleMap[viewKey] || "ALLZ HUB";
-
-      toolBtns.forEach(b => b.classList.remove("active"));
-      const btn = toolBtns.find(b => b.dataset.view === viewKey);
-      if(btn) btn.classList.add("active");
-
-      if(viewKey === "playlists") renderPublic();
-      if(viewKey === "archives") renderFiles();
-      if(viewKey === "admin") renderAdmin();
-    }
-
-    function closeModalFn(){
-      overlay.style.display = "none";
-      crumbTitle.textContent = "ALLZ HUB";
-
-      if(hasEntered){
-        amvVideo.play().catch(()=>{});
-        if(!isMuted) bgAudio.play().catch(()=>{});
-      }
-    }
-
-    toolBtns.forEach(btn => btn.addEventListener("click", ()=> openModal(btn.dataset.view)));
-    closeModal.addEventListener("click", closeModalFn);
-    overlay.addEventListener("click", (e)=>{ if(e.target === overlay) closeModalFn(); });
-    window.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && overlay.style.display === "flex") closeModalFn(); });
-
-    document.querySelectorAll("[data-link]").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const url = btn.getAttribute("data-link");
-        if(url) window.open(url, "_blank", "noopener,noreferrer");
-      });
-    });
-
-    function statusLabel(st){
-      switch(st){
-        case "online": return {txt:"online", color:"var(--good)"};
-        case "idle": return {txt:"ausente", color:"var(--idle)"};
-        case "dnd": return {txt:"não perturbe", color:"var(--dnd)"};
-        default: return {txt:"offline", color:"var(--offline)"};
-      }
-    }
-
-    function pickMainActivity(activities){
-      if(!Array.isArray(activities)) return null;
-      const ignore = new Set(["Custom Status", "Spotify"]);
-      return activities.find(a => a && a.name && !ignore.has(a.name)) || null;
-    }
-
-    async function fetchLanyard(){
-      try{
-        const res = await fetch(CONFIG.lanyardEndpoint, { cache:"no-store" });
-        if(!res.ok) throw new Error("lanyard http " + res.status);
-        const json = await res.json();
-        const data = json?.data;
-        if(!data) throw new Error("lanyard sem data");
-
-        const user = data.discord_user || {};
-        const presence = data.discord_status || "offline";
-        const acts = data.activities || [];
-        const spotify = data.spotify || null;
-
-        const avatarHash = user.avatar;
-        const uid = user.id || "513830615225860096";
-        const avatarUrl = avatarHash
-          ? `https://cdn.discordapp.com/avatars/${uid}/${avatarHash}.png?size=128`
-          : `https://cdn.discordapp.com/embed/avatars/0.png`;
-
-        const globalName = user.global_name || user.username || "ALLZ";
-        const username = user.username ? `@${user.username}` : "@allzz.exe";
-
-        const st = statusLabel(presence);
-
-        dAvatar.src = avatarUrl;
-        dName.textContent = globalName.toUpperCase();
-        dUser.textContent = username;
-        dStatus.textContent = st.txt;
-        sDot.style.background = st.color;
-
-        dockAvatar.src = avatarUrl;
-        dockName.textContent = globalName.toUpperCase();
-        dockUser.textContent = username;
-        dockPresence.textContent = st.txt;
-
-        rowDiscordAvatar.src = avatarUrl;
-        rowDiscordDot.style.background = st.color;
-
-        const now = new Date();
-        rowDiscordSub.textContent = `${st.txt} • ${pad(now.getHours())}:${pad(now.getMinutes())}`;
-
-        let activityLine = "—";
-        if(spotify && spotify.song){
-          const artist = spotify.artist || "";
-          activityLine = `ouvindo: ${spotify.song} — ${artist}`;
-          hudNow.textContent = `NOW: ${spotify.song} — ${artist}`;
-        }else{
-          const a = pickMainActivity(acts);
-          if(a){
-            const details = [a.details, a.state].filter(Boolean).join(" • ");
-            activityLine = details ? `${a.name} — ${details}` : `${a.name}`;
-          }
-          hudNow.textContent = "NOW: —";
-        }
-
-        activityText.textContent = activityLine;
-        dActivity.textContent = activityLine;
-        dockAct.textContent = activityLine;
-
-        lastDiscord = { uid, globalName, username, presence, statusTxt: st.txt, activity: activityLine };
-
-        openDiscordBtn.onclick = ()=> window.open("https://discord.com/users/" + uid, "_blank", "noopener,noreferrer");
-        copyStatusBtn.onclick = async ()=>{
-          const txt = `${globalName} ${username} — ${st.txt} — ${activityLine}`;
-          try{ await navigator.clipboard.writeText(txt); }catch{}
-        };
-
-        dockOpenDiscord.onclick = ()=> window.open("https://discord.com/users/" + uid, "_blank", "noopener,noreferrer");
-        dockCopyStatus.onclick = async ()=>{
-          const txt = `${globalName} ${username} — ${st.txt} — ${activityLine}`;
-          try{ await navigator.clipboard.writeText(txt); }catch{}
-        };
-
-      }catch(err){
-        dStatus.textContent = "offline";
-        sDot.style.background = "var(--offline)";
-        rowDiscordSub.textContent = "offline";
-        activityText.textContent = "—";
-        dActivity.textContent = "—";
-        dockPresence.textContent = "offline";
-        dockAct.textContent = "—";
-        hudNow.textContent = "NOW: —";
-      }
-    }
-
-    function refreshAdminSnapshot(){
-      if(!admTheme) return;
-      admTheme.textContent = document.body.getAttribute("data-theme") || "—";
-      admCrt.textContent = crtOn ? "on" : "off";
-      admCursor.textContent = cursorXP ? "xp" : "default";
-    }
-        /* ========= PLAYLISTS ========= */
-    function normalizeSpotifyUrl(url){
-      try{
-        const u = new URL(url);
-        u.search = "";
-        const parts = u.pathname.split("/").filter(Boolean);
-        if(parts[0] && parts[0].startsWith("intl-")){
-          parts.shift();
-          u.pathname = "/" + parts.join("/");
-        }
-        return u.toString();
-      }catch{
-        return url;
-      }
-    }
-
-    function parseSpotify(url){
-      try{
-        const clean = normalizeSpotifyUrl(url);
-        const u = new URL(clean);
-        if(u.hostname !== "open.spotify.com") return null;
-        const parts = u.pathname.split("/").filter(Boolean);
-        if(parts.length < 2) return null;
-        const type = parts[0];
-        const id = parts[1];
-        return {
-          type, id,
-          cleanUrl: `https://open.spotify.com/${type}/${id}`,
-        };
-      }catch{
-        return null;
-      }
-    }
-
-    function renderPublic(){
-      playlistItems = (CONFIG.PUBLIC_ITEMS || []).map(x => ({
-        ...x,
-        url: normalizeSpotifyUrl(x.url || ""),
-        audioUrl: (x.audioUrl || "").trim(),
-        coverUrl: (x.coverUrl || "").trim(),
-      }));
-
-      if(!playlistItems.length){
-        pubList.innerHTML = `<div class="hint">Sem itens ainda.</div>`;
-        return;
-      }
-
-      pubList.innerHTML = playlistItems.map((it, idx) => `
-        <div class="toolbtn plItem ${idx===curIdx?'active':''}" data-idx="${idx}" tabindex="0">
-          <div class="toolLeft">
-            <div class="ico" style="width:36px;height:36px;border-radius:8px;overflow:hidden;display:grid;place-items:center">
-              ${it.coverUrl ? `<img src="${escapeHtml(it.coverUrl)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">` : ``}
-            </div>
-            <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
-              <div style="font-weight:900;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(it.title || "item")}</div>
-              <div class="hint">${escapeHtml(it.subtitle || "spotify")}</div>
+      <img class="layout-gif" src="https://files.catbox.moe/0bgopj.gif" alt="gif decorativo" />
+    </section>
+
+    <!-- RIGHT -->
+    <aside class="sidebar-right panel-window">
+      <div class="right-card">
+        <div class="card-head">
+          <span>CONTROL PANEL</span>
+          <span id="clock-box">00:00:00</span>
+        </div>
+      </div>
+
+      <div class="right-card">
+        <div class="card-head">
+          <span>STATUS</span>
+          <span id="discord-state-top">offline</span>
+        </div>
+        <div class="discord-card">
+          <div class="discord-mini-header">discord</div>
+
+          <div class="discord-user-wrap">
+            <img id="discord-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="avatar" />
+            <div>
+              <strong id="discord-name">ALLZ</strong>
+              <p id="discord-username">—</p>
+              <p id="discord-activity">sem atividade</p>
             </div>
           </div>
-          <div class="toolTag">${it.audioUrl ? "mp3" : "sp"}</div>
-        </div>
-      `).join("");
 
-      pubList.querySelectorAll(".plItem").forEach(el=>{
-        el.addEventListener("click", ()=>{
-          const idx = Number(el.getAttribute("data-idx"));
-          selectItem(idx);
-        });
-        el.addEventListener("keydown", (e)=>{
-          if(e.key === "Enter"){
-            const idx = Number(el.getAttribute("data-idx"));
-            selectItem(idx);
-          }
-        });
-      });
-
-      selectItem(curIdx);
-    }
-
-    function setCover(it){
-      coverBig.innerHTML = it.coverUrl
-        ? `<img src="${escapeHtml(it.coverUrl)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">`
-        : `<div class="hint">NO COVER</div>`;
-    }
-
-    function selectItem(idx){
-      curIdx = Math.max(0, Math.min(idx, playlistItems.length - 1));
-      const it = playlistItems[curIdx];
-      if(!it) return;
-
-      pubNow.textContent = it.title || "—";
-      playerMeta.textContent = it.audioUrl ? "local mp3" : "spotify link";
-
-      trkArtist.textContent = it.artist || "Unknown";
-      trkTitle.textContent = it.title || "—";
-      trkSub.textContent = it.subtitle || "—";
-      trkMode.textContent = it.audioUrl ? "<MP3>" : "<SP>";
-      trkRate.textContent = "<44>";
-      setCover(it);
-
-      pubList.querySelectorAll(".plItem").forEach((el,i)=> el.classList.toggle("active", i===curIdx));
-
-      openOnSpotifyBtn.onclick = () => {
-        const clean = parseSpotify(it.url)?.cleanUrl || it.url;
-        window.open(clean, "_blank", "noopener,noreferrer");
-      };
-
-      copyLinkBtn.onclick = async () => {
-        const clean = parseSpotify(it.url)?.cleanUrl || it.url;
-        try{ await navigator.clipboard.writeText(clean); }catch{}
-      };
-
-      if(it.audioUrl){
-        plAudio.src = it.audioUrl;
-        plAudio.currentTime = 0;
-        tCur.textContent = "00:00";
-        tDur.textContent = "00:00";
-        seekFill.style.width = "0%";
-        playBtn.textContent = "▶";
-      }else{
-        try{ plAudio.pause(); }catch{}
-        plAudio.removeAttribute("src");
-        tCur.textContent = "00:00";
-        tDur.textContent = "00:00";
-        seekFill.style.width = "0%";
-        playBtn.textContent = "▶";
-      }
-    }
-
-    function togglePlay(){
-      const it = playlistItems[curIdx];
-      if(!it) return;
-
-      if(it.audioUrl){
-        if(plAudio.paused){
-          plAudio.play().catch(()=>{});
-        }else{
-          plAudio.pause();
-        }
-      }else{
-        const clean = parseSpotify(it.url)?.cleanUrl || it.url;
-        window.open(clean, "_blank", "noopener,noreferrer");
-      }
-    }
-
-    function stopTrack(){
-      if(plAudio.src){
-        try{
-          plAudio.pause();
-          plAudio.currentTime = 0;
-        }catch{}
-      }
-      playBtn.textContent = "▶";
-      seekFill.style.width = "0%";
-      tCur.textContent = "00:00";
-    }
-
-    function prevTrack(){ selectItem(curIdx - 1); }
-    function nextTrack(){ selectItem(curIdx + 1); }
-
-    prevBtn.addEventListener("click", prevTrack);
-    nextBtn.addEventListener("click", nextTrack);
-    playBtn.addEventListener("click", togglePlay);
-    stopBtn.addEventListener("click", stopTrack);
-
-    plAudio.addEventListener("play", ()=>{ playBtn.textContent = "⏸"; });
-    plAudio.addEventListener("pause", ()=>{ playBtn.textContent = "▶"; });
-    plAudio.addEventListener("loadedmetadata", ()=>{ tDur.textContent = mmss(plAudio.duration); });
-    plAudio.addEventListener("timeupdate", ()=>{
-      if(!isFinite(plAudio.duration) || plAudio.duration <= 0) return;
-      tCur.textContent = mmss(plAudio.currentTime);
-      const p = (plAudio.currentTime / plAudio.duration) * 100;
-      seekFill.style.width = `${Math.max(0, Math.min(100, p))}%`;
-    });
-    plAudio.addEventListener("ended", ()=>{
-      nextTrack();
-      const it = playlistItems[curIdx];
-      if(it && it.audioUrl){
-        plAudio.play().catch(()=>{});
-      }
-    });
-
-    seekBar.addEventListener("click", (e)=>{
-      const it = playlistItems[curIdx];
-      if(!it || !it.audioUrl) return;
-      if(!isFinite(plAudio.duration) || plAudio.duration <= 0) return;
-      const r = seekBar.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width;
-      plAudio.currentTime = Math.max(0, Math.min(plAudio.duration, x * plAudio.duration));
-    });
-
-    /* ========= ARQUIVOS ========= */
-    const FILES_KEY = "allz_files_v3";
-
-    function defaultFiles(){
-      return {
-        progress: {
-          level: 17,
-          name: "Allz",
-          className: "Shadow Build",
-          image: "https://files.catbox.moe/ce9qvw.gif",
-          dmg: "510",
-          crit: "62",
-          spd: "69",
-          acc: "101%",
-          hp: "2343",
-          def: "643",
-          eva: "179",
-          move: "106%",
-          log: "personagem principal / progresso geral / build atual."
-        },
-        games: [
-          { title:"Resident Evil 2", subtitle:"survival horror", cover:"" },
-          { title:"The Quarry", subtitle:"choice based", cover:"" },
-          { title:"Shadow Fight 2", subtitle:"favorite vibe", cover:"" }
-        ],
-        album: [
-          { title:"Memory 01", meta:"2026 • screenshot", desc:"uma memória, cena ou referência visual.", image:"" },
-          { title:"Memory 02", meta:"wallpaper", desc:"outra imagem da coleção.", image:"" }
-        ],
-        profile: {
-          avatar:"https://files.catbox.moe/ce9qvw.gif",
-          name:"ALLZ",
-          handle:"@steam / jogador",
-          bio:"perfil gamer / backlog / gêneros favoritos / observações.",
-          games:"38",
-          done:"11",
-          hours:"420"
-        },
-        images: [
-          { title:"Wallpaper 01", image:"" },
-          { title:"Wallpaper 02", image:"" }
-        ]
-      };
-    }
-
-    function loadFiles(){
-      try{
-        const raw = localStorage.getItem(FILES_KEY);
-        if(!raw) return defaultFiles();
-        const parsed = JSON.parse(raw);
-        return {
-          ...defaultFiles(),
-          ...parsed
-        };
-      }catch{
-        return defaultFiles();
-      }
-    }
-
-    function saveFiles(data){
-      try{ localStorage.setItem(FILES_KEY, JSON.stringify(data)); }catch{}
-    }
-
-    function updateFileCounts(data){
-      countProgress.textContent = "1";
-      countGames.textContent = String((data.games || []).length);
-      countAlbum.textContent = String((data.album || []).length);
-      countProfile.textContent = "1";
-      countImages.textContent = String((data.images || []).length);
-    }
-
-    function showFileSection(key){
-      filesProgress.classList.toggle("hidden", key !== "progress");
-      filesGames.classList.toggle("hidden", key !== "games");
-      filesAlbum.classList.toggle("hidden", key !== "album");
-      filesProfile.classList.toggle("hidden", key !== "profile");
-      filesImages.classList.toggle("hidden", key !== "images");
-    }
-
-    function renderFiles(){
-      const data = loadFiles();
-      updateFileCounts(data);
-
-      filesTabs.forEach(t => t.classList.toggle("active", t.getAttribute("data-ftab") === currentFilesTab));
-      filesTitle.textContent =
-        currentFilesTab === "progress" ? "PROGRESSO" :
-        currentFilesTab === "games" ? "JOGOS" :
-        currentFilesTab === "album" ? "ÁLBUM" :
-        currentFilesTab === "profile" ? "PERFIL" : "IMAGENS";
-
-      showFileSection(currentFilesTab);
-
-      const p = data.progress || defaultFiles().progress;
-      charLevel.textContent = p.level ?? 17;
-      charName.textContent = p.name ?? "Allz";
-      charClass.textContent = p.className ?? "Shadow Build";
-      charImage.src = p.image || "https://files.catbox.moe/ce9qvw.gif";
-      statDmg.textContent = p.dmg ?? "510";
-      statCrit.textContent = p.crit ?? "62";
-      statSpd.textContent = p.spd ?? "69";
-      statAcc.textContent = p.acc ?? "101%";
-      statHp.textContent = p.hp ?? "2343";
-      statDef.textContent = p.def ?? "643";
-      statEva.textContent = p.eva ?? "179";
-      statMove.textContent = p.move ?? "106%";
-      progressLog.textContent = p.log ?? "—";
-
-      gamesGrid.innerHTML = (data.games || []).map((g) => `
-        <div class="sectionBox" style="overflow:hidden">
-          <div style="aspect-ratio:3/4;background:rgba(0,0,0,.16);display:grid;place-items:center;border-bottom:1px solid var(--line2)">
-            ${g.cover ? `<img src="${escapeHtml(g.cover)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">` : `<div class="hint">sem capa</div>`}
-          </div>
-          <div class="sectionBody">
-            <div style="font-weight:900;letter-spacing:.05em">${escapeHtml(g.title || "Game")}</div>
-            <div class="hint" style="margin-top:6px">${escapeHtml(g.subtitle || "—")}</div>
+          <div class="discord-buttons">
+            <button id="open-discord">ABRIR DISCORD</button>
+            <button id="copy-status">COPIAR</button>
           </div>
         </div>
-      `).join("") || `<div class="hint">Sem jogos ainda.</div>`;
+      </div>
 
-      const albumList = data.album || [];
-      albumThumbs.innerHTML = albumList.map((a, i) => `
-        <button class="btnBevel albumItem" data-aidx="${i}" style="padding:0;overflow:hidden;height:92px;border-radius:12px">
-          ${a.image ? `<img src="${escapeHtml(a.image)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">` : `<span class="hint">sem imagem</span>`}
-        </button>
-      `).join("") || `<div class="hint">Sem itens no álbum.</div>`;
-
-      function selectAlbum(idx){
-        const item = albumList[idx];
-        if(!item) return;
-        albumTitle.textContent = item.title || "—";
-        albumMeta.textContent = item.meta || "—";
-        albumDesc.textContent = item.desc || "—";
-        if(item.image){
-          albumPreview.src = item.image;
-          albumPreview.style.display = "block";
-          albumPreviewFallback.style.display = "none";
-        }else{
-          albumPreview.removeAttribute("src");
-          albumPreview.style.display = "none";
-          albumPreviewFallback.style.display = "block";
-        }
-      }
-
-      if(albumList[0]) selectAlbum(0);
-      albumThumbs.querySelectorAll(".albumItem").forEach(el=>{
-        el.addEventListener("click", ()=>{
-          selectAlbum(Number(el.getAttribute("data-aidx")));
-        });
-      });
-
-      const pr = data.profile || defaultFiles().profile;
-      profileAvatar.src = pr.avatar || "https://files.catbox.moe/ce9qvw.gif";
-      profileName.textContent = pr.name || "ALLZ";
-      profileHandle.textContent = pr.handle || "@steam / jogador";
-      profileBio.textContent = pr.bio || "—";
-      profileGames.textContent = pr.games || "0";
-      profileDone.textContent = pr.done || "0";
-      profileHours.textContent = pr.hours || "0";
-
-      imagesGrid.innerHTML = (data.images || []).map((img) => `
-        <div class="sectionBox" style="overflow:hidden">
-          <div style="aspect-ratio:1/1;background:rgba(0,0,0,.14);display:grid;place-items:center;border-bottom:1px solid var(--line2)">
-            ${img.image ? `<img src="${escapeHtml(img.image)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">` : `<div class="hint">sem imagem</div>`}
-          </div>
-          <div class="sectionBody">
-            <div style="font-weight:900;letter-spacing:.05em">${escapeHtml(img.title || "Imagem")}</div>
+      <div class="right-card">
+        <div class="card-head">
+          <span>SISTEMA</span>
+          <span>ALLZ_HUB</span>
+        </div>
+        <div class="system-block">
+          <p>tema atual</p>
+          <strong>ESCURO</strong>
+          <small>dark principal • nostalgia moderna</small>
+          <div class="fx-buttons">
+            <button class="fx-btn active" data-fx="vhs">VHS</button>
+            <button class="fx-btn active" data-fx="grain">GRAIN</button>
+            <button class="fx-btn active" data-fx="crt">CRT</button>
           </div>
         </div>
-      `).join("") || `<div class="hint">Sem imagens ainda.</div>`;
-    }
+      </div>
 
-    filesTabs.forEach(tab=>{
-      tab.addEventListener("click", ()=>{
-        currentFilesTab = tab.getAttribute("data-ftab") || "progress";
-        renderFiles();
-      });
-      tab.addEventListener("keydown", (e)=>{
-        if(e.key === "Enter"){
-          currentFilesTab = tab.getAttribute("data-ftab") || "progress";
-          renderFiles();
-        }
-      });
-    });
+      <div class="right-card flex-grow">
+        <div class="card-head">
+          <span>NOTES</span>
+          <span>2009</span>
+        </div>
+        <div class="notes-block">
+          <p>lembrete</p>
+          <strong>normal people worry me</strong>
+          <small>hub pessoal • nostalgia + dark moderno</small>
+        </div>
+      </div>
+    </aside>
+  </main>
 
-    filesAddBtn.addEventListener("click", ()=>{
-      const data = loadFiles();
-
-      if(currentFilesTab === "progress"){
-        const name = prompt("Nome/personagem:", data.progress.name || "Allz");
-        if(name === null) return;
-        const className = prompt("Classe/build:", data.progress.className || "Shadow Build");
-        if(className === null) return;
-        const level = prompt("Level:", data.progress.level || "17");
-        if(level === null) return;
-        const log = prompt("Log/nota:", data.progress.log || "");
-        if(log === null) return;
-
-        data.progress = {
-          ...data.progress,
-          name,
-          className,
-          level,
-          log
-        };
-      }
-
-      if(currentFilesTab === "games"){
-        const title = prompt("Nome do jogo:");
-        if(!title) return;
-        const subtitle = prompt("Subtítulo/gênero:", "") || "";
-        const cover = prompt("Link da capa (opcional):", "") || "";
-        data.games.unshift({ title, subtitle, cover });
-      }
-
-      if(currentFilesTab === "album"){
-        const title = prompt("Título:");
-        if(!title) return;
-        const meta = prompt("Meta curta:", "") || "";
-        const desc = prompt("Descrição:", "") || "";
-        const image = prompt("Link da imagem (opcional):", "") || "";
-        data.album.unshift({ title, meta, desc, image });
-      }
-
-      if(currentFilesTab === "profile"){
-        const name = prompt("Nome do perfil:", data.profile.name || "ALLZ");
-        if(name === null) return;
-        const handle = prompt("Handle:", data.profile.handle || "@steam / jogador");
-        if(handle === null) return;
-        const bio = prompt("Bio:", data.profile.bio || "");
-        if(bio === null) return;
-        data.profile = { ...data.profile, name, handle, bio };
-      }
-
-      if(currentFilesTab === "images"){
-        const title = prompt("Título da imagem:");
-        if(!title) return;
-        const image = prompt("Link da imagem:", "") || "";
-        data.images.unshift({ title, image });
-      }
-
-      saveFiles(data);
-      renderFiles();
-    });
-
-    filesClearBtn.addEventListener("click", ()=>{
-      const ok = confirm("Limpar a seção atual?");
-      if(!ok) return;
-
-      const data = loadFiles();
-
-      if(currentFilesTab === "progress") data.progress = defaultFiles().progress;
-      if(currentFilesTab === "games") data.games = [];
-      if(currentFilesTab === "album") data.album = [];
-      if(currentFilesTab === "profile") data.profile = defaultFiles().profile;
-      if(currentFilesTab === "images") data.images = [];
-
-      saveFiles(data);
-      renderFiles();
-    });
-
-    /* ========= ADMIN ========= */
-    const ADMIN_KEY = "allz_admin_session_v3";
-    const NOTES_KEY = "allz_admin_notes_v3";
-    const LINKS_KEY = "allz_admin_links_v3";
-
-    function isAdmin(){
-      try{ return localStorage.getItem(ADMIN_KEY) === "1"; }catch{ return false; }
-    }
-
-    function setAdmin(on){
-      try{ localStorage.setItem(ADMIN_KEY, on ? "1" : "0"); }catch{}
-    }
-
-    function renderAdmin(){
-      const ok = isAdmin();
-      adminLogin.classList.toggle("hidden", ok);
-      adminDash.classList.toggle("hidden", !ok);
-
-      if(ok){
-        adminNotes.value = (localStorage.getItem(NOTES_KEY) || "");
-        adminLinks.value = (localStorage.getItem(LINKS_KEY) || "");
-        refreshAdminSnapshot();
-        admLoginAt.textContent = localStorage.getItem("allz_admin_login_at") || "—";
-      }
-    }
-
-    adminHintBtn.addEventListener("click", ()=>{
-      adminMsg.textContent = "user e senha padrão estão no CONFIG. troca depois.";
-    });
-
-    adminLoginBtn.addEventListener("click", ()=>{
-      const user = (adminUser.value || "").trim().toLowerCase();
-      const pass = adminPass.value || "";
-
-      if(user === String(CONFIG.adminUser).toLowerCase() && pass === CONFIG.adminPassword){
-        setAdmin(true);
-        try{ localStorage.setItem("allz_admin_login_at", new Date().toLocaleString()); }catch{}
-        adminPass.value = "";
-        adminMsg.textContent = "ok";
-        renderAdmin();
-      }else{
-        adminMsg.textContent = "usuário ou senha incorretos";
-      }
-    });
-
-    adminHintBtn.addEventListener("dblclick", ()=>{
-      adminUser.value = CONFIG.adminUser;
-    });
-
-    adminLogoutBtn.addEventListener("click", ()=>{
-      setAdmin(false);
-      renderAdmin();
-    });
-
-    adminSaveNotes.addEventListener("click", ()=>{
-      try{ localStorage.setItem(NOTES_KEY, adminNotes.value || ""); }catch{}
-    });
-
-    adminClearNotes.addEventListener("click", ()=>{
-      const ok = confirm("Apagar notas?");
-      if(!ok) return;
-      adminNotes.value = "";
-      try{ localStorage.setItem(NOTES_KEY, ""); }catch{}
-    });
-
-    adminSaveLinks.addEventListener("click", ()=>{
-      try{ localStorage.setItem(LINKS_KEY, adminLinks.value || ""); }catch{}
-    });
-
-    adminOpenLinks.addEventListener("click", ()=>{
-      const lines = (adminLinks.value || "").split("\n").map(s=>s.trim()).filter(Boolean);
-      for(const url of lines){
-        window.open(url, "_blank", "noopener,noreferrer");
-      }
-    });
-
-    /* ========= HELPERS ========= */
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, (c) => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        "\"":"&quot;",
-        "'":"&#39;"
-      }[c]));
-    }
-
-    /* ========= PARTICLES ========= */
-    const canvas = $("particles");
-    const ctx = canvas.getContext("2d");
-    let W=0,H=0,particles=[];
-
-    function resize(){
-      W = canvas.width = window.innerWidth;
-      H = canvas.height = window.innerHeight;
-      const count = Math.max(26, Math.floor((W * H) / 90000));
-      particles = new Array(count).fill(0).map(()=>({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        r: 1 + Math.random() * 2.2,
-        vx: (-0.2 + Math.random() * 0.4),
-        vy: (-0.35 - Math.random() * 0.55),
-        a: 0.05 + Math.random() * 0.14
-      }));
-    }
-
-    window.addEventListener("resize", resize);
-    resize();
-
-    function tick(){
-      ctx.clearRect(0,0,W,H);
-      ctx.fillStyle = "rgba(255,255,255,.12)";
-      for(const p of particles){
-        p.x += p.vx;
-        p.y += p.vy;
-        if(p.y < -20){ p.y = H + 20; p.x = Math.random() * W; }
-        if(p.x < -20) p.x = W + 20;
-        if(p.x > W + 20) p.x = -20;
-        ctx.globalAlpha = p.a;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-      requestAnimationFrame(tick);
-    }
-    tick();
-
-    /* ========= INIT ========= */
-    renderFiles();
-    renderAdmin();
-
-    console.log("[ALLZ HUB] collage version carregou ok");
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
