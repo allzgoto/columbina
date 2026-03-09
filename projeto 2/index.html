@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ALLZ HUB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="theme-dark effects-vhs effects-grain effects-crt">
+
+  <!-- ENTER SCREEN -->
+  <div id="enter-screen" class="enter-screen">
+    <div class="enter-box">
+      <div class="enter-title">ALLZ HUB</div>
+      <div class="enter-sub">old web / xp / dark scrapbook</div>
+      <button id="enter-btn" class="enter-btn">ENTER</button>
+      <p class="enter-hint">Clique ou pressione ENTER</p>
+    </div>
+  </div>
+
+  <!-- AUDIO -->
+  <audio id="bg-audio" loop preload="auto">
+    <source src="https://files.catbox.moe/mkmd7z.mp3" type="audio/mpeg" />
+  </audio>
+
+  <div class="ambient-particles"></div>
+
+  <main class="app-shell">
+    <!-- LEFT -->
+    <aside class="sidebar-left panel-window">
+      <div class="window-top">
+        <span class="window-dot"></span>
+        <span class="window-title">ALLZ.EXE</span>
+        <div class="window-actions">
+          <button class="mini-pill">CRT</button>
+          <button class="mini-pill">CUR</button>
+        </div>
+      </div>
+
+      <div class="sidebar-menu">
+        <button class="nav-btn active" data-section="social">
+          <span class="nav-icon">◉</span>
+          <span class="nav-label">SOCIAL</span>
+          <span class="nav-meta">open</span>
+        </button>
+
+        <button class="nav-btn" data-section="files">
+          <span class="nav-icon">▣</span>
+          <span class="nav-label">ARQUIVOS</span>
+          <span class="nav-meta">menu</span>
+        </button>
+
+        <button class="nav-btn" data-section="playlists">
+          <span class="nav-icon">♫</span>
+          <span class="nav-label">PLAYLISTS</span>
+          <span class="nav-meta">player</span>
+        </button>
+
+        <button class="nav-btn" data-section="admin">
+          <span class="nav-icon">▣</span>
+          <span class="nav-label">ADMIN</span>
+          <span class="nav-meta">lock</span>
+        </button>
+      </div>
+
+      <div class="sidebar-profile">
+        <img
+          id="profile-avatar-left"
+          src="https://cdn.discordapp.com/embed/avatars/0.png"
+          alt="avatar"
+          class="profile-avatar-small"
+        />
+        <div class="sidebar-profile-info">
+          <strong id="profile-name-left">ALLZ</strong>
+          <span id="profile-user-left">@allz.exe</span>
+          <span id="profile-status-left">offline</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER -->
+    <section class="center-stage panel-window">
+      <div class="window-top">
+        <span class="window-dot"></span>
+        <span class="window-title">ALLZ HUB</span>
+        <div class="window-actions window-actions-right">
+          <button class="mini-pill">TEMA</button>
+          <button class="mini-pill">ESCURO</button>
+          <button class="mini-pill" id="mute-toggle">MUTAR</button>
+        </div>
+      </div>
+
+      <div class="top-menubar">
+        <button>Arquivo</button>
+        <button>Editar</button>
+        <button>Exibir</button>
+        <button>Ajuda</button>
+        <span class="menubar-note">ALLZ HUB — XP/2009 + dark intencional</span>
+      </div>
+
+      <div class="section-holder">
+        <!-- SOCIAL -->
+        <section class="main-section active" id="section-social">
+          <div class="video-shell">
+            <div class="video-hud hud-left">
+              <div>Bandicam.com</div>
+              <div><span class="rec-dot"></span> CAPTURE • ALLZ_2009 • VHS</div>
+              <div>REC</div>
+              <div>RES: 1280x720 • FPS: 30</div>
+              <div>MIC: ON • VOL: 20%</div>
+            </div>
+
+            <div class="video-hud hud-right">
+              <div id="video-time">00:00:00</div>
+              <div id="video-date">--/--/----</div>
+            </div>
+
+            <video
+              id="hero-video"
+              class="hero-video"
+              autoplay
+              loop
+              muted
+              playsinline
+            >
+              <source src="https://files.catbox.moe/fhahqy.mp4" type="video/mp4" />
+            </video>
+
+            <div class="video-hud hud-bottom-left">
+              <span>ALLZ HUB / awake and unafraid</span>
+            </div>
+
+            <div class="video-hud hud-bottom-center">
+              <span>você está ouvindo: Mons</span>
+            </div>
+
+            <div class="video-hud hud-bottom-right">
+              <span>SF2 / AMV</span>
+              <span>NOW: _</span>
+            </div>
+
+            <div class="scanlines"></div>
+          </div>
+        </section>
+
+        <!-- FILES -->
+        <section class="main-section" id="section-files">
+          <div class="files-window">
+            <div class="files-tabs">
+              <button class="file-tab active" data-filetab="progress">PROGRESSO</button>
+              <button class="file-tab" data-filetab="games">JOGOS</button>
+              <button class="file-tab" data-filetab="album">ÁLBUM</button>
+              <button class="file-tab" data-filetab="profile">PERFIL</button>
+              <button class="file-tab" data-filetab="wallpapers">IMAGENS</button>
+            </div>
+
+            <div class="files-content">
+              <div class="file-panel active" id="filetab-progress">
+                <div class="rpg-card">
+                  <div class="rpg-char">
+                    <img src="https://files.catbox.moe/0bgopj.gif" alt="character" />
+                  </div>
+                  <div class="rpg-stats">
+                    <h3>SAVE STATUS</h3>
+                    <p>Character: ALLZ</p>
+                    <p>Level: 22</p>
+                    <div class="stat-grid">
+                      <div>HP <span>87</span></div>
+                      <div>DEF <span>63</span></div>
+                      <div>SPD <span>71</span></div>
+                      <div>CRIT <span>54</span></div>
+                      <div>ACC <span>90</span></div>
+                    </div>
+                    <div class="quest-note">
+                      <strong>Quest Log:</strong> organizar hub pessoal, playlists, jogos e arquivos.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="file-panel" id="filetab-games">
+                <div class="game-grid">
+                  <article class="game-card">
+                    <div class="game-cover">RE2</div>
+                    <div class="game-info">
+                      <strong>Resident Evil 2</strong>
+                      <span>Survival Horror</span>
+                    </div>
+                  </article>
+                  <article class="game-card">
+                    <div class="game-cover">TQ</div>
+                    <div class="game-info">
+                      <strong>The Quarry</strong>
+                      <span>Interactive Horror</span>
+                    </div>
+                  </article>
+                  <article class="game-card">
+                    <div class="game-cover">UNCH</div>
+                    <div class="game-info">
+                      <strong>Uncharted</strong>
+                      <span>Action Adventure</span>
+                    </div>
+                  </article>
+                  <article class="game-card">
+                    <div class="game-cover">MC</div>
+                    <div class="game-info">
+                      <strong>Minecraft</strong>
+                      <span>Sandbox</span>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
+              <div class="file-panel" id="filetab-album">
+                <div class="album-grid">
+                  <div class="album-item">Screenshot 01</div>
+                  <div class="album-item">Screenshot 02</div>
+                  <div class="album-item">Nota antiga</div>
+                  <div class="album-item">Imagem AMV</div>
+                  <div class="album-item">Pasta nostalgia</div>
+                  <div class="album-item">Memórias</div>
+                </div>
+              </div>
+
+              <div class="file-panel" id="filetab-profile">
+                <div class="profile-panel">
+                  <div class="profile-large-avatar" id="profile-large-avatar-wrap">
+                    <img id="profile-large-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="avatar">
+                  </div>
+                  <div class="profile-texts">
+                    <h3 id="profile-display-name">ALLZ</h3>
+                    <p id="profile-username-main">@allz.exe</p>
+                    <p class="profile-bio">
+                      hub pessoal / nostalgia internet antiga / dark melancólico / arquivos / jogos / playlists
+                    </p>
+                    <div class="profile-meta-grid">
+                      <div><span>Jogos</span><strong>4+</strong></div>
+                      <div><span>Horas</span><strong>???</strong></div>
+                      <div><span>Status</span><strong id="profile-status-main">offline</strong></div>
+                      <div><span>Integração</span><strong>Steam futuramente</strong></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="file-panel" id="filetab-wallpapers">
+                <div class="wallpaper-grid">
+                  <div class="wallpaper-box"></div>
+                  <div class="wallpaper-box"></div>
+                  <div class="wallpaper-box"></div>
+                  <div class="wallpaper-box"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PLAYLISTS -->
+        <section class="main-section" id="section-playlists">
+          <div class="cd-player">
+            <div class="cd-left">
+              <div class="album-art">
+                <div class="album-disc">
+                  <div class="disc-inner"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cd-right">
+              <div class="player-screen">
+                <div class="player-line"><span>ARTIST</span><strong id="track-artist">mons</strong></div>
+                <div class="player-line"><span>TRACK</span><strong id="track-title">awake and unafraid</strong></div>
+                <div class="player-line"><span>SOURCE</span><strong>ambient mp3</strong></div>
+              </div>
+
+              <div class="player-progress-wrap">
+                <input type="range" min="0" max="100" value="0" id="playlist-progress" />
+              </div>
+
+              <div class="player-controls">
+                <button id="prev-track">PREV</button>
+                <button id="play-track">PLAY</button>
+                <button id="pause-track">PAUSE</button>
+                <button id="stop-track">STOP</button>
+                <button id="next-track">NEXT</button>
+              </div>
+
+              <div class="playlist-list">
+                <button class="track-item active" data-src="https://files.catbox.moe/mkmd7z.mp3" data-title="awake and unafraid" data-artist="mons">
+                  01 — awake and unafraid
+                </button>
+                <button class="track-item" data-src="https://files.catbox.moe/mkmd7z.mp3" data-title="ambient loop" data-artist="allz hub">
+                  02 — ambient loop
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ADMIN -->
+        <section class="main-section" id="section-admin">
+          <div class="admin-shell">
+            <div class="admin-login" id="admin-login-box">
+              <div class="admin-titlebar">Windows Security</div>
+              <div class="admin-body">
+                <h3>Login required</h3>
+                <label>User name</label>
+                <input type="text" id="admin-user" placeholder="User name" />
+                <label>Password</label>
+                <input type="password" id="admin-pass" placeholder="Password" />
+                <div class="admin-actions">
+                  <button id="admin-login-btn">Log in</button>
+                </div>
+                <p class="admin-hint">demo: admin / 2009</p>
+              </div>
+            </div>
+
+            <div class="admin-dashboard hidden" id="admin-dashboard">
+              <div class="admin-board">
+                <div class="admin-card">
+                  <h4>PRIVATE NOTES</h4>
+                  <p>— ajustar arquivos</p>
+                  <p>— conectar steam futuramente</p>
+                  <p>— organizar wallpapers</p>
+                </div>
+                <div class="admin-card">
+                  <h4>PRIVATE LINKS</h4>
+                  <p>discord / drive / playlists</p>
+                </div>
+                <div class="admin-card">
+                  <h4>SYSTEM SNAPSHOT</h4>
+                  <p>theme: nostalgic dark</p>
+                  <p>effects: vhs / grain / crt</p>
+                  <p>status: running</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <img class="layout-gif" src="https://files.catbox.moe/0bgopj.gif" alt="gif decorativo" />
+    </section>
+
+    <!-- RIGHT -->
+    <aside class="sidebar-right panel-window">
+      <div class="right-card">
+        <div class="card-head">
+          <span>CONTROL PANEL</span>
+          <span id="clock-box">00:00:00</span>
+        </div>
+      </div>
+
+      <div class="right-card">
+        <div class="card-head">
+          <span>STATUS</span>
+          <span id="discord-state-top">offline</span>
+        </div>
+        <div class="discord-card">
+          <div class="discord-mini-header">discord</div>
+
+          <div class="discord-user-wrap">
+            <img id="discord-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="avatar" />
+            <div>
+              <strong id="discord-name">ALLZ</strong>
+              <p id="discord-username">—</p>
+              <p id="discord-activity">sem atividade</p>
+            </div>
+          </div>
+
+          <div class="discord-buttons">
+            <button id="open-discord">ABRIR DISCORD</button>
+            <button id="copy-status">COPIAR</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-card">
+        <div class="card-head">
+          <span>SISTEMA</span>
+          <span>ALLZ_HUB</span>
+        </div>
+        <div class="system-block">
+          <p>tema atual</p>
+          <strong>ESCURO</strong>
+          <small>dark principal • nostalgia moderna</small>
+          <div class="fx-buttons">
+            <button class="fx-btn active" data-fx="vhs">VHS</button>
+            <button class="fx-btn active" data-fx="grain">GRAIN</button>
+            <button class="fx-btn active" data-fx="crt">CRT</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-card flex-grow">
+        <div class="card-head">
+          <span>NOTES</span>
+          <span>2009</span>
+        </div>
+        <div class="notes-block">
+          <p>lembrete</p>
+          <strong>normal people worry me</strong>
+          <small>hub pessoal • nostalgia + dark moderno</small>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
