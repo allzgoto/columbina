@@ -1,7 +1,7 @@
 :root {
-  --bg: #06080d;
-  --bg-2: #0a0d14;
-  --panel: rgba(11, 14, 22, 0.88);
+  --bg: #05070b;
+  --bg-2: #090d14;
+  --panel: rgba(11, 14, 22, 0.92);
   --panel-2: rgba(18, 20, 28, 0.9);
   --line: rgba(171, 174, 191, 0.15);
   --line-strong: rgba(203, 206, 224, 0.28);
@@ -52,7 +52,7 @@ body::before {
       transparent 3px
     );
   pointer-events: none;
-  opacity: .2;
+  opacity: .16;
   z-index: 2;
 }
 
@@ -78,61 +78,32 @@ input {
   position: fixed;
   inset: 0;
   z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background:
-    radial-gradient(circle at center, rgba(118, 131, 97, .12), transparent 28%),
-    linear-gradient(180deg, rgba(3,4,8,.94), rgba(2,3,5,.98));
-  backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
+  background: #000;
 }
 
 .enter-screen.hidden {
   opacity: 0;
   pointer-events: none;
-  transition: opacity .5s ease;
+  transition: opacity .45s ease;
 }
 
-.enter-box {
-  width: min(460px, 92vw);
-  border: 1px solid var(--line-strong);
-  border-radius: 18px;
-  padding: 28px;
-  background: linear-gradient(180deg, rgba(18,22,32,.93), rgba(8,11,18,.96));
-  box-shadow: var(--shadow);
-  text-align: center;
-}
-
-.enter-title {
+.enter-click-btn {
+  background: transparent;
+  border: none;
+  color: #f2efe9;
   font-family: var(--font-pixel);
-  font-size: 48px;
-  letter-spacing: 2px;
-}
-
-.enter-sub {
-  color: var(--muted);
-  margin-top: 6px;
-  margin-bottom: 22px;
-}
-
-.enter-btn {
-  border: 1px solid rgba(255,255,255,.18);
-  background: linear-gradient(180deg, #222835, #151926);
-  color: var(--text);
-  padding: 12px 22px;
-  border-radius: 12px;
+  font-size: 64px;
+  letter-spacing: 3px;
   cursor: pointer;
-  font-weight: 700;
+  text-shadow: 0 0 18px rgba(255,255,255,.12);
+  transition: transform .15s ease, opacity .15s ease;
 }
 
-.enter-btn:hover {
-  filter: brightness(1.08);
-}
-
-.enter-hint {
-  margin-top: 14px;
-  color: #9da3ae;
-  font-size: 13px;
+.enter-click-btn:hover {
+  transform: scale(1.04);
+  opacity: .9;
 }
 
 .app-shell {
@@ -366,21 +337,24 @@ input {
 }
 
 .vintage-stage {
-  padding: 24px;
+  padding: 8px;
+  height: 100%;
 }
 
 .vintage-player-frame {
   position: relative;
-  width: min(860px, 94%);
-  background:
-    linear-gradient(180deg, var(--vintage-soft), var(--vintage-bg));
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, var(--vintage-soft), var(--vintage-bg));
   border: 2px solid var(--vintage-border);
   border-radius: 8px;
   box-shadow:
     0 30px 60px rgba(0,0,0,.45),
     inset 0 0 0 1px rgba(255,255,255,.45);
-  padding: 12px 12px 16px;
+  padding: 12px 12px 14px;
   color: var(--vintage-dark);
+  display: flex;
+  flex-direction: column;
 }
 
 .vintage-player-frame::before {
@@ -454,13 +428,13 @@ input {
 
 .vintage-video-wrap {
   position: relative;
-  height: 520px;
-  background:
-    linear-gradient(180deg, #efe7d7, #d2c7b3);
+  flex: 1;
+  min-height: 0;
+  background: linear-gradient(180deg, #efe7d7, #d2c7b3);
   border: 2px solid rgba(96, 83, 68, .55);
   border-radius: 4px;
   overflow: hidden;
-  padding: 34px 48px 52px;
+  padding: 28px 34px 44px;
 }
 
 .hero-video {
@@ -477,15 +451,15 @@ input {
 .side-character {
   position: absolute;
   z-index: 2;
-  bottom: 70px;
-  width: 70px;
   opacity: .75;
   pointer-events: none;
 }
 
 .left-character {
   left: 8px;
-  height: 230px;
+  bottom: 62px;
+  height: 210px;
+  width: 56px;
   background:
     linear-gradient(180deg, rgba(47, 37, 30, .15), rgba(47,37,30,.35)),
     radial-gradient(circle at 50% 20%, rgba(88,74,63,.85) 0 8%, transparent 9%),
@@ -497,10 +471,10 @@ input {
 
 .corner-silhouette {
   position: absolute;
-  right: 10px;
-  bottom: 14px;
-  width: 72px;
-  height: 112px;
+  right: 12px;
+  bottom: 12px;
+  width: 60px;
+  height: 100px;
   z-index: 2;
   pointer-events: none;
   opacity: .72;
@@ -521,30 +495,30 @@ input {
 }
 
 .hud-left {
-  left: 62px;
-  top: 78px;
+  left: 48px;
+  top: 52px;
 }
 
 .hud-right {
-  right: 62px;
-  top: 82px;
+  right: 48px;
+  top: 56px;
   text-align: right;
 }
 
 .hud-bottom-left {
-  left: 72px;
-  bottom: 56px;
+  left: 52px;
+  bottom: 48px;
 }
 
 .hud-bottom-center {
   left: 50%;
   transform: translateX(-50%);
-  bottom: 58px;
+  bottom: 48px;
 }
 
 .hud-bottom-right {
-  right: 68px;
-  bottom: 56px;
+  right: 52px;
+  bottom: 48px;
   text-align: right;
   display: flex;
   flex-direction: column;
@@ -577,7 +551,7 @@ input {
 }
 
 .vintage-controls {
-  padding: 12px 8px 0;
+  padding: 10px 8px 0;
 }
 
 .progress-fake {
@@ -617,6 +591,10 @@ input {
   font-weight: 700;
 }
 
+.decorative-btn {
+  pointer-events: none;
+}
+
 .ornate-btn.small {
   min-width: 32px;
 }
@@ -635,9 +613,9 @@ input {
 
 .layout-gif {
   position: absolute;
-  right: 38px;
-  bottom: 20px;
-  width: 130px;
+  right: 28px;
+  bottom: 14px;
+  width: 110px;
   image-rendering: auto;
   filter: drop-shadow(0 8px 18px rgba(0,0,0,.45));
   opacity: .92;
@@ -816,7 +794,9 @@ input {
 
 .rpg-stats,
 .profile-texts,
-.player-screen {
+.player-screen,
+.steam-box,
+.achievements-shell {
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,.08);
   background: linear-gradient(180deg, rgba(17,22,31,.92), rgba(8,11,17,.98));
@@ -824,8 +804,11 @@ input {
 }
 
 .rpg-stats h3,
-.profile-texts h3 {
+.profile-texts h3,
+.games-library-head h3,
+.achievements-head h3 {
   margin-top: 0;
+  margin-bottom: 8px;
   font-family: var(--font-pixel);
   font-size: 28px;
   letter-spacing: .03em;
@@ -840,22 +823,49 @@ input {
 }
 
 .stat-grid div,
-.profile-meta-grid div {
+.profile-meta-grid div,
+.steam-stats div {
   display: flex;
   justify-content: space-between;
   border: 1px solid rgba(255,255,255,.08);
   border-radius: 10px;
   padding: 10px 12px;
   background: rgba(255,255,255,.025);
+  gap: 10px;
 }
 
 .quest-note {
   color: #bdb6ac;
 }
 
+.games-library-head,
+.achievements-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.games-library-head p,
+.achievements-head p {
+  margin: 0;
+  color: #a9b0bc;
+}
+
+.games-summary {
+  color: #ddd5c8;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 700;
+}
+
 .game-grid,
 .album-grid,
-.wallpaper-grid {
+.wallpaper-grid,
+.achievement-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 14px;
@@ -863,7 +873,8 @@ input {
 
 .game-card,
 .album-item,
-.wallpaper-box {
+.wallpaper-box,
+.achievement-card {
   border: 1px solid rgba(255,255,255,.08);
   border-radius: 14px;
   padding: 12px;
@@ -889,6 +900,29 @@ input {
   gap: 4px;
 }
 
+.game-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #b3bbca;
+}
+
+.game-achievements-line {
+  margin-top: 10px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  overflow: hidden;
+}
+
+.game-achievements-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #778567, #b7c89c);
+}
+
 .album-item,
 .wallpaper-box {
   display: grid;
@@ -901,11 +935,100 @@ input {
   max-width: 640px;
 }
 
-.profile-meta-grid {
+.profile-meta-grid,
+.steam-stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   margin-top: 16px;
+}
+
+.steam-box {
+  margin-top: 18px;
+}
+
+.steam-box-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.steam-box-head span {
+  color: #a7afbc;
+  font-size: 13px;
+}
+
+.steam-user-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.steam-avatar-wrap img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+.steam-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.steam-user-info span,
+.steam-user-info small {
+  color: #adb5c2;
+}
+
+.achievements-shell {
+  margin-top: 16px;
+}
+
+.achievement-card {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.achievement-card.unlocked {
+  border-color: rgba(172, 201, 153, .26);
+  box-shadow: inset 0 0 0 1px rgba(172, 201, 153, .08);
+}
+
+.achievement-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.achievement-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, rgba(118,135,91,.35), rgba(56,66,45,.7));
+  border: 1px solid rgba(183, 196, 160, .18);
+  font-size: 18px;
+}
+
+.achievement-card.locked .achievement-badge {
+  filter: grayscale(1);
+  opacity: .7;
+}
+
+.achievement-state {
+  font-size: 12px;
+  color: #9fabba;
+}
+
+.achievement-card.unlocked .achievement-state {
+  color: #c7d6b8;
 }
 
 .cd-player {
@@ -1100,7 +1223,7 @@ body.effects-vhs .hero-video {
   }
 
   .vintage-video-wrap {
-    height: 460px;
+    min-height: 420px;
   }
 }
 
@@ -1123,16 +1246,13 @@ body.effects-vhs .hero-video {
 
   .vintage-player-frame {
     width: 100%;
+    height: auto;
   }
 
   .vintage-video-wrap {
-    height: 360px;
-    padding: 24px 24px 42px;
-  }
-
-  .hero-video {
-    width: 100%;
-    height: 100%;
+    min-height: 340px;
+    height: auto;
+    padding: 20px 20px 38px;
   }
 
   .hud-left,
@@ -1174,5 +1294,10 @@ body.effects-vhs .hero-video {
   .left-character,
   .corner-silhouette {
     display: none;
+  }
+
+  .profile-meta-grid,
+  .steam-stats {
+    grid-template-columns: 1fr;
   }
 }
