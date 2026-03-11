@@ -11,12 +11,10 @@
 </head>
 <body class="effects-vhs effects-grain effects-crt">
 
-  <!-- ENTER -->
   <div id="enter-screen" class="enter-screen">
     <button id="enter-btn" class="enter-click-btn">CLICK</button>
   </div>
 
-  <!-- AUDIO -->
   <audio id="bg-audio" loop preload="auto">
     <source src="https://files.catbox.moe/mkmd7z.mp3" type="audio/mpeg" />
   </audio>
@@ -24,7 +22,6 @@
   <div class="ambient-particles"></div>
 
   <main class="app-shell">
-    <!-- LEFT -->
     <aside class="sidebar-left panel-window">
       <div class="window-top">
         <span class="window-dot"></span>
@@ -62,12 +59,7 @@
       </div>
 
       <div class="sidebar-profile">
-        <img
-          id="profile-avatar-left"
-          src="https://cdn.discordapp.com/embed/avatars/0.png"
-          alt="avatar"
-          class="profile-avatar-small"
-        />
+        <img id="profile-avatar-left" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="avatar" class="profile-avatar-small" />
         <div class="sidebar-profile-info">
           <strong id="profile-name-left">ALLZ</strong>
           <span id="profile-user-left">@allz.exe</span>
@@ -76,7 +68,6 @@
       </div>
     </aside>
 
-    <!-- CENTER -->
     <section class="center-stage panel-window">
       <div class="window-top">
         <span class="window-dot"></span>
@@ -96,7 +87,6 @@
       </div>
 
       <div class="section-holder">
-        <!-- SOCIAL -->
         <section class="main-section active" id="section-social">
           <div class="video-shell vintage-stage">
             <div class="vintage-player-frame">
@@ -116,15 +106,12 @@
               <div class="ornament ornament-top-right">❦</div>
 
               <div class="vintage-video-wrap">
-                <div class="side-character left-character"></div>
-                <div class="corner-silhouette"></div>
-
                 <div class="video-hud hud-left">
                   <div>Bandicam.com</div>
                   <div><span class="rec-dot"></span> CAPTURE • ALLZ_2009 • VHS</div>
                   <div>REC</div>
                   <div>RES: 1280x720 • FPS: 30</div>
-                  <div>MIC: ON • VOL: 20%</div>
+                  <div>MIC: ON • VOL: 25%</div>
                 </div>
 
                 <div class="video-hud hud-right">
@@ -132,14 +119,7 @@
                   <div id="video-date">--/--/----</div>
                 </div>
 
-                <video
-                  id="hero-video"
-                  class="hero-video"
-                  loop
-                  muted
-                  playsinline
-                  preload="auto"
-                >
+                <video id="hero-video" class="hero-video" loop muted playsinline preload="auto">
                   <source src="https://files.catbox.moe/fhahqy.mp4" type="video/mp4" />
                 </video>
 
@@ -165,7 +145,7 @@
                 </div>
 
                 <div class="control-buttons">
-                  <button class="ornate-btn small decorative-btn">⏮</button>
+                  <button class="ornate-btn decorative-btn">⏮</button>
                   <button class="ornate-btn decorative-btn">⏵</button>
                   <button class="ornate-btn decorative-btn">⏸</button>
                   <button class="ornate-btn decorative-btn">⏹</button>
@@ -181,7 +161,6 @@
           </div>
         </section>
 
-        <!-- FILES -->
         <section class="main-section" id="section-files">
           <div class="files-window">
             <div class="files-tabs">
@@ -224,7 +203,6 @@
                   </div>
                   <div class="games-summary" id="games-summary">0 jogos</div>
                 </div>
-
                 <div class="game-grid" id="game-grid"></div>
               </div>
 
@@ -307,7 +285,6 @@
           </div>
         </section>
 
-        <!-- PLAYLISTS -->
         <section class="main-section" id="section-playlists">
           <div class="cd-player">
             <div class="cd-left">
@@ -349,7 +326,6 @@
           </div>
         </section>
 
-        <!-- ADMIN -->
         <section class="main-section" id="section-admin">
           <div class="admin-shell">
             <div class="admin-login" id="admin-login-box">
@@ -394,7 +370,6 @@
       <img class="layout-gif" src="https://files.catbox.moe/0bgopj.gif" alt="gif decorativo" />
     </section>
 
-    <!-- RIGHT -->
     <aside class="sidebar-right panel-window">
       <div class="right-card">
         <div class="card-head">
