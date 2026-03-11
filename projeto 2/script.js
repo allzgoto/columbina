@@ -2,7 +2,6 @@ const enterScreen = document.getElementById("enter-screen");
 const enterBtn = document.getElementById("enter-btn");
 const bgAudio = document.getElementById("bg-audio");
 const heroVideo = document.getElementById("hero-video");
-
 const muteTogglePlayer = document.getElementById("mute-toggle-player");
 
 const navButtons = document.querySelectorAll(".nav-btn");
@@ -44,103 +43,29 @@ let currentTrackIndex = 0;
 let siteEntered = false;
 let manualMute = false;
 
-/*
-  STEAM READY CONFIG
-  Para integração real no futuro:
-  - steamId: seu SteamID64
-  - apiKey: normalmente exigiria backend/proxy
-*/
+const DEFAULT_ACTIVE_VOLUME = 0.25;
+const DEFAULT_BACKGROUND_VOLUME = 0.05;
+
 const steamConfig = {
   enabled: false,
   steamId: "",
   apiKey: ""
 };
 
-/*
-  Sistema local gamer / conquistas
-*/
 const localGameData = [
-  {
-    code: "RE2",
-    name: "Resident Evil 2",
-    genre: "Survival Horror",
-    hours: 18,
-    achievementsUnlocked: 24,
-    achievementsTotal: 42,
-    progress: 71
-  },
-  {
-    code: "TQ",
-    name: "The Quarry",
-    genre: "Interactive Horror",
-    hours: 11,
-    achievementsUnlocked: 12,
-    achievementsTotal: 35,
-    progress: 43
-  },
-  {
-    code: "UNCH",
-    name: "Uncharted",
-    genre: "Action Adventure",
-    hours: 22,
-    achievementsUnlocked: 28,
-    achievementsTotal: 50,
-    progress: 64
-  },
-  {
-    code: "MC",
-    name: "Minecraft",
-    genre: "Sandbox",
-    hours: 96,
-    achievementsUnlocked: 18,
-    achievementsTotal: 40,
-    progress: 58
-  }
+  { code: "RE2", name: "Resident Evil 2", genre: "Survival Horror", hours: 18, achievementsUnlocked: 24, achievementsTotal: 42, progress: 71 },
+  { code: "TQ", name: "The Quarry", genre: "Interactive Horror", hours: 11, achievementsUnlocked: 12, achievementsTotal: 35, progress: 43 },
+  { code: "UNCH", name: "Uncharted", genre: "Action Adventure", hours: 22, achievementsUnlocked: 28, achievementsTotal: 50, progress: 64 },
+  { code: "MC", name: "Minecraft", genre: "Sandbox", hours: 96, achievementsUnlocked: 18, achievementsTotal: 40, progress: 58 }
 ];
 
 const localAchievements = [
-  {
-    icon: "✦",
-    title: "Primeira Noite",
-    description: "Entrou no hub e deixou o ambiente tocar.",
-    unlocked: true,
-    game: "ALLZ HUB"
-  },
-  {
-    icon: "⌘",
-    title: "Hub Builder",
-    description: "Montou a base principal do site pessoal.",
-    unlocked: true,
-    game: "ALLZ HUB"
-  },
-  {
-    icon: "☾",
-    title: "Dark Mood",
-    description: "Ativou a estética nostálgica e melancólica.",
-    unlocked: true,
-    game: "ALLZ HUB"
-  },
-  {
-    icon: "⚔",
-    title: "Rookie Survivor",
-    description: "Progresso salvo em jogos de campanha.",
-    unlocked: true,
-    game: "Resident Evil 2"
-  },
-  {
-    icon: "♫",
-    title: "AMV Loop",
-    description: "Deixou música e vídeo rodando juntos.",
-    unlocked: true,
-    game: "ALLZ HUB"
-  },
-  {
-    icon: "★",
-    title: "Steam Sync",
-    description: "Conectar perfil real da Steam futuramente.",
-    unlocked: false,
-    game: "Steam"
-  }
+  { icon: "✦", title: "Primeira Noite", description: "Entrou no hub e deixou o ambiente tocar.", unlocked: true, game: "ALLZ HUB" },
+  { icon: "⌘", title: "Hub Builder", description: "Montou a base principal do site pessoal.", unlocked: true, game: "ALLZ HUB" },
+  { icon: "☾", title: "Dark Mood", description: "Ativou a estética nostálgica e melancólica.", unlocked: true, game: "ALLZ HUB" },
+  { icon: "⚔", title: "Rookie Survivor", description: "Progresso salvo em jogos de campanha.", unlocked: true, game: "Resident Evil 2" },
+  { icon: "♫", title: "AMV Loop", description: "Deixou música e vídeo rodando juntos.", unlocked: true, game: "ALLZ HUB" },
+  { icon: "★", title: "Steam Sync", description: "Conectar perfil real da Steam futuramente.", unlocked: false, game: "Steam" }
 ];
 
 function formatClock(date) {
@@ -149,6 +74,12 @@ function formatClock(date) {
 
 function formatDate(date) {
   return date.toLocaleDateString("pt-BR");
+}
+
+function setAmbientVolumeBySection(sectionName) {
+  if (!bgAudio) return;
+  const targetVolume = sectionName === "social" ? DEFAULT_ACTIVE_VOLUME : DEFAULT_BACKGROUND_VOLUME;
+  bgAudio.volume = targetVolume;
 }
 
 function updateMuteButtons() {
@@ -171,7 +102,7 @@ async function syncStartMedia() {
     bgAudio.currentTime = 0;
     heroVideo.currentTime = 0;
 
-    bgAudio.volume = 0.2;
+    bgAudio.volume = DEFAULT_ACTIVE_VOLUME;
     bgAudio.muted = manualMute;
 
     const playVideo = heroVideo.play();
@@ -188,14 +119,13 @@ async function startHub() {
   siteEntered = true;
   enterScreen.classList.add("hidden");
   await syncStartMedia();
+  setAmbientVolumeBySection("social");
 }
 
 enterBtn.addEventListener("click", startHub);
 
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    startHub();
-  }
+  if (e.key === "Enter") startHub();
 });
 
 if (muteTogglePlayer) muteTogglePlayer.addEventListener("click", toggleMute);
@@ -209,6 +139,8 @@ navButtons.forEach((btn) => {
 
     sections.forEach((section) => section.classList.remove("active"));
     document.getElementById(`section-${target}`).classList.add("active");
+
+    setAmbientVolumeBySection(target);
   });
 });
 
@@ -281,7 +213,7 @@ function setTrack(index, autoPlay = false) {
   bgAudio.src = current.src;
   trackTitle.textContent = current.title;
   trackArtist.textContent = current.artist;
-  bgAudio.volume = 0.2;
+  bgAudio.volume = DEFAULT_ACTIVE_VOLUME;
   bgAudio.muted = manualMute;
 
   if (autoPlay) {
@@ -396,52 +328,24 @@ function updateGamingProfileStats() {
   const totalAchievementsUnlocked = localGameData.reduce((sum, game) => sum + game.achievementsUnlocked, 0);
   const totalHours = localGameData.reduce((sum, game) => sum + game.hours, 0);
 
-  const profileGamesCount = document.getElementById("profile-games-count");
-  const profileAchievementCount = document.getElementById("profile-achievement-count");
-  const steamGames = document.getElementById("steam-games");
-  const steamAchievements = document.getElementById("steam-achievements");
-  const steamHours = document.getElementById("steam-hours");
-
-  if (profileGamesCount) profileGamesCount.textContent = String(gamesCount);
-  if (profileAchievementCount) profileAchievementCount.textContent = String(totalAchievementsUnlocked);
-  if (steamGames) steamGames.textContent = String(gamesCount);
-  if (steamAchievements) steamAchievements.textContent = String(totalAchievementsUnlocked);
-  if (steamHours) steamHours.textContent = `${totalHours}h`;
+  document.getElementById("profile-games-count").textContent = String(gamesCount);
+  document.getElementById("profile-achievement-count").textContent = String(totalAchievementsUnlocked);
+  document.getElementById("steam-games").textContent = String(gamesCount);
+  document.getElementById("steam-achievements").textContent = String(totalAchievementsUnlocked);
+  document.getElementById("steam-hours").textContent = `${totalHours}h`;
 }
 
 function setupSteamBlockLocal() {
-  const steamModeLabel = document.getElementById("steam-mode-label");
-  const steamConnectionStatus = document.getElementById("steam-connection-status");
-  const steamName = document.getElementById("steam-name");
-  const steamIdLabel = document.getElementById("steam-id-label");
-  const steamBio = document.getElementById("steam-bio");
-  const steamAvatar = document.getElementById("steam-avatar");
-
-  if (steamModeLabel) steamModeLabel.textContent = steamConfig.enabled ? "steam ativo" : "modo local";
-  if (steamConnectionStatus) steamConnectionStatus.textContent = steamConfig.enabled ? "steam sync" : "local system";
-  if (steamName) steamName.textContent = "Allz";
-  if (steamIdLabel) steamIdLabel.textContent = steamConfig.steamId ? steamConfig.steamId : "Steam ID não conectado";
-  if (steamBio) {
-    steamBio.textContent = steamConfig.enabled
-      ? "Integração configurada. Ajuste o backend/proxy para puxar dados reais."
-      : "Você pode usar este bloco como perfil Steam fake agora, ou integrar depois com dados reais.";
-  }
-  if (steamAvatar) {
-    steamAvatar.src = document.getElementById("profile-large-avatar").src;
-  }
+  document.getElementById("steam-mode-label").textContent = steamConfig.enabled ? "steam ativo" : "modo local";
+  document.getElementById("steam-connection-status").textContent = steamConfig.enabled ? "steam sync" : "local system";
+  document.getElementById("steam-name").textContent = "Allz";
+  document.getElementById("steam-id-label").textContent = steamConfig.steamId ? steamConfig.steamId : "Steam ID não conectado";
+  document.getElementById("steam-bio").textContent = steamConfig.enabled
+    ? "Integração configurada. Ajuste o backend/proxy para puxar dados reais."
+    : "Você pode usar este bloco como perfil Steam fake agora, ou integrar depois com dados reais.";
 }
 
-/*
-  Opcional para futuro:
-  Dá para tentar buscar dados públicos por endpoints alternativos/proxy,
-  mas não deixei isso ativo para não quebrar o site sem backend.
-*/
 async function trySteamIntegration() {
-  if (!steamConfig.enabled || !steamConfig.steamId) {
-    setupSteamBlockLocal();
-    return;
-  }
-
   setupSteamBlockLocal();
 }
 
@@ -452,6 +356,7 @@ renderAchievements();
 updateGamingProfileStats();
 setupSteamBlockLocal();
 trySteamIntegration();
+setAmbientVolumeBySection("social");
 
 async function loadDiscordStatus() {
   try {
